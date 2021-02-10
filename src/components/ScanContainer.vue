@@ -7,8 +7,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import { BarcodeScanner } from "@ionic-native/barcode-scanner/ngx";
+<script>
 /* eslint-disable */
 // @ts-ignore
 import Quagga from "quagga";
