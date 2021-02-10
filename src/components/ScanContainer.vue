@@ -1,38 +1,129 @@
 <template>
   <div id="container">
-    <strong>{{ name }}</strong>
-    SCAN CONTAINER
-    <button v-on:click="scan()">SCAN</button>
+    <div id="interactive" class="viewport scanner">
+      <video />
+      <canvas class="drawingBuffer" />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import {  
-  Plugins,  
-  CameraSource,  
-  CameraResultType
-} from "@capacitor/core";
-const { Camera } = Plugins;
+import { BarcodeScanner } from "@ionic-native/barcode-scanner/ngx";
+/* eslint-disable */
+// @ts-ignore
+import Quagga from "quagga";
 
 export default {
-  name: 'ExploreContainer',
+  name: "ExploreContainer",
   props: {
     name: String
   },
-methods: {
-    async scan()  {
-        console.log('sono entrata');
-        const image = await Camera.getPhoto({
-        quality: 90,            
-        allowEditing: true,            
-        resultType: CameraResultType.DataUrl,            
-        source: CameraSource.Prompt
-        });
-                console.log(image.path);
-
-        }
+  data() {
+    return {
+      width: 0,
+      height: 0,
+      readers: ["ean_reader", "upc_reader", "code_128_reader"]
+    };
+  },
+  computed: {
+    config() {
+      return {
+        inputStream: {
+          type: "LiveStream",
+          constraints: {
+            width: this.width,
+            height: this.height,
+            facingMode: "environment",
+            aspectRatio: {
+              min: 1,
+              max: 2
+            }
+          }
+        },
+        locator: {
+          patchSize: "medium",
+          halfSample: true
+        },
+        numOfWorkers: 2,
+        frequency: 10,
+        decoder: {
+          readers: ["ean_reader", "upc_reader", "code_128_reader"]
+        },
+        locate: true
+      };
     }
-}
+  },
+  mounted() {
+    setTimeout(() => {
+      this.loadCanvas();
+      this.loadScanner();
+    }, 1000);
+  },
+  destroyed() {
+    Quagga.stop();
+  },
+  methods: {
+    loadCanvas() {
+      let ratio = 0.7;
+      let container = document.querySelector("#interactive");
+      // @ts-ignore: I don't care that it might not be a HTML Canvas Element
+      this.width = container.offsetWidth;
+      // @ts-ignore: I don't care that it might not be a HTML Canvas Element
+      this.height = container.offsetWidth * ratio;
+    },
+    loadScanner() {
+      Quagga.init(this.config, err => {
+        if (err) {
+          return console.error(err);
+        }
+        Quagga.start();
+      });
+      Quagga.onDetected(this.onDetected);
+      Quagga.onProcessed(this.onProcessed);
+    },
+    onDetected(result) {
+      console.log("onDetected", result);
+    },
+    onProcessed(result) {
+      if (result) {
+        let drawingCtx = Quagga.canvas.ctx.overlay;
+        let drawingCanvas = Quagga.canvas.dom.overlay;
+        if (result.boxes) {
+          drawingCtx.clearRect(
+            0,
+            0,
+            parseInt(drawingCanvas.getAttribute("width")),
+            parseInt(drawingCanvas.getAttribute("height"))
+          );
+          result.boxes
+            .filter(function(box) {
+              return box !== result.box;
+            })
+            .forEach(function(box) {
+              Quagga.ImageDebug.drawPath(box, { x: 0, y: 1 }, drawingCtx, {
+                color: "green",
+                lineWidth: 2
+              });
+            });
+        }
+        if (result.box) {
+          Quagga.ImageDebug.drawPath(result.box, { x: 0, y: 1 }, drawingCtx, {
+            color: "#00F",
+            lineWidth: 2
+          });
+        }
+        if (result.codeResult && result.codeResult.code) {
+          Quagga.ImageDebug.drawPath(
+            result.line,
+            { x: "x", y: "y" },
+            drawingCtx,
+            { color: "red", lineWidth: 3 }
+          );
+        }
+      }
+    }
+  }
+};
 </script>
 
 <style scoped>
@@ -61,3 +152,4 @@ methods: {
   text-decoration: none;
 }
 </style>
+/* eslint-enable */
