@@ -1,6 +1,7 @@
 <template>
   <div id="container">
     <QrStream @decode="onDecode"></QrStream>
+    <div class="result">{{ value }}</div>
   </div>
 </template>
 
@@ -14,6 +15,11 @@ export default {
   props: {
     name: String
   },
+  data: function() {
+    return {
+      value: ""
+    };
+  },
   components: {
     QrStream,
     QrCapture,
@@ -22,6 +28,8 @@ export default {
   methods: {
     onDecode(decodedString) {
       console.log("the result", decodedString);
+      window.open(decodedString);
+      this.value = decodedString;
     }
   }
 };
@@ -35,6 +43,15 @@ export default {
   right: 0;
   top: 50%;
   transform: translateY(-50%);
+}
+
+.result {
+  color: #fff;
+  font-size: 30px;
+  position: absolute;
+  background-color: #000;
+  bottom: 0;
+  left: 0;
 }
 
 #container strong {
