@@ -17,11 +17,24 @@
 </template>
 
 <script lang="ts">
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/vue';
-import ScanContainer from '@/components/ScanContainer.vue';
+import {
+  IonPage,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent
+} from "@ionic/vue";
+import ScanContainer from "@/components/ScanContainer.vue";
 
-export default  {
-  name: 'Tab3',
-  components: { ScanContainer, IonHeader, IonToolbar, IonTitle, IonContent, IonPage }
-}
+export default {
+  name: "Tab3",
+  components: {
+    ScanContainer,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonPage
+  }
+};
 </script>
