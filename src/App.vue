@@ -7,8 +7,6 @@
 <script lang="ts">
 import { IonApp, IonRouterOutlet } from "@ionic/vue";
 import { defineComponent } from "vue";
-import { Plugins, PermissionType } from "@capacitor/core";
-const { Permissions, PermissionsOptions } = Plugins;
 
 export default defineComponent({
   name: "App",
@@ -21,8 +19,7 @@ export default defineComponent({
   },
   methods: {
     async askPermissions() {
-      const hasPermission = await Permissions.query(PermissionsOptions.Camera);
-      console.log("permissions", hasPermission.state);
+      navigator.permissions.query({ name: "camera" });
     }
   }
 });

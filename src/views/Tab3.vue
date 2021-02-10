@@ -11,7 +11,7 @@
           <ion-title size="large">Tab 3</ion-title>
         </ion-toolbar>
       </ion-header>
-      <ScanContainer name="Tab 3 page" />
+      <button v-on:click="openModal()">OPEN SCANNER</button>
     </ion-content>
   </ion-page>
 </template>
@@ -22,19 +22,32 @@ import {
   IonHeader,
   IonToolbar,
   IonTitle,
+  modalController,
   IonContent
 } from "@ionic/vue";
-import ScanContainer from "@/components/ScanContainer.vue";
+import Modal from "./Modal.vue";
 
 export default {
   name: "Tab3",
   components: {
-    ScanContainer,
+    // ScanContainer,
     IonHeader,
     IonToolbar,
     IonTitle,
     IonContent,
     IonPage
+  },
+  methods: {
+    async openModal() {
+      const modal = await modalController.create({
+        component: Modal,
+        cssClass: "my-custom-class",
+        componentProps: {
+          title: "New Title"
+        }
+      });
+      return modal.present();
+    }
   }
 };
 </script>

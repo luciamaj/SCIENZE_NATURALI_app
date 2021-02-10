@@ -13,6 +13,7 @@
   "dependencies": {
     "@capacitor/core": "2.4.6",
     "@ionic-native/barcode-scanner": "^5.31.1",
+    "@ionic-native/camera": "^5.31.1",
     "@ionic-native/qr-scanner": "^5.31.1",
     "@ionic/pwa-elements": "^3.0.2",
     "@ionic/vue": "^5.4.0",
