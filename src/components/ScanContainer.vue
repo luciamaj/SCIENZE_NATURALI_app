@@ -4,7 +4,6 @@
     <div class="result">{{ value }}</div>
   </div>
 </template>
-
 <script>
 /* eslint-disable */
 // @ts-ignore
