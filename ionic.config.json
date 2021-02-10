@@ -1,0 +1,7 @@
+{
+  "name": "museo-scienze-naturali-bergamo",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
