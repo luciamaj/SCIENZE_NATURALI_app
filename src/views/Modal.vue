@@ -1,25 +1,33 @@
 <template>
-  <ion-page>
+  <div>
     <ion-header>
       <ion-toolbar>
-        <ion-title>{{ title }}</ion-title>
-        <QrStream @decode="onDecode"></QrStream>
-        <div class="result">{{ value }}</div>
+        <ion-icon @click="close" size="large" name="close" />
       </ion-toolbar>
     </ion-header>
-    <ion-content class="ion-padding">{{ content }}</ion-content>
-  </ion-page>
+    <ion-content>
+      <ion-button @click="closeMe">Close Me!</ion-button>
+    </ion-content>
+  </div>
 </template>
 
-<script>
-import { IonContent, IonHeader, IonTitle, IonToolbar } from "@ionic/vue";
-import { QrStream } from "vue3-qr-reader";
-import { defineComponent } from "vue";
+<script lang="ts">
+/* eslint-disable */
+import {
+  IonHeader,
+  IonToolbar,
+  IonButton,
+  IonIcon,
+  IonContent
+} from "@ionic/vue";
 
-export default defineComponent({
+export default {
   name: "Modal",
+  components: { IonHeader, IonToolbar, IonIcon, IonButton, IonContent },
   props: {
-    title: { type: String, default: "Super Modal" }
+    title: { type: String, default: "Super Modal" },
+
+    closeMe: { type: Function, default: () => {} }
   },
   data() {
     return {
@@ -27,18 +35,10 @@ export default defineComponent({
     };
   },
   methods: {
-    onDecode(decodedString) {
-      console.log("the result", decodedString);
-      window.open(decodedString);
-      this.value = decodedString;
+    close() {
+      this.$emit("close", { foo: "bar" });
     }
-  },
-  components: {
-    IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
-    QrStream
   }
-});
+};
+/* eslint-enable */
 </script>

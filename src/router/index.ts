@@ -8,9 +8,9 @@ const routes: Array<RouteRecordRaw> = [
     redirect: '/tabs/tab1'
   },
   {
-    path: '/modal/',
-    name: 'modal',
-    component: () => import('@/views/Modal.vue')
+    path: '/scanner/',
+    name: 'scanner',
+    component: () => import('@/views/Scanner.vue')
   },
   {
     path: '/tabs/',

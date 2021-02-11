@@ -9,6 +9,7 @@
 // @ts-ignore
 import { QrStream, QrCapture, QrDropzone } from "vue3-qr-reader";
 import { Camera, CameraOptions } from "@ionic-native/camera";
+/* eslint-enable */
 
 export default {
   name: "ScanContainer",
@@ -76,4 +77,3 @@ export default {
   text-decoration: none;
 }
 </style>
-/* eslint-enable */
