@@ -33,7 +33,6 @@ export default {
   methods: {
     onDecode(decodedString) {
       console.log("the result", decodedString);
-      window.open(decodedString);
       this.value = decodedString;
     }
   }
