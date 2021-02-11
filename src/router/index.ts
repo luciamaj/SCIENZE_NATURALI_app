@@ -30,11 +30,7 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: 'tab3',
-        component: () => import('@/views/Tab3.vue'),
-        beforeEnter: (to, from, next) => {
-          console.log('qui');
-          next();
-        },
+        component: () => import('@/views/MediaPlayer.vue'),
       }
     ]
   }
