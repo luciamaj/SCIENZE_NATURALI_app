@@ -7,7 +7,7 @@
 <script>
 /* eslint-disable */
 // @ts-ignore
-import { QrStream, QrCapture, QrDropzone } from "vue3-qr-reader";
+import { QrStream } from "vue3-qr-reader";
 import { Camera, CameraOptions } from "@ionic-native/camera";
 /* eslint-enable */
 
@@ -28,9 +28,7 @@ export default {
     console.log("remounted");
   },
   components: {
-    QrStream,
-    QrCapture,
-    QrDropzone
+    QrStream
   },
   methods: {
     onDecode(decodedString) {
