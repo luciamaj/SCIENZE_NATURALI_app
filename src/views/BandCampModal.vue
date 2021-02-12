@@ -42,7 +42,7 @@ export default {
   },
   methods: {
     back() {
-      this.$router.push({ name: "open-scanner" });
+      this.$router.go(-2);
     }
   },
   computed: {
