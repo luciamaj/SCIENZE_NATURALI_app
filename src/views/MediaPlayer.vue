@@ -18,15 +18,15 @@
       <ion-icon name="pause-outline" size="large"></ion-icon>
       {{ sound.artist }} - {{ sound.title }}
       {{ sound.howl ? sound.howl.duration() : '' }}
-      <ion-progress-bar id="linearbar" :value="progress" @click="updateSeek"></ion-progress-bar>
       <ion-range
+        snaps="false"
+        step="100"
         min="0"
-        max="1"
+        max="100"
+        id="linearbar"
         color="danger"
-        :value="progress != null ? progress : 0"
-        @click="updateSeek"
+        v-model="trackProgress"
       ></ion-range>
-      {{ progress }}
     </ion-content>
   </ion-page>
 </template>
@@ -40,7 +40,6 @@ import {
   IonContent,
   IonButton,
   IonIcon,
-  IonProgressBar,
   IonRange
 } from "@ionic/vue";
 import { Howl } from "howler";
@@ -55,7 +54,6 @@ export default {
     IonPage,
     IonButton,
     IonIcon,
-    IonProgressBar,
     IonRange
   },
   data() {
@@ -66,21 +64,21 @@ export default {
         howl: null,
         display: true
       },
+      value: 0.0,
       seek: 0,
-      playing: false
+      playing: false,
+      rangeActive: false
     };
   },
   watch: {
     playing(playing) {
       this.seek = this.sound.howl.seek();
-      console.log("the seek?", this.seek);
       let updateSeek;
       if (playing) {
         updateSeek = setInterval(() => {
           this.seek = this.sound.howl.seek();
         }, 250);
       } else {
-        console.log("what?");
         clearInterval(updateSeek);
       }
     }
@@ -88,7 +86,8 @@ export default {
   computed: {
     progress() {
       if (this.sound.howl.duration() === 0) return 0;
-      console.log(this.seek);
+      /* eslint-disable */
+      // this.value = this.seek / this.sound.howl.duration();
       return this.seek / this.sound.howl.duration();
     },
     trackProgress() {
@@ -102,6 +101,13 @@ export default {
     this.sound.howl = howlObj;
   },
   methods: {
+    onSeekStart() {
+      console.log(1);
+    },
+
+    onSeekEnd() {
+      console.log(2);
+    },
     playSound() {
       if (!this.sound.howl.playing()) {
         this.sound.howl.play();
@@ -111,13 +117,29 @@ export default {
         this.playing = false;
       }
     },
+    activateRange() {
+      this.rangeActive = true;
+    },
+
+    mouseUp() {
+      if (this.rangeActive) {
+        this.rangeActive = false;
+        console.log("range active");
+        // here you are sure the value is changed and
+        // the user has stopped to drag the range knobs so you can use the values
+      }
+    },
     updateSeek(event) {
+      console.log("qui 0");
+      console.log("event", event);
       const mousePos = event.offsetX;
       const elWidth = document.getElementById("linearbar").clientWidth;
       const percents = (mousePos / elWidth) * 100;
       this.setSeek(percents);
     },
     setSeek(percents) {
+      console.log("qui 1");
+      console.log(this.isDragging);
       const track = this.sound.howl;
 
       if (track.playing()) {

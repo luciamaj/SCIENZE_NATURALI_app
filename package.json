@@ -21,6 +21,7 @@
     "@ionic/pwa-elements": "^3.0.2",
     "@ionic/vue": "^5.4.0",
     "@ionic/vue-router": "^5.4.0",
+    "amplitudejs": "^5.2.0",
     "cordova-plugin-media": "^5.0.3",
     "core-js": "^3.6.5",
     "howler": "^2.2.1",
