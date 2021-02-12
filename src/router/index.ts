@@ -13,6 +13,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/Scanner.vue')
   },
   {
+    path: '/audioguida/:id',
+    name: 'audioguida',
+    component: () => import('@/views/BandCamp.vue')
+  },
+  {
     path: '/tabs/',
     component: Tabs,
     children: [
@@ -26,7 +31,7 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: 'tab2',
-        component: () => import('@/views/Tab2.vue')
+        component: () => import('@/views/BandCamp.vue')
       },
       {
         path: 'tab3',
