@@ -35,7 +35,7 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: 'tab3',
-        component: () => import('@/views/MediaPlayer.vue'),
+        component: () => import('@/views/Tab2.vue'),
       }
     ]
   }
