@@ -11,7 +11,9 @@
           <ion-title size="large">Tab 2</ion-title>
         </ion-toolbar>
       </ion-header>
-      <ion-button @click="openModal">Open Modal</ion-button>
+      <div class="centered">
+        <ion-button @click="openModal">Open Modal</ion-button>
+      </div>
     </ion-content>
   </ion-page>
 </template>
@@ -27,7 +29,7 @@ import {
 } from "@ionic/vue";
 
 export default {
-  name: "Tab2",
+  name: "OpenScanner",
   components: {
     IonPage,
     IonHeader,
@@ -53,3 +55,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.centered {
+  text-align: center;
+}
+</style>

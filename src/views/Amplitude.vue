@@ -2,13 +2,13 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title>Tab 1</ion-title>
+        <ion-title>AMPLITUDE</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
       <ion-header collapse="condense">
         <ion-toolbar>
-          <ion-title size="large">Tab 1</ion-title>
+          <ion-title size="large">AMPLITUDE</ion-title>
         </ion-toolbar>
       </ion-header>
 
@@ -39,7 +39,7 @@
         <span amplitude-song-info="name" amplitude-main-song-info="true" class="song-name"></span>
         <span amplitude-song-info="artist" amplitude-main-song-info="true"></span>
       </div>
-      <ion-button @click="play">PLAY</ion-button>
+      <ion-button @click="play">AMPLITUDE</ion-button>
     </ion-content>
   </ion-page>
 </template>
@@ -56,7 +56,7 @@ import {
 import Amplitude from "amplitudejs";
 
 export default {
-  name: "Tab1",
+  name: "Amplitude",
   components: {
     IonHeader,
     IonToolbar,

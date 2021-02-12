@@ -2,14 +2,14 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title>Bandcamp {{ id }}</ion-title>
-        <ion-icon @click="back" size="large" name="icon-back-outline" />
+        <ion-title>Bandcamp {{ name }}</ion-title>
+        <ion-icon @click="back" size="large" name="arrow-back" />
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
       <ion-header collapse="condense">
         <ion-toolbar>
-          <ion-title size="large">Bandcamp {{ id }}</ion-title>
+          <ion-title size="large">Bandcamp {{ name }}</ion-title>
         </ion-toolbar>
       </ion-header>
       <iframe style="border: 0; width: 100%; height: 120px;" :src="url" seamless></iframe>
@@ -42,12 +42,20 @@ export default {
   },
   methods: {
     back() {
-      this.$router.back();
+      this.$router.push({ name: "open-scanner" });
     }
   },
   computed: {
     id() {
       return this.$route.params.id;
+    },
+    name() {
+      const audio = data.find(x => x.index == this.$route.params.id);
+      if (audio) {
+        return audio.name;
+      } else {
+        return data[0].name;
+      }
     },
     url() {
       const audio = data.find(x => x.index == this.$route.params.id);

@@ -5,7 +5,7 @@ import Tabs from '../views/Tabs.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/tabs/tab1'
+    redirect: '/tabs/welcome'
   },
   {
     path: '/scanner/',
@@ -28,19 +28,22 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       {
         path: '',
-        redirect: '/tabs/tab1'
+        redirect: '/tabs/welcome'
       },
       {
-        path: 'tab1',
-        component: () => import('@/views/Tab1.vue')
+        path: 'welcome',
+        name: 'welcome',
+        component: () => import('@/views/Welcome.vue')
       },
       {
-        path: 'tab2',
-        component: () => import('@/views/BandCamp.vue')
+        path: 'open-scanner',
+        name: 'open-scanner',
+        component: () => import('@/views/OpenScanner.vue'),
       },
       {
-        path: 'tab3',
-        component: () => import('@/views/Tab2.vue'),
+        path: 'settings',
+        name: 'settings',
+        component: () => import('@/views/Settings.vue'),
       }
     ]
   }

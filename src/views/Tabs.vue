@@ -2,17 +2,17 @@
   <ion-page>
     <ion-tabs>
       <ion-tab-bar>
-        <ion-tab-button tab="tab1" href="/tabs/tab1">
+        <ion-tab-button tab="tab1" href="/tabs/welcome">
           <ion-icon :icon="triangle" />
           <ion-label>Tab 1</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="tab2" href="/tabs/tab2">
+        <ion-tab-button tab="tab2" href="/tabs/open-scanner">
           <ion-icon :icon="ellipse" />
           <ion-label>Tab 2</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="tab3" href="/tabs/tab3">
+        <ion-tab-button tab="tab3" href="/tabs/settings">
           <ion-icon :icon="square" />
           <ion-label>Tab 3</ion-label>
         </ion-tab-button>

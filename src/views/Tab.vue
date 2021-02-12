@@ -1,16 +1,14 @@
-
-
 <template>
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title>Tab 3</ion-title>
+        <ion-title>Tab</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
       <ion-header collapse="condense">
         <ion-toolbar>
-          <ion-title size="large">Tab 3</ion-title>
+          <ion-title size="large">Tab</ion-title>
         </ion-toolbar>
       </ion-header>
 
@@ -30,7 +28,7 @@ import {
 import ExploreContainer from "@/components/ExploreContainer.vue";
 
 export default {
-  name: "Tab2",
+  name: "Tab",
   components: {
     ExploreContainer,
     IonHeader,
