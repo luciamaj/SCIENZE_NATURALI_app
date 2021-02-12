@@ -96,7 +96,7 @@ export default {
   },
   created: function() {
     const howlObj = new Howl({
-      src: ["assets/sounds/1.ogg"]
+      src: ["assets/sounds/1.mp3"]
     });
     this.sound.howl = howlObj;
   },

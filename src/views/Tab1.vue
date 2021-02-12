@@ -78,7 +78,7 @@ export default {
           name: "Song Name 1",
           artist: "Artist Name",
           album: "Album Name",
-          url: "/assets/sounds/1.ogg",
+          url: "/assets/sounds/1.mp3",
           cover_art_url: "/assets/icon/icon.png"
         }
       ]
