@@ -18,6 +18,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/BandCamp.vue')
   },
   {
+    path: '/audioguida-modal/:id',
+    name: 'audioguida-modal',
+    component: () => import('@/views/BandCampModal.vue')
+  },
+  {
     path: '/tabs/',
     component: Tabs,
     children: [

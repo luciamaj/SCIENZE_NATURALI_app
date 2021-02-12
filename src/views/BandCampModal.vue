@@ -3,6 +3,7 @@
     <ion-header>
       <ion-toolbar>
         <ion-title>Bandcamp {{ id }}</ion-title>
+        <ion-icon @click="back" size="large" name="icon-back-outline" />
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
@@ -38,6 +39,11 @@ export default {
   },
   mounted() {
     console.log(data);
+  },
+  methods: {
+    back() {
+      this.$router.back();
+    }
   },
   computed: {
     id() {

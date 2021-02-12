@@ -59,7 +59,7 @@ export default {
         index = data[0].index;
       }
 
-      this.$router.push({ path: "/audioguida/" + index.toString() });
+      this.$router.push({ path: "/audioguida-modal/" + index.toString() });
     }
   },
   data: () => {
