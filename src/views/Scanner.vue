@@ -30,6 +30,7 @@ import {
   IonIcon
 } from "@ionic/vue";
 import { QrStream } from "vue3-qr-reader";
+import { data } from "../data/data";
 
 export default {
   name: "Scanner",
@@ -50,7 +51,15 @@ export default {
     onDecode(decodedString) {
       window.open(decodedString);
       this.value = decodedString;
-      console.log("the result", this.value);
+      const audio = data.find(x => x.external_url == decodedString);
+      let index;
+      if (audio) {
+        index = audio.index;
+      } else {
+        index = data[0].index;
+      }
+
+      this.$router.push({ path: "/audioguida/" + index.toString() });
     }
   },
   data: () => {
