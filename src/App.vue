@@ -22,7 +22,7 @@ export default defineComponent({
     provide("routerOutlet", routerOuteletRef);
 
     StatusBar.setStyle({
-      style: StatusBarStyle.Light
+      style: StatusBarStyle.Dark
     });
 
     // Display content under transparent status bar (Android only)
