@@ -1,7 +1,7 @@
 <template>
   <ion-page>
-    <ion-header collapse="condense">
-      <ion-toolbar ion-toolbar>
+    <ion-header>
+      <ion-toolbar color="dark">
         <ion-title>Settings</ion-title>
       </ion-toolbar>
     </ion-header>

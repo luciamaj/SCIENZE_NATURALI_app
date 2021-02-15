@@ -1,7 +1,7 @@
 <template>
   <ion-page class="ion-page" main>
     <ion-header>
-      <ion-toolbar>
+      <ion-toolbar color="dark">
         <ion-title>{{ title }}</ion-title>
         <ion-buttons v-if="showBackButton">
           <ion-back-button default-href="/" />

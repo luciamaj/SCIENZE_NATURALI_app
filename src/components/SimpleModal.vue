@@ -1,7 +1,7 @@
 <template>
   <div>
     <ion-header>
-      <ion-toolbar>
+      <ion-toolbar color="dark">
         <ion-title>{{ title }}</ion-title>
         <ion-icon @click="close" size="large" name="close" />
       </ion-toolbar>

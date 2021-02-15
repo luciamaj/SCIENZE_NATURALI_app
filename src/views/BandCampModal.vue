@@ -1,7 +1,7 @@
 <template>
   <ion-page>
-    <ion-header collapse="condense">
-      <ion-toolbar>
+    <ion-header>
+      <ion-toolbar color="dark">
         <ion-title>Bandcamp {{ name }}</ion-title>
         <ion-icon @click="back" size="large" name="arrow-back" />
       </ion-toolbar>

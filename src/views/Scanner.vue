@@ -1,11 +1,9 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-toolbar>
-        <ion-toolbar>
-          <ion-title>Scanner</ion-title>
-          <ion-icon @click="close" size="large" name="close" />
-        </ion-toolbar>
+      <ion-toolbar color="dark">
+        <ion-title>Scanner</ion-title>
+        <ion-icon @click="close" size="large" name="close" />
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
