@@ -2,11 +2,12 @@
   <ion-page>
     <ion-header>
       <ion-toolbar color="dark">
-        <ion-title size="large">Bandcamp {{ name }}</ion-title>
+        <ion-title>Bandcamp {{ name }}</ion-title>
+        <ion-icon @click="back" size="large" name="arrow-back" />
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
-      <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" :src="url"></iframe>
+      <iframe style="border: 0; width: 100%; height: 120px;" :src="url" seamless></iframe>
     </ion-content>
   </ion-page>
 </template>
@@ -23,7 +24,7 @@ import {
 import { data } from "../data/data";
 
 export default {
-  name: "BandCamp",
+  name: "BandCampModal",
   components: {
     IonHeader,
     IonToolbar,
@@ -33,6 +34,11 @@ export default {
   },
   mounted() {
     console.log(data);
+  },
+  methods: {
+    back() {
+      this.$router.push({ name: "open-scanner" });
+    }
   },
   computed: {
     id() {
@@ -49,7 +55,7 @@ export default {
     url() {
       const audio = data.find(x => x.index == this.$route.params.id);
       if (audio) {
-        return data.find(x => x.index == this.$route.params.id).url;
+        return audio.url;
       } else {
         return data[0].url;
       }
