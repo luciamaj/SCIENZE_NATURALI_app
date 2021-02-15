@@ -1,12 +1,12 @@
 <template>
   <ion-app>
-    <ion-router-outlet />
+    <ion-router-outlet ref="routerOuteletRef" id="main-content"></ion-router-outlet>
   </ion-app>
 </template>
 
 <script lang="ts">
 import { IonApp, IonRouterOutlet } from "@ionic/vue";
-import { defineComponent } from "vue";
+import { defineComponent, ref, provide } from "vue";
 
 export default defineComponent({
   name: "App",
@@ -16,6 +16,12 @@ export default defineComponent({
   },
   mounted() {
     this.askPermissions();
+  },
+  setup() {
+    const routerOuteletRef = ref(null);
+    provide("routerOutlet", routerOuteletRef);
+
+    return { routerOuteletRef };
   },
   methods: {
     async askPermissions() {

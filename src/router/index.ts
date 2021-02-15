@@ -38,7 +38,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'open-scanner',
         name: 'open-scanner',
-        component: () => import('@/views/OpenScanner.vue'),
+        component: () => import('@/views/Home.vue'),
       },
       {
         path: 'settings',

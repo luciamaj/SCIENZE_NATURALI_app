@@ -1,42 +1,42 @@
 <template>
-  <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Tab 2</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Tab 2</ion-title>
-        </ion-toolbar>
-      </ion-header>
-      <div class="centered">
-        <ion-button @click="openModal">Open Modal</ion-button>
-      </div>
-    </ion-content>
-  </ion-page>
+  <IonVuePage :title="'Modal'">
+    <ion-button @click="openModal">Open Modal</ion-button>
+    <ModalContent
+      ref="modalContent"
+      v-show="isOpen"
+      title="My Modal"
+      :closeMe="closeModal"
+      @close="closeModal"
+    />
+  </IonVuePage>
 </template>
 
-<script lang="ts">
+<script>
+import { modalController } from "@ionic/core";
+
 import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
+  //IonPage,
+  //IonHeader,
+  //IonToolbar,
+  //IonTitle,
   IonButton
+  //IonContent,
 } from "@ionic/vue";
 
+import ModalContent from "@/components/SimpleModal.vue";
+import IonVuePage from "@/views/IonVuePage.vue";
+
 export default {
-  name: "OpenScanner",
+  name: "Modal",
   components: {
-    IonPage,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
+    ModalContent,
+    //IonPage,
+    //IonHeader,
+    //IonToolbar,
+    //IonTitle,
     IonButton,
-    IonContent
+    //IonContent,
+    IonVuePage
   },
   data() {
     return {
@@ -45,9 +45,15 @@ export default {
     };
   },
   methods: {
-    openModal() {
-      console.log("logging");
-      this.$router.push({ name: "scanner" });
+    async createModal() {
+      this.modal = await modalController.create({
+        component: this.$refs.modalContent.$el
+      });
+    },
+    async openModal() {
+      await this.createModal();
+      this.isOpen = true;
+      this.modal.present();
     },
     closeModal() {
       this.modal.dismiss();
@@ -55,9 +61,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-.centered {
-  text-align: center;
-}
-</style>
