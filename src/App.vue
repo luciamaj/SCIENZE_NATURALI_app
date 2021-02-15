@@ -17,12 +17,12 @@ export default defineComponent({
     IonApp,
     IonRouterOutlet
   },
-  setup() {
+  mounted() {
     const routerOuteletRef = ref(null);
     provide("routerOutlet", routerOuteletRef);
 
     StatusBar.setStyle({
-      style: StatusBarStyle.Dark
+      style: StatusBarStyle.Light
     });
 
     // Display content under transparent status bar (Android only)
