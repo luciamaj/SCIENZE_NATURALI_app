@@ -11,7 +11,7 @@
           <ion-title size="large">Bandcamp {{ name }}</ion-title>
         </ion-toolbar>
       </ion-header>
-      <iframe style="border: 0; width: 100%; height: 120px;" :src="url" seamless></iframe>
+      <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" :src="url"></iframe>
     </ion-content>
   </ion-page>
 </template>

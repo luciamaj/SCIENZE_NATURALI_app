@@ -8,11 +8,15 @@
     <ion-content :fullscreen="true">
       <ion-header collapse="condense">
         <ion-toolbar>
-          <ion-title size="large">WELCOME</ion-title>
+          <ion-title size="large">Welcome</ion-title>
         </ion-toolbar>
       </ion-header>
 
-      <ExploreContainer name="WELCOME" />
+      <div class="vertical-center">
+        <div class="center">
+          <ion-img class="logo" src="/assets/imgs/logo_museo.svg"></ion-img>
+        </div>
+      </div>
     </ion-content>
   </ion-page>
 </template>
@@ -23,19 +27,38 @@ import {
   IonHeader,
   IonToolbar,
   IonTitle,
-  IonContent
+  IonContent,
+  IonImg
 } from "@ionic/vue";
-import ExploreContainer from "@/components/ExploreContainer.vue";
 
 export default {
   name: "welcome",
   components: {
-    ExploreContainer,
     IonHeader,
     IonToolbar,
     IonTitle,
     IonContent,
-    IonPage
+    IonPage,
+    IonImg
   }
 };
 </script>
+
+<style scoped>
+.vertical-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.center {
+  display: block;
+  margin: auto;
+  width: 50%;
+}
+
+.logo {
+  height: 30em;
+}
+</style>
