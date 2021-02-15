@@ -1,63 +1,80 @@
 <template>
-  <IonVuePage :title="'Modal'">
-    <ion-button @click="openModal">Open Modal</ion-button>
-    <ModalContent
-      ref="modalContent"
-      v-show="isOpen"
-      title="My Modal"
-      :closeMe="closeModal"
-      @close="closeModal"
-    />
-  </IonVuePage>
+  <ion-page>
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title>Scanner</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding">
+      <center>
+        <IonButton @click="openModal">Open scanner</IonButton>
+      </center>
+    </ion-content>
+  </ion-page>
 </template>
 
-<script>
-import { modalController } from "@ionic/core";
+<script lang="ts">
+import { defineComponent, inject } from "vue";
 
 import {
-  //IonPage,
-  //IonHeader,
-  //IonToolbar,
-  //IonTitle,
-  IonButton
-  //IonContent,
+  IonContent,
+  IonHeader,
+  IonPage,
+  IonToolbar,
+  IonTitle,
+  IonButton,
+  modalController
 } from "@ionic/vue";
 
-import ModalContent from "@/components/SimpleModal.vue";
-import IonVuePage from "@/views/IonVuePage.vue";
+import Home from "./Home.vue";
+import Scanner from "./Scanner.vue";
+import { Plugins } from "@capacitor/core";
+const { Storage } = Plugins;
 
-export default {
-  name: "Modal",
+export default defineComponent({
+  name: "Home",
   components: {
-    ModalContent,
-    //IonPage,
-    //IonHeader,
-    //IonToolbar,
-    //IonTitle,
-    IonButton,
-    //IonContent,
-    IonVuePage
-  },
-  data() {
-    return {
-      isOpen: false,
-      modal: null
-    };
+    IonContent,
+    IonHeader,
+    IonPage,
+    IonToolbar,
+    IonTitle,
+    IonButton
   },
   methods: {
-    async createModal() {
-      this.modal = await modalController.create({
-        component: this.$refs.modalContent.$el
-      });
-    },
-    async openModal() {
-      await this.createModal();
-      this.isOpen = true;
-      this.modal.present();
-    },
-    closeModal() {
-      this.modal.dismiss();
+    async getObject() {
+      const ret = await Storage.get({ key: "path" });
+      console.log(ret);
     }
+  },
+  setup() {
+    const outlet: any = inject("routerOutlet");
+
+    const openModal = async () => {
+      const top = (await modalController.getTop()) || outlet.value.$el;
+
+      const modal = await modalController.create({
+        component: Scanner,
+        swipeToClose: true,
+        presentingElement: top
+      });
+
+      modal.onDidDismiss().then(async _ => {
+        console.log("dismissed");
+        const obj = await Storage.get({ key: "path" });
+        console.log(obj);
+      });
+
+      return modal.present();
+    };
+
+    return {
+      openModal
+    };
   }
-};
+});
 </script>
+
+<style scoped>
+</style>

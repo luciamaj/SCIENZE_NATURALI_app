@@ -14,19 +14,11 @@ export default defineComponent({
     IonApp,
     IonRouterOutlet
   },
-  mounted() {
-    this.askPermissions();
-  },
   setup() {
     const routerOuteletRef = ref(null);
     provide("routerOutlet", routerOuteletRef);
 
     return { routerOuteletRef };
-  },
-  methods: {
-    async askPermissions() {
-      navigator.permissions.query({ name: "camera" });
-    }
   }
 });
 </script>

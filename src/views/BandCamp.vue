@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <ion-header>
+    <ion-header color="primary">
       <ion-toolbar>
         <ion-title>Bandcamp {{ name }}</ion-title>
       </ion-toolbar>

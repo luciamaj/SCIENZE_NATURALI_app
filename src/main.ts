@@ -41,6 +41,7 @@ const currentIcons = Object.keys(allIcons).map(i => {
   };
 });
 
+
 const iconsObject = Object.assign({}, ...currentIcons);
 addIcons(iconsObject);
 

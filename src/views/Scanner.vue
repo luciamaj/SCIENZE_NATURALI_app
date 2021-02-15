@@ -4,6 +4,7 @@
       <ion-toolbar>
         <ion-toolbar>
           <ion-title>Scanner</ion-title>
+          <ion-icon @click="close" size="large" name="close" />
         </ion-toolbar>
       </ion-toolbar>
     </ion-header>
@@ -26,11 +27,15 @@ import {
   IonHeader,
   IonToolbar,
   IonTitle,
-  IonContent
+  IonContent,
+  IonIcon,
+  modalController
 } from "@ionic/vue";
 import { QrStream } from "vue3-qr-reader";
 import { data } from "../data/data";
 import { defineComponent, inject } from "vue";
+import { Plugins } from "@capacitor/core";
+const { Storage } = Plugins;
 
 export default defineComponent({
   name: "Scanner",
@@ -40,15 +45,27 @@ export default defineComponent({
     IonTitle,
     IonContent,
     IonPage,
+    IonIcon,
     QrStream
   },
+  props: ["modal"],
   methods: {
-    close() {
-      console.log("close");
-      this.$router.back();
+    async close() {
+      const top = await modalController.getTop();
+      top.dismiss();
+    },
+    async setObject(param) {
+      await Storage.set({
+        key: "path",
+        value: JSON.stringify({
+          path: param
+        })
+      });
+    },
+    ionViewDidEnter() {
+      this.setObject(null);
     },
     onDecode(decodedString) {
-      window.open(decodedString);
       this.value = decodedString;
       const audio = data.find(x => x.external_url == decodedString);
       let index;
@@ -58,7 +75,10 @@ export default defineComponent({
         index = data[0].index;
       }
 
-      this.$router.push({ path: "/audioguida-modal/" + index.toString() });
+      this.setObject(index);
+      this.close();
+
+      //this.$router.push({ path: "/audioguida-modal/" + index.toString() });
     }
   },
   data: () => {
