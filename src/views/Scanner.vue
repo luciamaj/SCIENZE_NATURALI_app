@@ -57,7 +57,7 @@ export default defineComponent({
       });
     },
     ionViewDidEnter() {
-      this.setObject(null);
+      this.setObject("");
     },
     onDecode(decodedString) {
       this.value = decodedString;

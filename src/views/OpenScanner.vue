@@ -1,15 +1,17 @@
 <template>
   <ion-page>
-    <ion-header collapse="condense">
-      <ion-toolbar ion-toolbar>
+    <ion-header>
+      <ion-toolbar color="primary">
         <ion-title>Scanner</ion-title>
       </ion-toolbar>
     </ion-header>
 
     <ion-content class="ion-padding">
-      <center>
-        <IonButton @click="openModal">Open scanner</IonButton>
-      </center>
+      <div class="vertical-center">
+        <div class="center">
+          <IonButton @click="openModal">Open scanner</IonButton>
+        </div>
+      </div>
     </ion-content>
   </ion-page>
 </template>
@@ -55,7 +57,7 @@ export default defineComponent({
     const route = useRoute();
 
     const openModal = async () => {
-      const top = (await modalController.getTop()) || outlet.value.$el;
+      const top = await modalController.getTop();
 
       const modal = await modalController.create({
         component: Scanner,
@@ -68,7 +70,9 @@ export default defineComponent({
         const objStr = await Storage.get({ key: "path" });
         const obj = JSON.parse(objStr.value);
         console.log("the obj", obj.path);
-        router.push({ path: "/audioguida-modal/" + obj.path });
+        if (obj.path != "") {
+          router.push({ path: "/audioguida-modal/" + obj.path });
+        }
       });
 
       return modal.present();
@@ -82,4 +86,14 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.vertical-center {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+}
+
+.center {
+  display: block;
+  margin: auto;
+}
 </style>

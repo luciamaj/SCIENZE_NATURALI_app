@@ -8,6 +8,7 @@
 import { IonApp, IonRouterOutlet } from "@ionic/vue";
 import { defineComponent, ref, provide } from "vue";
 import { Plugins, StatusBarStyle } from "@capacitor/core";
+import { HeaderColor } from "@ionic-native/header-color/ngx";
 
 const { StatusBar } = Plugins;
 
@@ -17,18 +18,21 @@ export default defineComponent({
     IonApp,
     IonRouterOutlet
   },
-  mounted() {
-    const routerOuteletRef = ref(null);
-    provide("routerOutlet", routerOuteletRef);
+  ionViewWillEnter() {
+    this.statusBar.styleDarkContent();
+    this.statusBar.backgroundColorByHexString("#fff");
 
     StatusBar.setStyle({
       style: StatusBarStyle.Dark
     });
 
-    // Display content under transparent status bar (Android only)
-    StatusBar.setOverlaysWebView({
-      overlay: true
+    StatusBar.setBackgroundColor({
+      color: "#FFF"
     });
+  },
+  mounted() {
+    const routerOuteletRef = ref(null);
+    provide("routerOutlet", routerOuteletRef);
 
     return { routerOuteletRef };
   }
