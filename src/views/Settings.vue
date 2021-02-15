@@ -1,18 +1,12 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar color="primary">
+    <ion-header collapse="condense">
+      <ion-toolbar ion-toolbar color="primary">
         <ion-title>Settings</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">SETTING</ion-title>
-        </ion-toolbar>
-      </ion-header>
-
-      <ExploreContainer name="WELCOME" />
+      <ExploreContainer name="Settings" />
     </ion-content>
   </ion-page>
 </template>

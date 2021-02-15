@@ -1,17 +1,11 @@
 <template>
   <ion-page>
-    <ion-header>
+    <ion-header collapse="condense">
       <ion-toolbar ion-toolbar color="primary">
         <ion-title>Welcome</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Welcome</ion-title>
-        </ion-toolbar>
-      </ion-header>
-
       <div class="vertical-center">
         <div class="center">
           <ion-img class="logo" src="/assets/imgs/logo_museo.svg"></ion-img>

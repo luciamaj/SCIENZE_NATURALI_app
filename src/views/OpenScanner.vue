@@ -1,7 +1,7 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar color="primary">
+    <ion-header collapse="condense">
+      <ion-toolbar ion-toolbar color="primary">
         <ion-title>Scanner</ion-title>
       </ion-toolbar>
     </ion-header>
