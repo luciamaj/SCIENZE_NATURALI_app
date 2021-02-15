@@ -7,11 +7,6 @@
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Bandcamp {{ name }}</ion-title>
-        </ion-toolbar>
-      </ion-header>
       <iframe style="border: 0; width: 100%; height: 120px;" :src="url" seamless></iframe>
     </ion-content>
   </ion-page>
