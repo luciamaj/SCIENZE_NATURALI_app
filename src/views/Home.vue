@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header>
       <ion-toolbar color="primary">
-        <ion-title>Stacking Modals</ion-title>
+        <ion-title>Scanner</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -22,10 +22,11 @@ import {
   IonToolbar,
   IonTitle,
   IonButton,
-  modalController,
+  modalController
 } from "@ionic/vue";
 
 import Home from "./Home.vue";
+import Scanner from "./Scanner.vue";
 
 export default defineComponent({
   name: "Home",
@@ -35,7 +36,7 @@ export default defineComponent({
     IonPage,
     IonToolbar,
     IonTitle,
-    IonButton,
+    IonButton
   },
   setup() {
     const outlet: any = inject("routerOutlet");
@@ -44,17 +45,17 @@ export default defineComponent({
       const top = (await modalController.getTop()) || outlet.value.$el;
 
       const modal = await modalController.create({
-        component: Home,
+        component: Scanner,
         swipeToClose: true,
-        presentingElement: top,
+        presentingElement: top
       });
       return modal.present();
     };
 
     return {
-      openModal,
+      openModal
     };
-  },
+  }
 });
 </script>
 

@@ -3,7 +3,7 @@
     <ion-header>
       <ion-toolbar>
         <ion-toolbar>
-          <ion-icon @click="close" size="large" name="close" />
+          <ion-title>Scanner</ion-title>
         </ion-toolbar>
       </ion-toolbar>
     </ion-header>
@@ -26,13 +26,13 @@ import {
   IonHeader,
   IonToolbar,
   IonTitle,
-  IonContent,
-  IonIcon
+  IonContent
 } from "@ionic/vue";
 import { QrStream } from "vue3-qr-reader";
 import { data } from "../data/data";
+import { defineComponent, inject } from "vue";
 
-export default {
+export default defineComponent({
   name: "Scanner",
   components: {
     IonHeader,
@@ -40,7 +40,6 @@ export default {
     IonTitle,
     IonContent,
     IonPage,
-    IonIcon,
     QrStream
   },
   methods: {
@@ -67,5 +66,5 @@ export default {
       value: ""
     };
   }
-};
+});
 </script>

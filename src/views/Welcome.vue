@@ -1,8 +1,8 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-toolbar>
-        <ion-title>WELCOME</ion-title>
+      <ion-toolbar ion-toolbar color="primary">
+        <ion-title>Welcome</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
