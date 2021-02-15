@@ -9,12 +9,6 @@
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">SCANNER</ion-title>
-        </ion-toolbar>
-      </ion-header>
-
       <QrStream @decode="onDecode"></QrStream>
       <div class="result">{{ value }}</div>
     </ion-content>
@@ -77,8 +71,6 @@ export default defineComponent({
 
       this.setObject(index);
       this.close();
-
-      //this.$router.push({ path: "/audioguida-modal/" + index.toString() });
     }
   },
   data: () => {

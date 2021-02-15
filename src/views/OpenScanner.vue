@@ -30,6 +30,7 @@ import {
 import Home from "./Home.vue";
 import Scanner from "./Scanner.vue";
 import { Plugins } from "@capacitor/core";
+import { useRouter, useRoute } from "vue-router";
 const { Storage } = Plugins;
 
 export default defineComponent({
@@ -50,6 +51,8 @@ export default defineComponent({
   },
   setup() {
     const outlet: any = inject("routerOutlet");
+    const router = useRouter();
+    const route = useRoute();
 
     const openModal = async () => {
       const top = (await modalController.getTop()) || outlet.value.$el;
@@ -62,8 +65,10 @@ export default defineComponent({
 
       modal.onDidDismiss().then(async _ => {
         console.log("dismissed");
-        const obj = await Storage.get({ key: "path" });
-        console.log(obj);
+        const objStr = await Storage.get({ key: "path" });
+        const obj = JSON.parse(objStr.value);
+        console.log("the obj", obj.path);
+        router.push({ path: "/audioguida-modal/" + obj.path });
       });
 
       return modal.present();
