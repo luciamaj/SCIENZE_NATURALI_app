@@ -78,3 +78,9 @@ export default defineComponent({
   }
 });
 </script>
+
+<style scoped>
+ion-content {
+  --overflow: hidden;
+}
+</style>

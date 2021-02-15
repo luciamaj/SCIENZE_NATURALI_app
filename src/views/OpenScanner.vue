@@ -96,4 +96,8 @@ export default defineComponent({
   display: block;
   margin: auto;
 }
+
+ion-content {
+  --overflow: hidden;
+}
 </style>

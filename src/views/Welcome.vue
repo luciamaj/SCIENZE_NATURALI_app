@@ -5,7 +5,7 @@
         <ion-title>Welcome</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content :fullscreen="true">
+    <ion-content :fullscreen="true" :scroll-x="false" :scroll-y="false">
       <div class="vertical-center">
         <div class="center">
           <ion-img class="logo" src="/assets/imgs/logo_museo.svg"></ion-img>
@@ -54,5 +54,9 @@ export default {
 
 .logo {
   height: 30em;
+}
+
+ion-content {
+  --overflow: hidden;
 }
 </style>

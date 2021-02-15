@@ -33,3 +33,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+ion-content {
+  --overflow: hidden;
+}
+</style>

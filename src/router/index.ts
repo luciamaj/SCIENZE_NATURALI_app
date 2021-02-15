@@ -15,7 +15,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/audioguida/:id',
     name: 'audioguida',
-    component: () => import('@/views/BandCamp.vue')
+    component: () => import('@/views/BandCampModal.vue')
   },
   {
     path: '/audioguida-modal/:id',
