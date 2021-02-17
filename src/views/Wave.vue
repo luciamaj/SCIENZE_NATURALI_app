@@ -16,7 +16,7 @@
       <textarea name="textarea" id="txData" style="width:300px;height:100px;">Hello javascript</textarea>
       <br />
 
-      <button @click="onSend">Send</button>
+      <ion-button @click="onSend">Send</ion-button>
 
       <br />
       <br />
@@ -25,8 +25,8 @@
       <textarea name="textarea" id="rxData" style="width:300px;height:100px;" disabled></textarea>
       <br />
 
-      <button id="captureStart">Start capturing</button>
-      <button id="captureStop" hidden>Stop capturing</button>
+      <ion-button id="captureStart">Start capturing</ion-button>
+      <ion-button id="captureStop" hidden>Stop capturing</ion-button>
     </ion-content>
   </ion-page>
 </template>
@@ -37,7 +37,8 @@ import {
   IonHeader,
   IonToolbar,
   IonTitle,
-  IonContent
+  IonContent,
+  IonButton
 } from "@ionic/vue";
 
 import factory from "ggwave";
@@ -54,7 +55,8 @@ export default {
     IonToolbar,
     IonTitle,
     IonContent,
-    IonPage
+    IonPage,
+    IonButton
   },
   methods: {
     onSend() {
