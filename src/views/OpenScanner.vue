@@ -70,7 +70,7 @@ export default defineComponent({
         const objStr = await Storage.get({ key: "path" });
         const obj = JSON.parse(objStr.value);
         console.log("the obj", obj.path);
-        if (obj.path != "") {
+        if (obj.path != "" && obj.path != null) {
           router.push({ path: "/audioguida-modal/" + obj.path });
         }
       });

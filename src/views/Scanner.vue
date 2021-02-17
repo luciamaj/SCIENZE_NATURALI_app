@@ -54,8 +54,11 @@ export default defineComponent({
         })
       });
     },
+    async removeObj() {
+      await Storage.remove({ key: "path" });
+    },
     ionViewDidEnter() {
-      this.setObject("");
+      this.removeObj();
     },
     onDecode(decodedString) {
       this.value = decodedString;
