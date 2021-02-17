@@ -58,6 +58,7 @@ export default defineComponent({
       await Storage.remove({ key: "path" });
     },
     ionViewDidEnter() {
+      console.log("remove obj");
       this.removeObj();
     },
     onDecode(decodedString) {

@@ -69,11 +69,12 @@ export default defineComponent({
         console.log("dismissed");
         const objStr = await Storage.get({ key: "path" });
         const obj = JSON.parse(objStr.value);
-        console.log("the obj", obj.path);
-        if (obj.path != "" && obj.path != null) {
+        if (obj != null) {
           router.push({ path: "/audioguida-modal/" + obj.path });
         }
       });
+
+      await Storage.remove({ key: "path" });
 
       return modal.present();
     };
