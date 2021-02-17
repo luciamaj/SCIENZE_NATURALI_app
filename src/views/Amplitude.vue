@@ -8,7 +8,7 @@
     <ion-content :fullscreen="true">
       <ion-header collapse="condense">
         <ion-toolbar>
-          <ion-title size="large">Audioguida</ion-title>
+          <ion-title size="large">AMPLITUDE</ion-title>
         </ion-toolbar>
       </ion-header>
 
@@ -89,6 +89,7 @@ export default {
         }
       ]
     });
+    Amplitude.pause();
     console.log(Amplitude);
 
     document
