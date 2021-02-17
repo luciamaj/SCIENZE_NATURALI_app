@@ -27,6 +27,7 @@
     "amplitudejs": "^5.2.0",
     "cordova-plugin-media": "^5.0.3",
     "core-js": "^3.6.5",
+    "ggwave": "^0.1.7",
     "howler": "^2.2.1",
     "mitt": "^2.1.0",
     "quagga": "^0.12.1",

@@ -1,19 +1,35 @@
 <template>
-  <ion-page>
-    <ion-header>
-      <ion-toolbar color="dark">
-        <ion-title>Scanner</ion-title>
-      </ion-toolbar>
-    </ion-header>
-
-    <ion-content class="ion-padding">
-      <div class="vertical-center">
-        <div class="center">
-          <IonButton @click="openModal">Open scanner</IonButton>
-        </div>
+  <ion-content>
+    <ion-slide>
+      <div class="diag" style="background: url('assets/img/whitebg.svg') no-repeat">
+        <ion-icon ios="ios-analytics" md="md-analytics" color="primary"></ion-icon>
       </div>
-    </ion-content>
-  </ion-page>
+      <div>
+        <h2>track your routine</h2>
+        <p>whether it's sets, reps, weight used, you can track it all with our intuitive interface.</p>
+      </div>
+    </ion-slide>
+
+    <ion-slide>
+      <div class="diag" style="background: url('assets/img/whitebg.svg') no-repeat">
+        <ion-icon ios="ios-trophy" md="md-trophy" color="primary"></ion-icon>
+      </div>
+      <div>
+        <h2>set personal goals</h2>
+        <p>we're all in the gym for a reason: goals. set goals for diet and fitness.</p>
+      </div>
+    </ion-slide>
+
+    <ion-slide>
+      <div class="diag" style="background: url('assets/img/whitebg.svg') no-repeat">
+        <ion-icon ios="ios-chatboxes" md="md-chatboxes" color="primary"></ion-icon>
+      </div>
+      <div>
+        <h2>chat with others</h2>
+        <p>inspire and help each other reach fitness and diet goals.</p>
+      </div>
+    </ion-slide>
+  </ion-content>
 </template>
 
 <script lang="ts">
