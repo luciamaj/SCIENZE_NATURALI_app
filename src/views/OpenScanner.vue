@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject } from "vue";
+import { defineComponent } from "vue";
 
 import {
   IonContent,
@@ -30,14 +30,13 @@ import {
   IonImg
 } from "@ionic/vue";
 
-import Home from "./Home.vue";
 import Scanner from "./Scanner.vue";
 import { Plugins } from "@capacitor/core";
-import { useRouter, useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 const { Storage } = Plugins;
 
 export default defineComponent({
-  name: "Home",
+  name: "Open Scanner",
   components: {
     IonContent,
     IonHeader,
@@ -60,7 +59,6 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
-    const route = useRoute();
 
     const openModal = async () => {
       const top = await modalController.getTop();

@@ -25,7 +25,7 @@ import {
 } from "@ionic/vue";
 import { QrStream } from "vue3-qr-reader";
 import { data } from "../data/data";
-import { defineComponent, inject } from "vue";
+import { defineComponent } from "vue";
 import { Plugins } from "@capacitor/core";
 const { Storage } = Plugins;
 
