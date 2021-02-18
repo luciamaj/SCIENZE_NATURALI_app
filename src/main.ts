@@ -5,6 +5,10 @@ import router from './router';
 import { IonicVue } from '@ionic/vue';
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 
+import Vue from "vue";
+import VuePlyr from "vue-plyr";
+import "vue-plyr/dist/vue-plyr.css";
+
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css';
 
@@ -47,7 +51,10 @@ addIcons(iconsObject);
 
 const app = createApp(App)
   .use(IonicVue)
-  .use(router);
+  .use(router)
+  .use(VuePlyr, {
+    plyr: {}
+  });
 
 router.isReady().then(() => {
   app.mount('#app');

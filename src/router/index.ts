@@ -38,7 +38,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'settings',
         name: 'settings',
-        component: () => import('@/views/Settings.vue'),
+        component: () => import('@/views/Video.vue'),
       }
     ]
   }
