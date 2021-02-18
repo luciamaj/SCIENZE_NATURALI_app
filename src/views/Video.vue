@@ -1,18 +1,12 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-toolbar>
+      <ion-toolbar color="primary" mode="ios">
         <ion-title>Tab</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content>
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Tab</ion-title>
-        </ion-toolbar>
-      </ion-header>
-
-      <vue-plyr :options="options">
+      <vue-plyr id="player" :options="options">
         <video controls crossorigin playsinline>
           <source src="https://api.gelato.loudsrl.com/api/test/video/1.mp4" type="video/mp4" />
         </video>
@@ -41,7 +35,21 @@ export default {
   },
   data() {
     return {
-      setup: { fluid: true }
+      options: {
+        title: "Example Title",
+        enabled: true,
+        clickToPlay: true,
+        hideControls: false,
+        controls: [
+          "play",
+          "play-large",
+          "progress",
+          "current-time",
+          "mute",
+          "volume",
+          "fullscreen"
+        ]
+      }
     };
   }
 };
