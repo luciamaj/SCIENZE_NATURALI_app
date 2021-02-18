@@ -12,39 +12,41 @@
         </ion-toolbar>
       </ion-header>
 
-      <div class="player">
-        <img
-          src="https://521dimensions.com/img/open-source/amplitudejs/album-art/we-are-but-hunks-of-wood.jpg"
-          class="album-art"
-        />
-        <ion-footer class="ion-no-border">
-          <div class="meta-container">
-            <div class="song-title">Offcut #6</div>
-            <div class="song-artist">Little People</div>
+      <div class="vertical-center">
+        <div class="player">
+          <img
+            src="https://521dimensions.com/img/open-source/amplitudejs/album-art/we-are-but-hunks-of-wood.jpg"
+            class="album-art"
+          />
+          <ion-footer class="ion-no-border">
+            <div class="meta-container">
+              <div class="song-title">Offcut #6</div>
+              <div class="song-artist">Little People</div>
 
-            <div class="time-container">
-              <div class="current-time">
-                <span class="amplitude-current-minutes" data-amplitude-song-index="0"></span>:
-                <span class="amplitude-current-seconds" data-amplitude-song-index="0"></span>
+              <div class="time-container">
+                <div class="current-time">
+                  <span class="amplitude-current-minutes" data-amplitude-song-index="0"></span>:
+                  <span class="amplitude-current-seconds" data-amplitude-song-index="0"></span>
+                </div>
+
+                <div class="duration">
+                  <span class="amplitude-duration-minutes" data-amplitude-song-index="0">3</span>:
+                  <span class="amplitude-duration-seconds" data-amplitude-song-index="0">30</span>
+                </div>
               </div>
-
-              <div class="duration">
-                <span class="amplitude-duration-minutes" data-amplitude-song-index="0">3</span>:
-                <span class="amplitude-duration-seconds" data-amplitude-song-index="0">30</span>
+              <progress
+                class="amplitude-song-played-progress"
+                data-amplitude-song-index="0"
+                id="song-played-progress-1"
+              ></progress>
+              <div class="control-container">
+                <div class="amplitude-prev"></div>
+                <div class="amplitude-play-pause" data-amplitude-song-index="0"></div>
+                <div class="amplitude-next"></div>
               </div>
             </div>
-            <progress
-              class="amplitude-song-played-progress"
-              data-amplitude-song-index="0"
-              id="song-played-progress-1"
-            ></progress>
-            <div class="control-container">
-              <div class="amplitude-prev"></div>
-              <div class="amplitude-play-pause" data-amplitude-song-index="0"></div>
-              <div class="amplitude-next"></div>
-            </div>
-          </div>
-        </ion-footer>
+          </ion-footer>
+        </div>
       </div>
     </ion-content>
   </ion-page>
@@ -119,7 +121,13 @@ div.player {
   margin-bottom: 20px;
   max-width: 750px;
   margin: auto;
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
 }
+
 div.player:after {
   content: "";
   display: table;
@@ -132,6 +140,12 @@ div.player img.album-art {
   float: left;
 }
 
+.vertical-center {
+  padding: 70px 0;
+  height: 100vh;
+  width: 100vw;
+  background-color: fff;
+}
 /*
   Small only
 */
