@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-toolbar color="primary">
+      <ion-toolbar color="primary" mode="ios">
         <ion-title>{{ title }}</ion-title>
       </ion-toolbar>
     </ion-header>
@@ -74,7 +74,11 @@ export default defineComponent({
         const objStr = await Storage.get({ key: "path" });
         const obj = JSON.parse(objStr.value);
         if (obj != null) {
-          router.push({ path: "/audioguida/" + obj.path });
+          if (obj.path.type == "audio") {
+            router.push({ path: "/audioguida/" + obj.path.index });
+          } else {
+            console.log("its a video");
+          }
         }
       });
 

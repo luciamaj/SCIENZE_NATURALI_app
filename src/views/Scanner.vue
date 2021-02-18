@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-toolbar color="primary">
+      <ion-toolbar color="primary" mode="ios">
         <ion-title>Scanner</ion-title>
         <ion-icon @click="close" size="large" name="close" />
       </ion-toolbar>
@@ -64,14 +64,16 @@ export default defineComponent({
     onDecode(decodedString) {
       this.value = decodedString;
       const audio = data.find(x => x.external_url == decodedString);
-      let index;
+      const dataEl = { index: null, type: null };
       if (audio) {
-        index = audio.index;
+        dataEl.index = audio.index;
+        dataEl.type = audio.type;
       } else {
-        index = data[0].index;
+        dataEl.index = data[0].index;
+        dataEl.type = data[0].type;
       }
 
-      this.setObject(index);
+      this.setObject(dataEl);
       this.close();
     }
   },
