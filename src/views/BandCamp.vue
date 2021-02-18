@@ -37,7 +37,11 @@ export default {
   },
   methods: {
     back() {
-      this.$router.push({ name: "open-scanner" });
+      if (window.history.length > 1) {
+        this.$router.go(-1);
+      } else {
+        this.$router.push({ name: "open-scanner" });
+      }
     }
   },
   computed: {

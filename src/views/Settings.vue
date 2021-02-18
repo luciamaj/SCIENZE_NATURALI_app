@@ -1,8 +1,8 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-toolbar color="dark">
-        <ion-title>Settings</ion-title>
+      <ion-toolbar color="primary">
+        <ion-title>{{ title }}</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
@@ -30,6 +30,11 @@ export default {
     IonTitle,
     IonContent,
     IonPage
+  },
+  data() {
+    return {
+      title: "Impostazioni"
+    };
   }
 };
 </script>

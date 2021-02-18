@@ -15,12 +15,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/audioguida/:id',
     name: 'audioguida',
-    component: () => import('@/views/BandCamp.vue')
-  },
-  {
-    path: '/audioguida-modal/:id',
-    name: 'audioguida-modal',
-    component: () => import('@/views/BandCampModal.vue')
+    component: () => import('@/views/Amplitude.vue')
   },
   {
     path: '/tabs/',
@@ -43,7 +38,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'settings',
         name: 'settings',
-        component: () => import('@/views/Amplitude.vue'),
+        component: () => import('@/views/Settings.vue'),
       }
     ]
   }

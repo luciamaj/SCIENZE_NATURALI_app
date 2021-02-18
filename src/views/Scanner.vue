@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-toolbar color="dark">
+      <ion-toolbar color="primary">
         <ion-title>Scanner</ion-title>
         <ion-icon @click="close" size="large" name="close" />
       </ion-toolbar>
@@ -20,8 +20,8 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
-  IonIcon,
-  modalController
+  modalController,
+  IonIcon
 } from "@ionic/vue";
 import { QrStream } from "vue3-qr-reader";
 import { data } from "../data/data";
@@ -37,8 +37,8 @@ export default defineComponent({
     IonTitle,
     IonContent,
     IonPage,
-    IonIcon,
-    QrStream
+    QrStream,
+    IonIcon
   },
   props: ["modal"],
   methods: {
@@ -77,7 +77,8 @@ export default defineComponent({
   },
   data: () => {
     return {
-      value: ""
+      value: "",
+      title: "Scansiona"
     };
   }
 });

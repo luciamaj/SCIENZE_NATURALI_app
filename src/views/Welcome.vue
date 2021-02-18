@@ -1,11 +1,11 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-toolbar color="dark">
-        <ion-title>Welcome</ion-title>
+      <ion-toolbar color="primary">
+        <ion-title>{{ title }}</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content :fullscreen="true" :scroll-x="false" :scroll-y="false">
+    <ion-content :fullscreen="true">
       <div class="vertical-center">
         <div class="center">
           <ion-img class="logo" src="/assets/imgs/logo_museo.svg"></ion-img>
@@ -34,6 +34,11 @@ export default {
     IonContent,
     IonPage,
     IonImg
+  },
+  data() {
+    return {
+      title: "Benvenuto"
+    };
   }
 };
 </script>

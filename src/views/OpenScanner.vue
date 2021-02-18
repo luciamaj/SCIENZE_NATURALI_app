@@ -1,15 +1,15 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-toolbar color="dark">
-        <ion-title>Scanner</ion-title>
+      <ion-toolbar color="primary">
+        <ion-title>{{ title }}</ion-title>
       </ion-toolbar>
     </ion-header>
-
-    <ion-content class="ion-padding">
+    <ion-content :fullscreen="true">
       <div class="vertical-center">
         <div class="center">
-          <IonButton @click="openModal">Open scanner</IonButton>
+          <ion-img class="qr-img" src="/assets/imgs/qr.png"></ion-img>
+          <IonButton class="scan-btn" @click="openModal">INQUADRA UN QR CODE</IonButton>
         </div>
       </div>
     </ion-content>
@@ -26,7 +26,8 @@ import {
   IonToolbar,
   IonTitle,
   IonButton,
-  modalController
+  modalController,
+  IonImg
 } from "@ionic/vue";
 
 import Home from "./Home.vue";
@@ -43,13 +44,19 @@ export default defineComponent({
     IonPage,
     IonToolbar,
     IonTitle,
-    IonButton
+    IonButton,
+    IonImg
   },
   methods: {
     async getObject() {
       const ret = await Storage.get({ key: "path" });
       console.log(ret);
     }
+  },
+  data() {
+    return {
+      title: "Ascolta"
+    };
   },
   setup() {
     const router = useRouter();
@@ -69,7 +76,7 @@ export default defineComponent({
         const objStr = await Storage.get({ key: "path" });
         const obj = JSON.parse(objStr.value);
         if (obj != null) {
-          router.push({ path: "/audioguida-modal/" + obj.path });
+          router.push({ path: "/audioguida/" + obj.path });
         }
       });
 
@@ -90,6 +97,18 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   height: 100%;
+}
+
+.qr-img {
+  height: 200px;
+  width: auto;
+  display: block;
+  filter: grayscale(100%) brightness(120%);
+}
+
+.scan-btn {
+  display: block;
+  margin: 30px 60px;
 }
 
 .center {

@@ -1,17 +1,17 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-toolbar color="dark">
-        <ion-title>AMPLITUDE</ion-title>
+      <ion-toolbar color="primary" mode="ios">
+        <ion-title>{{ title }}</ion-title>
+        <!--ion-icon @click="back" size="large" name="arrow-back" /-->
+        <ion-buttons>
+          <ion-button v-on:click="back">
+            <ion-icon name="arrow-back"></ion-icon>
+          </ion-button>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">AMPLITUDE</ion-title>
-        </ion-toolbar>
-      </ion-header>
-
       <div class="vertical-center">
         <div class="player">
           <img
@@ -20,8 +20,8 @@
           />
           <ion-footer class="ion-no-border">
             <div class="meta-container">
-              <div class="song-title">Offcut #6</div>
-              <div class="song-artist">Little People</div>
+              <div class="song-title">{{ name }}</div>
+              <div class="song-artist">{{ lang }}</div>
 
               <div class="time-container">
                 <div class="current-time">
@@ -59,9 +59,13 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
-  IonFooter
+  IonFooter,
+  IonButtons,
+  IonIcon,
+  IonButton
 } from "@ionic/vue";
 import Amplitude from "amplitudejs";
+import { data } from "../data/data";
 
 export default {
   name: "Amplitude",
@@ -71,11 +75,55 @@ export default {
     IonTitle,
     IonContent,
     IonPage,
-    IonFooter
+    IonFooter,
+    IonButtons,
+    IonIcon,
+    IonButton
   },
   methods: {
     play() {
       Amplitude.play();
+    },
+    back() {
+      if (window.history.length > 1) {
+        this.$router.go(-1);
+      } else {
+        this.$router.push({ name: "open-scanner" });
+      }
+    }
+  },
+  data() {
+    return {
+      title: "Audioguida"
+    };
+  },
+  computed: {
+    id() {
+      return this.$route.params.id;
+    },
+    name() {
+      const audio = data.find(x => x.index == this.$route.params.id);
+      if (audio) {
+        return audio.name;
+      } else {
+        return data[0].name;
+      }
+    },
+    lang() {
+      const audio = data.find(x => x.index == this.$route.params.id);
+      if (audio) {
+        return audio.lang;
+      } else {
+        return data[0].lang;
+      }
+    },
+    url() {
+      const audio = data.find(x => x.index == this.$route.params.id);
+      if (audio) {
+        return audio.url;
+      } else {
+        return data[0].url;
+      }
     }
   },
   mounted() {
@@ -86,7 +134,7 @@ export default {
           name: "Song Name 1",
           artist: "Artist Name",
           album: "Album Name",
-          url: "/assets/sounds/1.mp3",
+          url: this.url,
           cover_art_url: "/assets/icon/icon.png"
         }
       ]
@@ -142,9 +190,8 @@ div.player img.album-art {
 
 .vertical-center {
   padding: 70px 0;
-  height: 100vh;
+  height: 80vh;
   width: 100vw;
-  background-color: fff;
 }
 /*
   Small only
