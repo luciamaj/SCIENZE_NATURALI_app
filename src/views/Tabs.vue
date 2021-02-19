@@ -7,11 +7,11 @@
         </ion-tab-button>
 
         <ion-tab-button tab="tab2" href="/tabs/open-scanner">
-          <ion-icon :icon="radio" />
+          <ion-icon :icon="qrCodeOutline" />
         </ion-tab-button>
 
         <ion-tab-button tab="tab3" href="/tabs/settings">
-          <ion-icon :icon="settings" />
+          <ion-icon :icon="radio" />
         </ion-tab-button>
       </ion-tab-bar>
     </ion-tabs>
@@ -20,7 +20,7 @@
 
 <script lang="ts">
 import { IonTabBar, IonTabButton, IonTabs, IonIcon, IonPage } from "@ionic/vue";
-import { home, radio, settings } from "ionicons/icons";
+import { home, radio, qrCodeOutline } from "ionicons/icons";
 
 export default {
   name: "Tabs",
@@ -29,7 +29,7 @@ export default {
     return {
       home,
       radio,
-      settings
+      qrCodeOutline
     };
   }
 };

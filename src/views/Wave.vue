@@ -1,21 +1,15 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Wave</ion-title>
-      </ion-toolbar>
-    </ion-header>
+    <ion-toolbar color="primary" mode="ios">
+      <ion-title>{{ name }}</ion-title>
+    </ion-toolbar>
     <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Wave</ion-title>
-        </ion-toolbar>
-      </ion-header>
-
-      <div>Rx data:</div>
-      {{ decodedValue }}
-      <ion-button @click="onSend" id="captureStart">Start capturing</ion-button>
-      <ion-button id="captureStop" hidden>Stop capturing</ion-button>
+      <div class="vertical-center">
+        <div class="center">
+          <ion-button @click="onSend" id="captureStart">Start capturing</ion-button>
+          <ion-button id="captureStop" hidden>Stop capturing</ion-button>
+        </div>
+      </div>
     </ion-content>
   </ion-page>
 </template>
@@ -23,7 +17,6 @@
 <script>
 import {
   IonPage,
-  IonHeader,
   IonToolbar,
   IonTitle,
   IonContent,
@@ -38,11 +31,11 @@ export default {
   name: "Tab",
   data() {
     return {
-      decodedValue: ""
+      decodedValue: "",
+      name: "Ascolta"
     };
   },
   components: {
-    IonHeader,
     IonToolbar,
     IonTitle,
     IonContent,
@@ -52,7 +45,7 @@ export default {
   methods: {
     findRoute(decodedString) {
       console.log(decodedString);
-      const audio = data.find(x => x.external_url == decodedString);
+      const audio = data.find(x => x.index == decodedString);
 
       if (audio != null) {
         if (audio.type == "audio") {
@@ -172,3 +165,16 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.vertical-center {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+}
+
+.center {
+  display: block;
+  margin: auto;
+}
+</style>
