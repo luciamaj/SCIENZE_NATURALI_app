@@ -64,7 +64,16 @@ export default {
         clickToPlay: true,
         hideControls: false,
         fullscreen: { enabled: false },
-        controls: ["mute", "volume", "play-large", "progress", "current-time"]
+        seekTime: 20,
+        controls: [
+          "mute",
+          "volume",
+          "play-large",
+          "rewind",
+          "progress",
+          "current-time",
+          "fast-forward"
+        ]
       }
     };
   },
