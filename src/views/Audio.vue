@@ -12,7 +12,7 @@
     </ion-header>
     <ion-content>
       <vue-plyr id="player" :options="options">
-        <video controls crossorigin playsinline>
+        <video controls crossorigin playsinline preload="metadata">
           <source src="/assets/sounds/quadro-sinottico-en.mp3" type="video/mp4" />
         </video>
       </vue-plyr>
@@ -58,6 +58,7 @@ export default {
   data() {
     return {
       options: {
+        displayDuration: true,
         type: "audio",
         title: "Example Title",
         enabled: true,
