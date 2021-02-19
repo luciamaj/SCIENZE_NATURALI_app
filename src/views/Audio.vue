@@ -13,7 +13,7 @@
     <ion-content>
       <vue-plyr id="player" :options="options">
         <video controls crossorigin playsinline>
-          <source :src="url" type="video/mp4" />
+          <source src="/assets/sounds/quadro-sinottico-en.mp3" type="video/mp4" />
         </video>
       </vue-plyr>
     </ion-content>

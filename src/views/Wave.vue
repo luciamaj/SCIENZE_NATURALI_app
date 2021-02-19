@@ -11,22 +11,9 @@
           <ion-title size="large">Wave</ion-title>
         </ion-toolbar>
       </ion-header>
-      {{ decodedValue }}
-      <div>Tx Data:</div>
-      <textarea name="textarea" id="txData" style="width:300px;height:100px;">Hello javascript</textarea>
-      <br />
+      <div name="textarea" id="rxData">{{ decodedValue }}</div>
 
-      <ion-button @click="onSend">Send</ion-button>
-
-      <br />
-      <br />
-
-      <div>Rx data:</div>
-      <textarea name="textarea" id="rxData" style="width:300px;height:100px;" disabled></textarea>
-      <br />
-
-      <ion-button id="captureStart">Start capturing</ion-button>
-      <ion-button id="captureStop" hidden>Stop capturing</ion-button>
+      <ion-button @click="onSend" id="captureStart">Start capturing</ion-button>
     </ion-content>
   </ion-page>
 </template>
@@ -47,7 +34,16 @@ export default {
   name: "Tab",
   data() {
     return {
-      decodedValue: ""
+      decodedValue: "cane",
+      isRecording: false,
+      constraints: {
+        audio: {
+          // not sure if these are necessary to have
+          echoCancellation: false,
+          autoGainControl: false,
+          noiseSuppression: false
+        }
+      }
     };
   },
   components: {
@@ -58,123 +54,87 @@ export default {
     IonPage,
     IonButton
   },
+  mounted() {
+    this.captureStart = document.getElementById("captureStart");
+    this.recorder = null;
+  },
   methods: {
+    convertTypedArray(src, type) {
+      const buffer = new ArrayBuffer(src.byteLength);
+      return new type(buffer);
+    },
     onSend() {
+      /* eslint-disable */
       factory().then(ggwave => {
         /* eslint-disable no-console */
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
         window.OfflineAudioContext =
           window.OfflineAudioContext || window.webkitOfflineAudioContext;
 
-        const context = new AudioContext();
-        let recorder = null;
-        const captureStart = document.getElementById("captureStart");
-
         // create ggwave instance with default parameters
         const parameters = ggwave.getDefaultParameters();
         const instance = ggwave.init(parameters);
 
-        const payload = "hello js";
+        //init();
+        this.context = new AudioContext();
 
-        // generate audio waveform for string "hello js"
-        const waveform = ggwave.encode(
-          instance,
-          payload,
-          ggwave.TxProtocolId.GGWAVE_TX_PROTOCOL_AUDIBLE_FAST,
-          10
-        );
+        navigator.mediaDevices
+          .getUserMedia(this.constraints)
+          .then(e => {
+            const mediaStream = this.context.createMediaStreamSource(e);
 
-        // decode the audio waveform back to text
-        const res = ggwave.decode(instance, waveform);
+            const bufferSize = 16 * 1024;
+            const numberOfInputChannels = 1;
+            const numberOfOutputChannels = 1;
 
-        console.log("the res", res);
-        this.decodedValue = res;
-
-        if (res != payload) {
-          //process.exit(1);
-        }
-
-        function convertTypedArray(src, type) {
-          const buffer = new ArrayBuffer(src.byteLength);
-          const baseView = new src.constructor(buffer).set(src);
-          return new type(buffer);
-        }
-
-        captureStart.addEventListener("click", function() {
-          const txData = document.getElementById("txData");
-          const rxData = document.getElementById("rxData");
-          const captureStart = document.getElementById("captureStart");
-          const captureStop = document.getElementById("captureStop");
-          //init();
-
-          const constraints = {
-            audio: {
-              // not sure if these are necessary to have
-              echoCancellation: false,
-              autoGainControl: false,
-              noiseSuppression: false
+            if (this.context.createScriptProcessor) {
+              this.recorder = this.context.createScriptProcessor(
+                bufferSize,
+                numberOfInputChannels,
+                numberOfOutputChannels
+              );
+            } else {
+              this.recorder = this.context.createJavaScriptNode(
+                bufferSize,
+                numberOfInputChannels,
+                numberOfOutputChannels
+              );
             }
-          };
 
-          navigator.mediaDevices
-            .getUserMedia(constraints)
-            .then(function(e) {
-              const mediaStream = context.createMediaStreamSource(e);
+            this.recorder.onaudioprocess = e => {
+              const source = e.inputBuffer;
+              const offlineCtx = new OfflineAudioContext(
+                source.numberOfChannels,
+                48000 * source.duration,
+                48000
+              );
+              const offlineSource = offlineCtx.createBufferSource();
 
-              const bufferSize = 16 * 1024;
-              const numberOfInputChannels = 1;
-              const numberOfOutputChannels = 1;
-
-              if (context.createScriptProcessor) {
-                recorder = context.createScriptProcessor(
-                  bufferSize,
-                  numberOfInputChannels,
-                  numberOfOutputChannels
+              offlineSource.buffer = source;
+              offlineSource.connect(offlineCtx.destination);
+              offlineSource.start();
+              offlineCtx.startRendering();
+              offlineCtx.oncomplete = e => {
+                const resampled = e.renderedBuffer.getChannelData(0);
+                const res = ggwave.decode(
+                  instance,
+                  this.convertTypedArray(new Float32Array(resampled), Int8Array)
                 );
-              } else {
-                recorder = context.createJavaScriptNode(
-                  bufferSize,
-                  numberOfInputChannels,
-                  numberOfOutputChannels
-                );
-              }
-
-              recorder.onaudioprocess = function(e) {
-                const source = e.inputBuffer;
-                const offlineCtx = new OfflineAudioContext(
-                  source.numberOfChannels,
-                  48000 * source.duration,
-                  48000
-                );
-                const offlineSource = offlineCtx.createBufferSource();
-
-                offlineSource.buffer = source;
-                offlineSource.connect(offlineCtx.destination);
-                offlineSource.start();
-                offlineCtx.startRendering();
-                offlineCtx.oncomplete = function(e) {
-                  const resampled = e.renderedBuffer.getChannelData(0);
-                  const res = ggwave.decode(
-                    instance,
-                    convertTypedArray(new Float32Array(resampled), Int8Array)
-                  );
-                  if (res) {
-                    rxData.value = res;
-                  }
-                };
+                if (res) {
+                  console.log(res);
+                  this.decodedValue = res;
+                }
               };
+            };
 
-              mediaStream.connect(recorder);
-              recorder.connect(context.destination);
-            })
-            .catch(function(e) {
-              console.error(e);
-            });
+            this.recorder.on;
 
-          rxData.value = "Listening ...";
-          captureStart.hidden = true;
-          captureStop.hidden = false;
-        });
+            mediaStream.connect(this.recorder);
+            this.recorder.connect(this.context.destination);
+          })
+          .catch(function(e) {
+            console.error(e);
+          });
       });
     }
   }
