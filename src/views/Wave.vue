@@ -11,9 +11,11 @@
           <ion-title size="large">Wave</ion-title>
         </ion-toolbar>
       </ion-header>
-      <div name="textarea" id="rxData">{{ decodedValue }}</div>
 
+      <div>Rx data:</div>
+      {{ decodedValue }}
       <ion-button @click="onSend" id="captureStart">Start capturing</ion-button>
+      <ion-button id="captureStop" hidden>Stop capturing</ion-button>
     </ion-content>
   </ion-page>
 </template>
@@ -29,21 +31,14 @@ import {
 } from "@ionic/vue";
 
 import factory from "ggwave";
+import { useRouter } from "vue-router";
+import { data } from "../data/data";
 
 export default {
   name: "Tab",
   data() {
     return {
-      decodedValue: "cane",
-      isRecording: false,
-      constraints: {
-        audio: {
-          // not sure if these are necessary to have
-          echoCancellation: false,
-          autoGainControl: false,
-          noiseSuppression: false
-        }
-      }
+      decodedValue: ""
     };
   },
   components: {
@@ -54,54 +49,78 @@ export default {
     IonPage,
     IonButton
   },
-  mounted() {
-    this.captureStart = document.getElementById("captureStart");
-    this.recorder = null;
-  },
   methods: {
-    convertTypedArray(src, type) {
-      const buffer = new ArrayBuffer(src.byteLength);
-      return new type(buffer);
+    findRoute(decodedString) {
+      console.log(decodedString);
+      const audio = data.find(x => x.external_url == decodedString);
+
+      if (audio != null) {
+        if (audio.type == "audio") {
+          this.$router.push({ path: "/audio/" + audio.index });
+        } else {
+          this.$router.push({ path: "/video/" + audio.index });
+        }
+      }
     },
     onSend() {
-      /* eslint-disable */
       factory().then(ggwave => {
         /* eslint-disable no-console */
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
         window.OfflineAudioContext =
           window.OfflineAudioContext || window.webkitOfflineAudioContext;
 
+        const context = new AudioContext();
+        let recorder = null;
+
         // create ggwave instance with default parameters
         const parameters = ggwave.getDefaultParameters();
         const instance = ggwave.init(parameters);
 
+        function convertTypedArray(src, type) {
+          const buffer = new ArrayBuffer(src.byteLength);
+          const baseView = new src.constructor(buffer).set(src);
+          return new type(buffer);
+        }
+
+        const txData = document.getElementById("txData");
+
+        const captureStart = document.getElementById("captureStart");
+        const captureStop = document.getElementById("captureStop");
         //init();
-        this.context = new AudioContext();
+
+        const constraints = {
+          audio: {
+            // not sure if these are necessary to have
+            echoCancellation: false,
+            autoGainControl: false,
+            noiseSuppression: false
+          }
+        };
 
         navigator.mediaDevices
-          .getUserMedia(this.constraints)
+          .getUserMedia(constraints)
           .then(e => {
-            const mediaStream = this.context.createMediaStreamSource(e);
+            const mediaStream = context.createMediaStreamSource(e);
 
             const bufferSize = 16 * 1024;
             const numberOfInputChannels = 1;
             const numberOfOutputChannels = 1;
 
-            if (this.context.createScriptProcessor) {
-              this.recorder = this.context.createScriptProcessor(
+            if (context.createScriptProcessor) {
+              recorder = context.createScriptProcessor(
                 bufferSize,
                 numberOfInputChannels,
                 numberOfOutputChannels
               );
             } else {
-              this.recorder = this.context.createJavaScriptNode(
+              recorder = context.createJavaScriptNode(
                 bufferSize,
                 numberOfInputChannels,
                 numberOfOutputChannels
               );
             }
 
-            this.recorder.onaudioprocess = e => {
+            recorder.onaudioprocess = e => {
               const source = e.inputBuffer;
               const offlineCtx = new OfflineAudioContext(
                 source.numberOfChannels,
@@ -118,23 +137,36 @@ export default {
                 const resampled = e.renderedBuffer.getChannelData(0);
                 const res = ggwave.decode(
                   instance,
-                  this.convertTypedArray(new Float32Array(resampled), Int8Array)
+                  convertTypedArray(new Float32Array(resampled), Int8Array)
                 );
                 if (res) {
-                  console.log(res);
+                  this.findRoute(res);
                   this.decodedValue = res;
                 }
               };
             };
 
-            this.recorder.on;
+            mediaStream.connect(recorder);
+            recorder.connect(context.destination);
 
-            mediaStream.connect(this.recorder);
-            this.recorder.connect(this.context.destination);
+            captureStop.addEventListener("click", function() {
+              if (recorder) {
+                recorder.disconnect(context.destination);
+                mediaStream.disconnect(recorder);
+              }
+
+              this.decodedValue = "stopped recording";
+              captureStart.hidden = false;
+              captureStop.hidden = true;
+            });
           })
-          .catch(function(e) {
+          .catch(e => {
             console.error(e);
           });
+
+        this.decodedValue = "recording";
+        captureStart.hidden = true;
+        captureStop.hidden = false;
       });
     }
   }
