@@ -75,9 +75,9 @@ export default defineComponent({
         const obj = JSON.parse(objStr.value);
         if (obj != null) {
           if (obj.path.type == "audio") {
-            router.push({ path: "/audioguida/" + obj.path.index });
+            router.push({ path: "/audio/" + obj.path.index });
           } else {
-            console.log("its a video");
+            router.push({ path: "/video/" + obj.path.index });
           }
         }
       });

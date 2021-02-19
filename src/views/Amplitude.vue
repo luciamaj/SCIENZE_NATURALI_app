@@ -3,7 +3,6 @@
     <ion-header>
       <ion-toolbar color="primary" mode="ios">
         <ion-title>{{ title }}</ion-title>
-        <!--ion-icon @click="back" size="large" name="arrow-back" /-->
         <ion-buttons>
           <ion-button v-on:click="back">
             <ion-icon name="arrow-back"></ion-icon>

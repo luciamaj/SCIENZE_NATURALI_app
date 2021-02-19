@@ -55,6 +55,19 @@ export default {
       }
     }
   },
+  data() {
+    return {
+      options: {
+        type: "audio",
+        title: "Example Title",
+        enabled: true,
+        clickToPlay: true,
+        hideControls: false,
+        fullscreen: { enabled: false },
+        controls: ["mute", "volume", "play-large", "progress", "current-time"]
+      }
+    };
+  },
   computed: {
     id() {
       return this.$route.params.id;
@@ -83,24 +96,12 @@ export default {
         return data[0].url;
       }
     }
-  },
-  data() {
-    return {
-      options: {
-        title: "Example Title",
-        enabled: true,
-        clickToPlay: true,
-        hideControls: false,
-        controls: [
-          "mute",
-          "volume",
-          "play-large",
-          "progress",
-          "current-time",
-          "fullscreen"
-        ]
-      }
-    };
   }
 };
 </script>
+
+<style scoped>
+video {
+  background: transparent url("/assets/imgs/qr.png") 50% 50% / contain no-repeat;
+}
+</style>

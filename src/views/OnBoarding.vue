@@ -66,37 +66,6 @@ export default defineComponent({
       const ret = await Storage.get({ key: "path" });
       console.log(ret);
     }
-  },
-  setup() {
-    const router = useRouter();
-    const route = useRoute();
-
-    const openModal = async () => {
-      const top = await modalController.getTop();
-
-      const modal = await modalController.create({
-        component: Scanner,
-        swipeToClose: true,
-        presentingElement: top
-      });
-
-      modal.onDidDismiss().then(async _ => {
-        console.log("dismissed");
-        const objStr = await Storage.get({ key: "path" });
-        const obj = JSON.parse(objStr.value);
-        if (obj != null) {
-          router.push({ path: "/audioguida/" + obj.path });
-        }
-      });
-
-      await Storage.remove({ key: "path" });
-
-      return modal.present();
-    };
-
-    return {
-      openModal
-    };
   }
 });
 </script>

@@ -9,8 +9,23 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-primary-contrast-rgb: 255,255,255;
   --ion-color-primary-shade: #055c78;
   --ion-color-primary-tint: #1f7894;
- 
+
   --plyr-color-main: #066988;
+  --plyr-video-controls-background: #ffffff;
+  --plyr-range-fill-background: #066988;
+  --plyr-video-control-color: #066988;
+  --plyr-video-progress-buffered-background: lightgray;
+  --plyr-audio-progress-buffered-background: var(--ion-color-light-shade);
+ 
+  /* --plyr-color-main: #ffffff;
+  --plyr-video-controls-background: #066988;
+  --plyr-range-fill-background: #ffffff; */
+
+  --plyr-control-icon-size: 20px;
+  --plyr-font-size-time: 15px;
+  --plyr-font-weight-regular: 600;
+  --plyr-menu-radius: 0px;
+  --plyr-tooltip-radius: 0px;
 
   --ion-color-secondary: #3dc2ff;
   --ion-color-secondary-rgb: 61,194,255;
@@ -67,4 +82,22 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-light-contrast-rgb: 0,0,0;
   --ion-color-light-shade: #d7d8da;
   --ion-color-light-tint: #f5f6f9;
+}
+
+.plyr--video {
+  height: 50% !important;
+  overflow: visible;
+}
+
+.plyr--video .plyr__controls {
+  bottom: -55px;
+  padding-top: 10px ;
+}
+
+.plyr__control--overlaid svg {
+  color: #fff !important;
+}
+
+.plyr__controls {
+  border-bottom: 1px solid lightgray;
 }

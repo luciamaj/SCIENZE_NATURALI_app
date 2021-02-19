@@ -13,9 +13,14 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/Scanner.vue')
   },
   {
-    path: '/audioguida/:id',
-    name: 'audioguida',
-    component: () => import('@/views/Amplitude.vue')
+    path: '/audio/:id',
+    name: 'audio',
+    component: () => import('@/views/Audio.vue')
+  },
+  {
+    path: '/video/:id',
+    name: 'video',
+    component: () => import('@/views/Video.vue')
   },
   {
     path: '/tabs/',
@@ -38,7 +43,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'settings',
         name: 'settings',
-        component: () => import('@/views/Video.vue'),
+        component: () => import('@/views/Settings.vue'),
       }
     ]
   }
