@@ -11,11 +11,9 @@
       </ion-toolbar>
     </ion-header>
     <ion-content>
-      <vue-plyr id="player" :options="options">
-        <video controls crossorigin playsinline>
-          <source :src="url" type="video/mp4" />
-        </video>
-      </vue-plyr>
+      <video controls>
+        <source :src="url" type="video/mp4" />
+      </video>
     </ion-content>
   </ion-page>
 </template>
@@ -104,3 +102,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+video {
+  width: 100%;
+}
+</style>

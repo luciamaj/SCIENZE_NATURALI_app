@@ -11,8 +11,8 @@
       </ion-toolbar>
     </ion-header>
     <ion-content>
-      <video webkit-playsinline>
-        <source :key="videoSrc" :src="videoSrc" type="audio/mpeg" />
+      <video controls>
+        <source :src="videoSrc" type="audio/mpeg" />
       </video>
     </ion-content>
   </ion-page>
@@ -79,7 +79,6 @@ export default {
         ]
       },
       videoSrc: "/assets/sounds/quadro-sinottico-en.mp3",
-      videoSrc2: "/assets/sounds/quadro-sinottico-en.mp3",
       key: "player"
     };
   },
@@ -118,5 +117,6 @@ export default {
 <style scoped>
 video {
   background: transparent url("/assets/imgs/qr.png") 50% 50% / contain no-repeat;
+  width: 100%;
 }
 </style>
