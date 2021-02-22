@@ -15,7 +15,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/audio/:id',
     name: 'audio',
-    component: () => import('@/views/Audio.vue')
+    component: () => import('@/views/Amplitude.vue')
   },
   {
     path: '/video/:id',
@@ -43,7 +43,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'settings',
         name: 'settings',
-        component: () => import('@/views/Wave.vue'),
+        component: () => import('@/views/Amplitude.vue'),
       }
     ]
   }
