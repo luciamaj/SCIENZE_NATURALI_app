@@ -5,7 +5,6 @@ import router from './router';
 import { IonicVue } from '@ionic/vue';
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 
-import Vue from "vue";
 import VuePlyr from "vue-plyr";
 import "vue-plyr/dist/vue-plyr.css";
 

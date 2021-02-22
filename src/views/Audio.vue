@@ -11,9 +11,9 @@
       </ion-toolbar>
     </ion-header>
     <ion-content>
-      <vue-plyr id="player" :options="options">
-        <video controls crossorigin playsinline preload="metadata">
-          <source src="/assets/sounds/quadro-sinottico-en.mp3" type="video/mp4" />
+      <vue-plyr :key="videoSrc" ref="player" :options="options">
+        <video>
+          <source :key="videoSrc2" :src="videoSrc" type="video/mp4" />
         </video>
       </vue-plyr>
     </ion-content>
@@ -46,6 +46,15 @@ export default {
     IonButton,
     IonIcon
   },
+  mounted() {
+    this.player = this.$refs.player.player;
+    this.playerBef = this.$refs.player;
+
+    this.player.on("ready", _ => {
+      this.videoSrc = "/assets/sounds/quadro-sinottico-it.mp3";
+      this.videoSrc2 = "/assets/sounds/quadro-sinottico-it.mp3";
+    });
+  },
   methods: {
     back() {
       if (window.history.length > 1) {
@@ -75,7 +84,10 @@ export default {
           "current-time",
           "fast-forward"
         ]
-      }
+      },
+      videoSrc: "/assets/sounds/quadro-sinottico-en.mp3",
+      videoSrc2: "/assets/sounds/quadro-sinottico-en.mp3",
+      key: "player"
     };
   },
   computed: {
