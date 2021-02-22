@@ -43,7 +43,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'settings',
         name: 'settings',
-        component: () => import('@/views/Amplitude.vue'),
+        component: () => import('@/views/Wave.vue'),
       }
     ]
   }
