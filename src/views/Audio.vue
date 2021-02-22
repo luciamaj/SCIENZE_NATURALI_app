@@ -12,7 +12,7 @@
     </ion-header>
     <ion-content>
       <vue-plyr :key="videoSrc" ref="player" :options="options">
-        <video>
+        <video webkit-playsinline>
           <source :key="videoSrc2" :src="videoSrc" type="video/mp4" />
         </video>
       </vue-plyr>
