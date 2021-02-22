@@ -45,12 +45,8 @@ export default {
     IonIcon
   },
   ionViewWillEnter() {
-    this.player = this.$refs.player.player;
-
-    this.player.on("ready", _ => {
-      this.videoSrc = "/assets/sounds/quadro-sinottico-it.mp3";
-      this.videoSrc2 = "/assets/sounds/quadro-sinottico-it.mp3";
-    });
+    this.videoSrc = "/assets/sounds/quadro-sinottico-it.mp3";
+    this.videoSrc2 = "/assets/sounds/quadro-sinottico-it.mp3";
   },
   methods: {
     back() {
