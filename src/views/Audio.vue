@@ -46,9 +46,8 @@ export default {
     IonButton,
     IonIcon
   },
-  mounted() {
+  ionViewWillEnter() {
     this.player = this.$refs.player.player;
-    this.playerBef = this.$refs.player;
 
     this.player.on("ready", _ => {
       this.videoSrc = "/assets/sounds/quadro-sinottico-it.mp3";
