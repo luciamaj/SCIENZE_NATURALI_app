@@ -11,11 +11,9 @@
       </ion-toolbar>
     </ion-header>
     <ion-content>
-      <vue-plyr :key="videoSrc" ref="player" :options="options">
-        <video webkit-playsinline>
-          <source :key="videoSrc2" :src="videoSrc" type="video/mp4" />
-        </video>
-      </vue-plyr>
+      <video webkit-playsinline>
+        <source :key="videoSrc" :src="videoSrc" type="audio/mpeg" />
+      </video>
     </ion-content>
   </ion-page>
 </template>
