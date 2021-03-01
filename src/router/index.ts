@@ -1,11 +1,12 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
-import Tabs from '../views/Tabs.vue'
+//import Tabs from '../views/Tabs.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/tabs/welcome'
+    name: '',
+    component: () => import('@/views/OpenScanner.vue')
   },
   {
     path: '/scanner/',
@@ -17,7 +18,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'audio',
     component: () => import('@/views/Amplitude.vue')
   },
-  {
+  /*{
     path: '/video/:id',
     name: 'video',
     component: () => import('@/views/Video.vue')
@@ -46,7 +47,7 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/Wave.vue'),
       }
     ]
-  }
+  }*/
 ]
 
 const router = createRouter({

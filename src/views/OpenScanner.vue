@@ -8,7 +8,7 @@
     <ion-content :fullscreen="true">
       <div class="vertical-center">
         <div class="center">
-          <ion-img class="qr-img" src="/assets/imgs/qr.png"></ion-img>
+          <ion-img class="qr-img" src="/assets/imgs/logo_museo.svg"></ion-img>
           <IonButton class="scan-btn" @click="openModal">INQUADRA UN QR CODE</IonButton>
         </div>
       </div>

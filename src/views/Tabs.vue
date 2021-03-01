@@ -2,17 +2,17 @@
   <ion-page>
     <ion-tabs>
       <ion-tab-bar>
-        <ion-tab-button tab="tab1" href="/tabs/welcome">
+        <!--ion-tab-button tab="tab1" href="/tabs/welcome">
           <ion-icon :icon="home" />
-        </ion-tab-button>
+        </ion-tab-button-->
 
         <ion-tab-button tab="tab2" href="/tabs/open-scanner">
           <ion-icon :icon="qrCodeOutline" />
         </ion-tab-button>
 
-        <ion-tab-button tab="tab3" href="/tabs/settings">
+        <!--ion-tab-button tab="tab3" href="/tabs/settings">
           <ion-icon :icon="radio" />
-        </ion-tab-button>
+        </ion-tab-button-->
       </ion-tab-bar>
     </ion-tabs>
   </ion-page>

@@ -13,10 +13,7 @@
     <ion-content :fullscreen="true">
       <div class="vertical-center">
         <div class="player">
-          <img
-            src="https://521dimensions.com/img/open-source/amplitudejs/album-art/we-are-but-hunks-of-wood.jpg"
-            class="album-art"
-          />
+          <img src="/assets/imgs/copertina.jpg" class="album-art" />
           <ion-footer class="ion-no-border">
             <div class="meta-container">
               <div class="song-title">{{ name }}</div>

@@ -101,3 +101,11 @@ http://ionicframework.com/docs/theming/ */
 .plyr__controls {
   border-bottom: 1px solid lightgray;
 }
+
+progress {
+  color: #066988 !important;
+}
+
+progress::-webkit-progress-value {
+  background: #066988 !important;
+}
