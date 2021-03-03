@@ -112,7 +112,16 @@ export default {
           iosNative: true,
           container: null
         },
-        hideControls: false
+        hideControls: false,
+        controls: [
+          "play",
+          "mute",
+          "volume",
+          "play-large",
+          "progress",
+          "current-time",
+          "fullscreen"
+        ]
       }
     };
   }
