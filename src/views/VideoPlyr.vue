@@ -90,6 +90,12 @@ export default {
         title: "Example Title",
         enabled: true,
         clickToPlay: true,
+        fullscreen: {
+          enabled: true,
+          fallback: true,
+          iosNative: true,
+          container: null
+        },
         hideControls: false,
         controls: [
           "mute",
