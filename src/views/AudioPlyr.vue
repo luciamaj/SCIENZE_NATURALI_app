@@ -119,8 +119,7 @@ export default {
           "volume",
           "play-large",
           "progress",
-          "current-time",
-          "fullscreen"
+          "current-time"
         ]
       }
     };
