@@ -13,7 +13,7 @@
     <ion-content>
       <vue-plyr :options="options">
         <video controls crossorigin playsinline>
-          <source src="/assets/videos/video.mp4" type="video/mp4" />
+          <source :src="url2" type="video/mp4" />
         </video>
       </vue-plyr>
     </ion-content>
@@ -56,6 +56,9 @@ export default {
     }
   },
   computed: {
+    url2() {
+      return "/assets/videos/video.mp4";
+    },
     id() {
       return this.$route.params.id;
     },
