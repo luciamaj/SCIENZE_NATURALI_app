@@ -12,6 +12,7 @@
     </ion-header>
     <ion-content>
       <div class="player">
+        <!-- bottone su immagine? -->
         <!--div class="vertical-center">
           <button>Centered Button</button>
         </div-->

@@ -146,6 +146,7 @@ export default {
               if (recorder) {
                 recorder.disconnect(context.destination);
                 mediaStream.disconnect(recorder);
+                recorder = null;
               }
 
               this.decodedValue = "stopped recording";
