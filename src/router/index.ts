@@ -6,7 +6,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: '',
-    component: () => import('@/views/VideoPlyr.vue')
+    component: () => import('@/views/AudioPlyr.vue')
   },
   {
     path: '/scanner/',

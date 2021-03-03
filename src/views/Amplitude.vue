@@ -13,7 +13,7 @@
     <ion-content :fullscreen="true">
       <div class="vertical-center">
         <div class="player">
-          <img src="/assets/imgs/copertina.jpg" class="album-art" />
+          <img :src="cover" class="album-art" />
           <ion-footer class="ion-no-border">
             <div class="meta-container">
               <div class="song-title">{{ name }}</div>
@@ -94,6 +94,14 @@ export default {
     };
   },
   computed: {
+    cover() {
+      const audio = data.find(x => x.index == this.$route.params.id);
+      if (audio) {
+        return audio.cover;
+      } else {
+        return data[0].cover;
+      }
+    },
     id() {
       return this.$route.params.id;
     },
