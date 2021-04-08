@@ -57,7 +57,7 @@ const app = createApp(App).use(store)
     plyr: {}
   });
 
-  fetch(`data.json`, {
+  fetch(`/data.json`, {
     headers : { 
       'Content-Type': 'application/json',
       'Accept': 'application/json'
