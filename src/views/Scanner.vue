@@ -24,7 +24,6 @@ import {
   IonIcon
 } from "@ionic/vue";
 import { QrStream } from "vue3-qr-reader";
-import { data } from "../data/data";
 import { defineComponent } from "vue";
 import { Plugins } from "@capacitor/core";
 const { Storage } = Plugins;
@@ -41,6 +40,9 @@ export default defineComponent({
     IonIcon
   },
   props: ["modal"],
+  created() {
+    this.dataPunti = JSON.parse(JSON.stringify(this.$store.getters.data));
+  },
   methods: {
     async close() {
       const top = await modalController.getTop();
@@ -63,14 +65,14 @@ export default defineComponent({
     },
     onDecode(decodedString) {
       this.value = decodedString;
-      const audio = data.find(x => x.external_url == decodedString);
+      const audio = this.dataPunti.find(x => x.external_url == decodedString);
       const dataEl = { index: null, type: null };
       if (audio) {
         dataEl.index = audio.index;
         dataEl.type = audio.type;
       } else {
-        dataEl.index = data[0].index;
-        dataEl.type = data[0].type;
+        dataEl.index = this.dataPunti[0].index;
+        dataEl.type = this.dataPunti[0].type;
       }
 
       this.setObject(dataEl);

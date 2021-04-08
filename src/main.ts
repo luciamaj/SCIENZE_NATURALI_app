@@ -46,7 +46,6 @@ const currentIcons = Object.keys(allIcons).map(i => {
   };
 });
 
-
 const iconsObject = Object.assign({}, ...currentIcons);
 addIcons(iconsObject);
 
@@ -58,8 +57,23 @@ const app = createApp(App).use(store)
     plyr: {}
   });
 
-router.isReady().then(() => {
-  app.mount('#app');
-});
+  fetch(`data.json`, {
+    headers : { 
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+     }
+  
+  })
+  .then((response) => response.json())
+  .then((data) => {
+    console.log(data);
+    store.commit("dataSet", data);
+    console.log(store.getters.data);
+    console.log({...store.getters.data})
+
+    router.isReady().then(() => {
+      app.mount('#app');
+    });
+  });
 
 defineCustomElements(window);

@@ -61,7 +61,6 @@ import {
   IonButton
 } from "@ionic/vue";
 import Amplitude from "amplitudejs";
-import { data } from "../data/data";
 
 export default {
   name: "Amplitude",
@@ -94,32 +93,35 @@ export default {
       dataPunti: [],
     };
   },
+  created() {
+    this.dataPunti = JSON.parse(JSON.stringify(this.$store.getters.data));
+  },
   computed: {
     id() {
       return this.$route.params.id;
     },
     name() {
-      const audio = data.find(x => x.index == this.$route.params.id);
+      const audio = this.dataPunti.find(x => x.index == this.$route.params.id);
       if (audio) {
         return audio.name;
       } else {
-        return data[0].name;
+        return this.dataPunti[0].name;
       }
     },
     lang() {
-      const audio = data.find(x => x.index == this.$route.params.id);
+      const audio = this.dataPunti.find(x => x.index == this.$route.params.id);
       if (audio) {
         return audio.lang;
       } else {
-        return data[0].lang;
+        return this.dataPunti[0].lang;
       }
     },
     url() {
-      const audio = data.find(x => x.index == this.$route.params.id);
+      const audio = this.dataPunti.find(x => x.index == this.$route.params.id);
       if (audio) {
         return audio.url;
       } else {
-        return data[0].url;
+        return this.dataPuntiata[0].url;
       }
     }
   },
