@@ -54,7 +54,7 @@ export default defineComponent({
   },
   data() {
     return {
-      title: "Ascolta"
+      title: "SCANSIONA"
     };
   },
   setup() {
