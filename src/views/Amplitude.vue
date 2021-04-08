@@ -90,7 +90,8 @@ export default {
   },
   data() {
     return {
-      title: "Audioguida"
+      title: "Audioguida",
+      dataPunti: [],
     };
   },
   computed: {

@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router';
+import LoadScript from "vue-plugin-load-script";
 
 import { IonicVue } from '@ionic/vue';
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
@@ -51,6 +52,7 @@ addIcons(iconsObject);
 const app = createApp(App)
   .use(IonicVue)
   .use(router)
+  .use(LoadScript)
   .use(VuePlyr, {
     plyr: {}
   });
