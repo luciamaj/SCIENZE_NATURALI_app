@@ -31,6 +31,7 @@ import './theme/variables.css';
 
 import { addIcons } from 'ionicons';
 import * as allIcons from 'ionicons/icons';
+import store from './store'
 
 const currentIcons = Object.keys(allIcons).map(i => {
   const key = i.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)
@@ -49,7 +50,7 @@ const currentIcons = Object.keys(allIcons).map(i => {
 const iconsObject = Object.assign({}, ...currentIcons);
 addIcons(iconsObject);
 
-const app = createApp(App)
+const app = createApp(App).use(store)
   .use(IonicVue)
   .use(router)
   .use(LoadScript)

@@ -36,7 +36,8 @@
     "vue": "^3.0.0-0",
     "vue-plyr": "^7.0.0",
     "vue-router": "^4.0.0-0",
-    "vue3-qr-reader": "^0.0.3"
+    "vue3-qr-reader": "^0.0.3",
+    "vuex": "^4.0.0-0"
   },
   "devDependencies": {
     "@capacitor/cli": "2.4.6",
@@ -50,6 +51,7 @@
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-plugin-typescript": "~4.5.0",
     "@vue/cli-plugin-unit-jest": "~4.5.0",
+    "@vue/cli-plugin-vuex": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0-0",
     "@vue/eslint-config-typescript": "^5.0.2",
