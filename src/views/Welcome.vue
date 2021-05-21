@@ -35,6 +35,9 @@ export default {
     IonPage,
     IonImg
   },
+  mounted() {
+    console.log("waaaa", this.$router);
+  },
   data() {
     return {
       title: "Benvenuto"

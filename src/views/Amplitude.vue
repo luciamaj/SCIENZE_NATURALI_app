@@ -4,9 +4,11 @@
       <ion-toolbar color="primary" mode="ios">
         <ion-title>{{ title }}</ion-title>
         <ion-buttons>
-          <ion-button v-if="window.history.length > 0" v-on:click="back">
-            <ion-icon name="arrow-back"></ion-icon>
-          </ion-button>
+          <template v-if="isModal == false">
+            <ion-button v-on:click="back">
+              <ion-icon name="arrow-back"></ion-icon>
+            </ion-button>
+          </template>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -123,9 +125,21 @@ export default {
       } else {
         return this.dataPuntiata[0].url;
       }
+    },
+    isModal() {
+      if(this.$route.query.modal) {
+        if(this.$route.query.modal == "true") {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
     }
   },
   mounted() {
+    console.log("query", this.$route.query);
     Amplitude.init({
       /* eslint-disable */
       songs: [

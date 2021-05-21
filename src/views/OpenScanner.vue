@@ -46,6 +46,9 @@ export default defineComponent({
     IonButton,
     IonImg
   },
+  mounted() {
+    console.log("query", this.$route.query);
+  },
   methods: {
     async getObject() {
       const ret = await Storage.get({ key: "path" });
