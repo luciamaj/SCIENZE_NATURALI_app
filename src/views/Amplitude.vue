@@ -4,7 +4,7 @@
       <ion-toolbar color="primary" mode="ios">
         <ion-title>{{ title }}</ion-title>
         <ion-buttons>
-          <ion-button v-on:click="back">
+          <ion-button v-if="window.history.length > 0" v-on:click="back">
             <ion-icon name="arrow-back"></ion-icon>
           </ion-button>
         </ion-buttons>
