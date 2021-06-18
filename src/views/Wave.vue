@@ -1,17 +1,24 @@
 <template>
-  <ion-page>
-    <ion-toolbar color="primary" mode="ios">
-      <ion-title>{{ name }}</ion-title>
-    </ion-toolbar>
-    <ion-content :fullscreen="true">
-      <div class="vertical-center">
-        <div class="center">
-          <ion-button @click="onSend" id="captureStart">Start capturing</ion-button>
-          <ion-button id="captureStop" hidden>Stop capturing</ion-button>
+  <div  class="bg">
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title size="large"></ion-title>
+      </ion-toolbar>
+      <ion-toolbar color="primary">
+        <div class="title">MUSEO FELLINI</div>
+      </ion-toolbar>
+    </ion-header>
+    <ion-page>
+      <ion-content :fullscreen="false">
+        <div class="vertical-center view-wwave-container">
+          <div class="center">
+            <ion-button expand="block" class="capture-btn" @click="onSend" id="captureStart">ASCOLTA</ion-button>
+            <ion-button expand="block" class="capture-btn" id="captureStop" hidden>STOP</ion-button>
+          </div>
         </div>
-      </div>
-    </ion-content>
-  </ion-page>
+      </ion-content>
+    </ion-page>
+  </div>
 </template>
 
 <script>
@@ -32,7 +39,7 @@ export default {
   data() {
     return {
       decodedValue: "",
-      name: "Ascolta"
+      name: "MUSEO FELLINI"
     };
   },
   components: {
@@ -168,6 +175,11 @@ export default {
 </script>
 
 <style scoped>
+
+ion-content {
+  --overflow: hidden;
+}
+
 .vertical-center {
   display: flex;
   justify-content: center;
@@ -178,4 +190,38 @@ export default {
   display: block;
   margin: auto;
 }
+
+.view-wwave-container {
+    background-image: url('/assets/background/fellini.jpeg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    background-size: cover;
+    background-blend-mode: saturation;
+}
+
+.title {
+  color: rgb(162, 1, 1);
+  font-size: 26px;
+  font-weight: 700;
+  padding: 10px;
+}
+
+.toolbar {
+   --background:  red;
+}
+
+.capture-btn {
+  font-weight: 700;
+  width: 280px;
+}
+
+#captureStop {
+  --background: rgb(162, 1, 1);
+}
+
+.toolbar-background {
+  color: black !important;
+}
+
 </style>
