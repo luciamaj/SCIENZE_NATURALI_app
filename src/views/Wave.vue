@@ -14,6 +14,8 @@
           <div class="center">
             <ion-button expand="block" class="capture-btn" @click="onSend" id="captureStart">ASCOLTA</ion-button>
             <ion-button expand="block" class="capture-btn" id="captureStop" hidden>STOP</ion-button>
+
+            <ion-button expand="block" class="capture-btn" @click="openModal('de', 0, '1')">PROVA</ion-button>
           </div>
         </div>
       </ion-content>
@@ -27,12 +29,14 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
-  IonButton
+  IonButton,
+  modalController
 } from "@ionic/vue";
 
 import factory from "ggwave";
 import { useRouter } from "vue-router";
 import { data } from "../data/data";
+import Subtitles from "./Subtitles.vue";
 
 export default {
   name: "Tab",
@@ -47,12 +51,44 @@ export default {
     IonTitle,
     IonContent,
     IonPage,
-    IonButton
+    IonButton,
+  },
+  setup() {
+    const openModal = async (langSub, timestamp, videoParam) => {
+      const top = await modalController.getTop();
+
+      console.log("waaaaa", timestamp);
+
+      const modal = await modalController.create({
+        component: Subtitles,
+        componentProps: {'langSubProp': langSub, 'timestampProp': timestamp, 'videoParamProp': videoParam},
+        swipeToClose: true,
+        presentingElement: top
+      });
+
+      modal.onDidDismiss().then(async _ => {
+        console.log("dismissed");
+      });
+
+      return modal.present();
+    };
+
+    return {
+      openModal
+    };
   },
   methods: {
     findRoute(decodedString) {
       console.log(decodedString);
-      const audio = data.find(x => x.index == decodedString);
+      //const audio = data.find(x => x.index == decodedString);
+      
+      const decodedArray = decodedString.split(" ");
+
+      if(decodedArray[0] == "media") {
+        if(parseInt(decodedArray[1])) {
+
+        }
+      }
 
       if (audio != null) {
         if (audio.type == "audio") {

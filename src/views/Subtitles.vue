@@ -1,17 +1,29 @@
 <template>
   <ion-page>
-    <ion-header>
+    <ionHeader>
       <ion-toolbar color="primary" mode="ios">
         <ion-title>{{ name }}</ion-title>
+          <ion-buttons>
+            <ion-button v-on:click="close">
+              <ion-icon name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
       </ion-toolbar>
-    </ion-header>
+    </ionHeader>
     <ion-content>
       <div class="player">
-        <video id="video" controls preload="metadata">
+        <video id="video" controls preload="metadata" muted autoplay>
             <source :src="videoSrc" type="video/mp4">
             <track v-if="langSub == 'en'" label="English" kind="subtitles" srclang="en" src="subtitles/en.vtt" default>
             <track v-if="langSub == 'de'" label="German" kind="subtitles" srclang="de" src="subtitles/de.vtt" default>
         </video>
+        <!--vue-plyr :options="options">
+          <video controls crossorigin playsinline>
+            <source id="video" :src="videoSrc" type="video/mp4" />
+            <track v-if="langSub == 'en'" label="English" kind="subtitles" srclang="en" src="subtitles/en.vtt" default>
+            <track v-if="langSub == 'de'" label="German" kind="subtitles" srclang="de" src="subtitles/de.vtt" default>
+          </video>
+        </vue-plyr-->
       </div>
     </ion-content>
   </ion-page>
@@ -24,6 +36,10 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
+  modalController,
+  IonIcon,
+  IonButton,
+  IonButtons
 } from "@ionic/vue";
 
 import { data } from "../data/data";
@@ -36,15 +52,23 @@ export default {
     IonTitle,
     IonContent,
     IonPage,
+    IonIcon,
+    IonButton,
+    IonButtons
   },
   mounted() {
-    this.langSub = this.$route.query.lang ? this.$route.query.lang : "en";
-    this.timestamp = this.$route.query.timestamp ? parseInt(this.$route.query.timestamp) : 0;
+    this.langSub = this.$route.query.langSub ? this.$route.query.langSub : this.$props.langSubProp;
+    this.timestamp = this.$route.query.timestamp ? parseInt(this.$route.query.timestamp) : this.$props.timestampProp;
+    this.videoParam = this.$route.query.videoParam ? this.$route.query.videoParam : this.$props.videoParamProp;
 
     const vid = document.getElementById("video") as HTMLVideoElement;
-    console.log("TIMESTAMP?", this.timestamp);
     vid.currentTime = this.timestamp;
+
+    this.options.captions.language = "en";
+    this.options.captions.active = true;
+    console.log(this.options.captions.language)
   },
+  props: ['langSubProp', 'timestampProp', 'videoParamProp'],
   methods: {
     back() {
       if (window.history.length > 1) {
@@ -52,7 +76,11 @@ export default {
       } else {
         this.$router.push({ name: "open-scanner" });
       }
-    }
+    },
+    async close() {
+      const top = await modalController.getTop();
+      top.dismiss();
+    },
   },
   computed: {
     id() {
@@ -85,9 +113,27 @@ export default {
   },
   data() {
     return {
-      langSub: "en",
       timestamp: 0,
-      videoSrc: "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4"
+      videoSrc: "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4",
+      options: {
+        title: "Example Title",
+        enabled: true,
+        clickToPlay: true,
+        fullscreen: {
+          enabled: true,
+          fallback: true,
+          iosNative: true,
+          container: null
+        },
+        captions: { defaultActive:true, active: true, update: true, language: "es" },
+        hideControls: false,
+        controls: [
+          "play-large",
+          "fullscreen",
+          "captions",
+          "options"
+        ]
+      }
     };
   }
 };
@@ -122,12 +168,29 @@ ion-content {
 
 #video {
   width: 100vw;
+  pointer-events: none;
 }
+
+#video::-webkit-media-controls {
+  display: none;
+}
+
+/* Could Use thise as well for Individual Controls */
+#video::-webkit-media-controls-play-button {}
+
+#video::-webkit-media-controls-volume-slider {}
+
+#video::-webkit-media-controls-mute-button {}
+
+#video::-webkit-media-controls-timeline {}
+
+#video::-webkit-media-controls-current-time-display {}
 
 ::cue {
   color: #fff;
   background-color: rgba(0, 0, 0, 0.6);
   font-size: 20px !important;
+  position: -40%;
 }
 
 </style>
