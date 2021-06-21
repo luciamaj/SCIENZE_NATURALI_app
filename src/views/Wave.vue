@@ -188,7 +188,7 @@ ion-content {
 
 .center {
   display: block;
-  margin: auto;
+  margin-top: 80vh;
 }
 
 .view-wwave-container {

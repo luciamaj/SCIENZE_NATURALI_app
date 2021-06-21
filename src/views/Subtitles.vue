@@ -12,16 +12,12 @@
     </ion-header>
     <ion-content>
       <div class="player">
-        <!-- bottone su immagine? -->
-        <!--div class="vertical-center">
-          <button>Centered Button</button>
-        </div-->
-        <ion-img class="cover" :src="cover"></ion-img>
-        <vue-plyr :options="options">
-          <audio controls crossorigin playsinline>
-            <source :src="url" type="audio/mp3" />
-          </audio>
-        </vue-plyr>
+        <video id="video" controls preload="metadata">
+            <source src="video/sintel-short.mp4" type="video/mp4">
+            <track label="English" kind="subtitles" srclang="en" src="captions/vtt/sintel-en.vtt" default>
+            <track label="Deutsch" kind="subtitles" srclang="de" src="captions/vtt/sintel-de.vtt">
+            <track label="Español" kind="subtitles" srclang="es" src="captions/vtt/sintel-es.vtt">
+        </video>
       </div>
     </ion-content>
   </ion-page>
@@ -36,14 +32,13 @@ import {
   IonContent,
   IonButtons,
   IonButton,
-  IonIcon,
-  IonImg
+  IonIcon
 } from "@ionic/vue";
 
 import { data } from "../data/data";
 
 export default {
-  name: "Tab",
+  name: "Subtitle",
   components: {
     IonHeader,
     IonToolbar,
@@ -52,8 +47,7 @@ export default {
     IonPage,
     IonButtons,
     IonButton,
-    IonIcon,
-    IonImg
+    IonIcon
   },
   methods: {
     back() {
@@ -65,14 +59,6 @@ export default {
     }
   },
   computed: {
-    cover() {
-      const audio = data.find(x => x.index == this.$route.params.id);
-      if (audio) {
-        return audio.cover;
-      } else {
-        return data[0].cover;
-      }
-    },
     id() {
       return this.$route.params.id;
     },
@@ -104,7 +90,6 @@ export default {
   data() {
     return {
       options: {
-        title: "Example Title",
         enabled: true,
         clickToPlay: true,
         fullscreen: {
@@ -129,17 +114,12 @@ export default {
 </script>
 
 <style scoped>
-  .cover {
-    object-fit: cover;
-  }
+.player {
+  height: 50vh;
+  position: relative;
+}
 
-      button {
-      display: inline-block; //Typically a button wouldn't need its own line
-      margin: 0 auto;
-      width: 200px;
-    }
-
-    .vertical-center {
+.vertical-center {
     margin: 0;
     position: absolute;
     top: 50%;
@@ -148,15 +128,12 @@ export default {
     transform: translateY(-50%);
     -ms-transform: translateX(-50%);
     transform: translateX(-50%);
+}
 
-.player {
-  height: 50vh;
-  position: relative;
-
-
-
-
-  }
+button {
+    display: inline-block; //Typically a button wouldn't need its own line
+    margin: 0 auto;
+    width: 200px;
 }
 
 ion-content {

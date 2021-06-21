@@ -9,6 +9,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/Wave.vue')
   },
   {
+    path: '/subtitles',
+    name: '',
+    component: () => import('@/views/Subtitles.vue')
+  },
+  {
     path: '/scanner/',
     name: 'scanner',
     component: () => import('@/views/Scanner.vue')
