@@ -17,13 +17,6 @@
             <track v-if="langSub == 'en'" label="English" kind="subtitles" srclang="en" src="subtitles/en.vtt" default>
             <track v-if="langSub == 'de'" label="German" kind="subtitles" srclang="de" src="subtitles/de.vtt" default>
         </video>
-        <!--vue-plyr :options="options">
-          <video controls crossorigin playsinline>
-            <source id="video" :src="videoSrc" type="video/mp4" />
-            <track v-if="langSub == 'en'" label="English" kind="subtitles" srclang="en" src="subtitles/en.vtt" default>
-            <track v-if="langSub == 'de'" label="German" kind="subtitles" srclang="de" src="subtitles/de.vtt" default>
-          </video>
-        </vue-plyr-->
       </div>
     </ion-content>
   </ion-page>
@@ -125,7 +118,7 @@ export default {
           iosNative: true,
           container: null
         },
-        captions: { defaultActive:true, active: true, update: true, language: "es" },
+        captions: { defaultActive:true, active: true, update: true, language: "en" },
         hideControls: false,
         controls: [
           "play-large",
