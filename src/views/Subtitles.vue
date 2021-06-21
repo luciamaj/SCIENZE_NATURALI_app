@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <ionHeader>
+    <ionHeader class="header">
       <ion-toolbar color="primary" mode="ios">
         <ion-title>{{ name }}</ion-title>
           <ion-buttons>
@@ -80,12 +80,7 @@ export default {
       return this.$route.params.id;
     },
     name() {
-      const audio = data.find(x => x.index == this.$route.params.id);
-      if (audio) {
-        return audio.name;
-      } else {
-        return data[0].name;
-      }
+      return "SOTTOTITOLI";
     },
     lang() {
       const audio = data.find(x => x.index == this.$route.params.id);
@@ -184,6 +179,10 @@ ion-content {
   background-color: rgba(0, 0, 0, 0.6);
   font-size: 20px !important;
   position: -40%;
+}
+
+#header {
+  background-color: #000;
 }
 
 </style>

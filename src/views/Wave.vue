@@ -86,7 +86,8 @@ export default {
 
       if(decodedArray[0] == "media") {
         if(parseInt(decodedArray[1])) {
-
+          const timestamp = decodedArray[2] ? decodedArray[2] : 0;
+          openModal('en', timestamp, parseInt(decodedArray[1]));
         }
       }
 
