@@ -12,7 +12,7 @@
     </ionHeader>
     <ion-content>
       <div class="player">
-        <video id="video" controls preload="metadata" muted autoplay>
+        <video id="video" controls preload="metadata" muted autoplay loop>
             <source :src="videoSrc" type="video/mp4">
             <track v-if="langSub == 'en'" label="English" kind="subtitles" srclang="en" src="subtitles/en.vtt" default>
             <track v-if="langSub == 'de'" label="German" kind="subtitles" srclang="de" src="subtitles/de.vtt" default>
