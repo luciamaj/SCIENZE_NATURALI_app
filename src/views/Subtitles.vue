@@ -3,18 +3,14 @@
     <ion-header>
       <ion-toolbar color="primary" mode="ios">
         <ion-title>{{ name }}</ion-title>
-        <ion-buttons>
-          <ion-button v-on:click="back">
-            <ion-icon name="arrow-back"></ion-icon>
-          </ion-button>
-        </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content>
       <div class="player">
         <video id="video" controls preload="metadata">
-            <source src="https://sample-videos.com/video123/mp4/240/big_buck_bunny_240p_30mb.mp4" type="video/mp4">
-            <track label="English" kind="subtitles" srclang="en" src="subtitles/sub.vtt" default>
+            <source :src="videoSrc" type="video/mp4">
+            <track v-if="langSub == 'en'" label="English" kind="subtitles" srclang="en" src="subtitles/en.vtt" default>
+            <track v-if="langSub == 'de'" label="German" kind="subtitles" srclang="de" src="subtitles/de.vtt" default>
         </video>
       </div>
     </ion-content>
@@ -28,9 +24,6 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
-  IonButtons,
-  IonButton,
-  IonIcon
 } from "@ionic/vue";
 
 import { data } from "../data/data";
@@ -43,9 +36,14 @@ export default {
     IonTitle,
     IonContent,
     IonPage,
-    IonButtons,
-    IonButton,
-    IonIcon
+  },
+  mounted() {
+    this.langSub = this.$route.query.lang ? this.$route.query.lang : "en";
+    this.timestamp = this.$route.query.timestamp ? parseInt(this.$route.query.timestamp) : 0;
+
+    const vid = document.getElementById("video") as HTMLVideoElement;
+    console.log("TIMESTAMP?", this.timestamp);
+    vid.currentTime = this.timestamp;
   },
   methods: {
     back() {
@@ -87,25 +85,9 @@ export default {
   },
   data() {
     return {
-      options: {
-        enabled: true,
-        clickToPlay: true,
-        fullscreen: {
-          enabled: true,
-          fallback: true,
-          iosNative: true,
-          container: null
-        },
-        hideControls: false,
-        controls: [
-          "play",
-          "mute",
-          "volume",
-          "play-large",
-          "progress",
-          "current-time"
-        ]
-      }
+      langSub: "en",
+      timestamp: 0,
+      videoSrc: "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4"
     };
   }
 };
