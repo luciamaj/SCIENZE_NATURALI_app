@@ -13,10 +13,8 @@
     <ion-content>
       <div class="player">
         <video id="video" controls preload="metadata">
-            <source src="video/sintel-short.mp4" type="video/mp4">
-            <track label="English" kind="subtitles" srclang="en" src="captions/vtt/sintel-en.vtt" default>
-            <track label="Deutsch" kind="subtitles" srclang="de" src="captions/vtt/sintel-de.vtt">
-            <track label="Español" kind="subtitles" srclang="es" src="captions/vtt/sintel-es.vtt">
+            <source src="https://sample-videos.com/video123/mp4/240/big_buck_bunny_240p_30mb.mp4" type="video/mp4">
+            <track label="English" kind="subtitles" srclang="en" src="subtitles/sub.vtt" default>
         </video>
       </div>
     </ion-content>
@@ -111,6 +109,7 @@ export default {
     };
   }
 };
+
 </script>
 
 <style scoped>
@@ -131,7 +130,6 @@ export default {
 }
 
 button {
-    display: inline-block; //Typically a button wouldn't need its own line
     margin: 0 auto;
     width: 200px;
 }
@@ -139,4 +137,15 @@ button {
 ion-content {
   --overflow: hidden;
 }
+
+#video {
+  width: 100vw;
+}
+
+::cue {
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.6);
+  font-size: 20px !important;
+}
+
 </style>
