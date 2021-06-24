@@ -14,8 +14,8 @@
       <div class="player">
         <video id="video" controls preload="metadata" muted autoplay loop>
             <source :src="videoSrc" type="video/mp4">
-            <track v-if="langSub == 'en'" label="English" kind="subtitles" srclang="en" src="subtitles/en.vtt" default>
-            <track v-if="langSub == 'de'" label="German" kind="subtitles" srclang="de" src="subtitles/de.vtt" default>
+            <track id="track_en" label="English" kind="subtitles" srclang="en" src="subtitles/en.vtt">
+            <track id="track_de" label="German" kind="subtitles" srclang="de" src="subtitles/de.vtt">
         </video>
       </div>
     </ion-content>
@@ -57,9 +57,21 @@ export default {
     const vid = document.getElementById("video") as HTMLVideoElement;
     vid.currentTime = this.timestamp;
 
-    this.options.captions.language = "en";
-    this.options.captions.active = true;
-    console.log(this.options.captions.language)
+    console.log("track_" + this.langSub);
+
+    const currentTrack = document.getElementById("track_" + this.langSub) as HTMLTrackElement;
+    currentTrack.default = true;
+
+
+
+    currentTrack.addEventListener('cuechange', function(e) {
+      const targetSub = e.target as HTMLTrackElement;
+      const cues = targetSub.track.activeCues;
+
+      if(cues[0]) {
+        console.log(cues[0]["text"]);
+      }
+    });
   },
   props: ['langSubProp', 'timestampProp', 'videoParamProp'],
   methods: {
@@ -103,25 +115,6 @@ export default {
     return {
       timestamp: 0,
       videoSrc: "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4",
-      options: {
-        title: "Example Title",
-        enabled: true,
-        clickToPlay: true,
-        fullscreen: {
-          enabled: true,
-          fallback: true,
-          iosNative: true,
-          container: null
-        },
-        captions: { defaultActive:true, active: true, update: true, language: "en" },
-        hideControls: false,
-        controls: [
-          "play-large",
-          "fullscreen",
-          "captions",
-          "options"
-        ]
-      }
     };
   }
 };
