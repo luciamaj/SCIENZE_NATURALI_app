@@ -33,41 +33,6 @@ export default defineComponent({
   mounted() {
     const routerOuteletRef = ref(null);
     provide("routerOutlet", routerOuteletRef);
-
-    screen.orientation.lock("portrait");
   }
 });
 </script>
-
-<style>
-
-@media screen and (min-aspect-ratio: 13/9) {
-  html {
-    transform: rotate(-90deg);
-    transform-origin: left top;
-    width: 100vh;
-    overflow-x: hidden;
-    position: absolute;
-    top: 100%;
-    left: 0;
-  }
-
-  .app {
-    height: inherit;
-  }
-}
-@media screen and (min-width: 1292px) {
-  html {
-    transform: none;
-    transform-origin: none;
-    width: 100%;
-    overflow-x: none;
-    position: relative;
-  }
-  
-  .app {
-    height: 100vh;
-  }
-}
-
-</style>

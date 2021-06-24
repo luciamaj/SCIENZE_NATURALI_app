@@ -11,8 +11,8 @@
       </ion-toolbar>
     </ionHeader>
     <ion-content>
-      <div class="player" id="player" v-on:click="fullscreen">
-        <video id="video" controls preload="metadata" muted autoplay loop>
+      <div class="player" id="player">
+        <video id="videoPl" controls preload="metadata" muted autoplay loop>
             <source src="assets/videos/nero.mp4" type="video/mp4">
             <track id="track_en" label="English" kind="subtitles" srclang="en" :src="'subtitles/' + $props.videoParamProp + '/en.vtt'">
             <track id="track_de" label="German" kind="subtitles" srclang="de" :src="'subtitles/' + $props.videoParamProp + '/de.vtt'">
@@ -22,7 +22,7 @@
   </ion-page>
 </template>
 
-<script lang="ts">
+<script>
 import {
   IonPage,
   IonHeader,
@@ -49,21 +49,45 @@ export default {
     IonButton,
     IonButtons
   },
+
   mounted() {
+    // eslint-disable-next-line
+    const that = this;
+    console.log(that);
+
+    const vid = document.getElementById("videoPl");
+    this.vid = document.getElementById("videoPl");
+
+    window.addEventListener('orientationchange', _ => {
+      if(window.innerHeight > window.innerWidth) {
+        console.log("cane", this);
+        console.log("sono qui 1", window.innerHeight, window.innerWidth);
+        this.vid.style.height = "100vh !important";
+        this.vid.style.width = "auto !important";
+
+        vid.setAttribute("style", "height: 80vh !important; width: auto !important");
+      } else {
+        console.log("sono qui 2", window.innerHeight, window.innerWidth);
+        this.vid.style.width = "100vw !important";
+        this.vid.style.height = "auto !important";
+
+        vid.setAttribute("style", "height: auto !important; width: 100vw !important");
+      }
+    });
+
     this.langSub = this.$route.query.langSub ? this.$route.query.langSub : this.$props.langSubProp;
     this.timestamp = this.$route.query.timestamp ? parseInt(this.$route.query.timestamp) : this.$props.timestampProp;
     this.videoParam = this.$route.query.videoParam ? this.$route.query.videoParam : this.$props.videoParamProp;
 
-    const vid = document.getElementById("video") as HTMLVideoElement;
     vid.currentTime = this.timestamp;
 
     console.log("track_" + this.langSub);
 
-    const currentTrack = document.getElementById("track_" + this.langSub) as HTMLTrackElement;
+    const currentTrack = document.getElementById("track_" + this.langSub);
     currentTrack.default = true;
 
     currentTrack.addEventListener('cuechange', function(e) {
-      const targetSub = e.target as HTMLTrackElement;
+      const targetSub = e.target;
       const cues = targetSub.track.activeCues;
 
       if(cues[0]) {
@@ -91,7 +115,7 @@ export default {
     },
     fullscreen() {
       console.log("qui 1");
-      const vidEl = document.getElementById("player")  as Element;
+      const vidEl = document.getElementById("player");
       if(this.open != true) {
         console.log("qui 2");
         vidEl.requestFullscreen();
@@ -139,8 +163,7 @@ export default {
 
 <style scoped>
 .player {
-  height: 50vh;
-  position: relative;
+  text-align: center;
 }
 
 .vertical-center {
@@ -167,9 +190,11 @@ ion-content {
   --overflow: hidden;
 }
 
-#video {
+#videoPl {
   width: 100vw;
+  height: auto;
   pointer-events: none;
+  display: inline-block;
 }
 
 #video::-webkit-media-controls {

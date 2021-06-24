@@ -38,6 +38,8 @@ import { useRouter } from "vue-router";
 import { data } from "../data/data";
 import Subtitles from "./Subtitles.vue";
 
+const orientation = require('o9n').orientation;
+
 export default {
   name: "Tab",
   data() {
@@ -54,6 +56,16 @@ export default {
     IonButton,
   },
   setup() {
+    /*window.addEventListener('orientationchange', function() {
+      if(window.innerHeight > window.innerWidth) {
+        console.log("sono qui 1", window.innerHeight, window.innerWidth);
+        document.getElementsByTagName("body")[0].style.transform = "rotate(0deg)";
+      } else {
+        console.log("sono qui 2", window.innerHeight, window.innerWidth);
+        document.getElementsByTagName("body")[0].style.transform = "rotate(0deg)";
+      }
+    });*/
+
     const openModal = async (langSub, timestamp, videoParam) => {
       const top = await modalController.getTop();
 
@@ -259,6 +271,13 @@ ion-content {
 
 .toolbar-background {
   color: black !important;
+}
+
+@media only screen and (orientation:portrait){
+  body {
+    height: 100vw;
+    transform: rotate(90deg);
+  }
 }
 
 </style>
