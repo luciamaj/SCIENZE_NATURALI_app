@@ -1,5 +1,5 @@
 <template>
-  <ion-page v-if="videoParam">
+  <ion-page>
     <ionHeader class="header">
       <ion-toolbar color="primary" mode="ios">
         <ion-title>{{ name  }}</ion-title>
@@ -11,11 +11,11 @@
       </ion-toolbar>
     </ionHeader>
     <ion-content>
-      <div class="player">
+      <div class="player" id="player" v-on:click="fullscreen">
         <video id="video" controls preload="metadata" muted autoplay loop>
             <source src="assets/videos/nero.mp4" type="video/mp4">
-            <track id="track_en" label="English" kind="subtitles" srclang="en" :src="'subtitles/' + videoParam.toString + '/en.vtt'">
-            <track id="track_de" label="German" kind="subtitles" srclang="de" :src="'subtitles/' + videoParam.toString + '/de.vtt'">
+            <track id="track_en" label="English" kind="subtitles" srclang="en" :src="'subtitles/' + $props.videoParamProp + '/en.vtt'">
+            <track id="track_de" label="German" kind="subtitles" srclang="de" :src="'subtitles/' + $props.videoParamProp + '/de.vtt'">
         </video>
       </div>
     </ion-content>
@@ -57,9 +57,6 @@ export default {
     const vid = document.getElementById("video") as HTMLVideoElement;
     vid.currentTime = this.timestamp;
 
-    const vidEl = document.getElementById("video")  as Element;
-    vidEl.requestFullscreen();
-
     console.log("track_" + this.langSub);
 
     const currentTrack = document.getElementById("track_" + this.langSub) as HTMLTrackElement;
@@ -78,13 +75,6 @@ export default {
         }
       }
     });
-
-    document.addEventListener('fullscreenchange', _ => {
-      if(!document.fullscreenElement) {
-        console.log("exited full screen");
-        this.close();
-      }
-    });
   },
   props: ['langSubProp', 'timestampProp', 'videoParamProp'],
   methods: {
@@ -99,6 +89,19 @@ export default {
       const top = await modalController.getTop();
       if (top) top.dismiss();
     },
+    fullscreen() {
+      console.log("qui 1");
+      const vidEl = document.getElementById("player")  as Element;
+      if(this.open != true) {
+        console.log("qui 2");
+        vidEl.requestFullscreen();
+        this.open = true;
+      } else if (this.open == true) {
+        console.log("qui 3");
+        document.exitFullscreen();
+        this.open = false;
+      }
+    }
   },
   computed: {
     id() {
@@ -127,6 +130,7 @@ export default {
   data() {
     return {
       timestamp: 0,
+      open: false,
     };
   }
 };
