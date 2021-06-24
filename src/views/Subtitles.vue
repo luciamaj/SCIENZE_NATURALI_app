@@ -1,5 +1,5 @@
 <template>
-  <ion-page>
+  <ion-page v-if="this.videoParam">
     <ionHeader class="header">
       <ion-toolbar color="primary" mode="ios">
         <ion-title>{{ name  }}</ion-title>
@@ -14,8 +14,8 @@
       <div class="player">
         <video id="video" controls preload="metadata" muted autoplay loop>
             <source src="assets/videos/nero.mp4" type="video/mp4">
-            <track id="track_en" label="English" kind="subtitles" srclang="en" src="subtitles/en.vtt">
-            <track id="track_de" label="German" kind="subtitles" srclang="de" src="subtitles/de.vtt">
+            <track id="track_en" label="English" kind="subtitles" srclang="en" :src="'subtitles/' + this.videoParam.toString + '/en.vtt'">
+            <track id="track_de" label="German" kind="subtitles" srclang="de" :src="'subtitles/' + this.videoParam.toString + '/de.vtt'">
         </video>
       </div>
     </ion-content>
