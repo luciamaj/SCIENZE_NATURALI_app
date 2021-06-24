@@ -15,7 +15,7 @@
             <ion-button expand="block" class="capture-btn" @click="onSend" id="captureStart">PLAY</ion-button>
             <ion-button expand="block" class="capture-btn" id="captureStop" hidden>STOP</ion-button>
 
-            <ion-button expand="block" class="capture-btn" @click="openModal('de', 0, '1')">PROVA</ion-button>
+            <ion-button expand="block" class="capture-btn" @click="openModal('en', 0, '1')">PROVA</ion-button>
           </div>
         </div>
       </ion-content>
