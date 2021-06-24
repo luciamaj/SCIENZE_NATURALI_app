@@ -2,8 +2,8 @@
   <ion-page>
     <ionHeader class="header">
       <ion-toolbar color="primary" mode="ios">
-        <ion-title>{{ name }}</ion-title>
-          <ion-buttons>
+        <ion-title>{{ name  }}</ion-title>
+          <ion-buttons v-if="$route.query.ios != 'true'">
             <ion-button v-on:click="close">
               <ion-icon name="close"></ion-icon>
             </ion-button>
@@ -13,7 +13,7 @@
     <ion-content>
       <div class="player">
         <video id="video" controls preload="metadata" muted autoplay loop>
-            <source :src="videoSrc" type="video/mp4">
+            <source src="assets/videos/nero.mp4" type="video/mp4">
             <track id="track_en" label="English" kind="subtitles" srclang="en" src="subtitles/en.vtt">
             <track id="track_de" label="German" kind="subtitles" srclang="de" src="subtitles/de.vtt">
         </video>
@@ -57,11 +57,13 @@ export default {
     const vid = document.getElementById("video") as HTMLVideoElement;
     vid.currentTime = this.timestamp;
 
+    const vidEl = document.getElementById("video")  as Element;
+    vidEl.requestFullscreen();
+
     console.log("track_" + this.langSub);
 
     const currentTrack = document.getElementById("track_" + this.langSub) as HTMLTrackElement;
     currentTrack.default = true;
-
 
 
     currentTrack.addEventListener('cuechange', function(e) {
@@ -70,6 +72,18 @@ export default {
 
       if(cues[0]) {
         console.log(cues[0]["text"]);
+
+        if(cues[0]["text"] === "fine") {
+          console.log("restart video");
+          vid.currentTime = 0;
+        }
+      }
+    });
+
+    document.addEventListener('fullscreenchange', _ => {
+      if(!document.fullscreenElement) {
+        console.log("exited full screen");
+        this.close();
       }
     });
   },
@@ -114,7 +128,6 @@ export default {
   data() {
     return {
       timestamp: 0,
-      videoSrc: "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4",
     };
   }
 };
@@ -136,6 +149,10 @@ export default {
     transform: translateY(-50%);
     -ms-transform: translateX(-50%);
     transform: translateX(-50%);
+}
+
+.fine {
+  color: #000;
 }
 
 button {
@@ -167,11 +184,16 @@ ion-content {
 
 #video::-webkit-media-controls-current-time-display {}
 
-::cue {
-  color: #fff;
-  background-color: rgba(0, 0, 0, 0.6);
-  font-size: 20px !important;
-  position: -40%;
+video::cue {
+  color: #FFF;
+  background-color: rgb(0, 0, 0);
+  font-size: 30px !important;
+  transform: translateY(10%) !important;
+}
+
+video::-webkit-media-text-track-container {
+  overflow: visible !important;
+  transform: translateY(-40%) !important;
 }
 
 #header {

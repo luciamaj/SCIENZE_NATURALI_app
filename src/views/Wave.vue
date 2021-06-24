@@ -12,7 +12,7 @@
       <ion-content :fullscreen="false">
         <div class="vertical-center view-wwave-container">
           <div class="center">
-            <ion-button expand="block" class="capture-btn" @click="onSend" id="captureStart">ASCOLTA</ion-button>
+            <ion-button expand="block" class="capture-btn" @click="onSend" id="captureStart">PLAY</ion-button>
             <ion-button expand="block" class="capture-btn" id="captureStop" hidden>STOP</ion-button>
 
             <ion-button expand="block" class="capture-btn" @click="openModal('de', 0, '1')">PROVA</ion-button>
@@ -61,7 +61,7 @@ export default {
 
       const modal = await modalController.create({
         component: Subtitles,
-        componentProps: {'langSubProp': langSub, 'timestampProp': timestamp, 'videoParamProp': videoParam},
+        componentProps: {'langSubProp': langSub, 'timestampProp': timestamp, 'videoParamProp': videoParam, 'web': 1},
         swipeToClose: true,
         presentingElement: top
       });
