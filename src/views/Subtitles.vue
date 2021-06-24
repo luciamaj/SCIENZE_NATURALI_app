@@ -65,7 +65,6 @@ export default {
     const currentTrack = document.getElementById("track_" + this.langSub) as HTMLTrackElement;
     currentTrack.default = true;
 
-
     currentTrack.addEventListener('cuechange', function(e) {
       const targetSub = e.target as HTMLTrackElement;
       const cues = targetSub.track.activeCues;
@@ -98,7 +97,7 @@ export default {
     },
     async close() {
       const top = await modalController.getTop();
-      top.dismiss();
+      if (top) top.dismiss();
     },
   },
   computed: {
