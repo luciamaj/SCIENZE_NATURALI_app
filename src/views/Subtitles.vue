@@ -12,7 +12,7 @@
     </ionHeader>
     <ion-content>
       <div class="player" id="player">
-        <video id="videoPl" controls preload="metadata" muted autoplay loop>
+        <video id="videoPl" preload="metadata" muted autoplay loop>
             <source src="assets/videos/nero.mp4" type="video/mp4">
             <track id="track_en" label="English" kind="subtitles" srclang="en" :src="'subtitles/' + $props.videoParamProp + '/en.vtt'">
             <track id="track_de" label="German" kind="subtitles" srclang="de" :src="'subtitles/' + $props.videoParamProp + '/de.vtt'">
@@ -113,19 +113,6 @@ export default {
       const top = await modalController.getTop();
       if (top) top.dismiss();
     },
-    fullscreen() {
-      console.log("qui 1");
-      const vidEl = document.getElementById("player");
-      if(this.open != true) {
-        console.log("qui 2");
-        vidEl.requestFullscreen();
-        this.open = true;
-      } else if (this.open == true) {
-        console.log("qui 3");
-        document.exitFullscreen();
-        this.open = false;
-      }
-    }
   },
   computed: {
     id() {
@@ -162,9 +149,6 @@ export default {
 </script>
 
 <style scoped>
-#videoPl {
-  max-width: 100%;
-}
 
 .vertical-center {
     margin: 0;
@@ -191,10 +175,19 @@ ion-content {
 }
 
 #videoPl {
-  width: 100vw;
   height: auto;
   pointer-events: none;
   display: inline-block;
+  width: 100%;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0 auto;
+}
+
+#player {
+  height: 100%;
+  width: 100%;
 }
 
 #video::-webkit-media-controls {
@@ -216,12 +209,11 @@ video::cue {
   color: #FFF;
   background-color: rgb(0, 0, 0);
   font-size: 30px !important;
-  transform: translateY(10%) !important;
 }
 
 video::-webkit-media-text-track-container {
   overflow: visible !important;
-  transform: translateY(-40%) !important;
+  transform: translateY(-50%) !important;
 }
 
 #header {
