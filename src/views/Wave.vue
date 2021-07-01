@@ -12,6 +12,8 @@
       <ion-content :fullscreen="false">
         <div class="vertical-center view-wwave-container">
           <div class="center">
+            <div class="logo-container"><img class="logo" src="/assets/background/dos.png"/></div>
+
             <ion-button expand="block" class="capture-btn" @click="onSend" id="captureStart">PLAY</ion-button>
             <ion-button expand="block" class="capture-btn" id="captureStop" hidden>STOP</ion-button>
 
@@ -34,11 +36,7 @@ import {
 } from "@ionic/vue";
 
 import factory from "ggwave";
-import { useRouter } from "vue-router";
-import { data } from "../data/data";
 import Subtitles from "./Subtitles.vue";
-
-const orientation = require('o9n').orientation;
 
 export default {
   name: "Tab",
@@ -56,20 +54,11 @@ export default {
     IonButton,
   },
   setup() {
-    /*window.addEventListener('orientationchange', function() {
-      if(window.innerHeight > window.innerWidth) {
-        console.log("sono qui 1", window.innerHeight, window.innerWidth);
-        document.getElementsByTagName("body")[0].style.transform = "rotate(0deg)";
-      } else {
-        console.log("sono qui 2", window.innerHeight, window.innerWidth);
-        document.getElementsByTagName("body")[0].style.transform = "rotate(0deg)";
-      }
-    });*/
 
     const openModal = async (langSub, timestamp, videoParam) => {
       const top = await modalController.getTop();
 
-      console.log("waaaaa", timestamp);
+      console.log("timestamp", timestamp);
 
       const modal = await modalController.create({
         component: Subtitles,
@@ -130,8 +119,6 @@ export default {
           const baseView = new src.constructor(buffer).set(src);
           return new type(buffer);
         }
-
-        const txData = document.getElementById("txData");
 
         const captureStart = document.getElementById("captureStart");
         const captureStop = document.getElementById("captureStop");
@@ -237,20 +224,34 @@ ion-content {
 
 .center {
   display: block;
-  margin-top: 80vh;
+  position: absolute;
+  bottom: 0;
+  padding-bottom: 15vh;
+}
+
+.logo-container {
+  background-color: #fff;
+}
+
+.logo {
+  object-fit: contain;
+  max-height: 30vh;
+  margin-bottom: 50px;
+  object-position: center;
+  width: 100%;
 }
 
 .view-wwave-container {
-    background-image: url('/assets/background/fellini.jpeg');
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: center;
-    background-size: cover;
-    background-blend-mode: saturation;
+  background-color: white;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;
+  background-blend-mode: saturation;
 }
 
 .title {
-  color: rgb(162, 1, 1);
+  color: #2d9fe3;
   font-size: 26px;
   font-weight: 700;
   padding: 10px;
@@ -263,17 +264,18 @@ ion-content {
 .capture-btn {
   font-weight: 700;
   width: 280px;
+  margin: 15px auto;
 }
 
 #captureStop {
-  --background: rgb(162, 1, 1);
+  --background: #2d9fe3;
 }
 
 .toolbar-background {
   color: black !important;
 }
 
-@media only screen and (orientation:portrait){
+@media only screen and (orientation:portrait) {
   body {
     height: 100vw;
     transform: rotate(90deg);

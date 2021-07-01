@@ -129,7 +129,7 @@ export default {
     object-fit: cover;
   }
 
-      button {
+    button {
       margin: 0 auto;
       width: 200px;
     }

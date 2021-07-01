@@ -2,7 +2,7 @@
   <ion-page>
     <ionHeader class="header">
       <ion-toolbar color="primary" mode="ios">
-        <ion-title>{{ name  }}</ion-title>
+        <ion-title>{{ name  }} {{ $route.params.videoParam }}</ion-title>
           <ion-buttons v-if="$route.query.ios != 'true'">
             <ion-button v-on:click="close">
               <ion-icon name="close"></ion-icon>
@@ -14,8 +14,8 @@
       <div class="player" id="player">
         <video id="videoPl" controls preload="metadata" muted autoplay loop>
             <source src="assets/videos/nero.mp4" type="video/mp4">
-            <track id="track_en" label="English" kind="subtitles" srclang="en" :src="'subtitles/' + $props.videoParamProp + '/en.vtt'">
-            <track id="track_de" label="German" kind="subtitles" srclang="de" :src="'subtitles/' + $props.videoParamProp + '/de.vtt'">
+            <track id="track_en" label="English" kind="subtitles" srclang="en" :src="'subtitles/' + $route.params.videoParam + '/en.vtt'">
+            <track id="track_de" label="German" kind="subtitles" srclang="de" :src="'subtitles/' + $route.params.videoParam + '/de.vtt'">
         </video>
       </div>
     </ion-content>
@@ -75,9 +75,9 @@ export default {
       }
     });
 
-    this.langSub = this.$route.query.langSub ? this.$route.query.langSub : this.$props.langSubProp;
-    this.timestamp = this.$route.query.timestamp ? parseInt(this.$route.query.timestamp) : this.$props.timestampProp;
-    this.videoParam = this.$route.query.videoParam ? this.$route.query.videoParam : this.$props.videoParamProp;
+    this.langSub = this.$route.params.lang;
+    this.timestamp = parseInt(this.$route.params.timestamp);
+    this.videoParam = this.$route.params.videoParam;
 
     vid.currentTime = this.timestamp;
 
@@ -162,8 +162,8 @@ export default {
 </script>
 
 <style scoped>
-#videoPl {
-  max-width: 100%;
+.player {
+  text-align: center;
 }
 
 .vertical-center {
