@@ -12,6 +12,8 @@ import { HeaderColor } from "@ionic-native/header-color/ngx";
 
 const { StatusBar } = Plugins;
 
+// TODO: open -a Google\ Chrome --args --disable-web-security --user-data-dir --------> PER APRIRE IN DEBUG
+
 export default defineComponent({
   name: "App",
   components: {
