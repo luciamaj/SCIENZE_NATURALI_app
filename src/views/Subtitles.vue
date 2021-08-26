@@ -12,11 +12,14 @@
     </ionHeader>
     <ion-content>
       <div class="player" id="player">
-        <video id="videoPl" preload="metadata" muted autoplay loop>
+        <video class="video" id="videoPl" preload="metadata" muted autoplay loop>
             <source src="assets/videos/nero.mp4" type="video/mp4">
-            <track id="track_en" label="English" kind="subtitles" srclang="en" :src="'subtitles/' + $props.videoParamProp + '/en.vtt'">
-            <track id="track_de" label="German" kind="subtitles" srclang="de" :src="'subtitles/' + $props.videoParamProp + '/de.vtt'">
+            <track id="track_en" :src="'subtitles/srt/' + $props.videoParamProp + '/en.srt'" label="English srt subtitles" kind="subtitles" srclang="en" />
+            <track id="track_it" :src="'subtitles/srt/' + $props.videoParamProp + '/it.srt'" label="Italian srt subtitles" kind="subtitles" srclang="it" />
         </video>
+        <div class="srt"
+     data-video="video"
+     :data-srt="'subtitles/srt/en.srt'" />
       </div>
     </ion-content>
   </ion-page>
@@ -54,6 +57,8 @@ export default {
     // eslint-disable-next-line
     const that = this;
     console.log(that);
+
+    $('.video').videoSub();
 
     const vid = document.getElementById("videoPl");
     this.vid = document.getElementById("videoPl");
@@ -150,17 +155,6 @@ export default {
 
 <style scoped>
 
-.vertical-center {
-    margin: 0;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
-    -ms-transform: translateX(-50%);
-    transform: translateX(-50%);
-}
-
 .fine {
   color: #000;
 }
@@ -172,6 +166,10 @@ button {
 
 ion-content {
   --overflow: hidden;
+}
+
+.videosub-bar {
+  width: 100%;
 }
 
 #videoPl {
@@ -194,7 +192,6 @@ ion-content {
   display: none;
 }
 
-/* Could Use thise as well for Individual Controls */
 #video::-webkit-media-controls-play-button {}
 
 #video::-webkit-media-controls-volume-slider {}
