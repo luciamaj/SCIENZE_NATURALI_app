@@ -14,12 +14,9 @@
       <div class="player" id="player">
         <video class="video" id="videoPl" preload="metadata" muted autoplay loop>
             <source src="assets/videos/nero.mp4" type="video/mp4">
-            <track id="track_en" :src="'subtitles/srt/' + $props.videoParamProp + '/en.srt'" label="English srt subtitles" kind="subtitles" srclang="en" />
-            <track id="track_it" :src="'subtitles/srt/' + $props.videoParamProp + '/it.srt'" label="Italian srt subtitles" kind="subtitles" srclang="it" />
+            <track id="track_en" :src="'https://fellini-app.eadev.it/subs/' + $props.videoParamProp + '/en.srt'" label="English srt subtitles" kind="subtitles" srclang="en" />
+            <track id="track_it" :src="'https://fellini-app.eadev.it/subs/' + $props.videoParamProp + '/en.srt'" label="Italian srt subtitles" kind="subtitles" srclang="in" />
         </video>
-        <div class="srt"
-     data-video="video"
-     :data-srt="'subtitles/srt/en.srt'" />
       </div>
     </ion-content>
   </ion-page>
