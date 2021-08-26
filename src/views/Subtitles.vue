@@ -1,22 +1,21 @@
 <template>
   <ion-page>
-    <ion-header>
+    <ionHeader class="header">
       <ion-toolbar color="primary" mode="ios">
-        <ion-title>{{ name }}</ion-title>
-        <ion-buttons>
-          <ion-button v-on:click="back">
-            <ion-icon name="arrow-back"></ion-icon>
-          </ion-button>
-        </ion-buttons>
+        <ion-title>{{ name  }}</ion-title>
+          <ion-buttons v-if="$route.query.ios != 'true'">
+            <ion-button v-on:click="close">
+              <ion-icon name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
       </ion-toolbar>
-    </ion-header>
+    </ionHeader>
     <ion-content>
-      <div class="player">
-        <video id="video" preload="metadata">
-            <source src="video/sintel-short.mp4" type="video/mp4">
-            <track label="English" kind="subtitles" srclang="en" src="captions/vtt/sintel-en.vtt" default>
-            <track label="Deutsch" kind="subtitles" srclang="de" src="captions/vtt/sintel-de.vtt">
-            <track label="Español" kind="subtitles" srclang="es" src="captions/vtt/sintel-es.vtt">
+      <div class="player" id="player">
+        <video id="videoPl" preload="metadata" muted autoplay loop>
+            <source src="assets/videos/nero.mp4" type="video/mp4">
+            <track id="track_en" label="English" kind="subtitles" srclang="en" :src="'subtitles/' + $props.videoParamProp + '/en.vtt'">
+            <track id="track_de" label="German" kind="subtitles" srclang="de" :src="'subtitles/' + $props.videoParamProp + '/de.vtt'">
         </video>
       </div>
     </ion-content>
@@ -30,9 +29,10 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
-  IonButtons,
+  modalController,
+  IonIcon,
   IonButton,
-  IonIcon
+  IonButtons
 } from "@ionic/vue";
 
 import { data } from "../data/data";
@@ -45,10 +45,62 @@ export default {
     IonTitle,
     IonContent,
     IonPage,
-    IonButtons,
+    IonIcon,
     IonButton,
-    IonIcon
+    IonButtons
   },
+
+  mounted() {
+    // eslint-disable-next-line
+    const that = this;
+    console.log(that);
+
+    const vid = document.getElementById("videoPl");
+    this.vid = document.getElementById("videoPl");
+
+    window.addEventListener('orientationchange', _ => {
+      if(window.innerHeight > window.innerWidth) {
+        console.log("cane", this);
+        console.log("sono qui 1", window.innerHeight, window.innerWidth);
+        this.vid.style.height = "100vh !important";
+        this.vid.style.width = "auto !important";
+
+        vid.setAttribute("style", "height: 80vh !important; width: auto !important");
+      } else {
+        console.log("sono qui 2", window.innerHeight, window.innerWidth);
+        this.vid.style.width = "100vw !important";
+        this.vid.style.height = "auto !important";
+
+        vid.setAttribute("style", "height: auto !important; width: 100vw !important");
+      }
+    });
+
+    this.langSub = this.$route.query.langSub ? this.$route.query.langSub : this.$props.langSubProp;
+    this.timestamp = this.$route.query.timestamp ? parseInt(this.$route.query.timestamp) : this.$props.timestampProp;
+    this.videoParam = this.$route.query.videoParam ? this.$route.query.videoParam : this.$props.videoParamProp;
+
+    vid.currentTime = this.timestamp;
+
+    console.log("track_" + this.langSub);
+
+    const currentTrack = document.getElementById("track_" + this.langSub);
+    currentTrack.default = true;
+
+    currentTrack.addEventListener('cuechange', function(e) {
+      const targetSub = e.target;
+      const cues = targetSub.track.activeCues;
+
+      if(cues[0]) {
+        console.log(cues[0]["text"]);
+
+        if(cues[0]["text"] === "fine") {
+          console.log("restart video");
+          vid.currentTime = 0;
+        }
+      }
+    });
+  },
+  props: ['langSubProp', 'timestampProp', 'videoParamProp'],
   methods: {
     back() {
       if (window.history.length > 1) {
@@ -56,19 +108,18 @@ export default {
       } else {
         this.$router.push({ name: "open-scanner" });
       }
-    }
+    },
+    async close() {
+      const top = await modalController.getTop();
+      if (top) top.dismiss();
+    },
   },
   computed: {
     id() {
       return this.$route.params.id;
     },
     name() {
-      const audio = data.find(x => x.index == this.$route.params.id);
-      if (audio) {
-        return audio.name;
-      } else {
-        return data[0].name;
-      }
+      return "SOTTOTITOLI";
     },
     lang() {
       const audio = data.find(x => x.index == this.$route.params.id);
@@ -89,35 +140,15 @@ export default {
   },
   data() {
     return {
-      options: {
-        enabled: true,
-        clickToPlay: true,
-        fullscreen: {
-          enabled: true,
-          fallback: true,
-          iosNative: true,
-          container: null
-        },
-        hideControls: false,
-        controls: [
-          "play",
-          "mute",
-          "volume",
-          "play-large",
-          "progress",
-          "current-time"
-        ]
-      }
+      timestamp: 0,
+      open: false,
     };
   }
 };
+
 </script>
 
 <style scoped>
-.player {
-  height: 50vh;
-  position: relative;
-}
 
 .vertical-center {
     margin: 0;
@@ -130,8 +161,11 @@ export default {
     transform: translateX(-50%);
 }
 
+.fine {
+  color: #000;
+}
+
 button {
-    display: inline-block; 
     margin: 0 auto;
     width: 200px;
 }
@@ -139,4 +173,51 @@ button {
 ion-content {
   --overflow: hidden;
 }
+
+#videoPl {
+  height: auto;
+  pointer-events: none;
+  display: inline-block;
+  width: 100%;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0 auto;
+}
+
+#player {
+  height: 100%;
+  width: 100%;
+}
+
+#video::-webkit-media-controls {
+  display: none;
+}
+
+/* Could Use thise as well for Individual Controls */
+#video::-webkit-media-controls-play-button {}
+
+#video::-webkit-media-controls-volume-slider {}
+
+#video::-webkit-media-controls-mute-button {}
+
+#video::-webkit-media-controls-timeline {}
+
+#video::-webkit-media-controls-current-time-display {}
+
+video::cue {
+  color: #FFF;
+  background-color: rgb(0, 0, 0);
+  font-size: 30px !important;
+}
+
+video::-webkit-media-text-track-container {
+  overflow: visible !important;
+  transform: translateY(-50%) !important;
+}
+
+#header {
+  background-color: #000;
+}
+
 </style>

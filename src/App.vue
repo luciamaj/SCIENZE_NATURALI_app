@@ -16,7 +16,7 @@ export default defineComponent({
   name: "App",
   components: {
     IonApp,
-    IonRouterOutlet
+    IonRouterOutlet,
   },
   ionViewWillEnter() {
     this.statusBar.styleDarkContent();
@@ -33,8 +33,6 @@ export default defineComponent({
   mounted() {
     const routerOuteletRef = ref(null);
     provide("routerOutlet", routerOuteletRef);
-
-    return { routerOuteletRef };
   }
 });
 </script>

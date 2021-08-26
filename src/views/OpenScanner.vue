@@ -44,7 +44,8 @@ export default defineComponent({
     IonToolbar,
     IonTitle,
     IonButton,
-    IonImg
+    IonImg,
+    IonHeader
   },
   methods: {
     async getObject() {

@@ -12,8 +12,12 @@
       <ion-content :fullscreen="false">
         <div class="vertical-center view-wwave-container">
           <div class="center">
-            <ion-button expand="block" class="capture-btn" @click="onSend" id="captureStart">ASCOLTA</ion-button>
+            <div class="logo-container"><img class="logo" src="/assets/background/dos.png"/></div>
+
+            <ion-button expand="block" class="capture-btn" @click="onSend" id="captureStart">PLAY</ion-button>
             <ion-button expand="block" class="capture-btn" id="captureStop" hidden>STOP</ion-button>
+
+            <ion-button expand="block" class="capture-btn" @click="openModal('en', 0, '1')">PROVA</ion-button>
           </div>
         </div>
       </ion-content>
@@ -27,12 +31,12 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
-  IonButton
+  IonButton,
+  modalController
 } from "@ionic/vue";
 
 import factory from "ggwave";
-import { useRouter } from "vue-router";
-import { data } from "../data/data";
+import Subtitles from "./Subtitles.vue";
 
 export default {
   name: "Tab",
@@ -47,12 +51,46 @@ export default {
     IonTitle,
     IonContent,
     IonPage,
-    IonButton
+    IonButton,
+  },
+  setup() {
+
+    const openModal = async (langSub, timestamp, videoParam) => {
+      const top = await modalController.getTop();
+
+      console.log("timestamp", timestamp);
+
+      const modal = await modalController.create({
+        component: Subtitles,
+        componentProps: {'langSubProp': langSub, 'timestampProp': timestamp, 'videoParamProp': videoParam, 'web': 1},
+        swipeToClose: true,
+        presentingElement: top
+      });
+
+      modal.onDidDismiss().then(async _ => {
+        console.log("dismissed");
+      });
+
+      return modal.present();
+    };
+
+    return {
+      openModal
+    };
   },
   methods: {
     findRoute(decodedString) {
       console.log(decodedString);
-      const audio = data.find(x => x.index == decodedString);
+      //const audio = data.find(x => x.index == decodedString);
+      
+      const decodedArray = decodedString.split(" ");
+
+      if(decodedArray[0] == "media") {
+        if(parseInt(decodedArray[1])) {
+          const timestamp = decodedArray[2] ? decodedArray[2] : 0;
+          openModal('en', timestamp, parseInt(decodedArray[1]));
+        }
+      }
 
       if (audio != null) {
         if (audio.type == "audio") {
@@ -81,8 +119,6 @@ export default {
           const baseView = new src.constructor(buffer).set(src);
           return new type(buffer);
         }
-
-        const txData = document.getElementById("txData");
 
         const captureStart = document.getElementById("captureStart");
         const captureStop = document.getElementById("captureStop");
@@ -188,20 +224,34 @@ ion-content {
 
 .center {
   display: block;
-  margin-top: 80vh;
+  position: absolute;
+  bottom: 0;
+  padding-bottom: 15vh;
+}
+
+.logo-container {
+  background-color: #fff;
+}
+
+.logo {
+  object-fit: contain;
+  max-height: 30vh;
+  margin-bottom: 50px;
+  object-position: center;
+  width: 100%;
 }
 
 .view-wwave-container {
-    background-image: url('/assets/background/fellini.jpeg');
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: center;
-    background-size: cover;
-    background-blend-mode: saturation;
+  background-color: white;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;
+  background-blend-mode: saturation;
 }
 
 .title {
-  color: rgb(162, 1, 1);
+  color: #2d9fe3;
   font-size: 26px;
   font-weight: 700;
   padding: 10px;
@@ -214,14 +264,22 @@ ion-content {
 .capture-btn {
   font-weight: 700;
   width: 280px;
+  margin: 15px auto;
 }
 
 #captureStop {
-  --background: rgb(162, 1, 1);
+  --background: #2d9fe3;
 }
 
 .toolbar-background {
   color: black !important;
+}
+
+@media only screen and (orientation:portrait) {
+  body {
+    height: 100vw;
+    transform: rotate(90deg);
+  }
 }
 
 </style>

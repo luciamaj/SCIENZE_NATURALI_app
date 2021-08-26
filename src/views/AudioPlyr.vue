@@ -12,10 +12,6 @@
     </ion-header>
     <ion-content>
       <div class="player">
-        <!-- bottone su immagine? -->
-        <!--div class="vertical-center">
-          <button>Centered Button</button>
-        </div-->
         <ion-img class="cover" :src="cover"></ion-img>
         <vue-plyr :options="options">
           <audio controls crossorigin playsinline>
@@ -134,7 +130,6 @@ export default {
   }
 
     button {
-      display: inline-block;
       margin: 0 auto;
       width: 200px;
     }
@@ -148,16 +143,12 @@ export default {
     transform: translateY(-50%);
     -ms-transform: translateX(-50%);
     transform: translateX(-50%);
+     }
 
-.player {
-  height: 50vh;
-  position: relative;
-
-
-
-
+  .player {
+    height: 50vh;
+    position: relative;
   }
-}
 
 ion-content {
   --overflow: hidden;

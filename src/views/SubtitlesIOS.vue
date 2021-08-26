@@ -1,0 +1,231 @@
+<template>
+  <ion-page>
+    <ionHeader class="header">
+      <ion-toolbar color="primary" mode="ios">
+        <ion-title>{{ name  }} {{ $route.params.videoParam }}</ion-title>
+          <ion-buttons v-if="$route.query.ios != 'true'">
+            <ion-button v-on:click="close">
+              <ion-icon name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+      </ion-toolbar>
+    </ionHeader>
+    <ion-content>
+      <div class="player" id="player">
+        <video id="videoPl" controls preload="metadata" muted autoplay loop>
+            <source src="assets/videos/nero.mp4" type="video/mp4">
+            <track id="track_en" label="English" kind="subtitles" srclang="en" :src="'subtitles/' + $route.params.videoParam + '/en.vtt'">
+            <track id="track_de" label="German" kind="subtitles" srclang="de" :src="'subtitles/' + $route.params.videoParam + '/de.vtt'">
+        </video>
+      </div>
+    </ion-content>
+  </ion-page>
+</template>
+
+<script>
+import {
+  IonPage,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  modalController,
+  IonIcon,
+  IonButton,
+  IonButtons
+} from "@ionic/vue";
+
+import { data } from "../data/data";
+
+export default {
+  name: "Subtitle",
+  components: {
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonPage,
+    IonIcon,
+    IonButton,
+    IonButtons
+  },
+
+  mounted() {
+    // eslint-disable-next-line
+    const that = this;
+    console.log(that);
+
+    const vid = document.getElementById("videoPl");
+    this.vid = document.getElementById("videoPl");
+
+    window.addEventListener('orientationchange', _ => {
+      if(window.innerHeight > window.innerWidth) {
+        console.log("cane", this);
+        console.log("sono qui 1", window.innerHeight, window.innerWidth);
+        this.vid.style.height = "100vh !important";
+        this.vid.style.width = "auto !important";
+
+        vid.setAttribute("style", "height: 80vh !important; width: auto !important");
+      } else {
+        console.log("sono qui 2", window.innerHeight, window.innerWidth);
+        this.vid.style.width = "100vw !important";
+        this.vid.style.height = "auto !important";
+
+        vid.setAttribute("style", "height: auto !important; width: 100vw !important");
+      }
+    });
+
+    this.langSub = this.$route.params.lang;
+    this.timestamp = parseInt(this.$route.params.timestamp);
+    this.videoParam = this.$route.params.videoParam;
+
+    vid.currentTime = this.timestamp;
+
+    console.log("track_" + this.langSub);
+
+    const currentTrack = document.getElementById("track_" + this.langSub);
+    currentTrack.default = true;
+
+    currentTrack.addEventListener('cuechange', function(e) {
+      const targetSub = e.target;
+      const cues = targetSub.track.activeCues;
+
+      if(cues[0]) {
+        console.log(cues[0]["text"]);
+
+        if(cues[0]["text"] === "fine") {
+          console.log("restart video");
+          vid.currentTime = 0;
+        }
+      }
+    });
+  },
+  props: ['langSubProp', 'timestampProp', 'videoParamProp'],
+  methods: {
+    back() {
+      if (window.history.length > 1) {
+        this.$router.go(-1);
+      } else {
+        this.$router.push({ name: "open-scanner" });
+      }
+    },
+    async close() {
+      const top = await modalController.getTop();
+      if (top) top.dismiss();
+    },
+    fullscreen() {
+      console.log("qui 1");
+      const vidEl = document.getElementById("player");
+      if(this.open != true) {
+        console.log("qui 2");
+        vidEl.requestFullscreen();
+        this.open = true;
+      } else if (this.open == true) {
+        console.log("qui 3");
+        document.exitFullscreen();
+        this.open = false;
+      }
+    }
+  },
+  computed: {
+    id() {
+      return this.$route.params.id;
+    },
+    name() {
+      return "SOTTOTITOLI";
+    },
+    lang() {
+      const audio = data.find(x => x.index == this.$route.params.id);
+      if (audio) {
+        return audio.lang;
+      } else {
+        return data[0].lang;
+      }
+    },
+    url() {
+      const audio = data.find(x => x.index == this.$route.params.id);
+      if (audio) {
+        return audio.url;
+      } else {
+        return data[0].url;
+      }
+    }
+  },
+  data() {
+    return {
+      timestamp: 0,
+      open: false,
+    };
+  }
+};
+
+</script>
+
+<style scoped>
+.player {
+  text-align: center;
+}
+
+.vertical-center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    -ms-transform: translateX(-50%);
+    transform: translateX(-50%);
+}
+
+.fine {
+  color: #000;
+}
+
+button {
+    margin: 0 auto;
+    width: 200px;
+}
+
+ion-content {
+  --overflow: hidden;
+}
+
+#videoPl {
+  width: 100vw;
+  height: auto;
+  pointer-events: none;
+  display: inline-block;
+}
+
+#video::-webkit-media-controls {
+  display: none;
+}
+
+/* Could Use thise as well for Individual Controls */
+#video::-webkit-media-controls-play-button {}
+
+#video::-webkit-media-controls-volume-slider {}
+
+#video::-webkit-media-controls-mute-button {}
+
+#video::-webkit-media-controls-timeline {}
+
+#video::-webkit-media-controls-current-time-display {}
+
+video::cue {
+  color: #FFF;
+  background-color: rgb(0, 0, 0);
+  font-size: 30px !important;
+  transform: translateY(10%) !important;
+}
+
+video::-webkit-media-text-track-container {
+  overflow: visible !important;
+  transform: translateY(-40%) !important;
+}
+
+#header {
+  background-color: #000;
+}
+
+</style>

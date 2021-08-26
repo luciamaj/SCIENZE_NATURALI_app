@@ -9,9 +9,9 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/Wave.vue')
   },
   {
-    path: '/subtitles',
+    path: '/subs/:lang/:timestamp/:videoParam/',
     name: '',
-    component: () => import('@/views/Subtitles.vue')
+    component: () => import('@/views/SubtitlesIOS.vue')
   },
   {
     path: '/scanner/',
