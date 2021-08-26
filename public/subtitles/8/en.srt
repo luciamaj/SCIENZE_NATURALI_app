@@ -1,0 +1,21 @@
+﻿1
+00:00:00,126 --> 00:00:01,899
+"La dolce vita" is Via Veneto.
+
+2
+00:00:01,993 --> 00:00:03,430
+It all happened there.
+
+3
+00:00:03,477 --> 00:00:05,157
+The went to Via Veneto
+
+4
+00:00:05,304 --> 00:00:08,257
+because they would find 
+the photographer there
+
+5
+00:00:08,304 --> 00:00:09,906
+who would photograph them.
+
