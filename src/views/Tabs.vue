@@ -18,7 +18,7 @@
   </ion-page>
 </template>
 
-<script lang="ts">
+<script>
 import { IonTabBar, IonTabButton, IonTabs, IonIcon, IonPage } from "@ionic/vue";
 import { home, radio, qrCodeOutline } from "ionicons/icons";
 

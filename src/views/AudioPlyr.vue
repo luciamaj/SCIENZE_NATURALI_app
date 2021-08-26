@@ -27,7 +27,7 @@
   </ion-page>
 </template>
 
-<script lang="ts">
+<script>
 import {
   IonPage,
   IonHeader,
@@ -133,8 +133,8 @@ export default {
     object-fit: cover;
   }
 
-      button {
-      display: inline-block; //Typically a button wouldn't need its own line
+    button {
+      display: inline-block;
       margin: 0 auto;
       width: 200px;
     }

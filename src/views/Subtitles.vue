@@ -12,7 +12,7 @@
     </ion-header>
     <ion-content>
       <div class="player">
-        <video id="video" controls preload="metadata">
+        <video id="video" preload="metadata">
             <source src="video/sintel-short.mp4" type="video/mp4">
             <track label="English" kind="subtitles" srclang="en" src="captions/vtt/sintel-en.vtt" default>
             <track label="Deutsch" kind="subtitles" srclang="de" src="captions/vtt/sintel-de.vtt">
@@ -23,7 +23,7 @@
   </ion-page>
 </template>
 
-<script lang="ts">
+<script>
 import {
   IonPage,
   IonHeader,
@@ -131,7 +131,7 @@ export default {
 }
 
 button {
-    display: inline-block; //Typically a button wouldn't need its own line
+    display: inline-block; 
     margin: 0 auto;
     width: 200px;
 }

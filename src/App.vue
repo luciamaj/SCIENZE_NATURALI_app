@@ -4,7 +4,7 @@
   </ion-app>
 </template>
 
-<script lang="ts">
+<script>
 import { IonApp, IonRouterOutlet } from "@ionic/vue";
 import { defineComponent, ref, provide } from "vue";
 import { Plugins, StatusBarStyle } from "@capacitor/core";

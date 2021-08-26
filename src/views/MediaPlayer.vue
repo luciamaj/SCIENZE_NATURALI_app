@@ -31,7 +31,7 @@
   </ion-page>
 </template>
 
-<script lang="ts">
+<script>
 import {
   IonPage,
   IonHeader,
