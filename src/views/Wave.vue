@@ -5,7 +5,7 @@
         <ion-title size="large"></ion-title>
       </ion-toolbar>
       <ion-toolbar color="primary">
-        <div class="title">MUSEO FELLINI</div>
+        <div class="title">Audible Museum</div>
       </ion-toolbar>
     </ion-header>
     <ion-page>
@@ -16,8 +16,8 @@
 
             <ion-button expand="block" class="capture-btn" @click="onSend" id="captureStart">PLAY</ion-button>
             <ion-button expand="block" class="capture-btn" id="captureStop" hidden>STOP</ion-button>
-
-            <ion-button expand="block" class="capture-btn" @click="openModal('en', 0, '00')">PROVA</ion-button>
+             <IonButton class="scan-btn" @click="openModal">INQUADRA UN QR CODE</IonButton>
+            <!--ion-button expand="block" class="capture-btn" @click="openModal('en', 0, '00')">PROVA</ion-button-->
           </div>
         </div>
       </ion-content>
@@ -35,15 +35,19 @@ import {
   modalController
 } from "@ionic/vue";
 
+
+import Scanner from "./Scanner.vue";
 import factory from "ggwave";
+import { Plugins } from "@capacitor/core";
 import Subtitles from "./Subtitles.vue";
+const { Storage } = Plugins;
 
 export default {
   name: "Tab",
   data() {
     return {
       decodedValue: "",
-      name: "MUSEO FELLINI"
+      name: "AUDIBLE MUSEUM"
     };
   },
   components: {
@@ -55,7 +59,7 @@ export default {
   },
   setup() {
 
-    const openModal = async (langSub, timestamp, videoParam) => {
+    /*const openModal = async (langSub, timestamp, videoParam) => {
       const top = await modalController.getTop();
 
       console.log("timestamp", timestamp);
@@ -70,6 +74,34 @@ export default {
       modal.onDidDismiss().then(async _ => {
         console.log("dismissed");
       });
+
+      return modal.present();
+    };*/
+
+    
+    const openModal = async () => {
+      const top = await modalController.getTop();
+
+      const modal = await modalController.create({
+        component: Scanner,
+        swipeToClose: true,
+        presentingElement: top
+      });
+
+      modal.onDidDismiss().then(async _ => {
+        console.log("dismissed");
+        const objStr = await Storage.get({ key: "path" });
+        const obj = JSON.parse(objStr.value);
+        if (obj != null) {
+          if (obj.path.type == "audio") {
+            router.push({ path: "/audio/" + obj.path.index });
+          } else {
+            router.push({ path: "/video/" + obj.path.index });
+          }
+        }
+      });
+
+      await Storage.remove({ key: "path" });
 
       return modal.present();
     };

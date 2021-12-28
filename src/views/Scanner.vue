@@ -74,7 +74,7 @@ export default defineComponent({
       }
 
       this.setObject(dataEl);
-      this.close();
+      //this.close();
     }
   },
   data: () => {
