@@ -3,14 +3,14 @@ http://ionicframework.com/docs/theming/ */
 
 /** Ionic CSS Variables **/
 :root {
-  --ion-color-primary: #000000;
+  --ion-color-primary: #626262;
   --ion-color-primary-rgb: 6,105,136;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255,255,255;
   --ion-color-primary-shade: #000000;
-  --ion-color-primary-tint: #000000;
+  --ion-color-primary-tint: #909090;
 
-  --ion-background-color: #000000;
+  --ion-background-color: #ffffff;
 
   --plyr-color-main: #066988;
   --plyr-video-controls-background: #ffffff;
@@ -22,7 +22,7 @@ http://ionicframework.com/docs/theming/ */
   /* --plyr-color-main: #ffffff;
   --plyr-video-controls-background: #066988;
   --plyr-range-fill-background: #ffffff; */
-
+  --ion-font-family:"Open Sans", sans-serif;
   --plyr-control-icon-size: 20px;
   --plyr-font-size-time: 15px;
   --plyr-font-weight-regular: 600;

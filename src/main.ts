@@ -1,6 +1,9 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router';
+import store from './store/store';
+
+
 
 import { IonicVue } from '@ionic/vue';
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
@@ -30,6 +33,7 @@ import './theme/variables.css';
 
 import { addIcons } from 'ionicons';
 import * as allIcons from 'ionicons/icons';
+import mitt from 'mitt';
 
 const currentIcons = Object.keys(allIcons).map(i => {
   const key = i.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)
@@ -44,6 +48,7 @@ const currentIcons = Object.keys(allIcons).map(i => {
   };
 });
 
+const emitter = mitt();
 
 const iconsObject = Object.assign({}, ...currentIcons);
 addIcons(iconsObject);
@@ -51,12 +56,25 @@ addIcons(iconsObject);
 const app = createApp(App)
   .use(IonicVue)
   .use(router)
+  .use(store)
   .use(VuePlyr, {
     plyr: {}
   });
-
+ 
 router.isReady().then(() => {
   app.mount('#app');
 });
+
+
+app.config.globalProperties.emitter = emitter;
+
+
+/*fetch('')
+  .then(response => response.json())
+  .catch(error => console.log("Si è verificato un errore!"+ error))
+  .then(data => console.log("sto tirando giù un data",data));
+*/
+ 
+
 
 defineCustomElements(window);

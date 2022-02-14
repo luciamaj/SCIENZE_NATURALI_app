@@ -5,8 +5,23 @@ import { RouteRecordRaw } from 'vue-router';
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    name: '',
-    component: () => import('@/views/Wave.vue')
+    name: 'wave',
+    component: () => import('@/views/Wave.vue'),
+    beforeEnter: (to, from, next) => {
+      if(localStorage.getItem('version')==null) {
+        next('/onboard');
+        
+        return;
+      } else {
+        next();
+        return;
+      }
+    }
+  },
+  {
+    path: '/onboard',
+    name: 'onboard',
+    component: () => import('@/views/Onboard.vue')
   },
   {
     path: '/subs/:lang/:timestamp/:videoParam/',
@@ -23,12 +38,17 @@ const routes: Array<RouteRecordRaw> = [
     name: 'audio',
     component: () => import('@/views/Amplitude.vue')
   },
-  /*{
+  {
+    path: '/open-scanner/',
+    name: 'open-scanner',
+    component: () => import('@/views/OpenScanner.vue'),
+  },
+  {
     path: '/video/:id',
     name: 'video',
     component: () => import('@/views/Video.vue')
   },
-  {
+ /* {
     path: '/tabs/',
     component: Tabs,
     children: [

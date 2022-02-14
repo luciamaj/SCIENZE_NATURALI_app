@@ -62,19 +62,19 @@ export default defineComponent({
       this.removeObj();
     },
     onDecode(decodedString) {
-      this.value = decodedString;
-      const audio = data.find(x => x.external_url == decodedString);
-      const dataEl = { index: null, type: null };
-      if (audio) {
+      this.value = decodedString.split('/');
+      //const audio = data.find(x => x.external_url == decodedString);
+      const dataEl = { index: this.value[ this.value.length-1], type: "audio" };
+     /* if (audio) {
         dataEl.index = audio.index;
         dataEl.type = audio.type;
       } else {
         dataEl.index = data[0].index;
         dataEl.type = data[0].type;
-      }
+      }*/
 
       this.setObject(dataEl);
-      //this.close();
+      this.close();
     }
   },
   data: () => {

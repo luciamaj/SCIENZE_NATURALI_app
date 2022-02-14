@@ -1,28 +1,36 @@
 <template>
-  <div  class="bg">
+  <ion-page>
     <ion-header>
       <ion-toolbar color="primary">
-        <ion-title size="large"></ion-title>
-      </ion-toolbar>
-      <ion-toolbar color="primary">
-        <div class="title">Audible Museum</div>
-      </ion-toolbar>
+        <ion-title slot="start" >Audible - {{store}}</ion-title>
+        <ion-buttons slot="primary">
+          <ion-button @click="openMenuModal(notification)">
+            <ion-icon slot="start" ios="ellipsis-horizontal" md="ellipsis-vertical"></ion-icon>
+            <ion-badge  mode="ios" color="danger" class="notification" :class="{showNotification:notification}">1</ion-badge>
+          </ion-button>
+         </ion-buttons>
+      </ion-toolbar> 
     </ion-header>
-    <ion-page>
-      <ion-content :fullscreen="false">
-        <div class="vertical-center view-wwave-container">
-          <div class="center">
-            <div class="logo-container"><img class="logo" src="/assets/background/dos.png"/></div>
+   
+    <ion-content :fullscreen="false">
+     <!--ion-modal :is-open="true" :swipe-to-close="true">
+  <ion-content>Modal Content</ion-content>
+</ion-modal-->
+      <div class="vertical-center view-wwave-container">
+        <div class="center">
+          <div class="logo-container"><img class="logo" src="/assets/background/dos.png"/></div>
+            {{ntag}}
+          <ion-button expand="block" class="capture-btn" @click="onSend" id="captureStart">PLAY</ion-button>
+          <ion-button expand="block" class="capture-btn" id="captureStop" hidden>STOP</ion-button>
+            <IonButton class="scan-btn" @click="openModal">INQUADRA UN QR CODE</IonButton>
 
-            <ion-button expand="block" class="capture-btn" @click="onSend" id="captureStart">PLAY</ion-button>
-            <ion-button expand="block" class="capture-btn" id="captureStop" hidden>STOP</ion-button>
-             <IonButton class="scan-btn" @click="openModal">INQUADRA UN QR CODE</IonButton>
-            <!--ion-button expand="block" class="capture-btn" @click="openModal('en', 0, '00')">PROVA</ion-button-->
-          </div>
+            <ion-button  class="test-btn" id="test" @click="openpage" >TEST</ion-button>
+          <!--ion-button expand="block" class="capture-btn" @click="openModal('en', 0, '00')">PROVA</ion-button-->
         </div>
-      </ion-content>
-    </ion-page>
-  </div>
+      </div>
+    </ion-content>
+    
+  </ion-page>
 </template>
 
 <script>
@@ -32,14 +40,21 @@ import {
   IonTitle,
   IonContent,
   IonButton,
-  modalController
+  modalController,
+  alertController,
+  IonBadge
+  //IonModal
+  
 } from "@ionic/vue";
 
-
+import { data } from "../data/data";
 import Scanner from "./Scanner.vue";
+import Menu from "./Menu.vue";
 import factory from "ggwave";
 import { Plugins } from "@capacitor/core";
 import Subtitles from "./Subtitles.vue";
+import { useRouter } from "vue-router";
+
 const { Storage } = Plugins;
 
 export default {
@@ -47,8 +62,15 @@ export default {
   data() {
     return {
       decodedValue: "",
-      name: "AUDIBLE MUSEUM"
+      name: "AUDIBLE MUSEUM",
+      store:"",
+      notification:false,
+     ntag:"",
+     playing:false,
     };
+  },
+  mounted(){
+    this.store=localStorage.getItem('version');
   },
   components: {
     IonToolbar,
@@ -56,6 +78,10 @@ export default {
     IonContent,
     IonPage,
     IonButton,
+    IonBadge
+    
+    //IonModal
+  
   },
   setup() {
 
@@ -77,8 +103,9 @@ export default {
 
       return modal.present();
     };*/
+ 
 
-    
+    const router = useRouter();
     const openModal = async () => {
       const top = await modalController.getTop();
 
@@ -92,6 +119,7 @@ export default {
         console.log("dismissed");
         const objStr = await Storage.get({ key: "path" });
         const obj = JSON.parse(objStr.value);
+        console.log("OGGETTO ",obj.path)
         if (obj != null) {
           if (obj.path.type == "audio") {
             router.push({ path: "/audio/" + obj.path.index });
@@ -106,30 +134,112 @@ export default {
       return modal.present();
     };
 
+    const openMenuModal = async (notification) => {
+      const top = await modalController.getTop();
+
+      const menumodal = await modalController.create({
+        component: Menu,
+        swipeToClose: true,
+        presentingElement: top,
+        componentProps: { 
+          notification:notification,
+          
+        }
+      });
+
+      menumodal.onDidDismiss().then(async _ => {
+        console.log("dismissed");
+         console.log("dismissed " +notification);
+      });
+
+     
+
+      return menumodal.present();
+    };
+
     return {
-      openModal
+      openModal,
+      openMenuModal
     };
   },
+  created(){
+   /* this.$parent.$on('changeVersion', _ => {
+      this.showOptions();
+    });*/
+    this.emitter.on('changeVersion', _ => {
+      this.showOptions();
+    });
+    
+    this.emitter.on('fineAggiornamento', _ => {
+      console.log("FINITO");
+      this.notification=false;
+    });
+   
+  },
   methods: {
+  async showOptions() {
+    const alert = await alertController.create({
+      header: "Aggiornamento",
+      message: "Sono disponibili aggiornamenti dei contenuti",
+      buttons: [
+        {
+          text: "Scarica",
+          handler: () => {
+            console.log("Accepted");
+             this.emitter.emit('aggiorna');
+          },
+        },
+        {
+          text: "Postponi",
+          role: "cancel",
+          handler: () => {
+            console.log("Declined the offer");
+            this.notification=true;
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+  },
+  openFirst() {
+      menuController.enable(true, 'first');
+      menuController.open('first');
+    },
+
     findRoute(decodedString) {
       console.log(decodedString);
+       const data=localStorage.getItem("dataMostra")
+     
+      const scheda= JSON.parse(data).find(x => x.tag == decodedString);
+   
       //const audio = data.find(x => x.index == decodedString);
       
-      const decodedArray = decodedString.split(" ");
+     ///const decodedArray = decodedString.split(" ");
+      //const audio = data.find(x => x.index ==  parseInt(decodedArray[1]));
 
-      if(decodedArray[0] == "media") {
+      /*if(decodedArray[0] == "media") {
+        
         if(parseInt(decodedArray[1])) {
           const timestamp = decodedArray[2] ? decodedArray[2] : 0;
-          openModal('en', timestamp, parseInt(decodedArray[1]));
+         // openModal('en', timestamp, parseInt(decodedArray[1]));
         }
-      }
+      }*/
+     
 
-      if (audio != null) {
-        if (audio.type == "audio") {
-          this.$router.push({ path: "/audio/" + audio.index });
+        // Dispatch/Trigger/Fire the event
+        
+      if (scheda != null) {
+       if(this.playingredmi ==false){
+        if (scheda.type == "audio") {
+          this.playing==true;
+          this.$router.push({ path: "/audio/" + decodedString });
         } else {
-          this.$router.push({ path: "/video/" + audio.index });
+          this.playing==true;
+          this.$router.push({ path: "/audio/" + decodedString });
         }
+       }
+        
       }
     },
     onSend() {
@@ -228,6 +338,8 @@ export default {
               captureStart.hidden = false;
               captureStop.hidden = true;
             });
+
+          
           })
           .catch(e => {
             console.error(e);
@@ -237,6 +349,10 @@ export default {
         captureStart.hidden = true;
         captureStop.hidden = false;
       });
+    },
+
+    openpage(){
+      this.$router.push({ path: "/audio/A0002"  });
     }
   }
 };
@@ -258,7 +374,7 @@ ion-content {
   display: block;
   position: absolute;
   bottom: 0;
-  padding-bottom: 15vh;
+  padding-bottom: 20vh;
 }
 
 .logo-container {
@@ -305,6 +421,14 @@ ion-content {
 
 .toolbar-background {
   color: black !important;
+}
+.notification{
+  width: 10px;
+  visibility:hidden;
+  height: 16px;
+}
+.showNotification{
+  visibility: visible;
 }
 
 @media only screen and (orientation:portrait) {

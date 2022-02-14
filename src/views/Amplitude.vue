@@ -1,22 +1,28 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-toolbar color="primary" mode="ios">
-        <ion-title>{{ title }}</ion-title>
-        <ion-buttons>
-          <ion-button v-on:click="back">
-            <ion-icon name="arrow-back"></ion-icon>
-          </ion-button>
+      <ion-toolbar color="primary" >
+        <ion-buttons slot="start">
+           <ion-back-button default-href="/" v-on:click="back" > </ion-back-button>
+          <!--ion-button v-on:click="back()">
+           
+          </ion-button-->
         </ion-buttons>
+        <ion-title>{{ title }}</ion-title>
+        
       </ion-toolbar>
     </ion-header>
+
     <ion-content :fullscreen="true">
       <div class="vertical-center">
+       
         <div class="player">
           <img :src="cover" class="album-art" />
           <ion-footer class="ion-no-border">
             <div class="meta-container">
-              <div class="song-title">{{ name }}</div>
+
+             
+              <div class="song-title">{{ contentScheda.titolo }} {{contentScheda.audio}}</div>
               <div class="song-artist">{{ lang }}</div>
 
               <div class="time-container">
@@ -41,8 +47,11 @@
                 <div class="amplitude-next"></div>
               </div>
             </div>
+            <div class="descrArea"   v-html="contentScheda.testo"> </div>
           </ion-footer>
         </div>
+
+       
       </div>
     </ion-content>
   </ion-page>
@@ -57,11 +66,14 @@ import {
   IonContent,
   IonFooter,
   IonButtons,
-  IonIcon,
-  IonButton
+  //IonIcon,
+  //IonButton,
+  IonBackButton, 
 } from "@ionic/vue";
 import Amplitude from "amplitudejs";
 import { data } from "../data/data";
+import { Plugins } from "@capacitor/core";
+const { Storage } = Plugins;
 
 export default {
   name: "Amplitude",
@@ -73,38 +85,59 @@ export default {
     IonPage,
     IonFooter,
     IonButtons,
-    IonIcon,
-    IonButton
+    //IonIcon,
+  //  IonButton,
+    IonBackButton, 
   },
-  methods: {
-    play() {
-      Amplitude.play();
-    },
-    back() {
-      if (window.history.length > 1) {
-        this.$router.go(-1);
-      } else {
-        this.$router.push({ name: "open-scanner" });
-      }
-    }
+  ionViewWillLeave() {
+    console.log('Home page will leave');
+          Amplitude.pause();
+   
   },
+
   data() {
     return {
-      title: "Audioguida"
+      title: "Audioguida",
+      timer:"",
     };
   },
   computed: {
+
+    contentScheda(){
+       const data=localStorage.getItem("dataMostra")
+     
+      const scheda= JSON.parse(data).find(x => x.tag == this.$route.params.id);
+       console.log("ENTRO QUA")
+    
+       
+     return scheda.content.find(x => x.lang == 'it');
+    },
+    dataSchede(){
+
+      const data=localStorage.getItem("dataMostra")
+     
+      const scheda= JSON.parse(data).find(x => x.tag == this.$route.params.id);
+      
+     return scheda
+     
+    },
+   
     cover() {
-      const audio = data.find(x => x.index == this.$route.params.id);
-      if (audio) {
-        return audio.cover;
+      const audio=this.contentScheda.audio; 
+      console.log("che c'è? "+ audio + this.dataSchede.img);
+      if (audio && this.dataSchede.img) {
+        console.log("c'è audio e iimmmagine");
+        return "https://dataoversound.eadev.it/dataoversound-swi/upload/"+this.dataSchede.img;
       } else {
-        return data[0].cover;
+        return 'https://dataoversound.eadev.it/dataoversound-swi/upload/329.jpg'
+       
       }
+      return 'https://dataoversound.eadev.it/dataoversound-swi/upload/(329)%2030_8_5.jpg';
     },
     id() {
       return this.$route.params.id;
     },
+
     name() {
       const audio = data.find(x => x.index == this.$route.params.id);
       if (audio) {
@@ -122,15 +155,18 @@ export default {
       }
     },
     url() {
-      const audio = data.find(x => x.index == this.$route.params.id);
-      if (audio) {
-        return audio.url;
+      const audio=this.contentScheda;
+      if (audio.audio) {
+        console.log("audio ",audio.audio);
+        return "https://dataoversound.eadev.it/dataoversound-swi/upload/"+audio.audio;
       } else {
-        return data[0].url;
+         console.log("audio ",audio.video);
+        return "https://dataoversound.eadev.it/dataoversound-swi/upload/"+ audio.video;
       }
     }
   },
   mounted() {
+   
     Amplitude.init({
       /* eslint-disable */
       songs: [
@@ -141,10 +177,16 @@ export default {
           url: this.url,
           cover_art_url: "/assets/icon/icon.png"
         }
-      ]
+      ],
+      callbacks: {
+			 ended: ()=>{
+				 console.log("Audio has been stopped.");
+          this.setTimer();
+
+			 }
+		  }
     });
-    Amplitude.pause();
-    console.log(Amplitude);
+   
 
     document
       .getElementById("song-played-progress-1")
@@ -160,6 +202,49 @@ export default {
           );
         }
       });
+
+      
+    console.log("AMPLI ",Amplitude);
+
+     this.play();
+  } ,
+  methods:{
+    play() {
+      Amplitude.play();
+      
+      $('.amplitude-play-pause').addClass('amplitude-playing').removeClass('amplitude-paused');
+    },
+    pause() {
+      Amplitude.pause();
+    },
+  
+    inactivityTime(){
+       document.ontouchmove = this.resetTimer;
+    },
+     
+    resetTimer() {
+      console.log('RESET Timer out');
+      clearTimeout(this.timer);
+      this.setTimer();
+          
+    },
+
+    setTimer(){
+       this.inactivityTime();
+      this.timer = setTimeout(this.timeout, 10 * 1000);
+    },
+    timeout() { 
+      console.log("timeout");
+    
+      this.$router.replace({path:"/"});
+      
+    },
+
+    
+   
+ 
+      
+     
   }
 };
 </script>
@@ -194,8 +279,18 @@ div.player img.album-art {
 
 .vertical-center {
   padding: 70px 0;
-  height: 80vh;
+  height: 88vh;
   width: 100vw;
+}
+
+.descrArea{
+  float: left;
+  /* width: calc(100% - 60px); */
+  padding: 18px 25px;
+  max-height: 40vh;
+  overflow: overlay;
+  margin-top: 4vh;
+
 }
 /*
   Small only
