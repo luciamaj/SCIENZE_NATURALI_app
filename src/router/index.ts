@@ -48,6 +48,11 @@ const routes: Array<RouteRecordRaw> = [
     name: 'video',
     component: () => import('@/views/Video.vue')
   },
+  {
+    path: '/test',
+    name: 'test',
+    component: () => import('@/views/TestMic.vue')
+  },
  /* {
     path: '/tabs/',
     component: Tabs,

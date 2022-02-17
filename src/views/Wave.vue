@@ -20,11 +20,13 @@
         <div class="center">
           <div class="logo-container"><img class="logo" src="/assets/background/dos.png"/></div>
             {{ntag}}
+          <div class="buttons">
           <ion-button expand="block" class="capture-btn" @click="onSend" id="captureStart">PLAY</ion-button>
           <ion-button expand="block" class="capture-btn" id="captureStop" hidden>STOP</ion-button>
             <IonButton class="scan-btn" @click="openModal">INQUADRA UN QR CODE</IonButton>
 
             <ion-button  class="test-btn" id="test" @click="openpage" >TEST</ion-button>
+          </div>
           <!--ion-button expand="block" class="capture-btn" @click="openModal('en', 0, '00')">PROVA</ion-button-->
         </div>
       </div>
@@ -69,8 +71,24 @@ export default {
      playing:false,
     };
   },
+  ionViewWillEnter(){
+   
+   this.getTour().then(x => {
+    const tour=x;
+   
+    console.log("upTour ", tour)
+    if(tour){
+         const captureStart = document.getElementById("captureStart");
+         captureStart.click();
+    }
+    } );
+   
+
+  },
   mounted(){
     this.store=localStorage.getItem('version');
+    
+
   },
   components: {
     IonToolbar,
@@ -104,7 +122,8 @@ export default {
       return modal.present();
     };*/
  
-
+    
+  
     const router = useRouter();
     const openModal = async () => {
       const top = await modalController.getTop();
@@ -159,8 +178,13 @@ export default {
 
     return {
       openModal,
-      openMenuModal
+      openMenuModal,
+     
+    
+
     };
+
+
   },
   created(){
    /* this.$parent.$on('changeVersion', _ => {
@@ -176,7 +200,55 @@ export default {
     });
    
   },
+
+
+
+
+
   methods: {
+  async setActiveTour() {
+    await Storage.set({
+      key: 'tourActive',
+      value:JSON.stringify({
+         active: true,
+        
+      })
+    });
+  },
+  async setInactiveTour() {
+    await Storage.set({
+      key: 'tourActive',
+      value:JSON.stringify({
+         active: false,
+        
+      })
+    });
+  },
+  async getTour() {
+    const ret = await Storage.get({ key: 'tourActive' });
+    const tour = JSON.parse(ret.value);
+    if(tour){
+       return tour.active;
+    }
+    else{
+      console.log("Not existing");
+      return null;
+    }
+   
+  },
+  async schedaState(state) {
+    console.log("openScheda");
+    await Storage.set({
+      key: 'openScheda',
+      value:state
+    });
+  },
+  async getSchedaState() {
+    const ret = await Storage.get({ key: 'openScheda' });
+    const scheda = JSON.parse(ret.value);
+    console.log("aaa ", scheda);
+    return scheda;
+  },
   async showOptions() {
     const alert = await alertController.create({
       header: "Aggiornamento",
@@ -212,7 +284,7 @@ export default {
        const data=localStorage.getItem("dataMostra")
      
       const scheda= JSON.parse(data).find(x => x.tag == decodedString);
-   
+      const captureStop = document.getElementById("captureStop");
       //const audio = data.find(x => x.index == decodedString);
       
      ///const decodedArray = decodedString.split(" ");
@@ -228,32 +300,48 @@ export default {
      
 
         // Dispatch/Trigger/Fire the event
+       // const event = new Event('pause');
+      //  window.dispatchEvent(event);
+        (async () => {
+            const stato = await this.getSchedaState();
+            console.log("statooo "+stato);
+          if (scheda != null) {
+            if(stato==false||stato==null){
+              if (scheda.type == "audio") {
+              this.schedaState(true);
+              this.$router.push({ path: "/audio/" + decodedString });
+              } else {
+              this.schedaState(true);
+              this.$router.push({ path: "/audio/" + decodedString });
+              }
+            }
+          }
+        })();
+       
+       
+        //captureStop.click();
+       
+       
+      
         
-      if (scheda != null) {
-       if(this.playingredmi ==false){
-        if (scheda.type == "audio") {
-          this.playing==true;
-          this.$router.push({ path: "/audio/" + decodedString });
-        } else {
-          this.playing==true;
-          this.$router.push({ path: "/audio/" + decodedString });
-        }
-       }
-        
-      }
     },
+
     onSend() {
+      this.setActiveTour();
       factory().then(ggwave => {
         /* eslint-disable no-console */
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
         window.OfflineAudioContext =
           window.OfflineAudioContext || window.webkitOfflineAudioContext;
 
-        const context = new AudioContext();
+        const context =  new AudioContext({sampleRate: 48000});
+      
         let recorder = null;
 
         // create ggwave instance with default parameters
         const parameters = ggwave.getDefaultParameters();
+        parameters.sampleRateInp = context.sampleRate;
+        parameters.sampleRateOut = context.sampleRate;
         const instance = ggwave.init(parameters);
 
         function convertTypedArray(src, type) {
@@ -275,32 +363,56 @@ export default {
           }
         };
 
+        navigator.mediaDevices.enumerateDevices() .then(function(devices) {
+          devices.forEach(function(device) {
+            console.log(device.kind + ": " + device.label +
+                        " id = " + device.deviceId);
+          });
+        })
+        .catch(function(err) {
+          console.log(err.name + ": " + err.message);
+        });
+
         navigator.mediaDevices
           .getUserMedia(constraints)
-          .then(e => {
-            const mediaStream = context.createMediaStreamSource(e);
-
+          .then(stream => {
+         
+            const mediaStream = context.createMediaStreamSource(stream);
+           
             const bufferSize = 16 * 1024;
             const numberOfInputChannels = 1;
             const numberOfOutputChannels = 1;
-
+          
             if (context.createScriptProcessor) {
+
+              console.log("createScriptProcessor");
               recorder = context.createScriptProcessor(
                 bufferSize,
                 numberOfInputChannels,
                 numberOfOutputChannels
               );
             } else {
+               console.log("createJavaScriptNode");
               recorder = context.createJavaScriptNode(
                 bufferSize,
                 numberOfInputChannels,
                 numberOfOutputChannels
               );
             }
+            console.log("recorder ",recorder);
 
             recorder.onaudioprocess = e => {
+
               const source = e.inputBuffer;
-              const offlineCtx = new OfflineAudioContext(
+                //console.log("sourcer ",source.getChannelData(0));
+
+              const res = ggwave.decode(instance, convertTypedArray(new Float32Array(source.getChannelData(0)), Int8Array));
+              if (res) {
+                    this.findRoute(res);
+                    this.decodedValue = res;
+              }
+
+              /*const offlineCtx = new OfflineAudioContext(
                 source.numberOfChannels,
                 48000 * source.duration,
                 48000
@@ -322,18 +434,30 @@ export default {
                   this.decodedValue = res;
                 }
               };
-            };
-
+              */
+           };
+          
             mediaStream.connect(recorder);
             recorder.connect(context.destination);
-
-            captureStop.addEventListener("click", function() {
+            
+            captureStop.addEventListener("click", ()=> {
               if (recorder) {
                 recorder.disconnect(context.destination);
                 mediaStream.disconnect(recorder);
                 recorder = null;
               }
+              this.setInactiveTour();
+              this.decodedValue = "stopped recording";
+              captureStart.hidden = false;
+              captureStop.hidden = true;
+            });
 
+            window.addEventListener('pause', ()=> {
+              if (recorder) {
+                recorder.disconnect(context.destination);
+                mediaStream.disconnect(recorder);
+                recorder = null;
+              }
               this.decodedValue = "stopped recording";
               captureStart.hidden = false;
               captureStop.hidden = true;
@@ -352,7 +476,8 @@ export default {
     },
 
     openpage(){
-      this.$router.push({ path: "/audio/A0002"  });
+     // this.$router.push({ path: "/audio/A0002"  });
+      this.$router.push({ path: "/test"  });
     }
   }
 };
@@ -388,7 +513,10 @@ ion-content {
   object-position: center;
   width: 100%;
 }
-
+.buttons{
+  width: 100%;
+  text-align: center;
+}
 .view-wwave-container {
   background-color: white;
   background-repeat: no-repeat;

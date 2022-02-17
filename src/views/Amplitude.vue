@@ -90,8 +90,10 @@ export default {
     IonBackButton, 
   },
   ionViewWillLeave() {
-    console.log('Home page will leave');
-          Amplitude.pause();
+    console.log('Ampli will leave');
+     clearTimeout(this.timer);
+    Amplitude.pause();
+    this.schedaState(false);
    
   },
 
@@ -108,9 +110,13 @@ export default {
      
       const scheda= JSON.parse(data).find(x => x.tag == this.$route.params.id);
        console.log("ENTRO QUA")
-    
+      if(scheda){
+        return scheda.content.find(x => x.lang == 'it');
+      }else{
+        return null
+      }
        
-     return scheda.content.find(x => x.lang == 'it');
+     
     },
     dataSchede(){
 
@@ -180,8 +186,14 @@ export default {
       ],
       callbacks: {
 			 ended: ()=>{
-				 console.log("Audio has been stopped.");
+				console.log("Audio has been stopped.");
+        console.log("Document " + document.visibilityState)
+        if(document.visibilityState=="visible"){
           this.setTimer();
+        }else{
+           this.$router.replace({path:"/"});
+        }
+         
 
 			 }
 		  }
@@ -241,7 +253,13 @@ export default {
     },
 
     
-   
+    async schedaState(state) {
+      console.log("openScheda");
+      await Storage.set({
+        key: 'openScheda',
+        value:state
+      });
+    },
  
       
      
