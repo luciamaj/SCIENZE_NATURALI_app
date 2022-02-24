@@ -27,18 +27,40 @@
         </button>
     </div>
     <h3 id="tex"></h3-->
-
-              <h1 class="is-size-1 has-text-centered is-uppercase has-text-weight-bold">Sound check!</h1>
-  <p class="">See if your microphone and headphones are setup properly</p>
-  <p> For the Microphone test, a prompt will appear asking for permission to access your select output device </p>
-    <p>If you are not using headphones, it'll have a loop feedback</p>
-    <p></p>
-  <button class="button is-primary is-fullwidth is-large" id="micTest" type="button">Test Microphone</button>
-  
+  <main>
+    <h1 class="is-size-1 has-text-centered is-uppercase has-text-weight-bold">Sound check!</h1>
+    <p class="">See if your microphone and headphones are setup properly</p>
+    <p> For the Microphone test, a prompt will appear asking for permission to access your select output device </p>
+      <p>If you are not using headphones, it'll have a loop feedback</p>
+      <p></p>
+    <!--button class="button is-primary is-fullwidth is-large" id="micTest" type="button">Test Microphone</button-->
+  </main>
   <!--button class="button is-link is-light is-fullwidth is-medium" id="soundTest" type="button">Test Headphone/Speakers</button-->
        
       </div>
+
+
+     <div class="toggle" @click="start">start</div> <div class="toggle" @click="pause">pause</div>
+    <audio-recorder v-if="showRecorder"
+      upload-url="some url"
+      filename="ninja"
+      format="wav"
+      :attempts="3"
+      :time="2"
+      :headers="headers"
+      :before-recording="callback"
+      :pause-recording="callback"
+      :after-recording="callback"
+      :select-record="callback"
+      :before-upload="callback"
+      :successful-upload="callback"
+      :failed-upload="callback"
+      :bit-rate="192"/>
+
+    <audio-player :src="mp3" v-if="!showRecorder"/>
     </ion-content>
+
+    
   </ion-page>
 </template>
 
@@ -65,7 +87,6 @@ export default {
     IonTitle,
     IonContent,
     IonPage,
-
     IonButtons,
     //IonIcon,
   //  IonButton,
@@ -77,6 +98,10 @@ export default {
     return {
       title: "Audioguida",
       timer:"",
+       
+        headers: {
+          'X-Custom-Header': 'some data'
+        }
     };
   },
 
@@ -124,8 +149,77 @@ export default {
     })*/
   },
   methods:{
+   /* callback (msg) {
+      console.debug('Event: ', msg)
+    },
+    toggle () {
+      this.showRecorder = !this.showRecorder
+    },*/
     
-    
+
+
+    start(){
+      const constraints = {
+        video: false,
+        audio: {
+          channelCount: 1,
+          echoCancellation: false
+        }
+      }
+      navigator.mediaDevices
+      .getUserMedia(constraints)
+      .then(this._micCaptured.bind(this))
+      .catch(this._micError.bind(this))
+    },
+
+
+    _micCaptured (stream) {
+    this.context    = new(window.AudioContext || window.webkitAudioContext)()
+    this.duration   = this._duration
+    this.input      = this.context.createMediaStreamSource(stream)
+    this.processor  = this.context.createScriptProcessor(this.bufferSize, 1, 1)
+    this.stream     = stream
+
+    this.processor.onaudioprocess = (ev) => {
+      const sample = ev.inputBuffer.getChannelData(0)
+      let sum = 0.0
+
+     // this.lameEncoder.encode(sample)
+
+      for (let i = 0; i < sample.length; ++i) {
+        sum += sample[i] * sample[i]
+      }
+
+      this.duration = parseFloat(this._duration) + parseFloat(this.context.currentTime.toFixed(2))
+      this.volume = Math.sqrt(sum / sample.length).toFixed(2)
+    }
+
+    const audio = document.createElement('audio');
+                    audio.controls = true;
+                    audio.autoplay = true;
+                  
+                    audio.srcObject = stream;
+
+    this.input.connect(this.processor)
+    this.processor.connect(this.context.destination)
+  },
+   _micError (error) {
+    this.micFailed && this.micFailed(error)
+  },
+
+  pause () {
+    console.log("pause");
+    this.stream.getTracks().forEach((track) => track.stop())
+    this.input.disconnect()
+    this.processor.disconnect()
+   //this.context.close()
+
+    this._duration = this.duration
+    this.isPause = true
+
+    this.pauseRecording && this.pauseRecording('pause recording')
+  }
+
    /* async vol(){
         
         let volumeCallback = null;
@@ -186,9 +280,9 @@ export default {
     }*/
 
 
-        handleError(e){
+       /* handleError(e){
         console.log("ruin", e.message);
-        },
+        },*/
 
 
  
@@ -202,12 +296,22 @@ export default {
 ion-content {
   --overflow: hidden;
 }
- div {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+
+#micTest::before {
+  content: '';
+  background-size: contain;
+  display: block;
+  width: 100px;
+  height: 20px;
+}
+
+#micTest{
+  width: 100%;
+}
+ /*div {
+
     min-height: 300px;
-  }
+  }*/
 
 .bar {
     --volume: 0%;

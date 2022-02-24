@@ -2,8 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router';
 import store from './store/store';
-
-
+import AudioRecorder from 'vue-audio-recorder';
 
 import { IonicVue } from '@ionic/vue';
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
@@ -47,6 +46,8 @@ const currentIcons = Object.keys(allIcons).map(i => {
     ['md-' + key]: allIcons[i].md,
   };
 });
+
+
 
 const emitter = mitt();
 

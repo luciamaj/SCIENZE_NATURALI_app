@@ -56,7 +56,7 @@ import factory from "ggwave";
 import { Plugins } from "@capacitor/core";
 import Subtitles from "./Subtitles.vue";
 import { useRouter } from "vue-router";
-
+import {AudioProcessing} from "../audioWorklet/audioWorker.js";
 const { Storage } = Plugins;
 
 export default {
@@ -203,8 +203,6 @@ export default {
 
 
 
-
-
   methods: {
   async setActiveTour() {
     await Storage.set({
@@ -285,44 +283,30 @@ export default {
      
       const scheda= JSON.parse(data).find(x => x.tag == decodedString);
       const captureStop = document.getElementById("captureStop");
-      //const audio = data.find(x => x.index == decodedString);
       
-     ///const decodedArray = decodedString.split(" ");
-      //const audio = data.find(x => x.index ==  parseInt(decodedArray[1]));
-
-      /*if(decodedArray[0] == "media") {
-        
-        if(parseInt(decodedArray[1])) {
-          const timestamp = decodedArray[2] ? decodedArray[2] : 0;
-         // openModal('en', timestamp, parseInt(decodedArray[1]));
-        }
-      }*/
-     
-
         // Dispatch/Trigger/Fire the event
        // const event = new Event('pause');
       //  window.dispatchEvent(event);
-        (async () => {
-            const stato = await this.getSchedaState();
-            console.log("statooo "+stato);
-          if (scheda != null) {
-            if(stato==false||stato==null){
-              if (scheda.type == "audio") {
-              this.schedaState(true);
-              this.$router.push({ path: "/audio/" + decodedString });
-              } else {
-              this.schedaState(true);
-              this.$router.push({ path: "/audio/" + decodedString });
-              }
+      (async () => {
+          const stato = await this.getSchedaState();
+          console.log("statooo "+stato);
+        if (scheda != null) {
+          if(stato==false||stato==null){
+            if (scheda.type == "audio") {
+              console.log("audio");
+            //this.schedaState(true);
+            this.$router.push({ path: "/audio/" + decodedString });
+            } else {
+                console.log("video");
+          //  this.schedaState(true);
+            this.$router.push({ path: "/audio/" + decodedString });
             }
           }
-        })();
+        }
+      })();
        
        
-        //captureStop.click();
-       
-       
-      
+      //captureStop.click();
         
     },
 
@@ -332,11 +316,11 @@ export default {
         /* eslint-disable no-console */
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
         window.OfflineAudioContext =
-          window.OfflineAudioContext || window.webkitOfflineAudioContext;
+        window.OfflineAudioContext || window.webkitOfflineAudioContext;
 
-        const context =  new AudioContext({sampleRate: 48000});
+        const context =  new AudioContext({ latencyHint: 'interactive',sampleRate: 44100});
       
-        let recorder = null;
+        
 
         // create ggwave instance with default parameters
         const parameters = ggwave.getDefaultParameters();
@@ -357,11 +341,16 @@ export default {
         const constraints = {
           audio: {
             // not sure if these are necessary to have
+            channelCount: 1,
             echoCancellation: false,
             autoGainControl: false,
             noiseSuppression: false
-          }
+          },
+          video: false
         };
+      
+       
+
 
         navigator.mediaDevices.enumerateDevices() .then(function(devices) {
           devices.forEach(function(device) {
@@ -373,12 +362,95 @@ export default {
           console.log(err.name + ": " + err.message);
         });
 
-        navigator.mediaDevices
+
+      /* GETMESDIA DEVICES*/
+          let recorder = null;
+          navigator.mediaDevices.getUserMedia({audio:true, video:false}).then((mstream)=>{
+
+            console.log("audiotracks 1 ",mstream.getAudioTracks());
+            navigator.mediaDevices.getUserMedia( constraints).then((stream)=>{
+                console.log("audiotracks 2 ",stream.getAudioTracks());
+                const mediaStream = context.createMediaStreamSource(stream);
+                const bufferSize = 16 * 1024;
+                const numberOfInputChannels = 1;
+                const numberOfOutputChannels = 1;
+            
+                if (context.createScriptProcessor) {
+
+                  console.log("createScriptProcessor");
+                  recorder = context.createScriptProcessor(
+                    bufferSize,
+                    numberOfInputChannels,
+                    numberOfOutputChannels
+                  );
+                } else {
+                  console.log("createJavaScriptNode");
+                    recorder = context.createJavaScriptNode(
+                    bufferSize,
+                    numberOfInputChannels,
+                    numberOfOutputChannels
+                  );
+                }
+              
+                recorder.onaudioprocess = e => {
+                    
+                  const source = e.inputBuffer.getChannelData(0);
+                 //   console.log("instance ",instance);
+                    
+                  
+                  const res = ggwave.decode(instance, convertTypedArray(new Float32Array(source), Int8Array));
+                  if (res) {
+                        this.findRoute(res);
+                        this.decodedValue = res;
+                  }
+                }
+                mediaStream.connect(recorder);
+                recorder.connect(context.destination);
+                
+                captureStop.addEventListener("click", ()=> {
+                  if (recorder) {
+                    recorder.disconnect(context.destination);
+                    mediaStream.disconnect(recorder);
+                    recorder = null;
+                  }
+                  this.setInactiveTour();
+                  this.schedaState(false);
+                  this.decodedValue = "stopped recording";
+                  captureStart.hidden = false;
+                  captureStop.hidden = true;
+                });
+
+                window.addEventListener('pause', ()=> {
+                  if (recorder) {
+                    recorder.disconnect(context.destination);
+                    mediaStream.disconnect(recorder);
+                    recorder = null;
+                  }
+                  this.decodedValue = "stopped recording";
+                  captureStart.hidden = false;
+                  captureStop.hidden = true;
+                });
+            }).catch(function (e) {   console.error(e);})
+            
+              
+          }).catch(function (e) {   console.error(e);})
+        
+
+      /*    navigator.mediaDevices
           .getUserMedia(constraints)
           .then(stream => {
          
-            const mediaStream = context.createMediaStreamSource(stream);
+            const mediaStream = context.createMediaStreamSource(stream);*/
+            ///provato nuovo metodo non funziona
+           //  let meterNode=null;
+           /* (async () => {
+              await context.audioWorklet.addModule('../audioWorklet/processor.js')
+              meterNode = new AudioWorkletNode(context, 'audio-processor')
+              mediaStream.connect(meterNode);
+            })();*/
            
+            
+/*
             const bufferSize = 16 * 1024;
             const numberOfInputChannels = 1;
             const numberOfOutputChannels = 1;
@@ -393,7 +465,7 @@ export default {
               );
             } else {
                console.log("createJavaScriptNode");
-              recorder = context.createJavaScriptNode(
+                recorder = context.createJavaScriptNode(
                 bufferSize,
                 numberOfInputChannels,
                 numberOfOutputChannels
@@ -411,7 +483,7 @@ export default {
                     this.findRoute(res);
                     this.decodedValue = res;
               }
-
+*/
               /*const offlineCtx = new OfflineAudioContext(
                 source.numberOfChannels,
                 48000 * source.duration,
@@ -435,8 +507,8 @@ export default {
                 }
               };
               */
-           };
-          
+         /*  };*/
+          /*
             mediaStream.connect(recorder);
             recorder.connect(context.destination);
             
@@ -447,6 +519,7 @@ export default {
                 recorder = null;
               }
               this.setInactiveTour();
+               this.schedaState(false);
               this.decodedValue = "stopped recording";
               captureStart.hidden = false;
               captureStop.hidden = true;
@@ -467,7 +540,7 @@ export default {
           })
           .catch(e => {
             console.error(e);
-          });
+          });*/
 
         this.decodedValue = "recording";
         captureStart.hidden = true;

@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en-us">
+    <head>
+        <title>microphone : js example</title>
+    </head>
+    <body>
+        <div id="main-container">
+            Minimal <b>ggwave</b> example using Javascript bindings
+
+            <br><br>
+
+            <div>Tx Data:</div> <textarea name="textarea" id="txData" style="width:300px;height:100px;">Hello javascript</textarea><br>
+
+            <button onclick="onSend();">Send</button>
+
+            <br><br>
+
+            <div>Rx data:</div> <textarea name="textarea" id="rxData" style="width:300px;height:100px;" disabled></textarea><br>
+
+            <button id="captureStart">Start capturing</button>
+            <button id="captureStop" hidden>Stop capturing</button>
+
+            <br><br>
+            <button class="button is-primary is-fullwidth is-large" id="micTest" type="button">Test Microphone</button>
+            <div class="cell-version">
+                <span>
+                    |
+                    Build time: <span class="nav-link">@GIT_DATE@</span> |
+                    Commit hash: <a class="nav-link" href="https://github.com/ggerganov/ggwave/commit/@GIT_SHA1@">@GIT_SHA1@</a> |
+                    Commit subject: <span class="nav-link">@GIT_COMMIT_SUBJECT@</span> |
+                    <a class="nav-link" href="https://github.com/ggerganov/ggwave/tree/master/examples/ggwave-js">Source Code</a> |
+                </span>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="ggwave.js"></script>
+        <script type='text/javascript'>
+//test mic
+            function handleSuccess(stream) {
+                console.log("W STREAM", window.stream)
+                if (window.stream) {
+                    window.stream.getAudioTracks().forEach(track => track.stop());
+                    window.stream = null;
+                } else {
+                   /*const audio = document.createElement('audio');
+                    audio.controls = true;
+                   audio.autoplay = true;*/
+                    window.stream = stream;
+
+                    //setTimeout(() => {startCapture();  }, 2000);
+                    
+                   // audio.srcObject = stream;
+
+                    stream.oninactive = function() {
+                    console.log('Stream ended');
+                    };
+                }
+            }
+            
+
+            function handleError(e){
+            console.log("ruin", e.message);
+            }
+
+            document.querySelector("#micTest").addEventListener('click', function(){
+            if ( window.stream ) {
+                this.innerText = "Test Microphone";
+            } else {
+                this.innerText = "Stop Test";
+            }
+            if (navigator.mediaDevices) {
+                const constraints =window.constraints= {
+                    audio:true,
+                    video: false
+                };
+                navigator.mediaDevices.getUserMedia(constraints).then(handleSuccess).catch(handleError)
+                setTimeout(() => {startCapture();  }, 2000);
+            }
+            });
+
+//end test mic
+
+            window.AudioContext = window.AudioContext || window.webkitAudioContext;
+            window.OfflineAudioContext = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+
+            var context = null;
+            var recorder = null;
+
+            // the ggwave module instance
+            var ggwave = null;
+            var parameters = null;
+            var instance = null;
+
+            // instantiate the ggwave instance
+            // ggwave_factory comes from the ggwave.js module
+            ggwave_factory().then(function(obj) {
+                ggwave = obj;
+            });
+
+            var txData = document.getElementById("txData");
+            var rxData = document.getElementById("rxData");
+            var captureStart = document.getElementById("captureStart");
+            var captureStop = document.getElementById("captureStop");
+
+            // helper function
+            function convertTypedArray(src, type) {
+                var buffer = new ArrayBuffer(src.byteLength);
+                var baseView = new src.constructor(buffer).set(src);
+                return new type(buffer);
+            }
+
+            // initialize audio context and ggwave
+            function init() {
+                if (!context) {
+                    context = new AudioContext({sampleRate: 48000});
+
+                    parameters = ggwave.getDefaultParameters();
+                    parameters.sampleRateInp = context.sampleRate;
+                    parameters.sampleRateOut = context.sampleRate;
+                    instance = ggwave.init(parameters);
+                }
+            }
+
+          
+            //
+            // Rx
+            //
+
+
+            function handler(stream){
+                
+                
+
+                   /* captureStop.click();
+                    window.stream=null;
+                    console.log("W STREAM exist ", window.stream);
+                }else {*/
+
+                    init();   
+                    mediaStream = context.createMediaStreamSource(stream);
+                    console.log("createmediaStream ", mediaStream)
+                    var bufferSize = 16*1024;
+                    var numberOfInputChannels = 1;
+                    var numberOfOutputChannels = 1;
+
+                    if (context.createScriptProcessor) {
+                        recorder = context.createScriptProcessor(
+                                bufferSize,
+                                numberOfInputChannels,
+                                numberOfOutputChannels);
+                    } else {
+                        recorder = context.createJavaScriptNode(
+                                bufferSize,
+                                numberOfInputChannels,
+                                numberOfOutputChannels);
+                    }
+
+                    recorder.onaudioprocess = function (e) {
+                        var source = e.inputBuffer;
+                        var res = ggwave.decode(instance, convertTypedArray(new Float32Array(source.getChannelData(0)), Int8Array));
+                        if (res) {
+                            rxData.value = res;
+                        }
+                    }
+
+                    mediaStream.connect(recorder);
+                    recorder.connect(context.destination);
+
+            
+
+            }
+            captureStart.addEventListener("click", function () {
+               
+                startCapture();
+               
+            });
+
+            function startCapture(){
+                console.log("startCapture")
+
+
+                let audiodev=[];
+
+                
+               const constraintsu =window.constraints= {
+                    audio: true,
+                    video: false
+                };
+              
+                let constraints  =window.constraints= {
+                    audio:{
+                        // not sure if these are necessary to have
+                        echoCancellation: false,
+                        autoGainControl: false,
+                        noiseSuppression: false,
+                        //deviceId:{exact:"d0e9808b26d9f1e1e833553fca041f319d5acf3b12e11fa497a0bc14bdf5c71d"}
+                        
+                    },
+                    video: false,
+                };
+
+
+
+
+                navigator.mediaDevices.enumerateDevices().then(devices=> {
+                    audiodev=devices.find(({ kind, label, deviceId }) =>  kind === "audioinput" &&  deviceId!=="default");
+                    console.log('devices ',devices);
+                    console.log('audiodev ',audiodev);
+                  //  console.log('audiodev id ',audiodev.deviceId);
+                    //constraints.audio.deviceId=audiodev.deviceId;
+                    //*console.log('audiodev id ', constraints.audio.deviceId);
+                });
+
+               
+                
+              /*  console.log("Supported contraints pre", navigator.mediaDevices.getSupportedConstraints());
+                console.log("enumerateDevices", navigator.mediaDevices.enumerateDevices());
+                console.log("mediaDevices pre", navigator.mediaDevices.getUserMedia({audio:true}));*/
+               
+
+
+               navigator.mediaDevices.getUserMedia( constraints).then((mstream)=>{
+                    console.log("audiotracks a caso ",mstream.getAudioTracks());
+                    handler(mstream);
+                    
+                }).catch(function (e) {   console.error(e);})
+
+               /* navigator.mediaDevices.getUserMedia( constraintsu).then((stream)=>{
+
+                    console.log("audiotracks 1 ",stream.getAudioTracks());
+                    navigator.mediaDevices.getUserMedia( constraints).then((mstream)=>{
+                        console.log("audiotracks 2 ",mstream.getAudioTracks());
+                        handler(mstream);
+                    }).catch(function (e) {   console.error(e);})
+                  
+                    
+                }).catch(function (e) {   console.error(e);})*/
+
+                   
+                
+               
+
+                rxData.value = 'Listening ...';
+                captureStart.hidden = true;
+                captureStop.hidden = false;
+            }
+
+            captureStop.addEventListener("click", function () {
+                if (recorder) {
+                    recorder.disconnect(context.destination);
+                    mediaStream.disconnect(recorder);
+                    recorder = null;
+                }
+
+                rxData.value = 'Audio capture is paused! Press the "Start capturing" button to analyze audio from the microphone';
+                captureStart.hidden = false;
+                captureStop.hidden = true;
+            });
+
+            captureStop.click();
+        </script>
+    </body>
+</html>

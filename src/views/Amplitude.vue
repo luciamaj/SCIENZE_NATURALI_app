@@ -110,11 +110,9 @@ export default {
      
       const scheda= JSON.parse(data).find(x => x.tag == this.$route.params.id);
        console.log("ENTRO QUA")
-      if(scheda){
+     
         return scheda.content.find(x => x.lang == 'it');
-      }else{
-        return null
-      }
+     
        
      
     },
@@ -172,7 +170,7 @@ export default {
     }
   },
   mounted() {
-   
+     this.schedaState(true);
     Amplitude.init({
       /* eslint-disable */
       songs: [
