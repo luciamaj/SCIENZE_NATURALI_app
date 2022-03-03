@@ -6,7 +6,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'wave',
-    component: () => import('@/views/Wave.vue'),
+    component: () => import('@/views/WaveB.vue'),
     beforeEnter: (to, from, next) => {
       if(localStorage.getItem('version')==null) {
         next('/onboard');
@@ -17,6 +17,16 @@ const routes: Array<RouteRecordRaw> = [
         return;
       }
     }
+  },
+  {
+    path: '/waveB',
+    name: 'waveB',
+    component: () => import('@/views/Wave.vue')
+  },
+  {
+    path: '/waveAW',
+    name: 'waveAW',
+    component: () => import('@/views/WaveBAudioWorklet.vue')
   },
   {
     path: '/onboard',

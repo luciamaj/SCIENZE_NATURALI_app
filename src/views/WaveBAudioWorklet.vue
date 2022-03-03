@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header>
       <ion-toolbar color="primary">
-        <ion-title slot="start" >Audible - {{store}}</ion-title>
+        <ion-title slot="start" >WAvE B - {{store}}</ion-title>
         <ion-buttons slot="primary">
           <ion-button @click="openMenuModal(notification)">
             <ion-icon slot="start" ios="ellipsis-horizontal" md="ellipsis-vertical"></ion-icon>
@@ -28,8 +28,8 @@
             <ion-button  class="test-btn" id="test" @click="openpage" >TEST</ion-button>
           </div>
           <!--ion-button expand="block" class="capture-btn" @click="openModal('en', 0, '00')">PROVA</ion-button-->
-           <audio src="/assets/sounds/E01AMP3E.mp3" id="audio-src" loop autoplay controls></audio>
         </div>
+       
       </div>
     </ion-content>
     
@@ -205,88 +205,93 @@ export default {
 
 
   methods: {
-  async setActiveTour() {
-    await Storage.set({
-      key: 'tourActive',
-      value:JSON.stringify({
-         active: true,
-        
-      })
-    });
-  },
-  async setInactiveTour() {
-    await Storage.set({
-      key: 'tourActive',
-      value:JSON.stringify({
-         active: false,
-        
-      })
-    });
-  },
-  async getTour() {
-    const ret = await Storage.get({ key: 'tourActive' });
-    const tour = JSON.parse(ret.value);
-    if(tour){
-       return tour.active;
-    }
-    else{
-      console.log("Not existing");
-      return null;
-    }
-   
-  },
-  async schedaState(state) {
-    console.log("openScheda");
-    await Storage.set({
-      key: 'openScheda',
-      value:state
-    });
-  },
-  async getSchedaState() {
-    const ret = await Storage.get({ key: 'openScheda' });
-    const scheda = JSON.parse(ret.value);
-    console.log("aaa ", scheda);
-    return scheda;
-  },
-  async showOptions() {
-    const alert = await alertController.create({
-      header: "Aggiornamento",
-      message: "Sono disponibili aggiornamenti dei contenuti",
-      buttons: [
-        {
-          text: "Scarica",
-          handler: () => {
-            console.log("Accepted");
-             this.emitter.emit('aggiorna');
+    async setActiveTour() {
+      await Storage.set({
+        key: 'tourActive',
+        value:JSON.stringify({
+          active: true,
+          
+        })
+      });
+    },
+    async setInactiveTour() {
+      await Storage.set({
+        key: 'tourActive',
+        value:JSON.stringify({
+          active: false,
+          
+        })
+      });
+    },
+    async getTour() {
+      const ret = await Storage.get({ key: 'tourActive' });
+      const tour = JSON.parse(ret.value);
+      if(tour){
+        return tour.active;
+      }
+      else{
+        console.log("Not existing");
+        return null;
+      }
+    
+    },
+    async schedaState(state) {
+      console.log("openScheda");
+      await Storage.set({
+        key: 'openScheda',
+        value:state
+      });
+    },
+    async getSchedaState() {
+      const ret = await Storage.get({ key: 'openScheda' });
+      const scheda = JSON.parse(ret.value);
+      console.log("aaa ", scheda);
+      return scheda;
+    },
+    async showOptions() {
+      const alert = await alertController.create({
+        header: "Aggiornamento",
+        message: "Sono disponibili aggiornamenti dei contenuti",
+        buttons: [
+          {
+            text: "Scarica",
+            handler: () => {
+              console.log("Accepted");
+              this.emitter.emit('aggiorna');
+            },
           },
-        },
-        {
-          text: "Postponi",
-          role: "cancel",
-          handler: () => {
-            console.log("Declined the offer");
-            this.notification=true;
+          {
+            text: "Postponi",
+            role: "cancel",
+            handler: () => {
+              console.log("Declined the offer");
+              this.notification=true;
+            },
           },
-        },
-      ],
-    });
+        ],
+      });
 
-    await alert.present();
-  },
-  openFirst() {
+      await alert.present();
+    },
+
+
+
+
+
+    openFirst() {
       menuController.enable(true, 'first');
       menuController.open('first');
     },
 
     findRoute(decodedString) {
       console.log(decodedString);
-       const data=localStorage.getItem("dataMostra")
-     
+        const data=localStorage.getItem("dataMostra")
+      
       const scheda= JSON.parse(data).find(x => x.tag == decodedString);
       const captureStop = document.getElementById("captureStop");
       
         // Dispatch/Trigger/Fire the event
-       // const event = new Event('pause');
+        // const event = new Event('pause');
       //  window.dispatchEvent(event);
       (async () => {
           const stato = await this.getSchedaState();
@@ -313,249 +318,115 @@ export default {
 
     onSend() {
 
-      
-     navigator.mediaDevices.getUserMedia( {audio:true}).then((mstream)=>{
-         console.log("stream 1  ",mstream);
-        console.log("audiotracks a caso ",mstream.getAudioTracks());
-         const track=mstream.getAudioTracks()[0]
-          if(track){
-            console.log("PIPPO ");
-               console.log("TRACK constr ",track.getConstraints());
-               console.log("TRACK settings ",track.getSettings());
-          }
-          
-      }).catch(function (e) { console.error(e);})
-
       this.setActiveTour();
       this. ggwave=null
       factory().then((obj) =>{
-          this.ggwave = obj;
-      });
-      window.AudioContext = window.AudioContext || window.webkitAudioContext;
-      window.OfflineAudioContext =
-      window.OfflineAudioContext || window.webkitOfflineAudioContext;
+        this.ggwave = obj;
 
-      
-
+        const audio=document.getElementById("audio-src");
         
-      const captureStart = document.getElementById("captureStart");
-      const captureStop = document.getElementById("captureStop");
-
-
-
-        const constraints = {
-        audio: {
-          // not sure if these are necessary to have
-          channelCount: 1,
-          echoCancellation: false,
-          autoGainControl: false,
-          noiseSuppression: false,
-          latency:0.01,
-
-        },
-        video: false
-      };
-
-      navigator.mediaDevices.enumerateDevices() .then(function(devices) {
-        devices.forEach(function(device) {
-          console.log(device.kind + ": " + device.label +
-                      " id = " + device.deviceId);
-        });
-      })
-      .catch(function(err) {
-        console.log(err.name + ": " + err.message);
-      });
-
-
-        navigator.mediaDevices.getUserMedia( constraints).then((stream)=>{
-           console.log("stream  2 ",stream);
-          console.log("audiotracks 2 ",stream.getAudioTracks());
-          const track=stream.getAudioTracks()[0]
-          if(track){
-            console.log("PIPPO ");
-               console.log("TRACK constr ",track.getConstraints());
-               console.log("TRACK settings ",track.getSettings());
-          }else{
-            console.log("NO TRACK");
-
-          }
-         
-          this.streamhandler(stream);
-
-          this.audioRecorder(stream);
-           /*const audio = document.createElement('audio');
-                    audio.controls = true;
-                    audio.autoplay = true;
-                    window.stream = stream;
-                    audio.srcObject = stream;*/
-
-
-        }).catch(function (e) {   console.error(e);})
-   
-
-
-      captureStop.addEventListener("click", ()=> {
-        if (this.recorder) {
-          this.recorder.disconnect(this.context.destination);
-         this.mediaStream.disconnect(this.recorder);
-          this.recorder = null;
-        }
-        this.setInactiveTour();
-        this.schedaState(false);
-        this.decodedValue = "stopped recording";
-        captureStart.hidden = false;
-        captureStop.hidden = true;
-      });
-
-      window.addEventListener('pause', ()=> {
-        if (this.recorder) {
-          this.recorder.disconnect(this.context.destination);
-          this.mediaStream.disconnect(this.recorder);
-          this.recorder = null;
-        }
-        this.decodedValue = "stopped recording";
-        captureStart.hidden = false;
-        captureStop.hidden = true;
-      });
-        this.decodedValue = "recording";
-      captureStart.hidden = true;
-      captureStop.hidden = false;
-
-      /*factory().then(ggwave => {
-        //eslint-disable no-console 
-      window.AudioContext = window.AudioContext || window.webkitAudioContext;
-      window.OfflineAudioContext =
-      window.OfflineAudioContext || window.webkitOfflineAudioContext;
-
-
-      const context =  new AudioContext({ latencyHint: 'interactive',sampleRate: 44100});
-      
-        
-
-        // create ggwave instance with default parameters
-        const parameters = ggwave.getDefaultParameters();
-        parameters.sampleRateInp = context.sampleRate;
-        parameters.sampleRateOut = context.sampleRate;
-        const instance = ggwave.init(parameters);
-
-        function convertTypedArray(src, type) {
-          const buffer = new ArrayBuffer(src.byteLength);
-          const baseView = new src.constructor(buffer).set(src);
-          return new type(buffer);
-        }
-
         const captureStart = document.getElementById("captureStart");
         const captureStop = document.getElementById("captureStop");
-        //init();
+
+
 
         const constraints = {
           audio: {
             // not sure if these are necessary to have
-            channelCount: 1,
-            echoCancellation: false,
-            autoGainControl: false,
-            noiseSuppression: false
+            echoCancellation: {exact: false},
+            autoGainControl:  {exact: false},
+            noiseSuppression: {exact: false},
+            echoCancellationType: 'system' 
+            
+          
           },
           video: false
         };
+
+       /* navigator.mediaDevices.getUserMedia( constraints).then((stream)=>{
+        console.log("audiotracks 2 ",stream.getAudioTracks());
+        const track=stream.getAudioTracks()[0]
+        if(track){
+          
+          console.log("PIPPO ");
+          console.log("TRACK constr ",track.getConstraints());
+          console.log("TRACK settings ",track.getSettings());
+          console.log(" capabilities ",track.getCapabilities());
+          this.settingSampleRate=track.getSettings().sampleRate;
+        }
       
+        //this.streamhandler(stream);
+         // this.audioRecorder(stream)
 
 
-        navigator.mediaDevices.enumerateDevices() .then(function(devices) {
-          devices.forEach(function(device) {
-            console.log(device.kind + ": " + device.label +
-                        " id = " + device.deviceId);
-          });
-        })
-        .catch(function(err) {
-          console.log(err.name + ": " + err.message);
+        }).catch(function (e) {   console.error(e);})*/
+        navigator.mediaDevices.getUserMedia( constraints).then((stream)=>{ this.onResponse(stream)})
+        .catch(function (e) {   console.error(e);})
+
+
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        window.OfflineAudioContext =
+        window.OfflineAudioContext || window.webkitOfflineAudioContext;
+    
+        captureStop.addEventListener("click", ()=> {
+          if (this.recorder) {
+            this.recorder.disconnect(this.context.destination);
+          this.mediaStream.disconnect(this.recorder);
+            this.recorder = null;
+          }
+          this.setInactiveTour();
+          this.schedaState(false);
+          this.decodedValue = "stopped recording";
+          captureStart.hidden = false;
+          captureStop.hidden = true;
         });
 
-
-        // GETMESDIA DEVICES
-        let recorder = null;
-        
-
-        navigator.mediaDevices.getUserMedia( constraints).then((stream)=>{
-            console.log("audiotracks 2 ",stream.getAudioTracks());
-            const mediaStream = context.createMediaStreamSource(stream);
-            const bufferSize = 16 * 1024;
-            const numberOfInputChannels = 1;
-            const numberOfOutputChannels = 1;
-        
-            if (context.createScriptProcessor) {
-
-              console.log("createScriptProcessor");
-              recorder = context.createScriptProcessor(
-                bufferSize,
-                numberOfInputChannels,
-                numberOfOutputChannels
-              );
-            } else {
-              console.log("createJavaScriptNode");
-                recorder = context.createJavaScriptNode(
-                bufferSize,
-                numberOfInputChannels,
-                numberOfOutputChannels
-              );
-            }
-          
-            recorder.onaudioprocess = e => {
-                
-              const source = e.inputBuffer.getChannelData(0);
-              //   console.log("instance ",instance);
-                
-              
-              const res = ggwave.decode(instance, convertTypedArray(new Float32Array(source), Int8Array));
-              if (res) {
-                    this.findRoute(res);
-                    this.decodedValue = res;
-              }
-            }
-            mediaStream.connect(recorder);
-            recorder.connect(context.destination);
-            
-            captureStop.addEventListener("click", ()=> {
-              if (recorder) {
-                recorder.disconnect(context.destination);
-                mediaStream.disconnect(recorder);
-                recorder = null;
-              }
-              this.setInactiveTour();
-              this.schedaState(false);
-              this.decodedValue = "stopped recording";
-              captureStart.hidden = false;
-              captureStop.hidden = true;
-            });
-
-            window.addEventListener('pause', ()=> {
-              if (recorder) {
-                recorder.disconnect(context.destination);
-                mediaStream.disconnect(recorder);
-                recorder = null;
-              }
-              this.decodedValue = "stopped recording";
-              captureStart.hidden = false;
-              captureStop.hidden = true;
-            });
-        }).catch(function (e) {   console.error(e);})
-
+        window.addEventListener('pause', ()=> {
+          if (this.recorder) {
+            this.recorder.disconnect(this.context.destination);
+            this.mediaStream.disconnect(this.recorder);
+            this.recorder = null;
+          }
+          this.decodedValue = "stopped recording";
+          captureStart.hidden = false;
+          captureStop.hidden = true;
+        });
         this.decodedValue = "recording";
         captureStart.hidden = true;
         captureStop.hidden = false;
-      });*/
+
+
+      });
+     
+     
+
     },
 
+    onResponse(stream){
+      console.log("RESPONSE ")
+      const audioContext = new AudioContext()
+      audioContext.audioWorklet.addModule('/audioWorklet/recorderWorkletProcessor.js')
+      const microphone = audioContext.createMediaStreamSource(stream)
+      const node = new AudioWorkletNode(audioContext, 'vumeter')
+      node.port.onmessage  = event => {
+          let _volume = 0
+          const _sensibility = 5
+          if (event.data.volume)
+              _volume = event.data.volume;
+          console.log("VOLUME "+(_volume * 100) / _sensibility)
+      }
+      microphone.connect(node).connect(audioContext.destination)
+    },
 
     audioRecorder(stream){
-     
+    
       const options = {mimeType: 'audio/webm'};
       const mediaRecorder = new MediaRecorder(stream, options);
-     
+      
       setTimeout(()=>{mediaRecorder.stop();},12000);
 
       
-       mediaRecorder.ondataavailable = this.handleDataAvailable;
+        mediaRecorder.ondataavailable = this.handleDataAvailable;
       mediaRecorder.start();
 
     },
@@ -573,14 +444,14 @@ export default {
         }*/
        
       const blob = new Blob(recordedChunks, {
-        type: 'video/webm'
+        type: 'audio/webm'
       });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       document.body.appendChild(a);
       a.style = 'display: none';
       a.href = url;
-      a.download = 'doppiotest.webm';
+      a.download = 'test.webm';
       a.click();
       window.URL.revokeObjectURL(url);
              
@@ -592,7 +463,7 @@ export default {
       return new type(buffer);
     },
     initcontext(){
-        this.context =  new AudioContext({ sampleRate: 48000});
+        this.context =  new AudioContext({ sampleRate: this.settingSampleRate});
         const parameters = this.ggwave.getDefaultParameters();
         parameters.sampleRateInp = this.context.sampleRate;
         parameters.sampleRateOut = this.context.sampleRate;
@@ -603,6 +474,7 @@ export default {
        this.initcontext();   
       console.log("audiotracks 2 ",stream.getAudioTracks());
       this.mediaStream = this.context.createMediaStreamSource(stream);
+      console.log("mdiastream handler ",  stream);
       const bufferSize = 16 * 1024;
       const numberOfInputChannels = 1;
       const numberOfOutputChannels = 1;

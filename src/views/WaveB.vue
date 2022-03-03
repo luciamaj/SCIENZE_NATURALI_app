@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header>
       <ion-toolbar color="primary">
-        <ion-title slot="start" >Audible - {{store}}</ion-title>
+        <ion-title slot="start" >WAvE B - {{store}}</ion-title>
         <ion-buttons slot="primary">
           <ion-button @click="openMenuModal(notification)">
             <ion-icon slot="start" ios="ellipsis-horizontal" md="ellipsis-vertical"></ion-icon>
@@ -11,7 +11,7 @@
          </ion-buttons>
       </ion-toolbar> 
     </ion-header>
-   
+  
     <ion-content :fullscreen="false">
      <!--ion-modal :is-open="true" :swipe-to-close="true">
   <ion-content>Modal Content</ion-content>
@@ -28,7 +28,6 @@
             <ion-button  class="test-btn" id="test" @click="openpage" >TEST</ion-button>
           </div>
           <!--ion-button expand="block" class="capture-btn" @click="openModal('en', 0, '00')">PROVA</ion-button-->
-           <audio src="/assets/sounds/E01AMP3E.mp3" id="audio-src" loop autoplay controls></audio>
         </div>
       </div>
     </ion-content>
@@ -88,6 +87,7 @@ export default {
   },
   mounted(){
     this.store=localStorage.getItem('version');
+   
     
 
   },
@@ -273,6 +273,19 @@ export default {
 
     await alert.present();
   },
+
+
+
+  inizialize(){
+    //navigator.mediaDevices.getUserMedia({audio: true});
+    navigator.mediaDevices.enumerateDevices().then((devices)=>{ 
+    const availableOutputDevices = devices.filter(device => device.kind === "audioinput");
+    this.selectedDeviceId = availableOutputDevices[1].deviceId;
+    console.log("DEV ", this.selectedDeviceId);
+    });
+       
+  },
+
   openFirst() {
       menuController.enable(true, 'first');
       menuController.open('first');
@@ -312,85 +325,64 @@ export default {
     },
 
     onSend() {
-
-      
-     navigator.mediaDevices.getUserMedia( {audio:true}).then((mstream)=>{
-         console.log("stream 1  ",mstream);
-        console.log("audiotracks a caso ",mstream.getAudioTracks());
-         const track=mstream.getAudioTracks()[0]
-          if(track){
-            console.log("PIPPO ");
-               console.log("TRACK constr ",track.getConstraints());
-               console.log("TRACK settings ",track.getSettings());
-          }
-          
-      }).catch(function (e) { console.error(e);})
-
+       this.inizialize();
       this.setActiveTour();
       this. ggwave=null
       factory().then((obj) =>{
           this.ggwave = obj;
-      });
-      window.AudioContext = window.AudioContext || window.webkitAudioContext;
-      window.OfflineAudioContext =
-      window.OfflineAudioContext || window.webkitOfflineAudioContext;
 
-      
-
+           const audio=document.getElementById("audio-src");
         
       const captureStart = document.getElementById("captureStart");
       const captureStop = document.getElementById("captureStop");
 
+   
 
-
-        const constraints = {
+       const constraints = {
         audio: {
           // not sure if these are necessary to have
-          channelCount: 1,
-          echoCancellation: false,
-          autoGainControl: false,
-          noiseSuppression: false,
-          latency:0.01,
-
+          echoCancellation: {exact: true},
+          autoGainControl:  {exact: false},
+          noiseSuppression: {exact: false},
+          deviceId:{exact: this.selectedDeviceId},
         },
         video: false
       };
 
       navigator.mediaDevices.enumerateDevices() .then(function(devices) {
         devices.forEach(function(device) {
-          console.log(device.kind + ": " + device.label +
-                      " id = " + device.deviceId);
+          console.log(device.kind + ": " , device);
         });
+        
       })
       .catch(function(err) {
         console.log(err.name + ": " + err.message);
       });
+      /*const stream=audio.captureStream();
+       this.streamhandler(stream);*/
+
+  
+      navigator.mediaDevices.getUserMedia( constraints).then((stream)=>{
+        console.log("audiotracks 2 ",stream.getAudioTracks());
+        const track=stream.getAudioTracks()[0]
+        if(track){
+          
+          console.log("PIPPO ");
+          console.log("TRACK constr ",track.getConstraints());
+          console.log("TRACK settings ",track.getSettings());
+          console.log(" capabilities ",track.getCapabilities());
+          this.settingSampleRate=track.getSettings().sampleRate;
+        }
+      
+        this.streamhandler(stream);
+        this.audioRecorder(stream)
 
 
-        navigator.mediaDevices.getUserMedia( constraints).then((stream)=>{
-           console.log("stream  2 ",stream);
-          console.log("audiotracks 2 ",stream.getAudioTracks());
-          const track=stream.getAudioTracks()[0]
-          if(track){
-            console.log("PIPPO ");
-               console.log("TRACK constr ",track.getConstraints());
-               console.log("TRACK settings ",track.getSettings());
-          }else{
-            console.log("NO TRACK");
+      }).catch(function (e) {   console.error(e);})
 
-          }
-         
-          this.streamhandler(stream);
-
-          this.audioRecorder(stream);
-           /*const audio = document.createElement('audio');
-                    audio.controls = true;
-                    audio.autoplay = true;
-                    window.stream = stream;
-                    audio.srcObject = stream;*/
-
-
-        }).catch(function (e) {   console.error(e);})
+      window.AudioContext = window.AudioContext || window.webkitAudioContext;
+      window.OfflineAudioContext =
+      window.OfflineAudioContext || window.webkitOfflineAudioContext;
    
 
 
@@ -421,131 +413,12 @@ export default {
       captureStart.hidden = true;
       captureStop.hidden = false;
 
-      /*factory().then(ggwave => {
-        //eslint-disable no-console 
-      window.AudioContext = window.AudioContext || window.webkitAudioContext;
-      window.OfflineAudioContext =
-      window.OfflineAudioContext || window.webkitOfflineAudioContext;
 
+      });
+     
+     
 
-      const context =  new AudioContext({ latencyHint: 'interactive',sampleRate: 44100});
-      
-        
-
-        // create ggwave instance with default parameters
-        const parameters = ggwave.getDefaultParameters();
-        parameters.sampleRateInp = context.sampleRate;
-        parameters.sampleRateOut = context.sampleRate;
-        const instance = ggwave.init(parameters);
-
-        function convertTypedArray(src, type) {
-          const buffer = new ArrayBuffer(src.byteLength);
-          const baseView = new src.constructor(buffer).set(src);
-          return new type(buffer);
-        }
-
-        const captureStart = document.getElementById("captureStart");
-        const captureStop = document.getElementById("captureStop");
-        //init();
-
-        const constraints = {
-          audio: {
-            // not sure if these are necessary to have
-            channelCount: 1,
-            echoCancellation: false,
-            autoGainControl: false,
-            noiseSuppression: false
-          },
-          video: false
-        };
-      
-
-
-        navigator.mediaDevices.enumerateDevices() .then(function(devices) {
-          devices.forEach(function(device) {
-            console.log(device.kind + ": " + device.label +
-                        " id = " + device.deviceId);
-          });
-        })
-        .catch(function(err) {
-          console.log(err.name + ": " + err.message);
-        });
-
-
-        // GETMESDIA DEVICES
-        let recorder = null;
-        
-
-        navigator.mediaDevices.getUserMedia( constraints).then((stream)=>{
-            console.log("audiotracks 2 ",stream.getAudioTracks());
-            const mediaStream = context.createMediaStreamSource(stream);
-            const bufferSize = 16 * 1024;
-            const numberOfInputChannels = 1;
-            const numberOfOutputChannels = 1;
-        
-            if (context.createScriptProcessor) {
-
-              console.log("createScriptProcessor");
-              recorder = context.createScriptProcessor(
-                bufferSize,
-                numberOfInputChannels,
-                numberOfOutputChannels
-              );
-            } else {
-              console.log("createJavaScriptNode");
-                recorder = context.createJavaScriptNode(
-                bufferSize,
-                numberOfInputChannels,
-                numberOfOutputChannels
-              );
-            }
-          
-            recorder.onaudioprocess = e => {
-                
-              const source = e.inputBuffer.getChannelData(0);
-              //   console.log("instance ",instance);
-                
-              
-              const res = ggwave.decode(instance, convertTypedArray(new Float32Array(source), Int8Array));
-              if (res) {
-                    this.findRoute(res);
-                    this.decodedValue = res;
-              }
-            }
-            mediaStream.connect(recorder);
-            recorder.connect(context.destination);
-            
-            captureStop.addEventListener("click", ()=> {
-              if (recorder) {
-                recorder.disconnect(context.destination);
-                mediaStream.disconnect(recorder);
-                recorder = null;
-              }
-              this.setInactiveTour();
-              this.schedaState(false);
-              this.decodedValue = "stopped recording";
-              captureStart.hidden = false;
-              captureStop.hidden = true;
-            });
-
-            window.addEventListener('pause', ()=> {
-              if (recorder) {
-                recorder.disconnect(context.destination);
-                mediaStream.disconnect(recorder);
-                recorder = null;
-              }
-              this.decodedValue = "stopped recording";
-              captureStart.hidden = false;
-              captureStop.hidden = true;
-            });
-        }).catch(function (e) {   console.error(e);})
-
-        this.decodedValue = "recording";
-        captureStart.hidden = true;
-        captureStop.hidden = false;
-      });*/
     },
-
 
     audioRecorder(stream){
      
@@ -573,14 +446,14 @@ export default {
         }*/
        
       const blob = new Blob(recordedChunks, {
-        type: 'video/webm'
+        type: 'audio/webm'
       });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       document.body.appendChild(a);
       a.style = 'display: none';
       a.href = url;
-      a.download = 'doppiotest.webm';
+      a.download = 'test.webm';
       a.click();
       window.URL.revokeObjectURL(url);
              
@@ -592,7 +465,7 @@ export default {
       return new type(buffer);
     },
     initcontext(){
-        this.context =  new AudioContext({ sampleRate: 48000});
+        this.context =  new AudioContext({ sampleRate: this.settingSampleRate});
         const parameters = this.ggwave.getDefaultParameters();
         parameters.sampleRateInp = this.context.sampleRate;
         parameters.sampleRateOut = this.context.sampleRate;
@@ -603,7 +476,8 @@ export default {
        this.initcontext();   
       console.log("audiotracks 2 ",stream.getAudioTracks());
       this.mediaStream = this.context.createMediaStreamSource(stream);
-      const bufferSize = 16 * 1024;
+      console.log("mdiastream handler ",  stream);
+    const bufferSize = 16 * 1024;
       const numberOfInputChannels = 1;
       const numberOfOutputChannels = 1;
   

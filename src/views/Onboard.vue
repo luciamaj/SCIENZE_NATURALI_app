@@ -2,7 +2,7 @@
   <ion-page>
     <div  class="onboard-main">
       <ion-fab vertical="bottom" horizontal="end" >
-        <ion-fab-button color="primary" v-on:click="next()"  class="next" :class="{invisible:last}">
+        <ion-fab-button color="primary" v-on:click="next()"  class=" swiper-button-next next" :class="{invisible:last}">
           <ion-icon name="chevron-forward"></ion-icon>
           </ion-fab-button>
       </ion-fab>
@@ -10,7 +10,7 @@
       <div class="onboard-top">
         <ion-toolbar>
           <ion-buttons >
-            <ion-button color="primary" v-on:click="goBack()" class="goback" :class="{invisible:isFirst}">
+            <ion-button color="primary" v-on:click="goBack()" class="swiper-button-prev goback" :class="{invisible:isFirst}">
                 <ion-icon name="chevron-back" ></ion-icon>
             </ion-button>
           </ion-buttons>
@@ -25,7 +25,7 @@
 
       <div class="onboard-bot">
                
-        <swiper :slides-per-view="1" :space-between="100" @swiper="onSwiper"    :observer="true" @slideChange="onSlideChange" :pagination="{ clickable: true ,  el: '.swiper-pagination', type: 'bullets'}" >
+        <swiper ref="slideSwiper" :slides-per-view="1" :space-between="100" @swiper="onSwiper"    :observer="true" @slideChange="onSlideChange" :navigation="{ nextEl: '.swiper-button-next',  prevEl: '.swiper-button-prev' }" :pagination="{ clickable: true ,  el: '.swiper-pagination', type: 'bullets'}" >
           <swiper-slide>
             <div class="onb-card">
               <ion-grid>

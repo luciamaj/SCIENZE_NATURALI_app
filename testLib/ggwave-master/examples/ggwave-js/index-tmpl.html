@@ -35,50 +35,8 @@
 
         <script type="text/javascript" src="ggwave.js"></script>
         <script type='text/javascript'>
-//test mic
-            function handleSuccess(stream) {
-                console.log("W STREAM", window.stream)
-                if (window.stream) {
-                    window.stream.getAudioTracks().forEach(track => track.stop());
-                    window.stream = null;
-                } else {
-                   /*const audio = document.createElement('audio');
-                    audio.controls = true;
-                   audio.autoplay = true;*/
-                    window.stream = stream;
 
-                    //setTimeout(() => {startCapture();  }, 2000);
-                    
-                   // audio.srcObject = stream;
-
-                    stream.oninactive = function() {
-                    console.log('Stream ended');
-                    };
-                }
-            }
             
-
-            function handleError(e){
-            console.log("ruin", e.message);
-            }
-
-            document.querySelector("#micTest").addEventListener('click', function(){
-            if ( window.stream ) {
-                this.innerText = "Test Microphone";
-            } else {
-                this.innerText = "Stop Test";
-            }
-            if (navigator.mediaDevices) {
-                const constraints =window.constraints= {
-                    audio:true,
-                    video: false
-                };
-                navigator.mediaDevices.getUserMedia(constraints).then(handleSuccess).catch(handleError)
-                setTimeout(() => {startCapture();  }, 2000);
-            }
-            });
-
-//end test mic
 
             window.AudioContext = window.AudioContext || window.webkitAudioContext;
             window.OfflineAudioContext = window.OfflineAudioContext || window.webkitOfflineAudioContext;
@@ -219,13 +177,13 @@
                
 
 
-               navigator.mediaDevices.getUserMedia( constraints).then((mstream)=>{
+               /*navigator.mediaDevices.getUserMedia( constraints).then((mstream)=>{
                     console.log("audiotracks a caso ",mstream.getAudioTracks());
                     handler(mstream);
                     
-                }).catch(function (e) {   console.error(e);})
+                }).catch(function (e) {   console.error(e);})*/
 
-               /* navigator.mediaDevices.getUserMedia( constraintsu).then((stream)=>{
+                navigator.mediaDevices.getUserMedia( constraintsu).then((stream)=>{
 
                     console.log("audiotracks 1 ",stream.getAudioTracks());
                     navigator.mediaDevices.getUserMedia( constraints).then((mstream)=>{
@@ -234,7 +192,7 @@
                     }).catch(function (e) {   console.error(e);})
                   
                     
-                }).catch(function (e) {   console.error(e);})*/
+                }).catch(function (e) {   console.error(e);})
 
                    
                 
