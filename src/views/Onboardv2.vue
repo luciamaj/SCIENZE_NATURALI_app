@@ -25,8 +25,9 @@
 
       <div class="onboard-bot">
                
-        <swiper ref="slideSwiper" class="mySwiper" @swiper="onSwiper"  :options="swiperOption"  @slideChange="onSlideChange"  >
-          <swiper-slide>
+        <div class="swiper-container"  @slideChange="onSlideChange" > 
+          <div class="swiper-wrapper">
+          <div class="swiper-slide">
             <div class="onb-card">
               <ion-grid>
                 <ion-row>
@@ -58,8 +59,8 @@
               </ion-grid>
                 
             </div>
-          </swiper-slide>
-            <swiper-slide>
+          </div>
+            <div class="swiper-slide">
               <div class="onb-card">
                   <div class="onb-img">
                       <img class="cover" src="/assets/background/dos.png" alt="">
@@ -71,8 +72,8 @@
 
                   </div>
               </div>
-          </swiper-slide>
-          <swiper-slide>
+           </div>
+          <div class="swiper-slide">
               <div class="onb-card">
                   <div class="onb-img">
                       <img class="cover" src="/assets/background/qr.png" alt="">
@@ -84,8 +85,8 @@
 
                   </div>
               </div>
-          </swiper-slide>
-          <swiper-slide>
+          </div>
+         <div class="swiper-slide">
               <div class="onb-card">
                   
                   <div class="onb-desc ion-text-center">
@@ -95,10 +96,11 @@
 
                   </div>
               </div>
-          </swiper-slide>
-
+          </div>>
+           </div>
           <div class="swiper-pagination"></div>
-        </swiper>
+
+        </div>
 
       </div>
     </div>
@@ -124,7 +126,9 @@ import {
 
 } from "@ionic/vue";
 import { Navigation, Pagination, Scrollbar, A11y } from 'swiper';
-import { Swiper, SwiperSlide } from "swiper/vue";
+import { Swiper } from "swiper";
+Swiper.use([Navigation, Pagination, Scrollbar, A11y ]);
+
 
 import "swiper/swiper.scss";
 import 'swiper/swiper-bundle.min.css'
@@ -177,14 +181,22 @@ export default {
       
       console.log('slide change');
     };
-
+    
   
     return {
       onSwiper,
       onSlideChange,
+    
 
       modules: [Navigation, Pagination, Scrollbar, A11y],
     };
+  },
+  mounted(){
+    this.swiper  =new Swiper('.swiper-container', {slidesPerView: 1,
+        spaceBetween: 100,
+        observer:true,
+        navigation:{ nextEl: '.next',  prevEl: '.prev' } ,
+        pagination:{ clickable: true ,  el: '.swiper-pagination', type: 'bullets'} });
   },
  
   components: {
@@ -196,8 +208,6 @@ export default {
     IonPage,
     IonButton,
     IonButtons,
-    Swiper,
-    SwiperSlide,
     IonFab,
     IonFabButton,
     IonProgressBar
@@ -224,9 +234,11 @@ export default {
     },
 
     next(){
-      const swiper = document.querySelector(".swiper-container").swiper;
-      swiper.slideNext();
-      this.slidechanged(swiper);
+      console.log("swippppppppeer", this.swiper);
+       //swiper = document.querySelector(".swiper-container");
+
+     // swiper.slideNext();
+      this.slidechanged( this.swiper);
       
     },
     slidechanged(swiper){
@@ -238,9 +250,9 @@ export default {
       }
     },
     goBack(){
-      const swiper = document.querySelector(".swiper-container").swiper;
-      swiper.slidePrev();
-      this.slidechanged(swiper);
+     
+       this.swiper.slidePrev();
+      this.slidechanged(this.swiper);
      
     
     },
@@ -377,8 +389,9 @@ ion-fab{
   flex-direction: column;
   justify-content: center;
 }
-.mySwiper{
-  width: 80vw;
+.swiper-container{
+  width: 85vw;
+  height: 61vh;
 }
 .swiper-slide{
   width: 100%;

@@ -17,12 +17,12 @@
          
         <ion-button expand="block" size="large" color="secondary" :disabled="!notification" @click="showOptions"> 
             <ion-icon slot="start" size="large" name="checkmark-circle-outline" /><ion-badge  mode="ios" color="danger" class="notification"  v-model="notificationState" :class="{showNotification:notificationState}">1</ion-badge>
-            <div class="button-text"> Aggiorna contenuti</div>
+            <div class="button-text"> {{$t('menu.content.title')}}</div>
             <ion-icon  slot="end" size="large" name="chevron-forward" />
         </ion-button>
-            <ion-button expand="block" size="large" color="secondary" > 
+            <ion-button expand="block" size="large" color="secondary"  @click="$router.push({ path: '/lang/' })" > 
             <ion-icon   slot="start" size="large" name="language" />
-            <div class="button-text"> Cambia lingua</div>
+            <div class="button-text">{{$t('menu.lang.title')}}</div>
             <ion-icon  slot="end" size="large" name="chevron-forward" />
         </ion-button>
         <ion-button expand="block" size="large" color="secondary" > 
@@ -56,6 +56,7 @@ import {
 import { data } from "../data/data";
 import { defineComponent } from "vue";
 import { Plugins } from "@capacitor/core";
+import { useI18n } from 'vue-i18n';
 const { Storage } = Plugins;
 
 
@@ -73,6 +74,7 @@ export default defineComponent({
   props: {
           notification: { type: Boolean, default: false },
   },
+  
   mounted(){
     console.log("NOTIFICATON "+ this.notification);
 

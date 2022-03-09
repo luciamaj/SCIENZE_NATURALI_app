@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router';
 import store from './store/store';
-import AudioRecorder from 'vue-audio-recorder';
+import i18n from './plugins/i18n';
 
 import { IonicVue } from '@ionic/vue';
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
@@ -58,10 +58,11 @@ const app = createApp(App)
   .use(IonicVue)
   .use(router)
   .use(store)
+  .use(i18n)
   .use(VuePlyr, {
     plyr: {}
   });
- 
+  
 router.isReady().then(() => {
   app.mount('#app');
 });

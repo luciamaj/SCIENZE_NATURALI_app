@@ -31,7 +31,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/onboard',
     name: 'onboard',
-    component: () => import('@/views/Onboard.vue')
+    component: () => import('@/views/Onboardv2.vue')
   },
   {
     path: '/subs/:lang/:timestamp/:videoParam/',
@@ -58,6 +58,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'video',
     component: () => import('@/views/Video.vue')
   },
+  
  /* {
     path: '/test',
     name: 'test',

@@ -23,7 +23,7 @@
           <div class="buttons">
           <ion-button expand="block" class="capture-btn" @click="onSend" id="captureStart">PLAY</ion-button>
           <ion-button expand="block" class="capture-btn" id="captureStop" hidden>STOP</ion-button>
-            <IonButton class="scan-btn" @click="openModal">INQUADRA UN QR CODE</IonButton>
+            <IonButton class="scan-btn" @click="openModal">{{$t('main.scan')}}</IonButton>
 
             <ion-button  class="test-btn" id="test" @click="openpage" >TEST</ion-button>
           </div>
@@ -52,6 +52,7 @@ import {
 import { data } from "../data/data";
 import Scanner from "./Scanner.vue";
 import Menu from "./Menu.vue";
+import Nav from "../components/Nav.vue";
 import factory from "ggwave";
 import { Plugins } from "@capacitor/core";
 import Subtitles from "./Subtitles.vue";
@@ -158,7 +159,7 @@ export default {
       const top = await modalController.getTop();
 
       const menumodal = await modalController.create({
-        component: Menu,
+        component: Nav,
         swipeToClose: true,
         presentingElement: top,
         componentProps: { 
