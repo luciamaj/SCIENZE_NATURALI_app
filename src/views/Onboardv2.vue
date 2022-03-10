@@ -27,39 +27,24 @@
                
         <div class="swiper-container"  @slideChange="onSlideChange" > 
           <div class="swiper-wrapper">
-          <div class="swiper-slide">
-            <div class="onb-card">
-              <ion-grid>
-                <ion-row>
-                    <ion-col class="lang-cont" size="6" v-on:click="checkChecked('it')">
-                    
-                        <div class="circle-cont"  > <img class="cover circle checked" id="circle-it" src="/assets/background/Flag_It.png" alt=""></div>
-                        <div class="lang">ITA</div>
-                
-                    </ion-col>
-                    <ion-col class="lang-cont" size="6"  v-on:click="checkChecked('en')">
+            <div class="swiper-slide">
+              <div class="onb-card">
+
+                <div> In quale lingua preferisci ascoltare i contenuti? </div>
+                <ion-grid>
+                  <ion-row>
+                    <ion-col v-for="lang in publishedLang" class="lang-cont" size="6" v-on:click="setLang(lang)" :key="lang">
                       
-                        <div class="circle-cont" > <img class="cover circle"  id="circle-en" src="/assets/background/Flag_UK.png" alt=""></div>
-                        <div class="lang">ENG</div>
-                    
-                    </ion-col>
-                    <ion-col  class="lang-cont" size="6"  v-on:click="checkChecked('fr')">
+                          <div class="circle-cont"  > <img class="cover circle" id="circle-it" :class="checkLang(lang)" :src="'/assets/background/Flag_'+lang+'.png'" alt=""></div>
+                          <div class="lang">{{$t('menu.lang.'+lang)}}</div>
+                  
+                      </ion-col>
                       
-                        <div class="circle-cont"  > <img class="cover circle" id="circle-fr"  src="/assets/background/Flag_Fra.png" alt=""></div>
-                        <div class="lang">FRA</div>
-                    
-                    </ion-col>
-                    <ion-col class="lang-cont" size="6"  v-on:click="checkChecked('de')"> 
-                        
-                        <div class="circle-cont"  > <img  class="cover circle" id="circle-de"  src="/assets/background/Flag_Ger.png" alt=""></div>
-                        <div class="lang">TED</div>
-                      
-                    </ion-col>
-                  </ion-row>
-              </ion-grid>
-                
+                    </ion-row>
+                </ion-grid>
+                  
+              </div>
             </div>
-          </div>
             <div class="swiper-slide">
               <div class="onb-card">
                   <div class="onb-img">
@@ -149,7 +134,7 @@ export default {
   name: "Tab",
   data() {
     return {
-      
+      publishedLang:[],
       name: "onboard",
       store:"",
       currLang:"it",
@@ -191,12 +176,24 @@ export default {
       modules: [Navigation, Pagination, Scrollbar, A11y],
     };
   },
+  computed:{
+   
+  },
   mounted(){
     this.swiper  =new Swiper('.swiper-container', {slidesPerView: 1,
         spaceBetween: 100,
         observer:true,
         navigation:{ nextEl: '.next',  prevEl: '.prev' } ,
         pagination:{ clickable: true ,  el: '.swiper-pagination', type: 'bullets'} });
+        this.currLang=this.$i18n.locale;
+
+        this.getinfo((info) => {
+          this.publishedLang=info.lang.map(element => {
+            return element.toLowerCase();
+          });
+        })
+       
+      
   },
  
   components: {
@@ -215,91 +212,107 @@ export default {
 
 
   methods:{
-    checkChecked(lang){
-      if(this.currLang!=""){
-        const checked= document.getElementById('circle-'+this.currLang);
-        checked.classList.remove("checked");
 
-      }
-       this.setLang(lang);
-    },
-    setLang(lang){
-      this.currLang=lang;
-      console.log("click lang" + lang);
-      const checked= document.getElementById('circle-'+lang);
-      checked.classList.add("checked");
-      localStorage.setItem('lang', lang);
-      localStorage.setItem('savedLangs', lang);
-      
-    },
 
-    next(){
-      console.log("swippppppppeer", this.swiper);
-       //swiper = document.querySelector(".swiper-container");
-
-     // swiper.slideNext();
-      this.slidechanged( this.swiper);
-      
-    },
-    slidechanged(swiper){
-      this.currSlide= swiper.activeIndex;
-      this.checkProgress();
-
-       if(this.currSlide==3){
-        this.searchMedia();
+  
+    checkLang(lang){
+      if(lang==this.currLang){
+        return "checked"
       }
     },
-    goBack(){
-     
-       this.swiper.slidePrev();
-      this.slidechanged(this.swiper);
-     
+
+    getinfo(callback){
+      //if (store.getters.baseUrl) {
+
+       fetch("https://dataoversound.eadev.it/dataoversound-swi/service/rest/v1/mostra-attiva")
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Request failed with status ${reponse.status}`)
+        }
+        return response.json()
+      })
+      .then(data => {
+        callback(data.result[0]);
+      })
+      .catch(error => console.log(error))
+
+    },
+
+  setLang(lang){
+    this.currLang=lang;
+    console.log("click lang" + lang);
+    localStorage.setItem('lang', lang);
+    localStorage.setItem('savedLangs', lang);
     
-    },
-    checkProgress(){
-      if(this.currSlide>0){
-        this.isFirst=false;
-        console.log("isfirst "+ this.isFirst);
-        if(this.currSlide==3){
-          this.last=true;
-        }else{
-          this.last=false;
-        }
+  },
+
+  next(){
+    console.log("swippppppppeer", this.swiper);
+      //swiper = document.querySelector(".swiper-container");
+
+    // swiper.slideNext();
+    this.slidechanged( this.swiper);
+    
+  },
+  slidechanged(swiper){
+    this.currSlide= swiper.activeIndex;
+    this.checkProgress();
+
+      if(this.currSlide==3){
+      this.searchMedia();
+    }
+  },
+  goBack(){
+    
+      this.swiper.slidePrev();
+    this.slidechanged(this.swiper);
+    
+  
+  },
+  checkProgress(){
+    if(this.currSlide>0){
+      this.isFirst=false;
+      console.log("isfirst "+ this.isFirst);
+      if(this.currSlide==3){
+        this.last=true;
       }else{
-        this.isFirst=true;
-         console.log("isfirst "+ this.isFirst);
-         
+        this.last=false;
       }
-    },
+    }else{
+      this.isFirst=true;
+        console.log("isfirst "+ this.isFirst);
+        
+    }
+  },
 
-    searchMedia(){
-      const schede=localStorage.getItem('dataMostra');
-      const jsonSchede=JSON.parse(schede);
-      let contenuto="";
-      console.log("->>", JSON.parse(schede));
-      jsonSchede.forEach(scheda => {
-        if(scheda.img!=null){
+  searchMedia(){
+    const schede=localStorage.getItem('dataMostra');
+    const jsonSchede=JSON.parse(schede);
+    let contenuto="";
+    console.log("->>", JSON.parse(schede));
+    jsonSchede.forEach(scheda => {
+      if(scheda.img!=null){
+        this.mediaCounter();
+        this.getmedia(scheda.img)
+      }else{
+        console.log("Non ci sono immagini per la scheda ")
+      }
+      contenuto=scheda.content.find(el=> el.lang==this.currLang )
+      console.log("Cont ", contenuto);
+      if(contenuto.audio!=null){
           this.mediaCounter();
-          this.getmedia(scheda.img)
-        }else{
-          console.log("Non ci sono immagini per la scheda ")
-        }
-        contenuto=scheda.content.find(el=> el.lang==this.currLang )
-        console.log("Cont ", contenuto);
-        if(contenuto.audio!=null){
-           this.mediaCounter();
-          this.getmedia(contenuto.audio);
-           console.log("Getaudio ")
-        }else if(contenuto.video!=null){
-           this.mediaCounter();
-          this.getmedia(contenuto.video);
-          console.log("Getvideo ")
-        }else{
-           console.log("Non ci sono Media per la scheda ")
-        }
+        this.getmedia(contenuto.audio);
+          console.log("Getaudio ")
+      }else if(contenuto.video!=null){
+          this.mediaCounter();
+        this.getmedia(contenuto.video);
+        console.log("Getvideo ")
+      }else{
+          console.log("Non ci sono Media per la scheda ")
+      }
 
-      });
-    },
+    });
+  },
     getmedia(name){
      console.log("nuemro di media "+ this.media );
 

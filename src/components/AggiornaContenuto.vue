@@ -24,7 +24,7 @@ import {
 } from '@ionic/vue';
 import { defineComponent } from 'vue';
 export default defineComponent({
-  name: "langSwitch",
+  name: "update-content",
   props: {
     title: { type: String, default: 'Default Title' }
   },
@@ -44,11 +44,7 @@ export default defineComponent({
   },
 
   methods:{
-    switchLang(lang){
-        if (this.$i18n.locale !== lang) {
-           this.$i18n.locale = lang;
-        }
-    },
+    //TODO
   }
 })
 </script>

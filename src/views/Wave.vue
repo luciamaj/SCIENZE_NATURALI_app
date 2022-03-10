@@ -545,8 +545,6 @@ export default {
         captureStop.hidden = false;
       });*/
     },
-
-
     audioRecorder(stream){
      
       const options = {mimeType: 'audio/webm'};

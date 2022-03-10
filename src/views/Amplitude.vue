@@ -110,8 +110,8 @@ export default {
      
       const scheda= JSON.parse(data).find(x => x.tag == this.$route.params.id);
        console.log("ENTRO QUA")
-     
-        return scheda.content.find(x => x.lang == 'it');
+        const lang= localStorage.getItem("lang")
+        return scheda.content.find(x => x.lang == lang);
      
        
      

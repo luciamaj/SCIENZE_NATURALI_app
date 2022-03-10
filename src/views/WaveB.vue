@@ -21,8 +21,8 @@
           <div class="logo-container"><img class="logo" src="/assets/background/dos.png"/></div>
             {{ntag}}
           <div class="buttons">
-          <ion-button expand="block" class="capture-btn" @click="onSend" id="captureStart">PLAY</ion-button>
-          <ion-button expand="block" class="capture-btn" id="captureStop" hidden>STOP</ion-button>
+          <ion-button expand="block" class="capture-btn" @click="onSend" id="captureStart">{{$t('main.start')}}</ion-button>
+          <ion-button expand="block" class="capture-btn" id="captureStop" hidden>{{$t('main.stop')}}</ion-button>
             <IonButton class="scan-btn" @click="openModal">{{$t('main.scan')}}</IonButton>
 
             <ion-button  class="test-btn" id="test" @click="openpage" >TEST</ion-button>
@@ -90,7 +90,6 @@ export default {
     this.store=localStorage.getItem('version');
    
     
-
   },
   components: {
     IonToolbar,
@@ -138,8 +137,9 @@ export default {
 
       modal.onDidDismiss().then(async _ => {
         console.log("dismissed");
-        const objStr = await Storage.get({ key: "path" });
+        const objStr = await Storage.get({ key: "scheda" });
         const obj = JSON.parse(objStr.value);
+         console.log("OGGETTO ",obj)
         console.log("OGGETTO ",obj.path)
         if (obj != null) {
           if (obj.path.type == "audio") {
@@ -150,7 +150,7 @@ export default {
         }
       });
 
-      await Storage.remove({ key: "path" });
+      await Storage.remove({ key: "scheda" });
 
       return modal.present();
     };
@@ -189,10 +189,7 @@ export default {
 
   },
   created(){
-   /* this.$parent.$on('changeVersion', _ => {
-      this.showOptions();
-    });*/
-    this.emitter.on('changeVersion', _ => {
+     this.emitter.on('changeVersion', _ => {
       this.showOptions();
     });
     
@@ -277,7 +274,8 @@ export default {
 
 
 
-  inizialize(){
+
+ /* inizialize(){
     //navigator.mediaDevices.getUserMedia({audio: true});
     navigator.mediaDevices.enumerateDevices().then((devices)=>{ 
     const availableOutputDevices = devices.filter(device => device.kind === "audioinput");
@@ -285,7 +283,7 @@ export default {
     console.log("DEV ", this.selectedDeviceId);
     });
        
-  },
+  },*/
 
   openFirst() {
       menuController.enable(true, 'first');
@@ -297,6 +295,8 @@ export default {
        const data=localStorage.getItem("dataMostra")
      
       const scheda= JSON.parse(data).find(x => x.tag == decodedString);
+      console.log("schedaaao ", scheda);
+      const content=scheda.content.find(x => x.lang == localStorage.getItem("lang"));
       const captureStop = document.getElementById("captureStop");
       
         // Dispatch/Trigger/Fire the event
@@ -305,16 +305,20 @@ export default {
       (async () => {
           const stato = await this.getSchedaState();
           console.log("statooo "+stato);
+          console.log("scheda.type "+ content.type);
         if (scheda != null) {
           if(stato==false||stato==null){
-            if (scheda.type == "audio") {
+            if (content.type == "audio") {
               console.log("audio");
-            //this.schedaState(true);
-            this.$router.push({ path: "/audio/" + decodedString });
-            } else {
-                console.log("video");
-          //  this.schedaState(true);
-            this.$router.push({ path: "/audio/" + decodedString });
+              //this.schedaState(true);
+              this.$router.push({ path: "/audio/" + decodedString });
+
+            }else if (content.type == "video"){
+              console.log("video");
+              //this.schedaState(true);
+              this.$router.push({ path: "/video/" + decodedString });
+            }else{
+               console.log("null");
             }
           }
         }
@@ -326,13 +330,16 @@ export default {
     },
 
     onSend() {
-       this.inizialize();
+     //  this.inizialize();
       this.setActiveTour();
       this. ggwave=null
       factory().then((obj) =>{
           this.ggwave = obj;
+       window.AudioContext = window.AudioContext || window.webkitAudioContext;
+      window.OfflineAudioContext =
+      window.OfflineAudioContext || window.webkitOfflineAudioContext;
 
-           const audio=document.getElementById("audio-src");
+         
         
       const captureStart = document.getElementById("captureStart");
       const captureStop = document.getElementById("captureStop");
@@ -342,7 +349,7 @@ export default {
        const constraints = {
         audio: {
           // not sure if these are necessary to have
-          echoCancellation: {exact: true},
+          echoCancellation: {exact: false},
           autoGainControl:  {exact: false},
           noiseSuppression: {exact: false},
           deviceId:{exact: this.selectedDeviceId},
@@ -376,14 +383,10 @@ export default {
         }
       
         this.streamhandler(stream);
-        this.audioRecorder(stream)
-
-
+        
       }).catch(function (e) {   console.error(e);})
 
-      window.AudioContext = window.AudioContext || window.webkitAudioContext;
-      window.OfflineAudioContext =
-      window.OfflineAudioContext || window.webkitOfflineAudioContext;
+    
    
 
 
@@ -420,7 +423,6 @@ export default {
      
 
     },
-
     audioRecorder(stream){
      
       const options = {mimeType: 'audio/webm'};
@@ -501,9 +503,7 @@ export default {
     
       this.recorder.onaudioprocess = e => {
           
-        const source = e.inputBuffer.getChannelData(0);
-          console.log("onaudioprocess entro");
-          
+        const source = e.inputBuffer.getChannelData(0);      
         
         const res = this.ggwave.decode(this.instance, this.convertTypedArray(new Float32Array(source), Int8Array));
         if (res) {
@@ -519,7 +519,19 @@ export default {
     openpage(){
      // this.$router.push({ path: "/audio/A0002"  });
       this.$router.push({ path: "/test"  });
-    }
+    },
+
+    async setObject(param) {
+      await Storage.set({
+        key: "scheda",
+        value: JSON.stringify({
+          path: param
+        })
+      });
+    },
+    async removeObj() {
+      await Storage.remove({ key: "scheda" });
+    },
   }
 };
 </script>
@@ -583,7 +595,9 @@ ion-content {
   width: 280px;
   margin: 15px auto;
 }
-
+#captureStart{
+    --background:var(--ion-color-secondary);
+}
 #captureStop {
   --background: #2d9fe3;
 }

@@ -49,10 +49,10 @@ import {
   modalController,
 alertController,
 } from '@ionic/vue';
-import { defineComponent } from 'vue';
+//import { defineComponent } from 'vue';
 import NavChild from '@/components/NavChild.vue';
 import Lang from '@/components/ChangeLang.vue';
-export default defineComponent({
+export default ({
 
     props: {
           notification: { type: Boolean, default: false },

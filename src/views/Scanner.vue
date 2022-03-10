@@ -24,7 +24,6 @@ import {
   IonIcon
 } from "@ionic/vue";
 import { QrStream } from "vue3-qr-reader";
-import { data } from "../data/data";
 import { defineComponent } from "vue";
 import { Plugins } from "@capacitor/core";
 const { Storage } = Plugins;
@@ -48,14 +47,14 @@ export default defineComponent({
     },
     async setObject(param) {
       await Storage.set({
-        key: "path",
+        key: "scheda",
         value: JSON.stringify({
           path: param
         })
       });
     },
     async removeObj() {
-      await Storage.remove({ key: "path" });
+      await Storage.remove({ key: "scheda" });
     },
     ionViewDidEnter() {
       console.log("remove obj");
@@ -63,8 +62,14 @@ export default defineComponent({
     },
     onDecode(decodedString) {
       this.value = decodedString.split('/');
-      //const audio = data.find(x => x.external_url == decodedString);
-      const dataEl = { index: this.value[ this.value.length-1], type: "audio" };
+      this.tag=this.value[ this.value.length-1]
+      let media = JSON.parse(localStorage.getItem("dataMostra")).find(x => x.tag == this.tag);
+      const lang= localStorage.getItem("lang")
+      media=media.content.find(x => x.lang == lang);
+       console.log("content",media);
+      //const dataEl = { index: this.value[ this.value.length-1], type: "audio" };
+ 
+      const dataEl = { index: this.tag, type: media.type };
      /* if (audio) {
         dataEl.index = audio.index;
         dataEl.type = audio.type;

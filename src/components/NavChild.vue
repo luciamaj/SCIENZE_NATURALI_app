@@ -21,8 +21,8 @@ import {
   IonTitle,
   IonToolbar
 } from '@ionic/vue';
-import { defineComponent } from 'vue';
-export default defineComponent({
+//import { defineComponent } from 'vue';
+export default ({
   props: {
     title: { type: String, default: 'Default Title' }
   },

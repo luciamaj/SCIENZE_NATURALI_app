@@ -7,7 +7,9 @@ export const en= {
     },
     main:{
 
-        scan:"Scan Qr code"
+        scan:"Scan Qr code",
+        start:"Start capture",
+        stop:"Stop capture",
     },
 
     menu:{
@@ -15,10 +17,14 @@ export const en= {
             title:"Update content"
         },
         lang:{
-            title:"Change lang",
+            title:"Language",
             add:"add new language",
             select:"select language",
-            alert:"Attention the content in the selected language will be downloaded"
+            alert:"Attention the content in the selected language will be downloaded",
+            it:"Italian",
+            en:"English",
+            fr:"French",
+            de:"German"
         }
     },
     menulangtitle:"Changes"

@@ -8,7 +8,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'wave',
     component: () => import('@/views/WaveB.vue'),
     beforeEnter: (to, from, next) => {
-      if(localStorage.getItem('version')==null) {
+      if(localStorage.getItem('pubblication')==null) {
         next('/onboard');
         
         return;

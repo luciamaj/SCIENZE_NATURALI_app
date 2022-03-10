@@ -25,6 +25,7 @@ export default defineComponent({
   },
   data() {
     return {
+      infoPubbl:{},
       mostra:"",
       pubblicazione:"",
       refreshing: false,
@@ -54,6 +55,7 @@ export default defineComponent({
       this.emitter.on('aggiorna', _ => {
       this.aggiorna();
     });
+    
 
   },
   mounted() {
@@ -63,18 +65,24 @@ export default defineComponent({
    
     this.getinfo((info) => {
       console.log("info", info);
+      this.infoPubbl=info;
+       this.infoPubbl.lang= this.infoPubbl.lang.map(element => {
+        return element.toLowerCase();
+      });
       this.mostra=info.mostra;
       this.pubblicazione=info.pubblicazione;
-   
-      if(localStorage.getItem('version')==null ||localStorage.getItem('version')=="" ){
+      const pubblication=localStorage.getItem('pubblication');
+      const jspubb=JSON.parse(pubblication);
+
+      if(pubblication==null ||pubblication=="" ){
         console.log("versione VUOTA");
          
-        localStorage.setItem('version', info.pubblicazione);
+        localStorage.setItem('pubblication', JSON.stringify(info));
         this.scaricaInfoMostra();
        
     
       }else{
-        if(localStorage.getItem('version')!=info.pubblicazione){
+        if(jspubb.pubblicazione!=info.pubblicazione){
           console.log("versione cambiata")///controllare e fare apparire popup di aggiornamento
           this.emitter.emit('changeVersion');
          
@@ -160,7 +168,7 @@ export default defineComponent({
 
     aggiorna(){
       console.log("aggiorno pubblicazione");
-      localStorage.setItem('version', this.pubblicazione);
+      localStorage.setItem('pubblication', JSON.stringify(this.infoPubbl));
       localStorage.removeItem('dataMostra');
       this.aggiornaInfo();
      // const newData= localStorage.getItem('dataMostra');
@@ -174,7 +182,8 @@ export default defineComponent({
         const filtered= retrivedinfo.filter( x => (x.mostra == this.mostra));
       
         console.log("Filtered " , filtered);
-        const JSONstring= JSON.stringify(filtered);
+        
+        const JSONstring= JSON.stringify(this.evendata(filtered));
         
       localStorage.setItem('dataMostra',JSONstring );
      
@@ -190,13 +199,51 @@ export default defineComponent({
         const filtered= retrivedinfo.filter( x => (x.mostra == this.mostra));
       
         console.log("Filtered " , filtered);
-        const JSONstring= JSON.stringify(filtered);
+        const JSONstring= JSON.stringify(this.evendata(filtered));
         
        localStorage.setItem('dataMostra',JSONstring );
        this.searchMedia(JSONstring);
       
       });
         
+    },
+
+    evendata(data){
+      const lang=this.infoPubbl.lang.filter( ( el ) =>{
+        return el!="it";
+      });
+      console.log("lang filter", this.infoPubbl.lang, " ", lang )
+      if(lang.length>0){
+        data.forEach(scheda => {
+        lang.forEach(lang => {
+         const contenuto=scheda.content.find(el=> el.lang==lang);
+             console.log("Cont ", contenuto);
+             console.log("Conttype ", contenuto.type);
+            if(contenuto.type==null) {
+                  
+              console.log("Non ci sono Media per la scheda  in "+ lang)
+              const contenutodefault=scheda.content.find(el=> el.lang=='it');
+
+              console.log("contenutoita "+ contenutodefault.type)
+              if(contenutodefault.type!=null){
+                contenuto.type=contenutodefault.type
+              }
+
+              if(contenutodefault.type=="audio") {
+                contenuto.audio=contenutodefault.audio;
+                console.log("Getaudio default ")
+              }else if(contenutodefault.type=="video"){
+                 contenuto.video=contenutodefault.video;
+             
+                console.log("Getvideo default ")
+              }
+              
+            }
+         });
+        });
+        
+      }
+      return data
     },
 
      searchMedia(schede){
@@ -235,7 +282,7 @@ export default defineComponent({
       fetch("https://dataoversound.eadev.it/dataoversound-swi/upload/"+name)
       .then(response => {
         if (!response.ok) {
-          throw new Error(`Request failed with status ${reponse.status}`)
+          throw new Error(`Request failed with status ${response.status}`)
         }
         console.log("OK Resp", response);
         if(response.status==200){
@@ -248,11 +295,6 @@ export default defineComponent({
            this.$router.push({ name: "wave" });
         }
         return response
-      })
-      .then(data => {
-       //console.log("media", data);
-        
-      
       })
       .catch(error => console.log(error))
     },

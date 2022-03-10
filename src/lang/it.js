@@ -8,7 +8,9 @@ export const it = {
     },
     main:{
 
-        scan:"Scansiona Qr code"
+        scan:"Scansiona Qr code",
+        start:"Inizia capture",
+        stop:"Stop capture",
     },
 
     menu:{
@@ -17,10 +19,14 @@ export const it = {
             title:"Aggiorna contenuti"
         },
         lang:{
-            title:"Cambia lingua",
+            title:"Lingue",
             add:"Aggiungi nuova lingua",
             select:"seleziona la lingua",
-            alert:"Attenzione questa azione comporta lo scricamento dei contenuti nella lingua scelta"
+            alert:"Attenzione questa azione comporta lo scricamento dei contenuti nella lingua scelta",
+            it:"Italiano",
+            en:"Inglese",
+            fr:"Francese",
+            de:"Tedesco"
         }
     },
     menulangtitle:"Cambia"
