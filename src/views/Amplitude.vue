@@ -3,7 +3,7 @@
     <ion-header>
       <ion-toolbar color="primary" >
         <ion-buttons slot="start">
-           <ion-back-button default-href="/" v-on:click="back" > </ion-back-button>
+           <ion-back-button default-href="/" v-on:click="back()" > </ion-back-button>
           <!--ion-button v-on:click="back()">
            
           </ion-button-->
@@ -18,21 +18,21 @@
        
         <div class="player">
           <img :src="cover" class="album-art" />
-          <ion-footer class="ion-no-border">
+          <div class="ion-no-border">
             <div class="meta-container">
 
              
               <div class="song-title">{{ contentScheda.titolo }} {{contentScheda.audio}}</div>
-              <div class="song-artist">{{ lang }}</div>
+             
 
               <div class="time-container">
                 <div class="current-time">
-                  <span class="amplitude-current-minutes" data-amplitude-song-index="0"></span>:
-                  <span class="amplitude-current-seconds" data-amplitude-song-index="0"></span>
+                  <span class="amplitude-current-minutes" data-amplitude-song-index="0">00</span>:
+                  <span class="amplitude-current-seconds" data-amplitude-song-index="0">00</span>
                 </div>
 
                 <div class="duration">
-                  <span class="amplitude-duration-minutes" data-amplitude-song-index="0">3</span>:
+                  <span class="amplitude-duration-minutes" data-amplitude-song-index="0">03</span>:
                   <span class="amplitude-duration-seconds" data-amplitude-song-index="0">30</span>
                 </div>
               </div>
@@ -48,7 +48,7 @@
               </div>
             </div>
             <div class="descrArea"   v-html="contentScheda.testo"> </div>
-          </ion-footer>
+          </div>
         </div>
 
        
@@ -64,7 +64,7 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
-  IonFooter,
+ 
   IonButtons,
   //IonIcon,
   //IonButton,
@@ -83,7 +83,7 @@ export default {
     IonTitle,
     IonContent,
     IonPage,
-    IonFooter,
+   
     IonButtons,
     //IonIcon,
   //  IonButton,
@@ -107,11 +107,12 @@ export default {
 
     contentScheda(){
        const data=localStorage.getItem("dataMostra")
-     
-      const scheda= JSON.parse(data).find(x => x.tag == this.$route.params.id);
+    
        console.log("ENTRO QUA")
         const lang= localStorage.getItem("lang")
-        return scheda.content.find(x => x.lang == lang);
+         
+      const scheda= this.dataSchede.content.find(x => x.lang == lang);
+      return scheda
      
        
      
@@ -189,7 +190,7 @@ export default {
         if(document.visibilityState=="visible"){
           this.setTimer();
         }else{
-           this.$router.replace({path:"/"});
+           this.back();
         }
          
 
@@ -219,6 +220,13 @@ export default {
      this.play();
   } ,
   methods:{
+    back() {
+      if (window.history.length > 1) {
+        this.$router.go(-1);
+      } else {
+        this.$router.push({ name: "wave" });
+      }
+    },
     play() {
       Amplitude.play();
       
@@ -302,10 +310,10 @@ div.player img.album-art {
 .descrArea{
   float: left;
   /* width: calc(100% - 60px); */
-  padding: 18px 25px;
+  padding: 5px 25px;
   max-height: 40vh;
   overflow: overlay;
-  margin-top: 4vh;
+  margin-top: 6vh;
 
 }
 /*
