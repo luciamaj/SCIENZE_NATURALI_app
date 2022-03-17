@@ -1,29 +1,22 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar color="primary" >
-        <ion-buttons slot="start">
-           <ion-back-button default-href="/" v-on:click="back()" > </ion-back-button>
-          <!--ion-button v-on:click="back()">
-           
-          </ion-button-->
+     <ion-header collapse="fade">
+      <ion-toolbar  mode="ios">
+        <ion-title>{{ contentScheda.titolo }} </ion-title>
+        <ion-buttons>
+          <ion-button v-on:click="back">
+            <ion-icon name="arrow-back"></ion-icon>
+          </ion-button>
         </ion-buttons>
-        <ion-title>{{ title }}</ion-title>
-        
       </ion-toolbar>
     </ion-header>
-
     <ion-content :fullscreen="true">
-      <div class="vertical-center">
-       
+      <div class="vertical-center">       
         <div class="player">
           <img :src="cover" class="album-art" />
-          <div class="ion-no-border">
-            <div class="meta-container">
-
-             
-              <div class="song-title">{{ contentScheda.titolo }} {{contentScheda.audio}}</div>
-             
+          <div class="ion-no-border content-scheda">
+            <div class="meta-container"> 
+              <div class="song-title">{{ contentScheda.titolo }}</div>
 
               <div class="time-container">
                 <div class="current-time">
@@ -68,7 +61,7 @@ import {
   IonButtons,
   //IonIcon,
   //IonButton,
-  IonBackButton, 
+
 } from "@ionic/vue";
 import Amplitude from "amplitudejs";
 import { data } from "../data/data";
@@ -87,7 +80,7 @@ export default {
     IonButtons,
     //IonIcon,
   //  IonButton,
-    IonBackButton, 
+
   },
   ionViewWillLeave() {
     console.log('Ampli will leave');
@@ -112,10 +105,9 @@ export default {
         const lang= localStorage.getItem("lang")
          
       const scheda= this.dataSchede.content.find(x => x.lang == lang);
+      console.log("che fine ha fatto la scheda? ",scheda);
       return scheda
-     
-       
-     
+
     },
     dataSchede(){
 
@@ -137,7 +129,7 @@ export default {
         return 'https://dataoversound.eadev.it/dataoversound-swi/upload/329.jpg'
        
       }
-      return 'https://dataoversound.eadev.it/dataoversound-swi/upload/(329)%2030_8_5.jpg';
+     
     },
     id() {
       return this.$route.params.id;
@@ -165,7 +157,7 @@ export default {
         console.log("audio ",audio.audio);
         return "https://dataoversound.eadev.it/dataoversound-swi/upload/"+audio.audio;
       } else {
-         console.log("audio ",audio.video);
+         console.log("video ",audio.video);
         return "https://dataoversound.eadev.it/dataoversound-swi/upload/"+ audio.video;
       }
     }
@@ -221,6 +213,7 @@ export default {
   } ,
   methods:{
     back() {
+       this.schedaState(false);
       if (window.history.length > 1) {
         this.$router.go(-1);
       } else {
@@ -313,7 +306,16 @@ div.player img.album-art {
   padding: 5px 25px;
   max-height: 40vh;
   overflow: overlay;
-  margin-top: 6vh;
+  margin-top: 4vh;
+  margin-bottom: 2vh;
+  /*bottom: 3vh;
+  position: absolute;*/
+
+}
+
+.content-scheda{
+    overflow: overlay;
+  height: 57vh;
 
 }
 /*
@@ -335,13 +337,13 @@ div.player img.album-art {
 div.meta-container {
   float: left;
   width: calc(100% - 270px);
-  padding: 10px;
+  padding: 10px 20px;
   max-height: 40vh;
 }
 div.meta-container div.song-title {
   text-align: center;
   color: #263238;
-  font-size: 30px;
+  font-size: 25px;
   font-weight: 600;
   font-family: "Open Sans", sans-serif;
 }
@@ -354,7 +356,7 @@ div.meta-container div.song-artist {
 }
 div.meta-container div.time-container {
   font-family: Helvetica;
-  font-size: 18px;
+  font-size: 15px;
   color: #000;
   margin-bottom: 10px;
 }

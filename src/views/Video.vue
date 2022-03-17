@@ -1,8 +1,8 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar color="primary" mode="ios">
-        <ion-title>{{ contenuto.titolo }}{{ lang}}</ion-title>
+    <ion-header collapse="fade">
+      <ion-toolbar  mode="ios">
+        <ion-title>{{ contenuto.titolo }} {{ lang}}</ion-title>
         <ion-buttons>
           <ion-button v-on:click="back">
             <ion-icon name="arrow-back"></ion-icon>
@@ -11,38 +11,36 @@
       </ion-toolbar>
     </ion-header>
     <ion-content>
-      <video  id="video">
+      <video  id="video" >
         <source :src="url" type="video/mp4" />
       </video>
+       <ion-icon class="expand" name="expand-outline" @click="expand()"></ion-icon>
 
-          <div class="ion-no-border">
-            <div class="meta-container">
+      <div class="ion-no-border content-scheda">
 
-             
-              <div class="song-title">{{ contenuto.titolo }} {{contenuto.audio}}</div>
-             
+        <div class="meta-container">
 
-            
-              <div class="time-container">
-                <div class="current-time">
-                  <span class="amplitude-current-minutes" data-amplitude-song-index="0">{{current.min}}</span>:
-                  <span class="amplitude-current-seconds" data-amplitude-song-index="0">{{current.sec}}</span>
-                </div>
-
-                <div class="duration">
-                  <span class="amplitude-duration-minutes" data-amplitude-song-index="0">{{duration.min}}</span>:
-                  <span class="amplitude-duration-seconds" data-amplitude-song-index="0">{{duration.sec}}</span>
-                </div>
-              </div>
-              <progress class="amplitude-song-played-progress" :value="progress" :buffer="1" color="secondary"></progress>
-              <div class="control-container">
-                <div class="amplitude-prev"></div>
-                <div class="amplitude-play-pause amplitude-paused" :class="checkPlay()" @click="playpause"></div>
-                <div class="amplitude-next"></div>
-              </div>
+          <div class="song-title">{{ contenuto.titolo }} </div>
+          <progress class="amplitude-song-played-progress" :value="progress" :buffer="1" color="secondary"></progress>
+            <div class="time-container">
+            <div class="current-time">
+              <span class="amplitude-current-minutes" data-amplitude-song-index="0">{{current.min}}</span>:
+              <span class="amplitude-current-seconds" data-amplitude-song-index="0">{{current.sec}}</span>
             </div>
-            <div class="descrArea"   v-html="contenuto.testo"> </div>
+
+            <div class="duration">
+              <span class="amplitude-duration-minutes" data-amplitude-song-index="0">{{duration.min}}</span>:
+              <span class="amplitude-duration-seconds" data-amplitude-song-index="0">{{duration.sec}}</span>
+            </div>
           </div>
+          <div class="control-container">
+            <div class="amplitude-prev"></div>
+            <div class="amplitude-play-pause " :class="checkPlay()" @click="playpause"></div>
+            <div class="amplitude-next"></div>
+          </div>
+        </div>
+        <div class="descrArea"   v-html="contenuto.testo"> </div>
+      </div>
     </ion-content>
   </ion-page>
 </template>
@@ -59,6 +57,7 @@ import {
   IonIcon,
  // IonProgressBar
 } from "@ionic/vue";
+import Amplitude from "amplitudejs";
 
 import { data } from "../data/data";
 
@@ -147,6 +146,9 @@ export default {
            this.back();
         }
     }
+
+
+   
    
   },
 
@@ -193,6 +195,16 @@ export default {
           return  'amplitude-playing'
 
         }
+    },
+    expand(){
+      const vid=document.getElementById('video');
+      if (vid.requestFullscreen) {
+        vid.requestFullscreen();
+      } else if (vid.webkitRequestFullscreen) { /* Safari */
+        vid.webkitRequestFullscreen();
+      } else if (vid.msRequestFullscreen) { /* IE11 */
+        vid.msRequestFullscreen();
+      }
     },
      inactivityTime(){
        document.ontouchmove = this.resetTimer;
@@ -297,14 +309,33 @@ div.player img.album-art {
 .descrArea{
   float: left;
   /* width: calc(100% - 60px); */
-  padding: 18px 25px;
+  padding:5px 25px;
   max-height: 40vh;
   overflow: overlay;
-  margin-top: 4vh;
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+  /*bottom: 3vh;
+  position: absolute;*/
+
+}
+.content-scheda{
+  overflow: overlay;
+  height: 57vh;
 
 }
 video {
   width: 100%;
+}
+.expand{
+  position: relative;
+    bottom: 7vh;
+    
+    left: 90vw;
+    color: white;
+    height: 3vh;
+    width: 3vh;
+    background: #ffffff21;
+
 }
 
 @media screen and (max-width: 39.9375em) {
@@ -323,13 +354,13 @@ video {
 div.meta-container {
   float: left;
   width: calc(100% - 270px);
-  padding: 10px;
+  padding: 10px 20px;
   max-height: 40vh;
 }
-div.meta-container div.song-title {
-  text-align: center;
+ div.song-title {
+  text-align: le;
   color: #263238;
-  font-size: 30px;
+  font-size: 25px;
   font-weight: 600;
   font-family: "Open Sans", sans-serif;
 }
@@ -342,9 +373,9 @@ div.meta-container div.song-artist {
 }
 div.meta-container div.time-container {
   font-family: Helvetica;
-  font-size: 18px;
+  font-size: 15px;
   color: #000;
-  margin-bottom: 10px;
+  margin-top: 10px;
 }
 div.meta-container div.time-container:after {
   content: "";
@@ -374,7 +405,7 @@ div.meta-container div.time-container div.duration {
 */
 div.control-container {
   text-align: center;
-  margin-top: 4vh;
+  margin-top: 1vh;
 }
 div.control-container div.amplitude-prev {
   width: 28px;
@@ -385,17 +416,23 @@ div.control-container div.amplitude-prev {
   vertical-align: middle;
 }
 div.control-container div.amplitude-play-pause {
-  width: 40px;
-  height: 44px;
+  width: 35px;
+  height: 41px;
   cursor: pointer;
   display: inline-block;
   vertical-align: middle;
 }
 div.control-container div.amplitude-play-pause.amplitude-paused {
   background: url("https://521dimensions.com/img/open-source/amplitudejs/examples/multiple-songs/play.svg");
+  
+    background-size: cover;
+
 }
 div.control-container div.amplitude-play-pause.amplitude-playing {
   background: url("https://521dimensions.com/img/open-source/amplitudejs/examples/multiple-songs/pause.svg");
+  
+    background-size: cover;
+
 }
 div.control-container div.amplitude-next {
   width: 28px;
