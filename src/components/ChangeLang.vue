@@ -30,7 +30,7 @@
     </ion-grid>
 
 
-    <ion-button v-if="remaining.length>0" expand="block" size="slim" color="primary"  @click="presentActionSheet">  {{$t('menu.lang.add')}} </ion-button>
+    <ion-button v-if="remaining.length>0" expand="block" size="slim" color="primary" class="add-lang" @click="presentActionSheet">  {{$t('menu.lang.add')}} </ion-button>
 
 
 
@@ -47,6 +47,7 @@
 </template>
 
 <script lang="ts">
+import router from '@/router';
 import {
   IonButtons,
   IonBackButton,
@@ -58,6 +59,7 @@ import {
   actionSheetController ,
   
   } from '@ionic/vue';
+  //import scaricamento from '@../view/Scaricamento.vue';
 //import { defineComponent } from 'vue';
 export default ({
   name: "langSwitch",
@@ -155,7 +157,7 @@ export default ({
           remainingArray.push(lang)
         });
         const cancelbutton={
-              text: 'Cancel',
+              text: this.$t('action.cancel'),
               role: 'cancel',
               handler: () => {
                 console.log('Cancel clicked')
@@ -191,14 +193,19 @@ export default ({
            console.log("navigator langs", navigator.language );
            console.log("langs",pubblication.lang );
            console.log("lang "+ suppLang);
-           if(suppLang){
-              this.searchMedia(lang);
-           }else{
-              this.searchMedia('it');
-           }
-          
             this.savedLangs=lang;
             this.remaining=this.remaining.filter(item => item !== lang);
+           if(suppLang){
+              //this.searchMedia(lang);
+              this.$router.replace({ path: "/scarica/"+ lang});
+             // this.pushPage()
+           }else{
+              //this.searchMedia('it');
+              this.$router.replace({ path: "/scarica/it"});
+              //this.pushPage();
+           }
+          
+           
            
           },
         },
@@ -295,6 +302,14 @@ export default ({
       .catch(error => console.log(error))
     },
 
+    /*pushPage() {
+      const ionNav = document.querySelector('ion-nav') as any;
+  
+        ionNav.push(scaricamento, { title: 'Changeeee' });
+  
+    
+    },*/
+
   }
 })
 </script>
@@ -339,6 +354,11 @@ export default ({
     display: flex;
     align-items: center;
     font-size: 20px;
+ }
+ .add-lang{
+  position: absolute;
+    bottom: 5vh;
+    width: 91vw;
  }
 
 

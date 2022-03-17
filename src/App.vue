@@ -202,7 +202,8 @@ export default defineComponent({
         const JSONstring= JSON.stringify(this.evendata(filtered));
         
        localStorage.setItem('dataMostra',JSONstring );
-       this.searchMedia(JSONstring);
+       //this.searchMedia(JSONstring);
+       this.$router.replace({ path: "/scarica/"+ localStorage.getItem('lang')});
       
       });
         

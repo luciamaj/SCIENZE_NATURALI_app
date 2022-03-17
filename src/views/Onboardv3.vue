@@ -71,17 +71,6 @@
                   </div>
               </div>
           </div>
-         <div class="swiper-slide">
-              <div class="onb-card">
-                  
-                  <div class="onb-desc ion-text-center">
-                      <h4>Scarico i contenuti</h4>
-                      <p class="ion-no-margin">A breve l'applicazione sarà pronta all'uso</p>
-                      <ion-progress-bar :value="progress" :buffer="1" color="secondary"></ion-progress-bar>
-
-                  </div>
-              </div>
-          </div>>
            </div>
           <div class="swiper-pagination"></div>
 
@@ -121,7 +110,7 @@ import 'swiper/swiper.min.css'
 import 'swiper/components/navigation/navigation.min.css'
 import 'swiper/components/pagination/pagination.min.css'
 import"swiper/components/pagination/pagination.scss"
-import { IonProgressBar } from '@ionic/vue'
+
 
 //import { data } from "../data/data";
 
@@ -207,7 +196,7 @@ export default {
     IonButtons,
     IonFab,
     IonFabButton,
-    IonProgressBar
+   
   },
 
 
@@ -258,8 +247,8 @@ export default {
     this.currSlide= swiper.activeIndex;
     this.checkProgress();
 
-      if(this.currSlide==3){
-        this.searchMedia();
+      if(this.currSlide==2){
+        this.$router.replace({ path: "/scarica/"+ localStorage.getItem('lang')});
       }
   },
   goBack(){
@@ -273,7 +262,7 @@ export default {
     if(this.currSlide>0){
       this.isFirst=false;
       console.log("isfirst "+ this.isFirst);
-      if(this.currSlide==3){
+      if(this.currSlide==2){
         this.last=true;
       }else{
         this.last=false;
@@ -331,7 +320,7 @@ export default {
         this.progress=this.mediafetched/this.media;
         console.log("progress ",  this.progress);
         if(this.progress==1){
-           this.$router.push({ name: "wave" });
+           this.$router.replace({ name: "wave" });
         }
         return response
       })
