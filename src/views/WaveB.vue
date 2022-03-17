@@ -2,11 +2,11 @@
   <ion-page>
     <ion-header class="ion-no-border">
       <ion-toolbar >
-        <ion-title slot="start" >WAvE B - {{store}}</ion-title>
+        <ion-title slot="start" >WAvE B - {{store.mostra}}</ion-title>
         <ion-buttons slot="primary">
           <ion-button @click="openMenuModal(notification)">
             <ion-icon slot="start" ios="ellipsis-horizontal" md="ellipsis-vertical"></ion-icon>
-            <ion-badge  mode="ios" id="badge" color="danger" class="notification" :class="{showNotification:notification}">1</ion-badge>
+            <ion-badge  mode="ios" id="badge" color="danger" class="notification" :class="{showNotification:notification}">0</ion-badge>
           </ion-button>
          </ion-buttons>
       </ion-toolbar> 
@@ -87,7 +87,7 @@ export default {
 
   },
   mounted(){
-    this.store=localStorage.getItem('version');
+    this.store=JSON.parse(localStorage.getItem('pubblication'));
    
     
   },
@@ -609,6 +609,15 @@ ion-content {
   width: 10px;
   visibility:hidden;
   height: 16px;
+  
+  position: absolute;
+  top: 3px;
+  right: 1px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: transparent;
+
 }
 .showNotification{
   visibility: visible;

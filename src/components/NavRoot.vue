@@ -14,7 +14,7 @@
     <div class="button-container">
          
         <ion-button expand="block" size="large" color="secondary" :disabled="!notification" @click="showOptions"> 
-            <ion-icon slot="start" size="large" name="checkmark-circle-outline" /><ion-badge  mode="ios" color="danger" class="notification"  v-model="notificationState" :class="{showNotification:notificationState}">1</ion-badge>
+            <ion-icon slot="start" size="large" name="checkmark-circle-outline" /><ion-badge  mode="ios" color="danger" class="notification"  v-model="notificationState"   :class="{showNotification:notificationState}">0</ion-badge>
             <div class="button-text"> {{$t('menu.content.title')}}</div>
             <ion-icon  slot="end" size="large" name="chevron-forward" />
         </ion-button>
@@ -158,16 +158,23 @@ margin-top: 30px;
     
 }
 .button-text{
-       width: 80%;
+    width: 80%;
     text-align: start;
     padding-left: 13px;
     font-size: 0.9em;
    
 }
 .notification{
-  width: 10px;
-  visibility:hidden;
-  height: 16px;
+     width: 10px;
+    visibility: hidden;
+    height: 16px;
+    position: absolute;
+    top: 14px;
+    left: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: transparent;
 }
 .showNotification{
   visibility: visible;
