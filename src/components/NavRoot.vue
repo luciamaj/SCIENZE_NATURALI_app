@@ -2,7 +2,7 @@
   <ion-header>
     <ion-toolbar>
      
-      <ion-title>Nav - Root</ion-title>
+      <ion-title >Nav - Root  </ion-title>
        <ion-buttons slot="end" >
         <ion-button  @click="dismiss"><ion-icon size="large" name="chevron-down-outline" /></ion-button>
       </ion-buttons>
@@ -53,11 +53,27 @@ alertController,
 import NavChild from '@/components/NavChild.vue';
 import Lang from '@/components/ChangeLang.vue';
 export default ({
-
+    
     props: {
-          notification: { type: Boolean, default: false },
+        titolo: String,
+        notification: Boolean
     },
-        components: {
+    /*computed:{
+        titolo(){
+            const titolo=this.params
+            console.log("aaaaaaaaaaaaaaaaa ",this.params)
+            return titolo
+        }
+    },*/
+   /* setup(){
+        const titolo=this.navParams.get("titolo")
+         return{
+             titolo
+         }
+     },*/
+          
+   
+    components: {
         IonButtons,
         IonButton,
         IonContent,

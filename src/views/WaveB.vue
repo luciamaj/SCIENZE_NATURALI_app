@@ -1,12 +1,12 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar color="primary">
+    <ion-header class="ion-no-border">
+      <ion-toolbar >
         <ion-title slot="start" >WAvE B - {{store}}</ion-title>
         <ion-buttons slot="primary">
           <ion-button @click="openMenuModal(notification)">
             <ion-icon slot="start" ios="ellipsis-horizontal" md="ellipsis-vertical"></ion-icon>
-            <ion-badge  mode="ios" color="danger" class="notification" :class="{showNotification:notification}">1</ion-badge>
+            <ion-badge  mode="ios" id="badge" color="danger" class="notification" :class="{showNotification:notification}">1</ion-badge>
           </ion-button>
          </ion-buttons>
       </ion-toolbar> 
@@ -163,7 +163,7 @@ export default {
         swipeToClose: true,
         presentingElement: top,
         componentProps: { 
-          notification:notification,
+          updateNotification:notification,
           
         }
       });
@@ -518,7 +518,7 @@ export default {
 
     openpage(){
      // this.$router.push({ path: "/audio/A0002"  });
-      this.$router.push({ path: "/test"  });
+      this.$router.push({ path: "/testjava"  });
     },
 
     async setObject(param) {

@@ -19,6 +19,11 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
+    path: '/scarica/:lang',
+    name: 'scarica',
+    component: () => import('@/views/Scaricamento.vue')
+  },
+  {
     path: '/waveB',
     name: 'waveB',
     component: () => import('@/views/Wave.vue')
@@ -31,7 +36,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/onboard',
     name: 'onboard',
-    component: () => import('@/views/Onboardv2.vue')
+    component: () => import('@/views/Onboardv3.vue')
   },
   {
     path: '/subs/:lang/:timestamp/:videoParam/',
@@ -58,6 +63,12 @@ const routes: Array<RouteRecordRaw> = [
     name: 'video',
     component: () => import('@/views/Video.vue')
   },
+  {
+    path: '/testjava',
+    name: 'testJava',
+    component: () => import('@/views/SimplePage.vue')
+  },
+
   
  /* {
     path: '/test',
