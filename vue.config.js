@@ -29,6 +29,20 @@ module.exports = {
                     handler: 'staleWhileRevalidate',
 
                 },
+                {
+
+                    urlPattern: new RegExp('https://dataoversound.eadev.it/dataoversound-swi/service/rest/v1/mostra-attiva'),
+
+                    handler: 'NetworkFirst',
+
+                },
+                {
+
+                    urlPattern: new RegExp('https://dataoversound.eadev.it/dataoversound-swi/service/rest/v1/app-schede-audible'),
+
+                    handler: 'NetworkFirst',
+
+                },
 
                 {
 
@@ -37,6 +51,8 @@ module.exports = {
                     handler: 'CacheFirst',
 
                 },
+                
+
 
             ]
 
