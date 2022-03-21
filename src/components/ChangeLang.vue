@@ -287,8 +287,8 @@ export default ({
 
     getmedia(name){
      console.log("numero di media "+ this.media );
-     // fetch("https://dataoversound.eadev.it/dataoversound-swi/inventario/download.php?id="+name+"&link=1")
-      fetch("https://dataoversound.eadev.it/dataoversound-swi/upload/"+name)
+     // fetch(this.$store.getters.baseUrl+"/inventario/download.php?id="+name+"&link=1")
+      fetch(this.$store.getters.baseUrl+"/upload/"+name)
       .then(response => {
         if (!response.ok) {
           throw new Error(`Request failed with status ${response.status}`)

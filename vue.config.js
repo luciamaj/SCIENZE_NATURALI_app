@@ -31,14 +31,14 @@ module.exports = {
                 },
                 {
 
-                    urlPattern: new RegExp('https://dataoversound.eadev.it/dataoversound-swi/service/rest/v1/mostra-attiva'),
+                    urlPattern: new RegExp(this.$store.getters.baseUrl+'/service/rest/v1/mostra-attiva'),
 
                     handler: 'NetworkFirst',
 
                 },
                 {
 
-                    urlPattern: new RegExp('https://dataoversound.eadev.it/dataoversound-swi/service/rest/v1/app-schede-audible'),
+                    urlPattern: new RegExp(this.$store.getters.baseUrl+'/service/rest/v1/app-schede-audible'),
 
                     handler: 'NetworkFirst',
 

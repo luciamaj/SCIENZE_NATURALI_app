@@ -1,4 +1,5 @@
-import { createApp } from 'vue'
+import { createApp} from 'vue'
+import Vue from 'vue'
 import App from './App.vue'
 import router from './router';
 import store from './store/store';
@@ -9,6 +10,8 @@ import { defineCustomElements } from '@ionic/pwa-elements/loader';
 
 import VuePlyr from "vue-plyr";
 import "vue-plyr/dist/vue-plyr.css";
+import { loadScript } from "vue-plugin-load-script";
+import { conf } from "./config/config";
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css';
@@ -47,13 +50,22 @@ const currentIcons = Object.keys(allIcons).map(i => {
   };
 });
 
-
+const confurl = "./config/config.js";
 
 const emitter = mitt();
 
 const iconsObject = Object.assign({}, ...currentIcons);
 addIcons(iconsObject);
 
+
+loadScript(confurl)
+.then(() => {
+
+  store.commit("confSet", conf);
+  store.commit("baseUrlSet", conf.baseUrl);
+
+
+});
 const app = createApp(App)
   .use(IonicVue)
   .use(router)

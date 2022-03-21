@@ -124,9 +124,9 @@ export default {
       console.log("che c'è? "+ audio + this.dataSchede.img);
       if (audio && this.dataSchede.img) {
         console.log("c'è audio e iimmmagine");
-        return "https://dataoversound.eadev.it/dataoversound-swi/upload/"+this.dataSchede.img;
+        return this.$store.getters.baseUrl+"/upload/"+this.dataSchede.img;
       } else {
-        return 'https://dataoversound.eadev.it/dataoversound-swi/upload/329.jpg'
+        return this.$store.getters.baseUrl+'/upload/329.jpg'
        
       }
      
@@ -155,10 +155,10 @@ export default {
       const audio=this.contentScheda;
       if (audio.audio) {
         console.log("audio ",audio.audio);
-        return "https://dataoversound.eadev.it/dataoversound-swi/upload/"+audio.audio;
+        return this.$store.getters.baseUrl+"/upload/"+audio.audio;
       } else {
          console.log("video ",audio.video);
-        return "https://dataoversound.eadev.it/dataoversound-swi/upload/"+ audio.video;
+        return this.$store.getters.baseUrl+"/upload/"+ audio.video;
       }
     }
   },

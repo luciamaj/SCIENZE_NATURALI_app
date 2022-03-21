@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <div  class="onboard-main">
-      <ion-fab vertical="bottom" horizontal="end" >
+      <ion-fab class="button-next" vertical="bottom" horizontal="end" >
         <ion-fab-button color="primary" v-on:click="next()"  class="next" :class="{invisible:last}">
           <ion-icon name="chevron-forward"></ion-icon>
           </ion-fab-button>
@@ -25,10 +25,10 @@
 
       <div class="onboard-bot">
                
-        <div class="swiper-container"  @slideChange="onSlideChange" > 
+        <div class="swiper swiper-creative  swiper-initialized swiper-vertical swiper-pointer-events swiper-container"  @slideChange="onSlideChange" ref="swiper" > 
           <div class="swiper-wrapper">
             <div class="swiper-slide">
-              <div class="onb-card">
+              <div class="slide-inner">
 
                 <div> In quale lingua preferisci ascoltare i contenuti? </div>
                 <ion-grid>
@@ -46,7 +46,7 @@
               </div>
             </div>
             <div class="swiper-slide">
-              <div class="onb-card">
+              <div class="slide-inner">
                   <div class="onb-img">
                       <img class="cover" src="/assets/background/dos.png" alt="">
                   </div>
@@ -57,9 +57,9 @@
 
                   </div>
               </div>
-           </div>
-          <div class="swiper-slide">
-              <div class="onb-card">
+            </div>
+            <div class="swiper-slide">
+              <div class="slide-inner">
                   <div class="onb-img">
                       <img class="cover" src="/assets/background/qr.png" alt="">
                   </div>
@@ -70,9 +70,9 @@
 
                   </div>
               </div>
+            </div>
           </div>
-           </div>
-          <div class="swiper-pagination"></div>
+          <div class="swiper-pagination swiper-pagination-clickable swiper-pagination-bullets swiper-pagination-vertical swiper-pagination-bullets-dynamic"></div>
 
         </div>
 
@@ -168,20 +168,25 @@ export default {
   computed:{
    
   },
+ 
   mounted(){
     this.swiper  =new Swiper('.swiper-container', {slidesPerView: 1,
-        spaceBetween: 100,
-        observer:true,
-        navigation:{ nextEl: '.next',  prevEl: '.prev' } ,
-        pagination:{ clickable: true ,  el: '.swiper-pagination', type: 'bullets'} });
-        this.currLang=this.$i18n.locale;
+    spaceBetween: 100,
+    autoplay:{
+      delay: 500,
+    },
+    observer:true,
+    navigation:{ nextEl: '.next',  prevEl: '.prev' } ,
+    pagination:'.swiper-pagination'
+    });
+    this.currLang=this.$i18n.locale;
+    
+    this.getinfo((info) => {
+      this.publishedLang=info.lang.map(element => {
+        return element.toLowerCase();
+      });
+    })
 
-        this.getinfo((info) => {
-          this.publishedLang=info.lang.map(element => {
-            return element.toLowerCase();
-          });
-        })
-       
       
   },
  
@@ -213,7 +218,7 @@ export default {
     getinfo(callback){
       //if (store.getters.baseUrl) {
 
-       fetch("https://dataoversound.eadev.it/dataoversound-swi/service/rest/v1/mostra-attiva")
+       fetch(this.$store.getters.baseUrl+"/service/rest/v1/mostra-attiva")
       .then(response => {
         if (!response.ok) {
           throw new Error(`Request failed with status ${reponse.status}`)
@@ -305,8 +310,8 @@ export default {
     getmedia(name){
      console.log("nuemro di media "+ this.media );
 
-      //fetch("https://dataoversound.eadev.it/dataoversound-swi/inventario/download.php?id="+name+"&link=1")
-     fetch("https://dataoversound.eadev.it/dataoversound-swi/upload/"+name)
+      //fetch(this.$store.getters.baseUrl+"/inventario/download.php?id="+name+"&link=1")
+     fetch(this.$store.getters.baseUrl+"/upload/"+name)
       .then(response => {
         if (!response.ok) {
           throw new Error(`Request failed with status ${reponse.status}`)
@@ -374,10 +379,13 @@ ion-content {
      background:  white;
 
 }
-ion-fab{
-  bottom: 35px;
+.button-next{
+  position: absolute;
+  z-index: 10;
+   bottom: 35px;
   right: 28px;
 }
+
 .onboard-top{
   margin-top: 5%;
  
@@ -391,6 +399,15 @@ ion-fab{
   flex-direction: column;
   justify-content: center;
 }
+.swiper{
+  margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    overflow: hidden;
+    list-style: none;
+    padding: 0;
+    z-index: 1;
+}
 .swiper-container{
   width: 85vw;
   height: 61vh;
@@ -398,9 +415,23 @@ ion-fab{
 .swiper-slide{
   width: 100%;
 }
+.slide-inner{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 16px;
+  text-align: center;
+}
+
 .lang-cont {
   margin-bottom: 20px;
 }
+
+
 
 .lang{
  text-align: center;
@@ -459,7 +490,7 @@ ion-fab{
 }
 
 .onb-img{
-  height: 300px;
+  height: 230px;
   text-align: center;
 }
 .onb-img > img{
@@ -471,6 +502,10 @@ ion-fab{
   font-size: 26px;
   font-weight: 700;
   padding: 10px;
+}
+
+.onb-desc{
+  margin-top: 4vh;
 }
 
 .toolbar {

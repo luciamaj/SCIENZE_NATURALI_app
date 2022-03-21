@@ -116,7 +116,7 @@ export default {
    
         if (video) {
         console.log("video ",video);
-        return "https://dataoversound.eadev.it/dataoversound-swi/upload/"+video;
+        return this.$store.getters.baseUrl+"/upload/"+video;
       } else {
         
         return "";

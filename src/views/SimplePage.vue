@@ -74,7 +74,9 @@ export default {
 
     callJava(){
       const answ= AndroidObject.executeJavaCode();
+      alert("Risposta  "+answ);
       this.answ=answ;
+
       
    
 

@@ -137,7 +137,7 @@ export default defineComponent({
     getinfo(callback){
       //if (store.getters.baseUrl) {
 
-       fetch("https://dataoversound.eadev.it/dataoversound-swi/service/rest/v1/mostra-attiva")
+       fetch(this.$store.getters.baseUrl+"/service/rest/v1/mostra-attiva")
       .then(response => {
         if (!response.ok) {
           throw new Error(`Request failed with status ${reponse.status}`)
@@ -151,7 +151,7 @@ export default defineComponent({
 
     },
     getSchede(callback){
-      fetch("https://dataoversound.eadev.it/dataoversound-swi/service/rest/v1/app-schede-audible")
+      fetch(this.$store.getters.baseUrl+"/service/rest/v1/app-schede-audible")
       .then(response => {
         if (!response.ok) {
           throw new Error(`Request failed with status ${reponse.status}`)
@@ -279,8 +279,8 @@ export default defineComponent({
     },
     getmedia(name){
      console.log("numero di media "+ this.media );
-     // fetch("https://dataoversound.eadev.it/dataoversound-swi/inventario/download.php?id="+name+"&link=1")
-      fetch("https://dataoversound.eadev.it/dataoversound-swi/upload/"+name)
+     // fetch(this.$store.getters.baseUrl+"/inventario/download.php?id="+name+"&link=1")
+      fetch(this.$store.getters.baseUrl+"/upload/"+name)
       .then(response => {
         if (!response.ok) {
           throw new Error(`Request failed with status ${response.status}`)
