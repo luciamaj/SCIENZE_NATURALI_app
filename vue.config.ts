@@ -1,3 +1,4 @@
+
 module.exports = {
 
     pwa: {
@@ -30,15 +31,15 @@ module.exports = {
 
                 },
                 {
-
-                    urlPattern: new RegExp(this.$store.getters.baseUrl+'/service/rest/v1/mostra-attiva'),
+                    
+                    urlPattern: new RegExp(process.env.VUE_APP_BASE_URL+ '/service/rest/v1/mostra-attiva'),
 
                     handler: 'NetworkFirst',
 
                 },
                 {
 
-                    urlPattern: new RegExp(this.$store.getters.baseUrl+'/service/rest/v1/app-schede-audible'),
+                    urlPattern: new RegExp(process.env.VUE_APP_BASE_URL+'/service/rest/v1/app-schede-audible'),
 
                     handler: 'NetworkFirst',
 

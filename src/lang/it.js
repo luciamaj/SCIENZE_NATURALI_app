@@ -14,7 +14,7 @@ export const it = {
     },
 
     menu:{
-        title:"aaaa",
+        title:"Impostazioni",
         content:{
             title:"Aggiorna contenuti"
         },

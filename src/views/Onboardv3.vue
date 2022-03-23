@@ -1,5 +1,6 @@
 <template>
   <ion-page>
+    <ion-content>
     <div  class="onboard-main">
       <ion-fab class="button-next" vertical="bottom" horizontal="end" >
         <ion-fab-button color="primary" v-on:click="next()"  class="next" :class="{invisible:last}">
@@ -24,28 +25,25 @@
       </div>
 
       <div class="onboard-bot">
-               
-        <div class="swiper swiper-creative  swiper-initialized swiper-vertical swiper-pointer-events swiper-container"  @slideChange="onSlideChange" ref="swiper" > 
-          <div class="swiper-wrapper">
-            <div class="swiper-slide">
-              <div class="slide-inner">
-
-                <div> In quale lingua preferisci ascoltare i contenuti? </div>
-                <ion-grid>
+        <ion-slides pager="true" :options="slideOpts"  @ionSlideDidChange="slidechanged" ref="slider">
+          <ion-slide>
+            <div class="slide-inner">
+              <div> In quale lingua preferisci ascoltare i contenuti? </div>
+              <ion-grid>
                   <ion-row>
-                    <ion-col v-for="lang in publishedLang" class="lang-cont" size="6" v-on:click="setLang(lang)" :key="lang">
+                  <ion-col v-for="lang in publishedLang" class="lang-cont" size="6" v-on:click="setLang(lang)" :key="lang">
                       
                           <div class="circle-cont"  > <img class="cover circle" id="circle-it" :class="checkLang(lang)" :src="'/assets/background/Flag_'+lang+'.png'" alt=""></div>
                           <div class="lang">{{$t('menu.lang.'+lang)}}</div>
                   
                       </ion-col>
                       
-                    </ion-row>
-                </ion-grid>
-                  
-              </div>
+                  </ion-row>
+              </ion-grid>
             </div>
-            <div class="swiper-slide">
+
+          </ion-slide>
+          <ion-slide>
               <div class="slide-inner">
                   <div class="onb-img">
                       <img class="cover" src="/assets/background/dos.png" alt="">
@@ -57,27 +55,24 @@
 
                   </div>
               </div>
-            </div>
-            <div class="swiper-slide">
-              <div class="slide-inner">
-                  <div class="onb-img">
-                      <img class="cover" src="/assets/background/qr.png" alt="">
-                  </div>
-                  <div class="onb-desc ion-text-center">
-                      <h4>titolo in H4 slide 3</h4>
-                      <p class="ion-no-margin">  Utilizza l'app per accedere a contenuti di approfondimento</p>
-                        <p class="ion-no-margin">  Scansiona i QR Code che troverai lungo il percorso </p>
+          </ion-slide>
+          <ion-slide>
+            <div class="slide-inner">
+              <div class="onb-img">
+                  <img class="cover" src="/assets/background/qr.png" alt="">
+              </div>
+              <div class="onb-desc ion-text-center">
+                  <h4>titolo in H4 slide 3</h4>
+                  <p class="ion-no-margin">  Utilizza l'app per accedere a contenuti di approfondimento</p>
+                    <p class="ion-no-margin">  Scansiona i QR Code che troverai lungo il percorso </p>
 
-                  </div>
               </div>
             </div>
-          </div>
-          <div class="swiper-pagination swiper-pagination-clickable swiper-pagination-bullets swiper-pagination-vertical swiper-pagination-bullets-dynamic"></div>
-
-        </div>
-
+          </ion-slide>
+        </ion-slides>
       </div>
     </div>
+    </ion-content>
   </ion-page>
 </template>
 
@@ -91,17 +86,18 @@ import {
   IonPage,
   IonToolbar,
  // IonTitle,
- // IonContent,
+  IonContent,
   IonButton,
   IonButtons,
   IonIcon,
   IonFab,
-  IonFabButton
+  IonFabButton,
+  IonSlides, IonSlide 
 
 } from "@ionic/vue";
 import { Navigation, Pagination, Scrollbar, A11y } from 'swiper';
-import { Swiper } from "swiper";
-Swiper.use([Navigation, Pagination, Scrollbar, A11y ]);
+
+
 
 
 import "swiper/swiper.scss";
@@ -110,6 +106,7 @@ import 'swiper/swiper.min.css'
 import 'swiper/components/navigation/navigation.min.css'
 import 'swiper/components/pagination/pagination.min.css'
 import"swiper/components/pagination/pagination.scss"
+import { onMounted } from '@vue/runtime-core';
 
 
 //import { data } from "../data/data";
@@ -133,33 +130,28 @@ export default {
       progress:0,
       media:0,
       mediafetched:0,
-
-      swiperOption:{
-        slidesPerView: 1,
-        spaceBetween: 100,
-        observer:true,
-        navigation:{ nextEl: '.next',  prevEl: '.prev' } ,
-        pagination:{ clickable: true ,  el: '.swiper-pagination', type: 'bullets'} 
-      }
+    
     };
   },
 
   setup() {
-   
-    const onSwiper = (swiper) => {
-      console.log("swiper",swiper);
-    };
   
-    const onSlideChange = (swiper) => {
-      console.log("activeidx "+ swiper.activeIndex);
+    /*const onSlideChange = () => {
+    //  console.log("activeidx "+ this.$refs.slider.$el.getActiveIndex());
       
       console.log('slide change');
+    };*/
+    const slideOpts = {
+      initialSlide: 0,
+      speed: 400,
+      
     };
+
     
-  
     return {
-      onSwiper,
-      onSlideChange,
+      slideOpts,
+      //onSlideChange,
+    
     
 
       modules: [Navigation, Pagination, Scrollbar, A11y],
@@ -170,15 +162,8 @@ export default {
   },
  
   mounted(){
-    this.swiper  =new Swiper('.swiper-container', {slidesPerView: 1,
-    spaceBetween: 100,
-    autoplay:{
-      delay: 500,
-    },
-    observer:true,
-    navigation:{ nextEl: '.next',  prevEl: '.prev' } ,
-    pagination:'.swiper-pagination'
-    });
+    const slider= this.$refs.slider.$el;
+   
     this.currLang=this.$i18n.locale;
     
     this.getinfo((info) => {
@@ -195,12 +180,13 @@ export default {
     IonToolbar,
     IonIcon,
    // IonTitle,
-   // IonContent,
+    IonContent,
     IonPage,
     IonButton,
     IonButtons,
     IonFab,
     IonFabButton,
+    IonSlides, IonSlide 
    
   },
 
@@ -241,25 +227,27 @@ export default {
   },
 
   next(){
-    console.log("swippppppppeer", this.swiper);
-      //swiper = document.querySelector(".swiper-container");
+    console.log("nexxxt");
+   
+    this.$refs.slider.$el.slideNext(800);
 
-    // swiper.slideNext();
-    this.slidechanged( this.swiper);
+    this.slidechanged();
+    if(this.currSlide==2){
+        this.$router.replace({ path: "/scarica/"+ localStorage.getItem('lang')});
+    }
     
   },
-  slidechanged(swiper){
-    this.currSlide= swiper.activeIndex;
+  async slidechanged() {
+    this.currSlide= await this.$refs.slider.$el.getActiveIndex();
+    console.log('@index',  this.currSlide);
     this.checkProgress();
-
-      if(this.currSlide==2){
-        this.$router.replace({ path: "/scarica/"+ localStorage.getItem('lang')});
-      }
+    
   },
+ 
   goBack(){
     
-      this.swiper.slidePrev();
-    this.slidechanged(this.swiper);
+    this.$refs.slider.$el.slidePrev(500);
+    this.slidechanged();
     
   
   },
@@ -267,7 +255,7 @@ export default {
     if(this.currSlide>0){
       this.isFirst=false;
       console.log("isfirst "+ this.isFirst);
-      if(this.currSlide==2){
+      if(this.currSlide==3){
         this.last=true;
       }else{
         this.last=false;
@@ -410,7 +398,7 @@ ion-content {
 }
 .swiper-container{
   width: 85vw;
-  height: 61vh;
+  height: 83vh;
 }
 .swiper-slide{
   width: 100%;

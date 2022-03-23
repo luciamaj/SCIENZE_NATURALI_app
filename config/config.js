@@ -5,4 +5,3 @@ const conf = {
     server: '',
     interactionType: 'mix',// 'mix', 'QR', 'silencetag'
 }
-export { conf };

@@ -8,9 +8,7 @@
     </ion-toolbar>
   </ion-header>
   <ion-content class="ion-padding" id="nav-child-content">
-    {{ title }}
-
-
+  
     <ion-grid class="langs-grid">
       <template v-for="lang in saved" v-bind:key="lang">
         <ion-row>

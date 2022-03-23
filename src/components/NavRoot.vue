@@ -2,7 +2,7 @@
   <ion-header>
     <ion-toolbar>
      
-      <ion-title >Nav - Root  </ion-title>
+      <ion-title > {{$t('menu.title')}} </ion-title>
        <ion-buttons slot="end" >
         <ion-button  @click="dismiss"><ion-icon size="large" name="chevron-down-outline" /></ion-button>
       </ion-buttons>

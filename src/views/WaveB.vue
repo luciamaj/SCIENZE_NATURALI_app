@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header class="ion-no-border">
       <ion-toolbar >
-        <ion-title slot="start" >WAvE B - {{store.mostra}}</ion-title>
+        <ion-title slot="start" >WAvE - {{store.mostra}}</ion-title>
         <ion-buttons slot="primary">
           <ion-button @click="openMenuModal(notification)">
             <ion-icon slot="start" ios="ellipsis-horizontal" md="ellipsis-vertical"></ion-icon>
@@ -243,7 +243,6 @@ export default {
   async getSchedaState() {
     const ret = await Storage.get({ key: 'openScheda' });
     const scheda = JSON.parse(ret.value);
-    console.log("aaa ", scheda);
     return scheda;
   },
   async showOptions() {
@@ -302,12 +301,10 @@ export default {
         // Dispatch/Trigger/Fire the event
        // const event = new Event('pause');
       //  window.dispatchEvent(event);
-      (async () => {
-          const stato = await this.getSchedaState();
-          console.log("statooo "+stato);
+    
           console.log("scheda.type "+ content.type);
         if (scheda != null) {
-          if(stato==false||stato==null){
+          
             if (content.type == "audio") {
               console.log("audio");
               //this.schedaState(true);
@@ -320,9 +317,8 @@ export default {
             }else{
                console.log("null");
             }
-          }
+        
         }
-      })();
        
        
       //captureStop.click();
@@ -504,12 +500,19 @@ export default {
       this.recorder.onaudioprocess = e => {
           
         const source = e.inputBuffer.getChannelData(0);      
-        
-        const res = this.ggwave.decode(this.instance, this.convertTypedArray(new Float32Array(source), Int8Array));
-        if (res) {
-              this.findRoute(res);
-              this.decodedValue = res;
-        }
+        (async () => {
+          const stato = await this.getSchedaState();
+          //console.log("statooo "+stato);
+          if(stato==false||stato==null){
+             const res = this.ggwave.decode(this.instance, this.convertTypedArray(new Float32Array(source), Int8Array));
+            if (res) {
+                  this.findRoute(res);
+                  this.decodedValue = res;
+            }
+
+          }
+        })();
+       
       }
       this.mediaStream.connect(this.recorder);
       this.recorder.connect(this.context.destination);

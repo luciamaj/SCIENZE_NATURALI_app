@@ -13,6 +13,7 @@ export const en= {
     },
 
     menu:{
+        titile:"Settings",
         content:{
             title:"Update content"
         },

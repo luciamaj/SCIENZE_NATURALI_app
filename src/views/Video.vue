@@ -58,8 +58,8 @@ import {
  // IonProgressBar
 } from "@ionic/vue";
 import Amplitude from "amplitudejs";
-
-import { data } from "../data/data";
+import { Plugins } from "@capacitor/core";
+const { Storage } = Plugins;
 
 export default {
   name: "Tab",
@@ -77,7 +77,8 @@ export default {
   ionViewWillLeave() {
     console.log('VIdeo will leave');
      clearTimeout(this.timer);
-  
+    this.vid.pause();
+    this.vid.currentTime=0;
     this.schedaState(false);
    
   },
@@ -124,10 +125,12 @@ export default {
     }
   },
   mounted(){
+    this.schedaState(true);
     this.vid=document.getElementById("video");
     console.log("video ",this.vid);
+    this.vid.load();
     this.vid.onloadeddata = ()=> {
-      //alert("Browser has loaded the current frame");
+      console.log("Browser has loaded ");
     this.duration= this.getminsec(this.vid.duration);
     this.vid.play();
      this.videoPlay=true;
@@ -236,6 +239,7 @@ export default {
         value:state
       });
     },
+    
   },
 
   data() {
