@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header class="ion-no-border">
       <ion-toolbar >
-        <ion-title slot="start" >WAvE - {{store.mostra}}</ion-title>
+        <ion-title slot="start" >{{store.mostra}}</ion-title>
         <ion-buttons slot="primary">
           <ion-button @click="openMenuModal(notification)">
             <ion-icon slot="start" ios="ellipsis-horizontal" md="ellipsis-vertical"></ion-icon>
@@ -12,7 +12,7 @@
       </ion-toolbar> 
     </ion-header>
   
-    <ion-content :fullscreen="false">
+    <ion-content :fullscreen="true">
      <!--ion-modal :is-open="true" :swipe-to-close="true">
   <ion-content>Modal Content</ion-content>
 </ion-modal-->
@@ -25,7 +25,7 @@
           <ion-button expand="block" class="capture-btn" id="captureStop" hidden>{{$t('main.stop')}}</ion-button>
             <IonButton class="scan-btn" @click="openModal">{{$t('main.scan')}}</IonButton>
 
-            <ion-button  class="test-btn" id="test" @click="openpage" >TEST</ion-button>
+            <!--ion-button  class="test-btn" id="test" @click="openpage" >TEST</ion-button-->
           </div>
           <!--ion-button expand="block" class="capture-btn" @click="openModal('en', 0, '00')">PROVA</ion-button-->
         </div>
@@ -80,7 +80,7 @@ export default {
     console.log("upTour ", tour)
     if(tour){
          const captureStart = document.getElementById("captureStart");
-        // captureStart.click();
+         //captureStart.click();
     }
     } );
    
@@ -139,9 +139,9 @@ export default {
         console.log("dismissed");
         const objStr = await Storage.get({ key: "scheda" });
         const obj = JSON.parse(objStr.value);
-         console.log("OGGETTO ",obj)
-        console.log("OGGETTO ",obj.path)
+
         if (obj != null) {
+            console.log("OGGETTO ",obj)
           if (obj.path.type == "audio") {
             router.push({ path: "/audio/" + obj.path.index });
           } else {
@@ -294,29 +294,32 @@ export default {
        const data=localStorage.getItem("dataMostra")
      
       const scheda= JSON.parse(data).find(x => x.tag == decodedString);
-      console.log("schedaaao ", scheda);
-      const content=scheda.content.find(x => x.lang == localStorage.getItem("lang"));
+      
       const captureStop = document.getElementById("captureStop");
       
         // Dispatch/Trigger/Fire the event
        // const event = new Event('pause');
       //  window.dispatchEvent(event);
     
-          console.log("scheda.type "+ content.type);
+         
         if (scheda != null) {
-          
-            if (content.type == "audio") {
-              console.log("audio");
-              //this.schedaState(true);
-              this.$router.push({ path: "/audio/" + decodedString });
+          console.log("schedaaao ", scheda);
 
-            }else if (content.type == "video"){
-              console.log("video");
-              //this.schedaState(true);
-              this.$router.push({ path: "/video/" + decodedString });
-            }else{
-               console.log("null");
-            }
+          const content=scheda.content.find(x => x.lang == localStorage.getItem("lang"));
+          console.log("scheda.type "+ content.type);
+          
+          if (content.type == "audio") {
+            console.log("audio");
+            //this.schedaState(true);
+            this.$router.push({ path: "/audio/" + decodedString });
+
+          }else if (content.type == "video"){
+            console.log("video");
+            //this.schedaState(true);
+            this.$router.push({ path: "/video/" + decodedString });
+          }else{
+              console.log("null");
+          }
         
         }
        
@@ -501,9 +504,9 @@ export default {
           
         const source = e.inputBuffer.getChannelData(0);      
         (async () => {
-          const stato = await this.getSchedaState();
+       this.stato = await this.getSchedaState();
           //console.log("statooo "+stato);
-          if(stato==false||stato==null){
+          if( this.stato==false|| this.stato==null){
              const res = this.ggwave.decode(this.instance, this.convertTypedArray(new Float32Array(source), Int8Array));
             if (res) {
                   this.findRoute(res);

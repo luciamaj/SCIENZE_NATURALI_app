@@ -11,10 +11,14 @@
       </ion-toolbar>
     </ion-header>
     <ion-content>
-      <video  id="video" >
-        <source :src="url" type="video/mp4" />
-      </video>
+      <div class="player-container">
+        <video  id="video" >
+          <source :src="url" type="video/mp4" />
+         </video>
        <ion-icon class="expand" name="expand-outline" @click="expand()"></ion-icon>
+
+      </div>
+     
 
       <div class="ion-no-border content-scheda">
 
@@ -75,11 +79,12 @@ export default {
   //  IonProgressBar
   },
   ionViewWillLeave() {
+    this.schedaState(false);
     console.log('VIdeo will leave');
      clearTimeout(this.timer);
     this.vid.pause();
     this.vid.currentTime=0;
-    this.schedaState(false);
+   
    
   },
  
@@ -328,18 +333,24 @@ div.player img.album-art {
 
 }
 video {
+  
   width: 100%;
+  object-fit: cover;
+  height: 100%;
 }
 .expand{
   position: relative;
-    bottom: 7vh;
-    
-    left: 90vw;
-    color: white;
-    height: 3vh;
-    width: 3vh;
-    background: #ffffff21;
+  bottom: 43px;
+  
+  left: 90vw;
+  color: white;
+  height: 3vh;
+  width: 3vh;
+  background: #ffffff21;
 
+}
+.player-container{
+  height: 30vh;
 }
 
 @media screen and (max-width: 39.9375em) {
@@ -367,6 +378,7 @@ div.meta-container {
   font-size: 25px;
   font-weight: 600;
   font-family: "Open Sans", sans-serif;
+  margin: 5px 0;
 }
 div.meta-container div.song-artist {
   text-align: center;
@@ -421,7 +433,7 @@ div.control-container div.amplitude-prev {
 }
 div.control-container div.amplitude-play-pause {
   width: 35px;
-  height: 41px;
+  height: 40px;
   cursor: pointer;
   display: inline-block;
   vertical-align: middle;
@@ -490,11 +502,10 @@ progress.amplitude-song-played-progress {
   -moz-appearance: none;
   appearance: none;
   width: 100%;
-  height: 5px;
   display: block;
   cursor: pointer;
   border-radius: 3px;
-  height: 8px;
+  height:6px;
   border: none;
 }
 

@@ -40,9 +40,14 @@ export default defineComponent({
     IonIcon
   },
   props: ["modal"],
+  mounted(){
+    this.schedaState(true);
+
+  },
   methods: {
     async close() {
       const top = await modalController.getTop();
+       this.schedaState(false)
       top.dismiss();
     },
     async setObject(param) {
@@ -56,9 +61,17 @@ export default defineComponent({
     async removeObj() {
       await Storage.remove({ key: "scheda" });
     },
+    async schedaState(state) {
+      console.log("openScheda");
+      await Storage.set({
+        key: 'openScheda',
+        value:state
+      });
+    },
     ionViewDidEnter() {
       console.log("remove obj");
       this.removeObj();
+      
     },
     onDecode(decodedString) {
       this.value = decodedString.split('/');

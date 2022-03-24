@@ -13,11 +13,20 @@
     <ion-content :fullscreen="true">
       <div class="vertical-center">       
         <div class="player">
-          <img :src="cover" class="album-art" />
+          <div class="img-container"> 
+            <img :src="cover" class="album-art" />
+          </div>
+          
           <div class="ion-no-border content-scheda">
             <div class="meta-container"> 
               <div class="song-title">{{ contentScheda.titolo }}</div>
 
+              
+              <progress
+                class="amplitude-song-played-progress"
+                data-amplitude-song-index="0"
+                id="song-played-progress-1"
+              ></progress>
               <div class="time-container">
                 <div class="current-time">
                   <span class="amplitude-current-minutes" data-amplitude-song-index="0">00</span>:
@@ -29,11 +38,6 @@
                   <span class="amplitude-duration-seconds" data-amplitude-song-index="0">30</span>
                 </div>
               </div>
-              <progress
-                class="amplitude-song-played-progress"
-                data-amplitude-song-index="0"
-                id="song-played-progress-1"
-              ></progress>
               <div class="control-container">
                 <div class="amplitude-prev"></div>
                 <div class="amplitude-play-pause" data-amplitude-song-index="0"></div>
@@ -84,7 +88,7 @@ export default {
   },
   ionViewWillLeave() {
     console.log('Ampli will leave');
-     clearTimeout(this.timer);
+    clearTimeout(this.timer);
     Amplitude.pause();
     this.schedaState(false);
    
@@ -105,7 +109,7 @@ export default {
         const lang= localStorage.getItem("lang")
          
       const scheda= this.dataSchede.content.find(x => x.lang == lang);
-      console.log("che fine ha fatto la scheda? ",scheda);
+    //  console.log("che fine ha fatto la scheda? ",scheda);
       return scheda
 
     },
@@ -270,16 +274,19 @@ export default {
 ion-content {
   --overflow: hidden;
 }
+.img-container{
+  height: 30vh;
+}
 
 div.player {
   margin-bottom: 20px;
   max-width: 750px;
   margin: auto;
   position: relative;
-  top: 50%;
+  /*top: 50%;
   -webkit-transform: translateY(-50%);
   -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
+  transform: translateY(-50%);*/
 }
 
 div.player:after {
@@ -295,7 +302,6 @@ div.player img.album-art {
 }
 
 .vertical-center {
-  padding: 70px 0;
   height: 88vh;
   width: 100vw;
 }
@@ -306,7 +312,7 @@ div.player img.album-art {
   padding: 5px 25px;
   max-height: 40vh;
   overflow: overlay;
-  margin-top: 4vh;
+  margin-top: 3vh;
   margin-bottom: 2vh;
   /*bottom: 3vh;
   position: absolute;*/
@@ -314,7 +320,7 @@ div.player img.album-art {
 }
 
 .content-scheda{
-    overflow: overlay;
+   /* overflow: overlay;*/
   height: 57vh;
 
 }
@@ -324,8 +330,9 @@ div.player img.album-art {
 @media screen and (max-width: 39.9375em) {
   div.player img.album-art {
     width: 100%;
-    height: auto;
+    height: 100%;
     max-height: 40vh;
+    object-fit: cover;
   }
 }
 /*
@@ -341,11 +348,13 @@ div.meta-container {
   max-height: 40vh;
 }
 div.meta-container div.song-title {
-  text-align: center;
+  text-align: left;
   color: #263238;
   font-size: 25px;
   font-weight: 600;
   font-family: "Open Sans", sans-serif;
+  margin: 5px 0;
+
 }
 div.meta-container div.song-artist {
   text-align: center;
@@ -358,7 +367,7 @@ div.meta-container div.time-container {
   font-family: Helvetica;
   font-size: 15px;
   color: #000;
-  margin-bottom: 10px;
+  margin-top: 10px;
 }
 div.meta-container div.time-container:after {
   content: "";
@@ -388,7 +397,7 @@ div.meta-container div.time-container div.duration {
 */
 div.control-container {
   text-align: center;
-  margin-top: 4vh;
+  margin-top: 2vh;
 }
 div.control-container div.amplitude-prev {
   width: 28px;
@@ -399,17 +408,19 @@ div.control-container div.amplitude-prev {
   vertical-align: middle;
 }
 div.control-container div.amplitude-play-pause {
-  width: 40px;
-  height: 44px;
+  width: 35px;
+  height: 40px;
   cursor: pointer;
   display: inline-block;
   vertical-align: middle;
 }
 div.control-container div.amplitude-play-pause.amplitude-paused {
   background: url("https://521dimensions.com/img/open-source/amplitudejs/examples/multiple-songs/play.svg");
+      background-size: cover;
 }
 div.control-container div.amplitude-play-pause.amplitude-playing {
   background: url("https://521dimensions.com/img/open-source/amplitudejs/examples/multiple-songs/pause.svg");
+      background-size: cover;
 }
 div.control-container div.amplitude-next {
   width: 28px;
@@ -452,6 +463,12 @@ div.control-container div.amplitude-next {
   div.control-container div.amplitude-next {
     margin-left: 75px;
   }
+
+  .vertical-center {
+  padding: 70px 0;
+ 
+  }
+
 }
 progress.amplitude-song-played-progress:not([value]) {
   background-color: #313252;
@@ -463,11 +480,10 @@ progress.amplitude-song-played-progress {
   -moz-appearance: none;
   appearance: none;
   width: 100%;
-  height: 5px;
   display: block;
   cursor: pointer;
   border-radius: 3px;
-  height: 8px;
+  height: 6px;
   border: none;
 }
 
