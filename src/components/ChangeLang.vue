@@ -57,7 +57,9 @@ import {
   actionSheetController ,
   
   } from '@ionic/vue';
-  //import scaricamento from '@../view/Scaricamento.vue';
+  
+
+ import Download from '@/components/ScaricamentoContenuti.vue';
 //import { defineComponent } from 'vue';
 export default ({
   name: "langSwitch",
@@ -141,7 +143,13 @@ export default ({
         return "checked"
       }
     },
-     
+    pushPage(passedLang) {
+      const ionNav = document.querySelector('ion-nav') as any;
+      
+      ionNav.push(Download,  { lang: passedLang , from:"lang"});
+      
+      
+    },
     buttons(){
       const remainingArray=[];
       const lang={};
@@ -195,12 +203,12 @@ export default ({
             this.remaining=this.remaining.filter(item => item !== lang);
            if(suppLang){
               //this.searchMedia(lang);
-              this.$router.replace({ path: "/scarica/"+ lang});
-             // this.pushPage()
+             // this.$router.replace({ path: "/scarica/"+ lang});
+              this.pushPage(lang);
            }else{
               //this.searchMedia('it');
-              this.$router.replace({ path: "/scarica/it"});
-              //this.pushPage();
+              //this.$router.replace({ path: "/scarica/it"});
+             this.pushPage("it");
            }
           
            

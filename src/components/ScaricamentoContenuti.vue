@@ -1,8 +1,7 @@
 <template>
-  <ion-page>
      <ion-content>
      
-      <!--div  class="onboard-main">
+      <div  class="onboard-main">
     
       
 
@@ -21,11 +20,10 @@
         </div>
             
 
-      </div-->
-      <download-cont :lang="lang"></download-cont>
+      </div>
+      
 
     </ion-content>
-  </ion-page>
 </template>
 
 
@@ -35,56 +33,66 @@
 
 
 import {
-  IonPage,
+
  IonContent,
+ IonProgressBar
 
 } from "@ionic/vue";
 
-
-import DownloadCont from './../components/ScaricamentoContenuti.vue'
-
+//import NavRoot from '@/components/NavRoot.vue';
+import Lang from '@/components/ChangeLang.vue';
 //import { Plugins } from "@capacitor/core";
 //import { useRouter } from "vue-router";
 
 
 export default {
-  name: "Tab",
-  data() {
-    return {
-      publishedLang:[],
-      name: "onboard",
-      store:"",
-      currLang:"it",
-      currSlide:0,
-      isFirst:true,
-      last:false,
-      progress:0,
-      media:0,
-      mediafetched:0,
+    name: "scaricamento",
+    props: {
+        lang: { type: String, default: 'it' },
+        from: { type: String, default: 'main' }
+    },
+    data() {
+        return {
+        publishedLang:[],
+        store:"",
+        currLang:"it",
+        currSlide:0,
+        isFirst:true,
+        last:false,
+        progress:0,
+        media:0,
+        mediafetched:0,
 
-    };
-  },
+        swiperOption:{
+            slidesPerView: 1,
+            spaceBetween: 100,
+            observer:true,
+            navigation:{ nextEl: '.next',  prevEl: '.prev' } ,
+            pagination:{ clickable: true ,  el: '.swiper-pagination', type: 'bullets'} 
+        }
+        };
+    },
 
 
   computed:{
     
-    lang(){
+    /*lang(){
    
-      return this.$route.params.lang;
-    },
+      return this.lang;
+    },*/
 
    
   },
   mounted(){
 
-       // this.currLang=this.$i18n.locale;
+        this.currLang=this.$i18n.locale;
 
-       /* this.getinfo((info) => {
+        this.getinfo((info) => {
           this.publishedLang=info.lang.map(element => {
             return element.toLowerCase();
           });
         })
-        this.searchMedia();*/
+        this.searchMedia();
        
       
   },
@@ -94,14 +102,12 @@ export default {
    
    
    IonContent,
-    IonPage,
-    DownloadCont,
-
+    IonProgressBar
   },
 
 
   methods:{
-/*
+
 
   
     getinfo(callback){
@@ -184,7 +190,14 @@ export default {
         this.progress=this.mediafetched/this.media;
         console.log("progress ",  this.progress);
         if(this.progress==1){
-           this.$router.replace({ name: "wave" });
+            if(this.from=="main"){
+                this.$router.replace({ name: "wave" });
+            }else if(this.from=="update"){
+                this.pushPage();
+            } else if(this.from=="lang"){
+                this.pushPage("lang");
+            }
+           
         }
         return response
       })
@@ -198,8 +211,17 @@ export default {
 
     mediaCounter(){
       this.media++;
-    }
-    */
+    },
+    pushPage(fromTo) {
+        const ionNav = document.querySelector('ion-nav') ;
+        if(fromTo=="lang"){
+            ionNav.push(Lang);
+        }
+        
+       
+    },
+    
+    
   }
    
 }
@@ -322,13 +344,6 @@ ion-fab{
   width: 100%;
 }
 
-.onb-img{
-  height: 300px;
-  text-align: center;
-}
-.onb-img > img{
-  height: 100%;
-}
 
 .title {
   color: #2d9fe3;

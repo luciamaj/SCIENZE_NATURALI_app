@@ -15,7 +15,7 @@
                 <ion-icon name="chevron-back" ></ion-icon>
             </ion-button>
           </ion-buttons>
-          <ion-buttons slot="end">
+          <ion-buttons slot="end" v-if="help">
               <ion-button color="dark" v-on:click="skip()">
               skip
               </ion-button>
@@ -28,7 +28,7 @@
         <ion-slides pager="true" :options="slideOpts"  @ionSlideDidChange="slidechanged" ref="slider">
           <ion-slide>
             <div class="slide-inner">
-              <div> In quale lingua preferisci ascoltare i contenuti? </div>
+              <div class="text-one"> In quale lingua preferisci ascoltare i contenuti? </div>
               <ion-grid>
                   <ion-row>
                   <ion-col v-for="lang in publishedLang" class="lang-cont" size="6" v-on:click="setLang(lang)" :key="lang">
@@ -49,9 +49,9 @@
                       <img class="cover" src="/assets/background/dos.png" alt="">
                   </div>
                   <div class="onb-desc ion-text-center">
-                      <h4>titolo in H4 slide 2</h4>
+                      <h4>Avvicina lo smartphone ai Silence Tag</h4>
                       <p class="ion-no-margin">  Utilizza l'app per accedere a contenuti di approfondimento</p>
-                        <p class="ion-no-margin">  Avvicina lo smartphone ai Silence Tag </p>
+                        <p class="ion-no-margin">  </p>
 
                   </div>
               </div>
@@ -62,9 +62,9 @@
                   <img class="cover" src="/assets/background/qr.png" alt="">
               </div>
               <div class="onb-desc ion-text-center">
-                  <h4>titolo in H4 slide 3</h4>
-                  <p class="ion-no-margin">  Utilizza l'app per accedere a contenuti di approfondimento</p>
-                    <p class="ion-no-margin">  Scansiona i QR Code che troverai lungo il percorso </p>
+                  <h4>Oppure scansiona i QR Code che troverai lungo il percorso </h4>
+                  <!--p class="ion-no-margin">  Utilizza l'app per accedere a contenuti di approfondimento</p-->
+                    <p class="ion-no-margin">   </p>
 
               </div>
             </div>
@@ -130,6 +130,7 @@ export default {
       progress:0,
       media:0,
       mediafetched:0,
+      help:false
     
     };
   },
@@ -162,10 +163,10 @@ export default {
   },
  
   mounted(){
-    const slider= this.$refs.slider.$el;
+    //const slider= this.$refs.slider.$el;
    
     this.currLang=this.$i18n.locale;
-    
+    this.setLang(this.currLang);
     this.getinfo((info) => {
       this.publishedLang=info.lang.map(element => {
         return element.toLowerCase();
@@ -229,11 +230,12 @@ export default {
   next(){
     console.log("nexxxt");
    
-    this.$refs.slider.$el.slideNext(800);
+    this.$refs.slider.$el.slideNext(500);
 
     this.slidechanged();
     if(this.currSlide==2){
-        this.$router.replace({ path: "/scarica/"+ localStorage.getItem('lang')});
+      
+      this.$router.replace({ path: "/scarica/"+ this.currLang});
     }
     
   },
@@ -418,7 +420,10 @@ ion-content {
 .lang-cont {
   margin-bottom: 20px;
 }
-
+.text-one{
+    margin-bottom: 9vh;
+    margin-top: 14vh;
+}
 
 
 .lang{
@@ -494,6 +499,7 @@ ion-content {
 
 .onb-desc{
   margin-top: 4vh;
+  padding: 10px;
 }
 
 .toolbar {

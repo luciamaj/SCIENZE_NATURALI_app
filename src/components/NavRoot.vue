@@ -52,6 +52,7 @@ alertController,
 //import { defineComponent } from 'vue';
 import NavChild from '@/components/NavChild.vue';
 import Lang from '@/components/ChangeLang.vue';
+import Download from '@/components/ScaricamentoContenuti.vue';
 export default ({
     
     props: {
@@ -102,6 +103,8 @@ export default ({
         const ionNav = document.querySelector('ion-nav') as any;
         if(page=="lang"){
             ionNav.push(Lang, { title: 'Changeeee' });
+        }else if(page=="aggiorna"){
+            ionNav.push(Download,  { lang: localStorage.getItem('lang'), from:"update" });
         }else{
             ionNav.push(NavChild, { title: 'Custom Title' });
         }
@@ -117,12 +120,13 @@ export default ({
                 message: "Sono disponibili aggiornamenti dei contenuti",
                 buttons: [
                     {
-                    text: "Scarica",
-                    handler: () => {
-                        console.log("Accepted");
-                        this.emitter.emit('aggiorna');
-                        this.notificationState=false
-                    },
+                        text: "Scarica",
+                        handler: () => {
+                            console.log("Accepted");
+                            this.emitter.emit('aggiorna');
+                            this.notificationState=false
+                            //this.pushPage("aggiorna");
+                        },
                     },
                     {
                     text: "Postponi",
