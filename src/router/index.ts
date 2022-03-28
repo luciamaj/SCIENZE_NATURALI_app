@@ -1,12 +1,14 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
+import Wave from '@/views/WaveB.vue'
 //import Tabs from '../views/Tabs.vue'
 
 const routes: Array<RouteRecordRaw> = [
+  
   {
     path: '/',
     name: 'wave',
-    component: () => import('@/views/WaveB.vue'),
+    component: Wave,
     beforeEnter: (to, from, next) => {
       if(localStorage.getItem('pubblication')==null) {
         next('/onboard');
@@ -18,6 +20,8 @@ const routes: Array<RouteRecordRaw> = [
       }
     }
   },
+  { path: "/:pathMatch(.*)*", redirect: '/' },
+  { path: "/scheda/:id", redirect:'/audio/:id' },
   {
     path: '/scarica/:lang',
     name: 'scarica',
@@ -106,5 +110,22 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
+
+router.beforeEach((to, from, next) => {
+  if (localStorage.getItem('pubblication')==null && to.path !== '/onboard') {
+    console.log("pubblication Null")
+    //next();
+    console.log("parmas?", to.params.id)
+    if(to.params.id){
+     localStorage.setItem('provToOpen', to.params.id.toString());
+    }
+   return next('/onboard');
+        
+   
+  } else {
+    return  next();
+    
+  }
+});
 
 export default router

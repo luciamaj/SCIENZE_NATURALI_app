@@ -191,7 +191,14 @@ export default {
         console.log("progress ",  this.progress);
         if(this.progress==1){
             if(this.from=="main"){
+              if(localStorage.getItem('provToOpen')!=null){
+                console.log("entra in audio?");
+               // const path= "audio/"
+                this.$router.replace({ path: "/audio/"+localStorage.getItem('provToOpen') });
+              }else{
                 this.$router.replace({ name: "wave" });
+              }
+                
             }else if(this.from=="update"){
                 this.pushPage();
             } else if(this.from=="lang"){
@@ -215,7 +222,8 @@ export default {
     pushPage(fromTo) {
         const ionNav = document.querySelector('ion-nav') ;
         if(fromTo=="lang"){
-            ionNav.push(Lang);
+            ionNav.pop();
+            
         }
         
        

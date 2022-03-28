@@ -147,6 +147,7 @@ export default ({
       const ionNav = document.querySelector('ion-nav') as any;
       
       ionNav.push(Download,  { lang: passedLang , from:"lang"});
+     
       
       
     },

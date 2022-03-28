@@ -59,9 +59,9 @@ export default defineComponent({
 
   },
   mounted() {
-    
+    console.log("entro in app");
 
-   screen.orientation.lock('portrait');
+   //screen.orientation.lock('portrait');
     const routerOuteletRef = ref(null);
     provide("routerOutlet", routerOuteletRef);
    
