@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">AAudible museum</string>
-    <string name="title_activity_main">AAudible museum</string>
+    <string name="app_name">Audible museum</string>
+    <string name="title_activity_main">Audible museum</string>
     <string name="package_name">io.ionic.starter</string>
     <string name="custom_url_scheme">io.ionic.starter</string>
 </resources>

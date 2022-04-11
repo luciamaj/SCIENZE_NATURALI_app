@@ -1,12 +1,12 @@
 {
   "appId": "io.ionic.starter",
-  "appName": "audible-museum",
+  "appName": "Biblioteca Sonora",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "dist",
   "plugins": {
     "SplashScreen": {
-      "launchShowDuration": 1
+      "launchShowDuration": 0
     }
   },
   "cordova": {}
