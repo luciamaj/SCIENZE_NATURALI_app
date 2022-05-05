@@ -1,3 +1,5 @@
+import { text } from "@fortawesome/fontawesome-svg-core";
+
 export const it = {
 
     action:{
@@ -5,7 +7,8 @@ export const it = {
         postponi:"Più tardi",
         declina:"Declina",
         cancel:"Annulla",
-        download:"Scarica"
+        download:"Scarica",
+        app:"Apri in App"
     },
     onboard:{
         lang:{
@@ -24,20 +27,28 @@ export const it = {
 
 
     },
+    networkerror:{
+		title:"Errore di rete",
+        text:"Impossibile scaricare i contenuti, sono stati rilevati problemi di connessione ",
+        action:"Riprova più tardi"
+    },
     update:{
 		title:"Aggiornamento",
         text:"Sono disponibili nuovi contenuti, aggiornali prima di usare l'app"
     },
     scarica:{
 		title:"Scaricamento dei contenuti",
-        text:"A breve sarà disponibile l'applicazione, l'operazione può richiedere un po' di tempo."
+        text:"A breve l'applicazione sarà disponibile, l'operazione può richiedere qualche minuto."
     },
     main:{
 
         scan:"Scansiona QR Code",
         start:"Scansiona Silence Tag",
         stop:"Stop SilenceTag",
-		
+		alertApp:{
+            title:"funzione non disponibile",
+            text:"Questa funzione è disponibile solo in app",
+        },
 		timeoutTagTitle:"ATTENZIONE",
 		timeoutTagText:"SilenceTag NON rilevato, potrebbe essere spento, utilizza il pulsante \"Scansiona QR Code\"",
 		timeoutTagAccept:"Prosegui"
@@ -50,15 +61,20 @@ export const it = {
         },
         lang:{
             title:"Lingue",
-            subtitile:"",
+            subtitile:"Lingue scaricate",
             add:"Aggiungi nuova lingua",
             select:"Contenuti disponibili",
-            alert:"Attenzione questa operazione scaricherà lo scaricamento dei contenuti nella lingua scelta",
+            alert:"Attenzione questa operazione scaricherà i contenuti nella lingua scelta",
             it:"Italiano",
             en:"Inglese",
             fr:"Francese",
             de:"Tedesco"
-        }
+        },
+        help:"Aiuto",
+        copyright:"Copyright",
+        privacy:"Privacy",
+        termini:"Termini di servizio"
+
     },
    
 

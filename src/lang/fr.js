@@ -4,7 +4,8 @@ export let fr ={
         postponi:"Plus tard",
         declina:"Déclin",
         cancel:"Annuler",
-        download:"Télécharger"
+        download:"Télécharger",
+        app:"Aller sur l'appli"
     },
     onboard:{
         lang:{
@@ -23,6 +24,11 @@ export let fr ={
 
 
     },
+    networkerror:{
+		title:"Défaillance du réseau",
+        text:"Impossible de télécharger le contenu, des problèmes de connexion ont été détectés",
+        action:"Essayer plus tard"
+    },
     update:{
 		title:"Nouveau contenu",
         text:"Un nouveau contenu est disponible, veuillez le mettre à jour avant d'utiliser l'application"
@@ -36,7 +42,10 @@ export let fr ={
         scan:"Scanner le code QR",
         start:"Scanner le SilenceTag",
         stop:"Stop SilenceTag",
-		
+        alertApp:{
+            title:"Attention",
+            text:"Cette fonctionnalité est disponible via l'application",
+        },
 		timeoutTagTitle:"ATTENTION",
 		timeoutTagText:"SilenceTag NON détecté, il est peut-être désactivé, utilisez le bouton \"Scan QR Code\"",
 		timeoutTagAccept:"Continuez"
@@ -49,7 +58,7 @@ export let fr ={
         },
         lang:{
             title:"Langues",
-            subtitile:"",
+            subtitile:"Langues téléchargées",
             add:"Ajouter une nouvelle langue",
             select:"Available content",
             alert:"Attention : cette opération consiste à télécharger le contenu dans la langue choisie",
@@ -58,6 +67,10 @@ export let fr ={
             fr:"French",
             de:"German"
         },
+        help:"Aiuto",
+        copyright:"Copyright",
+        privacy:"Privacy",
+        termini:"Conditions d'utilisation"
         
     },
     menulangtitle:"Changes"

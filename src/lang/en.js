@@ -4,7 +4,8 @@ export const en= {
         postponi:"Postpone",
         declina:"Decline",
         cancel:"Cancel",
-        download:"Download"
+        download:"Download",
+        app:"Go to App"
     },
     onboard:{
         lang:{
@@ -23,9 +24,14 @@ export const en= {
 
 
     },
+    networkerror:{
+		title:"Network error",
+        text:"Connection problems have been detected, the content cannot be downloaded",
+        action:"Try later"
+    },
     update:{
-		title:"Update",
-        text:"There is new content available, please update it before using the app"
+		title:"Updates",
+        text:"There are new updates avaiable, do you want to update the app now?"
     },
     scarica:{
 		title:"Download the contents",							 
@@ -36,8 +42,11 @@ export const en= {
         scan:"Scan QR code",
         start:"Scan SilenceTag",
         stop:"Stop SilenceTag",
-		
-		timeoutTagTitle:"ATTENTION!",
+        alertApp:{
+            title:"Feature not available",
+            text:"This feature is only available on the app",
+        },
+		timeoutTagTitle:"ATTENTION",
 		timeoutTagText:"SilenceTag NOT detected, it may be off, use the \"Scan QR Code\" button",
 		timeoutTagAccept:"Continue"
     
@@ -50,7 +59,7 @@ export const en= {
         },
         lang:{
             title:"Language",
-            subtitile:"",
+            subtitile:"Dowloaded languages",
             add:"Add new language",
             select:"Available content",
             alert:"Attention this operation will download the content in the language selected",
@@ -59,6 +68,10 @@ export const en= {
             fr:"French",
             de:"German"
         },
+        help:"Help",
+        copyright:"Copyright",
+        privacy:"Privacy",
+        termini:"Terms of Service"
         
     },
    

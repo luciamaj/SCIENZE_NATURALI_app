@@ -4,7 +4,8 @@ export const en= {
         postponi:"Später",
         declina:"Ablehnen",
         cancel:"Abbrechen",
-        download:"Herunterladen"
+        download:"Herunterladen",
+        app:"Gehe zur App"
     },
     onboard:{
         lang:{
@@ -22,6 +23,11 @@ export const en= {
 
 
     },
+    networkerror:{
+		title:"Netzwerkfehler",
+        text:"Inhalte können nicht heruntergeladen werden, es wurden Verbindungsprobleme festgestellt",
+        action:"Versuche es später"
+    },
     update:{
 		title:"Update",
         text:"There is new content available, please update it before using the app"
@@ -35,7 +41,10 @@ export const en= {
         scan:"QR-Code scannen",
         start:"SilenceTag scannen",
         stop:"Stop SilenceTag",
-		
+        alertApp:{
+            title:"Nicht verfügbar",
+            text:"Diese Funktion ist in der App verfügbar",
+        },
 		timeoutTagTitle:"AUFMERKSAMKEIT",
 		timeoutTagText:"SilenceTag wird NICHT erkannt, möglicherweise ist es deaktiviert. Verwenden Sie die Schaltfläche \"QR-Code scannen\"",
 		timeoutTagAccept:"Fortsetzen"
@@ -48,7 +57,7 @@ export const en= {
         },
         lang:{
             title:"Sprache",
-            subtitile:"",
+            subtitile:"Sprachen heruntergeladen",
             add:"Neue Sprache hinzufügen",
             select:"Available content",
             alert:"Achtung: Bei diesem Vorgang werden die Inhalte in der gewählten Sprache heruntergeladen",
@@ -57,6 +66,10 @@ export const en= {
             fr:"French",
             de:"German"
         },
+        help:"Aiuto",
+        copyright:"Copyright",
+        privacy:"Privacy",
+        termini:"Nutzungsbedingungen"
         
     },
     menulangtitle:""
