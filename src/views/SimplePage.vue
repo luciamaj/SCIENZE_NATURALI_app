@@ -1,21 +1,21 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-toolbar color="primary">
-        <ion-title slot="start" >WAvE B - {{store}}</ion-title>
-        
-      </ion-toolbar> 
+      
     </ion-header>
   
     <ion-content :fullscreen="true">
-    
-          <div class="buttons">
-          
-            <ion-button  class="test-btn" id="test" @click="callJava" >call</ion-button>
-          </div>
-
-          Risposta: {{answ}}
-         
+      <div class="vertical-center ">
+        <div class="center-content">
+          <div class="logo-container"><img class="logo" :src="logo"/></div>
+      
+        <div class="buttons">
+        
+          <ion-button color="secondary" class="test-btn" id="test" @click="openApp(tag)" >{{$t('action.app')}}</ion-button>
+        </div>
+        <div class="powered" @click="openWebSite">Powered by Engineering Associates</div>
+        </div>
+      </div>
     </ion-content>
     
   </ion-page>
@@ -24,8 +24,6 @@
 <script>
 import {
   IonPage,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonButton,
 
@@ -34,55 +32,57 @@ import {
 } from "@ionic/vue";
 
 
-import { Plugins } from "@capacitor/core";
-
+import common from "../js/common"
 import { useRouter } from "vue-router";
 
-const { Storage } = Plugins;
+
 
 export default {
-  name: "Tab",
+  name: "open-app",
+  props:{tag:{type: String, default: '0' }},
   data() {
     return {
-      decodedValue: "",
-      name: "AUDIBLE MUSEUM",
-      store:"",
-      notification:false,
-     ntag:"",
-     playing:false,
     };
+  },
+  created(){
+    this.openApp=common.openApp;
+   
+
   },
  
   components: {
-    IonToolbar,
-    IonTitle,
-    IonContent,
+   IonContent,
     IonPage,
     IonButton,    
     //IonModal
   
   },
+  computed:{
+   
+  },
+
   
+  mounted(){
+    const mostra=JSON.parse(localStorage.getItem('pubblication'));
+    
+    if (mostra) {
+        this.logo= this.$store.getters.baseUrl+"/upload/"+mostra.img;
+    } else {
+      this.logo= '/assets/background/dos.png'
+      
+    }
+    
+    this.openApp(this.tag)
+         
+  },
 
 
   methods: {
  
-    openpage(){
-     // this.$router.push({ path: "/audio/A0002"  });
-      this.$router.push({ path: "/test"  });
-    },
-
-    callJava(){
-      const answ= AndroidObject.executeJavaCode();
-      alert("Risposta  "+answ);
-      this.answ=answ;
-
+   
+  
+   
       
-   
-
-    }
-
-   
   }
 };
 </script>
@@ -99,11 +99,14 @@ ion-content {
   height: 100%;
 }
 
-.center {
-  display: block;
-  position: absolute;
-  bottom: 0;
-  padding-bottom: 20vh;
+.center-content {
+    display: flex;
+    position: absolute;
+   
+    width: 84vw;
+    height:94vh;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .logo-container {
@@ -112,7 +115,7 @@ ion-content {
 
 .logo {
   object-fit: contain;
-  max-height: 30vh;
+  max-height: 35vh;
   margin-bottom: 50px;
   object-position: center;
   width: 100%;
@@ -120,14 +123,6 @@ ion-content {
 .buttons{
   width: 100%;
   text-align: center;
-}
-.view-wwave-container {
-  background-color: white;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-position: center;
-  background-size: cover;
-  background-blend-mode: saturation;
 }
 
 .title {
@@ -141,30 +136,17 @@ ion-content {
    --background:  red;
 }
 
-.capture-btn {
-  font-weight: 700;
-  width: 280px;
-  margin: 15px auto;
-}
-#captureStart{
-    --background:var(--ion-color-secondary);
-}
-#captureStop {
-  --background: #2d9fe3;
-}
+.powered{
+    position: absolute;
+    bottom: 25px;
+    width: 100vw;
+    font-size: 15px;
+    text-align: center;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #136c97;
 
-.toolbar-background {
-  color: black !important;
 }
-.notification{
-  width: 10px;
-  visibility:hidden;
-  height: 16px;
-}
-.showNotification{
-  visibility: visible;
-}
-
 @media only screen and (orientation:portrait) {
   body {
     height: 100vw;
