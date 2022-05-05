@@ -93,30 +93,31 @@ export default defineComponent({
 
     async showOptions() {
       const alert = await alertController.create({
-      header: "Aggiornamento",
-      message: "Sono disponibili aggiornamenti dei contenuti",
-      buttons: [
-        {
-          text: "Scarica",
-          handler: () => {
-            console.log("Accepted");
-             this.emitter.emit('aggiorna');
-             this.notificationState=false
-          },
-        },
-        {
-          text: "Postponi",
-          role: "cancel",
-          handler: () => {
-            console.log("Declined the offer");
-            
-          },
-        },
-      ],
-    });
+          header: this.$t('update.title') ,
+          message: this.$t('update.text') ,
+          buttons: [
+              {
+                  text:this.$t('action.download'),
+                  handler: () => {
+                      console.log("Accepted");
+                      this.emitter.emit('aggiorna','');
+                      this.notificationState=false
+                      
+                  },
+              },
+              {
+              text: this.$t('action.postponi') ,
+              role: "cancel",
+              handler: () => {
+                  console.log("Declined the offer");
+                  
+              },
+              },
+          ],
+      });
 
-    await alert.present();
-  },
+      await alert.present();
+    },
 
     
   },

@@ -10,31 +10,42 @@
   </ion-header>
   <ion-content class="ion-padding">
 
-    <ion-title class="content-title">Settings</ion-title>
+    <!--ion-title class="content-title"></ion-title-->
     <div class="button-container">
          
-        <ion-button expand="block" size="large" color="secondary" :disabled="!notification" @click="showOptions"> 
-            <ion-icon slot="start" size="large" name="checkmark-circle-outline" /><ion-badge  mode="ios" color="danger" class="notification"  v-model="notificationState"   :class="{showNotification:notificationState}">0</ion-badge>
+        <ion-button expand="block" size="large" color="secondary" :disabled="!notificationState" @click="showOptions"> 
+            <ion-icon slot="start" size="large" name="cloud-download-outline" /><ion-badge  mode="ios" color="warning" class="notification"  v-model="notificationState"   :class="{showNotification:notificationState}">0</ion-badge>
             <div class="button-text"> {{$t('menu.content.title')}}</div>
             <ion-icon  slot="end" size="large" name="chevron-forward" />
         </ion-button>
-            <ion-button expand="block" size="large" color="secondary"  @click="pushPage('lang')" id="push-nav-child"> 
+        <ion-button expand="block" size="large" color="secondary"  @click="pushPage('lang')" id="push-nav-child"> 
             <ion-icon   slot="start" size="large" name="language" />
             <div class="button-text">{{$t('menu.lang.title')}}</div>
             <ion-icon  slot="end" size="large" name="chevron-forward" />
         </ion-button>
-        <ion-button expand="block" size="large" color="secondary" > 
-            <ion-icon  slot="start" size="large" name="information-circle-outline" />
-            <div class="button-text"> Help</div>
+        <ion-button expand="block" size="large" color="secondary"  @click="openHelpModal"> 
+            <ion-icon  slot="start" size="large" name="help-circle-outline" />
+            <div class="button-text"> {{$t("menu.help")}}</div>
             <ion-icon  slot="end" size="large" name="chevron-forward" />
         </ion-button>
-         <ion-button expand="block" size="large" color="secondary" > 
+         <ion-button expand="block" size="large" color="secondary" @click="pushPage('copy')" > 
             <ion-icon  slot="start" size="large" name="information-circle-outline" />
-            <div class="button-text"> Copiright</div>
+            <div class="button-text"> {{$t("menu.copyright")}}</div>
+            <ion-icon  slot="end" size="large" name="chevron-forward" />
+        </ion-button>
+        <ion-button expand="block" size="large" color="secondary" @click="pushPage('privacy')" > 
+            <ion-icon  slot="start" size="large" name="glasses" />
+            <div class="button-text"> {{$t("menu.privacy")}}</div>
+            <ion-icon  slot="end" size="large" name="chevron-forward" />
+        </ion-button>
+        <ion-button expand="block" size="large" color="secondary" @click="pushPage('terms')" > 
+            <ion-icon  slot="start" size="large" name="shield-checkmark-outline"/>
+            <div class="button-text"> {{$t("menu.termini")}}</div>
             <ion-icon  slot="end" size="large" name="chevron-forward" />
         </ion-button>
        
     </div>
+    <div class="powered" @click="openWebSite">Powered by Engineering Associates</div>
   </ion-content>
 </template>
 
@@ -53,25 +64,41 @@ alertController,
 import NavChild from '@/components/NavChild.vue';
 import Lang from '@/components/ChangeLang.vue';
 import Download from '@/components/ScaricamentoContenuti.vue';
+import Copy from '@/components/Copy.vue';
+import Instructions from '@/views/Onboardv3.vue'
+import common from '@/js/common';
 export default ({
     
     props: {
         titolo: String,
         notification: Boolean
     },
-    /*computed:{
-        titolo(){
-            const titolo=this.params
-            console.log("aaaaaaaaaaaaaaaaa ",this.params)
-            return titolo
+    
+    setup(){
+        const openHelpModal = async () => {
+          
+            const top = await modalController.getTop();
+
+            const modal = await modalController.create({
+                component: Instructions,
+                swipeToClose: true,
+                presentingElement: top,
+                componentProps: { 
+                context:"help",
+                
+                }
+            });
+
+
+           
+
+            return modal.present();
+        };
+        return{
+            openHelpModal
         }
-    },*/
-   /* setup(){
-        const titolo=this.navParams.get("titolo")
-         return{
-             titolo
-         }
-     },*/
+    },
+
           
    
     components: {
@@ -82,6 +109,12 @@ export default ({
         IonTitle,
         IonToolbar,
         
+    },
+    created(){
+        this.networkError=common.networkError;
+         this.emitter.on('fineAggiornamento', _ => {
+           this.notificationState=false;
+        });
     },
 
     data: ()=>  {
@@ -105,7 +138,14 @@ export default ({
             ionNav.push(Lang, { title: 'Changeeee' });
         }else if(page=="aggiorna"){
             ionNav.push(Download,  { lang: localStorage.getItem('lang'), from:"update" });
-        }else{
+        }else if(page=="copy"){
+            ionNav.push(Copy,  {page:"copyright" });
+        }else if(page=="privacy"){
+            ionNav.push(Copy,  {page:"privacy" });
+        }else if(page=="terms"){
+            ionNav.push(Copy,  {page:"termini" });
+        }
+        else{
             ionNav.push(NavChild, { title: 'Custom Title' });
         }
         
@@ -115,31 +155,46 @@ export default ({
         },
 
         async showOptions() {
-            const alert = await alertController.create({
-                header: "Aggiornamento",
-                message: "Sono disponibili aggiornamenti dei contenuti",
-                buttons: [
-                    {
-                        text: "Scarica",
-                        handler: () => {
-                            console.log("Accepted");
-                            this.emitter.emit('aggiorna');
-                            this.notificationState=false
-                            //this.pushPage("aggiorna");
-                        },
-                    },
-                    {
-                    text: "Postponi",
-                    role: "cancel",
-                    handler: () => {
-                        console.log("Declined the offer");
+            if(window.navigator.onLine){
+                 const alert = await alertController.create({
+                    header: this.$t('update.title') ,
+                    message: this.$t('update.text') ,
+                    buttons: [
                         
-                    },
-                    },
-                ],
-            });
+                        {
+                            text: this.$t('action.postponi') ,
+                            role: "cancel",
+                            handler: () => {
+                                console.log("Declined the offer");
+                                
+                            },
+                        },
+                        {
+                            text:this.$t('action.download'),
+                            handler: () => {
+                                console.log("Accepted");
+                                this.emitter.emit('aggiorna', "menu");
+                                this.pushPage("aggiorna");
+                            
+                            },
+                        },
+                    ],
+                });
 
-            await alert.present();
+                await alert.present();
+
+            }else{
+                this.networkError();
+            }
+           
+        },
+
+
+        openWebSite(){
+            window.open('https://www.engineering-associates.it/', '_blank').focus();
+        },
+        openCopyPage(){
+            window.open('https://www.engineering-associates.it/', '_blank').focus();
         }
     }
 });
@@ -152,20 +207,22 @@ margin-top: 30px;
 }
 .button-container{
     position: relative;
-    height: 47vh;
-    top: 15%;
+    height: fit-content;
+    top: 50%;
     padding: 8vw;
+    transform: translatey(-55%);
 }
 .button-container>ion-button{
     text-transform: capitalize;
-    margin: 25px 0;
+    margin: 20px 0;
+    height: 48px
     
 }
 .button-text{
     width: 80%;
     text-align: start;
     padding-left: 13px;
-    font-size: 0.9em;
+    font-size: 0.75em;
    
 }
 .notification{
@@ -183,5 +240,15 @@ margin-top: 30px;
 .showNotification{
   visibility: visible;
 }
+.powered{
+    position: absolute;
+    bottom: 25px;
+    width: 100vw;
+    font-size: 15px;
+    text-align: center;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #136c97;
 
+}
 </style>

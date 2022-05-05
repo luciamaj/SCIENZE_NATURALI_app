@@ -2,6 +2,7 @@
   <ion-app>
     <ion-router-outlet ref="routerOuteletRef" id="main-content"></ion-router-outlet>
   </ion-app>
+   <loader v-if="loading"/>
 </template>
 
 <script>
@@ -9,8 +10,11 @@ import { IonApp, IonRouterOutlet } from "@ionic/vue";
 import { defineComponent, ref, provide } from "vue";
 import { Plugins, StatusBarStyle } from "@capacitor/core";
 import { HeaderColor } from "@ionic-native/header-color/ngx";
-
-
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
+ import { loadScript } from "vue-plugin-load-script";
+//constructor(private screenOrientation: ScreenOrientation) { }
+import Loader from "./components/Loader.vue"
+import common from "./js/common"
 
 const { StatusBar } = Plugins;
 const { Storage } = Plugins;
@@ -18,10 +22,12 @@ const { Storage } = Plugins;
 // TODO: open -a Google\ Chrome --args --disable-web-security --user-data-dir --------> PER APRIRE IN DEBUG
 
 export default defineComponent({
+  
   name: "App",
   components: {
     IonApp,
     IonRouterOutlet,
+    Loader,
   },
   data() {
     return {
@@ -34,6 +40,7 @@ export default defineComponent({
       media:0,
       progress:0,
       mediafetched:0,
+      loading: true
     };
   },
   ionViewWillEnter() {
@@ -48,35 +55,54 @@ export default defineComponent({
       color: "#FFF"
     });
 
-
   },
+ 
   created(){
-     document.addEventListener("swUpdated", this.showRefreshUI, { once: true });
-      this.emitter.on('aggiorna', _ => {
-      this.aggiorna();
+    this.setInactiveTour=common.setInactiveTour;
+    this.updateNotification=common.updateNotification;
+    this.getNotificstionState=common.getNotificstionState;
+  
+    window.document.addEventListener("visibilitychange", ()=> {
+      console.log('VISIBILITY CHANGE', window.document.visibilityState);
+      if(window.document.visibilityState=="visible"){ 
+        if(this.savedPubblication.pubblicazione!= this.pubblicazione){
+          this.getNotificstionState().then(state=>{
+            if(state==false ||state==null){
+              this.emitter.emit('changeVersion');
+              this.updateNotification(true);
+
+            }
+          })
+         
+
+        }
+      }
+     
     });
     
+    document.addEventListener("swUpdated", this.showRefreshUI, { once: true });
+    this.emitter.on('aggiorna',(from) => {
+      this.aggiorna(from);
+    });
 
   },
+ 
   mounted() {
-    console.log("entro in app");
-
-   //screen.orientation.lock('portrait');
+        
     const routerOuteletRef = ref(null);
     provide("routerOutlet", routerOuteletRef);
-   
+    //this.setInactiveTour();
     this.getinfo((info) => {
       console.log("info", info);
       this.infoPubbl=info;
-       this.infoPubbl.lang= this.infoPubbl.lang.map(element => {
+      this.infoPubbl.lang= this.infoPubbl.lang.map(element => {
         return element.toLowerCase();
       });
       this.mostra=info.mostra;
       this.pubblicazione=info.pubblicazione;
-      const pubblication=localStorage.getItem('pubblication');
-      const jspubb=JSON.parse(pubblication);
-
-      if(pubblication==null ||pubblication=="" ){
+      this.savedPubblication=JSON.parse(localStorage.getItem('pubblication'));
+     
+      if(this.savedPubblication==null ||this.savedPubblication=="" ){
         console.log("versione VUOTA");
          
         localStorage.setItem('pubblication', JSON.stringify(info));
@@ -84,9 +110,10 @@ export default defineComponent({
        
     
       }else{
-        if(jspubb.pubblicazione!=info.pubblicazione){
+        if(this.savedPubblication.pubblicazione!= this.pubblicazione){
           console.log("versione cambiata")///controllare e fare apparire popup di aggiornamento
           this.emitter.emit('changeVersion');
+          this.updateNotification(true);
          
         }else{
           console.log("versione uguale");
@@ -102,6 +129,11 @@ export default defineComponent({
 
         console.log("schede salvate "+ ogg);
     });
+    
+   setTimeout(() => {
+        this.loading = false
+        this.schedaState(false);
+    }, 1500);
 
   },
 
@@ -115,7 +147,7 @@ export default defineComponent({
         value:JSON.stringify(param) 
       });
     },
-      async getData() {
+    async getData() {
       const ret = await Storage.get({ key: "dataSchede" });
       console.log(ret);
     },
@@ -138,11 +170,11 @@ export default defineComponent({
 
     getinfo(callback){
       //if (store.getters.baseUrl) {
-
+      
        fetch(this.$store.getters.baseUrl+"/service/rest/v1/mostra-attiva")
       .then(response => {
         if (!response.ok) {
-          throw new Error(`Request failed with status ${reponse.status}`)
+          throw new Error(`Request failed with status ${response.status}`)
         }
         return response.json()
       })
@@ -156,7 +188,7 @@ export default defineComponent({
       fetch(this.$store.getters.baseUrl+"/service/rest/v1/app-schede-audible")
       .then(response => {
         if (!response.ok) {
-          throw new Error(`Request failed with status ${reponse.status}`)
+          throw new Error(`Request failed with status ${response.status}`)
         }
         return response.json()
       })
@@ -168,11 +200,10 @@ export default defineComponent({
       .catch(error => console.log(error))
     },
 
-    aggiorna(){
+    aggiorna(from){
       console.log("aggiorno pubblicazione");
       localStorage.setItem('pubblication', JSON.stringify(this.infoPubbl));
-      localStorage.removeItem('dataMostra');
-      this.aggiornaInfo();
+      this.aggiornaInfo(from);
      // const newData= localStorage.getItem('dataMostra');
      
     },
@@ -193,7 +224,8 @@ export default defineComponent({
       });
         
     },
-    aggiornaInfo(){
+    aggiornaInfo(from){
+     
       this.getSchede((schede) => {
       
         console.log("schede info", schede);
@@ -202,10 +234,13 @@ export default defineComponent({
       
         console.log("Filtered " , filtered);
         const JSONstring= JSON.stringify(this.evendata(filtered));
-        
-       localStorage.setItem('dataMostra',JSONstring );
-       //this.searchMedia(JSONstring);
-       this.$router.replace({ path: "/scarica/"+ localStorage.getItem('lang')});
+        localStorage.removeItem('dataMostra');
+        localStorage.setItem('dataMostra',JSONstring );
+        //this.searchMedia(JSONstring);
+        if(from!="menu"){
+          this.$router.replace({ path: "/scarica/"+ localStorage.getItem('lang')});
+        }
+       
       
       });
         
@@ -213,19 +248,20 @@ export default defineComponent({
 
     evendata(data){
       const lang=this.infoPubbl.lang.filter( ( el ) =>{
-        return el!="it";
+        return el!=process.env.VUE_APP_LANG_DEFAULT;
       });
       console.log("lang filter", this.infoPubbl.lang, " ", lang )
       if(lang.length>0){
         data.forEach(scheda => {
         lang.forEach(lang => {
          const contenuto=scheda.content.find(el=> el.lang==lang);
-             console.log("Cont ", contenuto);
-             console.log("Conttype ", contenuto.type);
+            // console.log("Cont ", contenuto);
+            console.log("Conttype ", contenuto.type);
+            const contenutodefault=scheda.content.find(el=> el.lang==process.env.VUE_APP_LANG_DEFAULT);
             if(contenuto.type==null) {
                   
               console.log("Non ci sono Media per la scheda  in "+ lang)
-              const contenutodefault=scheda.content.find(el=> el.lang=='it');
+             
 
               console.log("contenutoita "+ contenutodefault.type)
               if(contenutodefault.type!=null){
@@ -242,6 +278,13 @@ export default defineComponent({
               }
               
             }
+            if(contenuto.titolo==null){
+              contenuto.titolo=contenutodefault.titolo;
+            }
+            if(contenuto.testo==null){
+              contenuto.testo=contenutodefault.testo;
+            }
+
          });
         });
         
@@ -264,15 +307,15 @@ export default defineComponent({
           console.log("Non ci sono immagini per la scheda ")
         }
         contenuto=scheda.content.find(el=> el.lang==currLang )
-        console.log("Cont ", contenuto);
+        //console.log("Cont ", contenuto);
         if(contenuto.audio!=null){
            this.mediaCounter();
           this.getmedia(contenuto.audio);
-           console.log("Getaudio ")
+           //console.log("Getaudio ")
         }else if(contenuto.video!=null){
          this.mediaCounter();
           this.getmedia(contenuto.video);
-          console.log("Getvideo ")
+          //console.log("Getvideo ")
         }else{
            console.log("Non ci sono Media per la scheda ")
         }
@@ -304,7 +347,23 @@ export default defineComponent({
 
     mediaCounter(){
       this.media++;
-    }
+    },
+
+    
+    async schedaState(state) {
+      await Storage.set({
+        key: 'openScheda',
+        value:state
+      });
+    },
+   
+   /* async updateNotification(state) {
+      console.log("Update");
+      await Storage.set({
+        key: 'update',
+        value:state
+      });
+    },*/
   },
  
 });

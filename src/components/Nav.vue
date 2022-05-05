@@ -1,6 +1,5 @@
 
 <template>
-  {{updateNotification}}
   <ion-nav :root="NavRoot" :rootParams="{notification:updateNotification}" id="nav" ></ion-nav>
 </template>
 

@@ -2,22 +2,20 @@
      <ion-content>
      
       <div  class="onboard-main">
-    
-      
 
-        <div class="onboard-bot">
+       
 
-          <div class="onb-card">
-              
-            <div class="onb-desc ion-text-center">
-                <h4>Scarico i contenuti</h4>
-                <p class="ion-no-margin">A breve l'applicazione sarà pronta all'uso</p>
-                <ion-progress-bar :value="progress" :buffer="1" color="secondary"></ion-progress-bar>
-
-            </div>
+          <div class="onb-desc ion-text-center">
+            <h4> {{$t('scarica.title')}}</h4>
+            <p class="ion-no-margin text-scaricamento"> {{$t('scarica.text')}}</p>
           </div>
-          
-        </div>
+          <div class="progress"> 
+            <ion-progress-bar :value="progress" :buffer="1" color="secondary"> </ion-progress-bar>
+            <div class ="progressvalue"><ion-spinner v-if="progress<1" name="crescent"></ion-spinner>{{ Math.round(progress*100) }} %</div>
+          </div>
+
+         
+       
             
 
       </div>
@@ -26,24 +24,19 @@
     </ion-content>
 </template>
 
-
-
 <script>
-
-
-
+import common from "../js/common"
 import {
 
  IonContent,
- IonProgressBar
+ IonProgressBar,
+ IonSpinner,
+ alertController
 
 } from "@ionic/vue";
 
-//import NavRoot from '@/components/NavRoot.vue';
-import Lang from '@/components/ChangeLang.vue';
-//import { Plugins } from "@capacitor/core";
-//import { useRouter } from "vue-router";
 
+import Lang from '@/components/ChangeLang.vue';
 
 export default {
     name: "scaricamento",
@@ -74,33 +67,47 @@ export default {
     },
 
 
-  computed:{
-    
-    /*lang(){
-   
-      return this.lang;
-    },*/
+  
+  created(){
+    if(window.navigator.onLine){
+      this.online=true
+    }else{
+       this.online=false
+    }
+    this.updateNotification=common.updateNotification;
+    this.savedlangs=localStorage.getItem('savedLangs');
+    console.log("svd lng",this.savedlangs);
+    this.currLang=this.$i18n.locale;
 
-   
+    if(this.online){
+      this.getinfo((info) => {
+        this.publishedLang=info.lang.map(element => {
+          return element.toLowerCase();
+        });
+      })
+    }
+
   },
   mounted(){
-
-        this.currLang=this.$i18n.locale;
-
-        this.getinfo((info) => {
-          this.publishedLang=info.lang.map(element => {
-            return element.toLowerCase();
-          });
-        })
+   
+    
+    setTimeout(() => {
+      if(this.online){
         this.searchMedia();
+      }else{
+        this.networkError();
+      }
+       
+    
+    },1000);
+    
        
       
   },
  
   components: {
     
-   
-   
+   IonSpinner ,
    IonContent,
     IonProgressBar
   },
@@ -108,10 +115,27 @@ export default {
 
   methods:{
 
-
+    async networkError() {
+      const alert = await alertController.create({
+        header:  this.$t('networkerror.title'),
+        message: this.$t('networkerror.text'),
+        buttons: [
+         
+          {
+            text: this.$t('networkerror.action'), 
+            handler: () => {
+              this.gotoFrom();
+              
+            },
+          },
+        ],
+      });
+  
+      await alert.present();
+    },
   
     getinfo(callback){
-      //if (store.getters.baseUrl) {
+      
 
        fetch(this.$store.getters.baseUrl+"/service/rest/v1/mostra-attiva")
       .then(response => {
@@ -173,46 +197,46 @@ export default {
     });
   },
     getmedia(name){
-     console.log("nuemro di media "+ this.media );
+      console.log("nuemro di media "+ this.media );
 
       //fetch(this.$store.getters.baseUrl+"/inventario/download.php?id="+name+"&link=1")
-     fetch(this.$store.getters.baseUrl+"/upload/"+name)
+      fetch(this.$store.getters.baseUrl+"/upload/"+name)
       .then(response => {
         if (!response.ok) {
-          throw new Error(`Request failed with status ${reponse.status}`)
+          throw new Error(`Request failed with status ${response.status}`)
         }
         
         console.log("OK Resp", response);
         if(response.status==200){
          
-          this.mediafetched++
+         // this.mediafetched++
         }
-        this.progress=this.mediafetched/this.media;
-        console.log("progress ",  this.progress);
-        if(this.progress==1){
-            if(this.from=="main"){
-              if(localStorage.getItem('provToOpen')!=null){
-                console.log("entra in audio?");
-               // const path= "audio/"
-                this.$router.replace({ path: "/audio/"+localStorage.getItem('provToOpen') });
-              }else{
-                this.$router.replace({ name: "wave" });
-              }
-                
-            }else if(this.from=="update"){
-                this.pushPage();
-            } else if(this.from=="lang"){
-                this.pushPage("lang");
-            }
-           
-        }
+       /* this.progress=(this.mediafetched/this.media*100 )/100;
+        console.log("progress ",  this.progress);*/
+       
         return response
       })
       .then(response => response.blob())
       .then(blob => URL.createObjectURL(blob))
-      .then(url => console.log( url))
-      .catch(err => console.error(err));
-   
+      .then(url =>{ console.log( url);
+        this.mediafetched++
+        this.progress=Math.round(this.mediafetched/this.media*100 )/100;
+        console.log("progress ",  this.progress);
+      
+        if(this.progress==1){
+          this.openNext();
+        }
+      })
+      .catch(err => {console.error(err)
+        console.log("sono in errore")
+        this.mediafetched++
+        this.progress=Math.round(this.mediafetched/this.media*100 )/100;
+        console.log("progress ",  this.progress);
+        if(this.progress==1){
+          this.openNext();
+        }
+      });
+
 
     },
 
@@ -221,13 +245,50 @@ export default {
     },
     pushPage(fromTo) {
         const ionNav = document.querySelector('ion-nav') ;
-        if(fromTo=="lang"){
+        if(fromTo=="lang"||fromTo=="update"){
             ionNav.pop();
             
         }
         
        
     },
+
+    openNext(){
+      this.emitter.emit("fineAggiornamento");
+      this.updateNotification(false);
+      if(this.from=="main"){
+        if(localStorage.getItem('provToOpen')!=null){
+          const tag= localStorage.getItem('provToOpen');
+          localStorage.removeItem('provToOpen');
+          this.$router.replace({ path: "/scheda/"+tag });
+        }else{
+          this.$router.replace({ name: "wave" });
+        }
+            
+      }else if(this.from=="update"){
+        this.pushPage("update");
+      } else if(this.from=="lang"){
+        this.pushPage("lang");
+      }
+    },
+
+    gotoFrom(){
+      if(this.from=="main"){
+        if(localStorage.getItem('provToOpen')!=null){
+          const tag= localStorage.getItem('provToOpen');
+          localStorage.removeItem('provToOpen');
+          this.$router.replace({ path: "/scheda/"+tag });
+        }else{
+          this.$router.replace({ name: "wave" });
+        }
+            
+      }else if(this.from=="update"){
+        this.pushPage("update");
+      } else if(this.from=="lang"){
+        this.pushPage("lang");
+      }
+      
+    }
     
     
   }
@@ -340,17 +401,6 @@ ion-fab{
   padding-bottom: 15vh;
 }
 
-.logo-container {
-  background-color: #fff;
-}
-
-.logo {
-  object-fit: contain;
-  max-height: 30vh;
-  margin-bottom: 50px;
-  object-position: center;
-  width: 100%;
-}
 
 
 .title {
@@ -360,6 +410,16 @@ ion-fab{
   padding: 10px;
 }
 
+.onb-desc{
+  top: 32%;
+    position: relative;
+
+}
+
+.text-scaricamento{
+  margin-bottom: 20px;
+}
+
 .toolbar {
    --background:  red;
 }
@@ -367,6 +427,57 @@ ion-fab{
 
 .toolbar-background {
   color: white !important;
+}
+.progress{
+  height: 31px;
+  top: 35%;
+    position: relative;
+    padding: 0 10px;
+
+}
+ion-spinner{
+  margin-right: 2%;
+  color: azure;
+  height: 19px;
+  flex-direction: row;
+}
+.progressvalue{
+  display: flex;
+  align-items: center;
+  position: relative;
+  left: 15px;
+  text-align: left;
+  transform: translateY(-110%);
+  font-weight: 700;
+  color: azure;
+  height: 25px;
+}
+ion-progress-bar {
+  background-color: #d7dee3;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 100%;
+  display: block;
+  cursor: pointer;
+  border-radius: 15px;
+  height: 30px;
+  border: none;
+}
+
+ion-progress-bar[value]::-webkit-progress-bar {
+  background-color: #d7dee3;
+  border-radius: 3px;
+}
+
+ion-progress-bar[value]::-moz-progress-bar {
+  background-color: #00a0ff;
+  border-radius: 3px;
+}
+
+ion-progress-bar[value]::-webkit-progress-value {
+  background-color: #00a0ff;
+  border-radius: 3px;
 }
 
 @media only screen and (orientation:portrait) {

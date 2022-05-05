@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
+import WaveApp from '@/views/WavetoApp.vue'
 import Wave from '@/views/WaveB.vue'
 //import Tabs from '../views/Tabs.vue'
 
@@ -8,7 +9,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'wave',
-    component: Wave,
+    component: WaveApp,
     beforeEnter: (to, from, next) => {
       if(localStorage.getItem('pubblication')==null) {
         next('/onboard');
@@ -21,21 +22,45 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   { path: "/:pathMatch(.*)*", redirect: '/' },
-  { path: "/scheda/:id", redirect:'/audio/:id' },
+  {
+    path:"/scheda/:id",
+    name:"scheda",
+    component: '',
+    beforeEnter: (to, from, next) => {
+      if(process.env.VUE_APP_MODE=='mix'){
+      
+        next({name:'open-app', params:{tag:to.params.id}});
+       // window.location.replace('intent://instagram.com/#Intent;scheme=https;package=com.instagram.android;end');
+        //window.location.replace('instagram');
+        return;
+      }else{
+        const data=localStorage.getItem("dataMostra")
+        let scheda= JSON.parse(data).find(x => x.tag == to.params.id );
+        const lang= localStorage.getItem("lang");
+            
+        scheda= scheda.content.find(x => x.lang == lang);
+        if(scheda.type=="video"){
+          next ( '/video/'+to.params.id )
+        }else {
+          next('/audio/'+to.params.id );
+          return;
+        }
+
+      }
+      
+    },
+    
+  },
+  
   {
     path: '/scarica/:lang',
     name: 'scarica',
     component: () => import('@/views/Scaricamento.vue')
   },
   {
-    path: '/waveB',
-    name: 'waveB',
-    component: () => import('@/views/Wave.vue')
-  },
-  {
-    path: '/waveAW',
-    name: 'waveAW',
-    component: () => import('@/views/WaveBAudioWorklet.vue')
+    path: '/waveApp',
+    name: 'waveApp',
+    component: Wave
   },
   {
     path: '/onboard',
@@ -55,7 +80,13 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/audio/:id',
     name: 'audio',
-    component: () => import('@/views/Amplitude.vue')
+    component: () => import('@/views/Amplitude.vue'),
+    beforeEnter: (to, from, next) => {
+    
+        next();
+        next(from)
+
+    },
   },
   {
     path: '/open-scanner/',
@@ -68,9 +99,16 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/Video.vue')
   },
   {
-    path: '/testjava',
-    name: 'testJava',
-    component: () => import('@/views/SimplePage.vue')
+    path: '/openapp',
+    name: 'open-app',
+    component: () => import('@/views/SimplePage.vue'),
+    props:true
+  },
+  {
+    path: '/raccolta',
+    name: 'raccolta',
+    component: () => import('@/views/Visited.vue'),
+    props:true
   },
 
   
@@ -113,19 +151,24 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (localStorage.getItem('pubblication')==null && to.path !== '/onboard') {
-    console.log("pubblication Null")
-    //next();
-    console.log("parmas?", to.params.id)
-    if(to.params.id){
-     localStorage.setItem('provToOpen', to.params.id.toString());
+    if((to.name == 'scheda'||to.name == 'open-app' ) && process.env.VUE_APP_MODE=='mix'){
+      return  next();
+    }else{
+      console.log("pubblication Null")
+      //next();
+      console.log("parmas?", to.params.id)
+      if(to.params.id){
+      localStorage.setItem('provToOpen', to.params.id.toString());
+      }
+      return next('/onboard');
+ 
     }
-   return next('/onboard');
-        
-   
-  } else {
-    return  next();
     
-  }
+   
+    } else {
+      return  next();
+    
+    }
 });
 
 export default router

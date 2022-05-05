@@ -41,13 +41,42 @@ export default defineComponent({
   },
   props: ["modal"],
   mounted(){
+    
     this.schedaState(true);
+    this.time=setTimeout(() => {
+      this.presentAlert();
+    }, 30000);
+    this.statusCam();
+   
 
   },
+  ionViewDidEnter() {
+      console.log("remove obj");
+      this.removeObj();
+      
+  },
   methods: {
+    async statusCam() {
+      const status = await navigator.permissions.query({name: "camera"})
+      console.log("status",status);
+      if(status.state=="denied"){
+        this.alertPermissions();
+       
+      }
+      if(status.state=="prompt"){
+          this.alertPermissions();
+          status.addEventListener('change', ()=>{
+             this.PermissionAlert.dismiss()
+          })
+       
+         
+      }
+
+    },
     async close() {
       const top = await modalController.getTop();
        this.schedaState(false)
+       clearTimeout(this.time);
       top.dismiss();
     },
     async setObject(param) {
@@ -68,32 +97,45 @@ export default defineComponent({
         value:state
       });
     },
-    ionViewDidEnter() {
-      console.log("remove obj");
-      this.removeObj();
-      
-    },
+    
     onDecode(decodedString) {
       this.value = decodedString.split('/');
       this.tag=this.value[ this.value.length-1]
       let media = JSON.parse(localStorage.getItem("dataMostra")).find(x => x.tag == this.tag);
       const lang= localStorage.getItem("lang")
-      media=media.content.find(x => x.lang == lang);
-       console.log("content",media);
-      //const dataEl = { index: this.value[ this.value.length-1], type: "audio" };
- 
-      const dataEl = { index: this.tag, type: media.type };
-     /* if (audio) {
-        dataEl.index = audio.index;
-        dataEl.type = audio.type;
-      } else {
-        dataEl.index = data[0].index;
-        dataEl.type = data[0].type;
-      }*/
+      if(media){
+        media=media.content.find(x => x.lang == lang);
+        console.log("content",media);
+        const dataEl = { index: this.tag, type: media.type };
+        this.setObject(dataEl);
+        this.close();
+      }else{
+        this.presentAlert();
+      }
 
-      this.setObject(dataEl);
-      this.close();
-    }
+     
+    },
+    presentAlert() {
+      const alert = document.createElement('ion-alert');
+      alert.mode='ios'
+      alert.header = 'Alert';
+      alert.message = 'Qr code non riconosciuto';
+      alert.buttons = ['OK'];
+
+      document.body.appendChild(alert);
+      return alert.present();
+    },
+    alertPermissions() {
+      const permAlert = document.createElement('ion-alert');
+      permAlert.mode='ios'
+      permAlert.header = 'Alert';
+      permAlert.message = 'La camera non ha i permessi necessari';
+      permAlert.buttons = ['OK'];
+
+      document.body.appendChild(permAlert);
+      this.PermissionAlert=permAlert;
+      return permAlert.present();
+    },
   },
   data: () => {
     return {

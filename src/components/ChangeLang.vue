@@ -1,14 +1,15 @@
 <template>
   <ion-header>
     <ion-toolbar>
-      <ion-buttons>
+       <ion-title color="secondary">{{$t('menu.lang.subtitile')}}</ion-title>
+      <ion-buttons slot="start" >
         <ion-back-button></ion-back-button>
       </ion-buttons>
-      <ion-title>{{$t('menu.lang.title')}}</ion-title>
+     
     </ion-toolbar>
   </ion-header>
   <ion-content class="ion-padding" id="nav-child-content">
-  
+    <!--div>{{$t('menu.lang.subtitile')}}</div-->
     <ion-grid class="langs-grid">
       <template v-for="lang in saved" v-bind:key="lang">
         <ion-row>
@@ -31,15 +32,6 @@
     <ion-button v-if="remaining.length>0" expand="block" size="slim" color="primary" class="add-lang" @click="presentActionSheet">  {{$t('menu.lang.add')}} </ion-button>
 
 
-
-    <div>
-     
-      <!--div v-for="remainingLang in remaining" v-bind:key="remainingLang" @click="add(remainingLang)">
-        {{remainingLang}}
-      </div-->
-
-
-    </div>
      
   </ion-content>
 </template>
@@ -58,7 +50,7 @@ import {
   
   } from '@ionic/vue';
   
-
+import common from  "../js/common"
  import Download from '@/components/ScaricamentoContenuti.vue';
 //import { defineComponent } from 'vue';
 export default ({
@@ -126,6 +118,10 @@ export default ({
 
     
   },
+  created(){
+    this.networkError=common.networkError;
+
+  },
   mounted(){
     this.savedLangs
     this.remainingLang
@@ -175,14 +171,14 @@ export default ({
       },
     async presentActionSheet() {
         const actionSheet = await actionSheetController.create({
-            header: 'Langs',
+            header: this.$t('menu.lang.select'),
             cssClass: 'my-custom-class',
             buttons: this.buttons(),
           });
         await actionSheet.present();
 
-        const { role, data } = await actionSheet.onDidDismiss();
-        console.log('onDidDismiss resolved with role and data', role, data);
+       await actionSheet.onDidDismiss();
+        console.log('onDidDismiss');
       },
 
     async showOptions(lang) {
@@ -191,27 +187,27 @@ export default ({
       message:  this.$t('menu.lang.alert') ,
       buttons: [
         {
-          text: this.$t('action.accept'),
+          text: this.$t('action.download'),
           handler: () => {
             console.log("Accepted");
-           //  this.emitter.emit('aggiorna');
-           const pubblication=JSON.parse(localStorage.getItem("pubblication"))
-           const suppLang=pubblication.lang.find(el=> el==lang);
-           console.log("navigator langs", navigator.language );
-           console.log("langs",pubblication.lang );
-           console.log("lang "+ suppLang);
-            this.savedLangs=lang;
-            this.remaining=this.remaining.filter(item => item !== lang);
-           if(suppLang){
-              //this.searchMedia(lang);
-             // this.$router.replace({ path: "/scarica/"+ lang});
-              this.pushPage(lang);
-           }else{
-              //this.searchMedia('it');
-              //this.$router.replace({ path: "/scarica/it"});
-             this.pushPage("it");
-           }
-          
+            if(window.navigator.onLine){
+              const pubblication=JSON.parse(localStorage.getItem("pubblication"))
+              const suppLang=pubblication.lang.find(el=> el==lang);
+                this.savedLangs=lang;
+                this.remaining=this.remaining.filter(item => item !== lang);
+              if(suppLang){
+                  //this.searchMedia(lang);
+                // this.$router.replace({ path: "/scarica/"+ lang});
+                  this.pushPage(lang);
+              }else{
+                  //this.searchMedia('it');
+                  //this.$router.replace({ path: "/scarica/it"});
+                this.pushPage("it");
+              }
+            }else{
+              console.log("NON C?èRETE");
+              this.networkError();
+            }
            
            
           },
@@ -219,16 +215,15 @@ export default ({
         {
           text: this.$t('action.cancel') ,
           role: "cancel",
-          handler: () => {
-            console.log("Declined the offer");
-            
-          },
         },
       ],
     });
 
     await alert.present();
     },
+
+
+   
 
     switchLang(lang){
        /* if (this.$i18n.locale !== lang) {
@@ -238,6 +233,7 @@ export default ({
         if (localStorage.getItem('lang')!= lang) {
           localStorage.setItem('lang', lang);
           this.currLang=lang;
+          this.$i18n.locale = lang;
         }
     },
     add(lang){
@@ -350,7 +346,7 @@ export default ({
     margin: 0.2em 1em;
     border-bottom: solid 1px #d5d5d5;
     width: 100%;
-    padding: 1em;
+    padding: 0.4em 1em;
  }
   .lang-cont-flag{
    

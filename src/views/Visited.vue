@@ -2,7 +2,7 @@
   <ion-page>
      <ion-content>
      
-      <download-cont :lang="lang"></download-cont>
+      <raccolta :lang="lang"></raccolta>
 
     </ion-content>
   </ion-page>
@@ -21,31 +21,24 @@ import {
 } from "@ionic/vue";
 
 
-import DownloadCont from './../components/ScaricamentoContenuti.vue'
+import Raccolta from './../components/Raccolta.vue'
+
 
 //import { Plugins } from "@capacitor/core";
 //import { useRouter } from "vue-router";
 
 
 export default {
-  name: "Tab",
+  name: "Visited",
  
 
-  computed:{
-    
-    lang(){
-   
-      return this.$route.params.lang;
-    },
-
-   
-  },
+ 
  
   components: {
   
     IonContent,
     IonPage,
-    DownloadCont,
+    Raccolta,
 
   },
 

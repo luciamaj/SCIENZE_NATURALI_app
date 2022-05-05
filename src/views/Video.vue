@@ -2,9 +2,9 @@
   <ion-page>
     <ion-header collapse="fade">
       <ion-toolbar  mode="ios">
-        <ion-title>{{ contenuto.titolo }} {{ lang}}</ion-title>
+        <ion-title v-html="contenuto.titolo"></ion-title>
         <ion-buttons>
-          <ion-button v-on:click="back">
+          <ion-button v-on:click="back()">
             <ion-icon name="arrow-back"></ion-icon>
           </ion-button>
         </ion-buttons>
@@ -24,7 +24,7 @@
 
         <div class="meta-container">
 
-          <div class="song-title">{{ contenuto.titolo }} </div>
+          <div class="song-title" v-html="contenuto.titolo"></div>
           <progress class="amplitude-song-played-progress" :value="progress" :buffer="1" color="secondary"></progress>
             <div class="time-container">
             <div class="current-time">
@@ -38,9 +38,9 @@
             </div>
           </div>
           <div class="control-container">
-            <div class="amplitude-prev"></div>
+            <div class="amplitude-prev" @click="minus"></div>
             <div class="amplitude-play-pause " :class="checkPlay()" @click="playpause"></div>
-            <div class="amplitude-next"></div>
+            <div class="amplitude-next" @click="plus"></div>
           </div>
         </div>
         <div class="descrArea"   v-html="contenuto.testo"> </div>
@@ -59,10 +59,13 @@ import {
   IonButtons,
   IonButton,
   IonIcon,
+  alertController,
  // IonProgressBar
 } from "@ionic/vue";
 import Amplitude from "amplitudejs";
 import { Plugins } from "@capacitor/core";
+import common from './../js/common'
+
 const { Storage } = Plugins;
 
 export default {
@@ -78,8 +81,9 @@ export default {
     IonIcon,
   //  IonProgressBar
   },
+ 
   ionViewWillLeave() {
-    this.schedaState(false);
+  
     console.log('VIdeo will leave');
      clearTimeout(this.timer);
     this.vid.pause();
@@ -87,10 +91,15 @@ export default {
    
    
   },
- 
+   
+  unmounted(){
+    this.vid.src="";
+    this.schedaState(false);
+    console.log("Unmounting page");
+  },
   computed: {
     tag() {
-      return this.$route.params.id;
+      return this.paramId;
     },
     scheda() {
       const scheda = JSON.parse(localStorage.getItem("dataMostra")).find(x => x.tag == this.tag);
@@ -129,16 +138,36 @@ export default {
       }
     }
   },
+  created(){
+   
+
+    this.addtoBucket=common.addtoBucket;
+    this.paramId=this.$route.params.id;
+     this.schedaState(true);
+    console.log("Entra update")
+    this.emitter.on('changeVersion', _ => {
+      this.showOptions();
+    });
+    this.emitter.on('fineAggiornamento', _ => {
+      console.log("FINITO");
+    });
+
+  },
   mounted(){
-    this.schedaState(true);
+   
     this.vid=document.getElementById("video");
     console.log("video ",this.vid);
     this.vid.load();
     this.vid.onloadeddata = ()=> {
       console.log("Browser has loaded ");
-    this.duration= this.getminsec(this.vid.duration);
-    this.vid.play();
-     this.videoPlay=true;
+      this.duration= this.getminsec(this.vid.duration);
+      this.vid.play();
+      if(this.vid.paused){
+        this.videoPlay=false;
+      }else{
+         this.videoPlay=true;
+      }
+     
     };
 
     this.vid.ontimeupdate = ()=> {
@@ -147,26 +176,25 @@ export default {
     },
     this.vid.onended=()=>{
       console.log("FINIOTOO")
-       this.videoPlay=false;
-        if(document.visibilityState=="visible"){
-          this.setTimer();
-        }else{
-           this.back();
-        }
+      this.videoPlay=false;
+      if(document.visibilityState=="visible"){
+        this.setTimer();
+      }else{
+          this.back();
+      }
     }
 
+    this.addtoBucket(this.paramId);
 
-   
-   
   },
 
    methods: {
     back() {
-      if (window.history.length > 1) {
+      /*if (window.history.length > 1) {
         this.$router.go(-1);
-      } else {
-        this.$router.push({ name: "wave" });
-      }
+      } else {*/
+      this.$router.replace({ path: "/" });
+      
     },
     getminsec(time){
       let min=Math.floor(time/60)
@@ -190,7 +218,12 @@ export default {
         this.videoPlay=false;
       }else{
         this.vid.play();
+       
           this.videoPlay=true;
+          if(this.timer){
+            console.log('clear?');
+            clearTimeout(this.timer);
+          }
 
       }
     },
@@ -204,6 +237,33 @@ export default {
 
         }
     },
+
+    minus(){
+          
+      if(this.vid.currentTime> 0.0){
+      this.vid.currentTime= this.vid.currentTime-5;
+        
+      }
+      if(this.timer){
+          console.log('clear?');
+          clearTimeout(this.timer);
+      }
+
+
+    },
+    plus(){
+      if(this.vid.currentTime< this.vid.duration){
+        this.vid.currentTime= this.vid.currentTime+5;
+        console.log("VD "+ this.vid.duration)
+      }
+      if(this.timer){
+          console.log('clear?');
+          clearTimeout(this.timer);
+      }
+      
+        
+
+    },
     expand(){
       const vid=document.getElementById('video');
       if (vid.requestFullscreen) {
@@ -213,6 +273,7 @@ export default {
       } else if (vid.msRequestFullscreen) { /* IE11 */
         vid.msRequestFullscreen();
       }
+     // screen.orientation.lock('landscape')
     },
      inactivityTime(){
        document.ontouchmove = this.resetTimer;
@@ -227,7 +288,7 @@ export default {
 
     setTimer(){
        this.inactivityTime();
-      this.timer = setTimeout(this.timeout, 10 * 1000);
+      this.timer = setTimeout(this.timeout, 30 * 1000);
     },
     timeout() { 
       console.log("timeout");
@@ -237,8 +298,36 @@ export default {
       
     },
 
+    async showOptions( ) {
+      const alert = await alertController.create({
+          header: this.$t('update.title') ,
+          message: this.$t('update.text') ,
+          buttons: [
+            {
+              text: this.$t('action.postponi') ,
+              role: "cancel",
+              handler: () => {
+                  console.log("Declined the offer");
+                  this.updateNotification(true);
+                  
+              },
+            },
+            {
+                text:this.$t('action.download'),
+                handler: () => {
+                  console.log("Accepted");
+                  localStorage.setItem('provToOpen', this.$route.params.id);
+                  this.emitter.emit('aggiorna','main');
+                },
+            },
+          ],
+      });
+
+      await alert.present();
+    },
+
     async schedaState(state) {
-      console.log("openScheda");
+       console.log("set openscheda state");
       await Storage.set({
         key: 'openScheda',
         value:state

@@ -10,7 +10,7 @@ module.exports = {
             short_name:`'Biblioteca Sonora'`,
             start_url: `'.'`,
             display: `'fullscreen'`,
-            theme_color: `pwa.themeColor`,
+            theme_color: `process.env.VUE_APP_COLOR`,
 
         },
         iconPaths: {
@@ -23,12 +23,13 @@ module.exports = {
         appleMobileWebAppCapable: 'yes',
 
         appleMobileWebAppStatusBarStyle: 'blue',
-       // workboxPluginMode: 'InjectManifest',
-
+        //workboxPluginMode: 'InjectManifest',
+      
         workboxPluginMode: 'GenerateSW',
 
         workboxOptions: {
-
+            
+            swSrc: 'src/service-worker.js',
             exclude: [
 
                 /\.map$/, 
@@ -36,6 +37,7 @@ module.exports = {
                 /manifest\.json$/ 
 
             ],
+            
 
             navigateFallback: '/index.html',
 
@@ -66,6 +68,14 @@ module.exports = {
                 {
 
                     urlPattern: new RegExp('/'),
+
+                    handler: 'CacheFirst',
+
+                },
+
+                {
+
+                    urlPattern: new RegExp(process.env.VUE_APP_BASE_URL+'/upload/'),
 
                     handler: 'CacheFirst',
 

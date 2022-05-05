@@ -2,9 +2,9 @@
   <ion-page>
      <ion-header collapse="fade">
       <ion-toolbar  mode="ios">
-        <ion-title>{{ contentScheda.titolo }} </ion-title>
+        <ion-title v-html="contentScheda.titolo" > </ion-title>
         <ion-buttons>
-          <ion-button v-on:click="back">
+          <ion-button v-on:click="goingback()">
             <ion-icon name="arrow-back"></ion-icon>
           </ion-button>
         </ion-buttons>
@@ -19,15 +19,15 @@
           
           <div class="ion-no-border content-scheda">
             <div class="meta-container"> 
-              <div class="song-title">{{ contentScheda.titolo }}</div>
+              <div class="song-title" v-html="contentScheda.titolo"></div>
 
               
-              <progress
+              <progress v-if="url!=null"
                 class="amplitude-song-played-progress"
                 data-amplitude-song-index="0"
                 id="song-played-progress-1"
               ></progress>
-              <div class="time-container">
+              <div class="time-container" v-if="url!=null">
                 <div class="current-time">
                   <span class="amplitude-current-minutes" data-amplitude-song-index="0">00</span>:
                   <span class="amplitude-current-seconds" data-amplitude-song-index="0">00</span>
@@ -38,10 +38,10 @@
                   <span class="amplitude-duration-seconds" data-amplitude-song-index="0">30</span>
                 </div>
               </div>
-              <div class="control-container">
-                <div class="amplitude-prev"></div>
+              <div class="control-container" v-if="url!=null">
+                <div class="prev" @click="minus"></div>
                 <div class="amplitude-play-pause" data-amplitude-song-index="0"></div>
-                <div class="amplitude-next"></div>
+                <div class="next" @click="plus"></div>
               </div>
             </div>
             <div class="descrArea"   v-html="contentScheda.testo"> </div>
@@ -61,7 +61,7 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
- 
+ alertController,
   IonButtons,
   //IonIcon,
   //IonButton,
@@ -70,6 +70,7 @@ import {
 import Amplitude from "amplitudejs";
 import { data } from "../data/data";
 import { Plugins } from "@capacitor/core";
+import common from "./../js/common"
 const { Storage } = Plugins;
 
 export default {
@@ -88,10 +89,38 @@ export default {
   },
   ionViewWillLeave() {
     console.log('Ampli will leave');
-    clearTimeout(this.timer);
-    Amplitude.pause();
-    this.schedaState(false);
+    if(this.url){
+      clearTimeout(this.timer);
+      Amplitude.pause();
+      this.audio.currentTime=0;
+      this.audio.src="";
+    }
+
+  },
+
    
+  ionViewDidLeave() {
+   
+     console.log("leave page");
+  },
+
+  unmounted(){
+    this.schedaState(false);
+    console.log("Unmounting page");
+  },
+
+  created(){
+    this.addtoBucket=common.addtoBucket;
+    this.paramId=this.$route.params.id;
+    this.schedaState(true);
+    this.emitter.on('changeVersion', _ => {
+      this.showOptions();
+    });
+    this.emitter.on('fineAggiornamento', _ => {
+      console.log("FINITO");
+     // this.notification=false;
+    });
+
   },
 
   data() {
@@ -103,21 +132,26 @@ export default {
   computed: {
 
     contentScheda(){
-       const data=localStorage.getItem("dataMostra")
-    
+         
        console.log("ENTRO QUA")
-        const lang= localStorage.getItem("lang")
+       const lang= localStorage.getItem("lang")
          
       const scheda= this.dataSchede.content.find(x => x.lang == lang);
     //  console.log("che fine ha fatto la scheda? ",scheda);
-      return scheda
+      if(scheda) {
+        return scheda
+      }else{
+
+        return ""
+      }
+     
 
     },
     dataSchede(){
 
       const data=localStorage.getItem("dataMostra")
      
-      const scheda= JSON.parse(data).find(x => x.tag == this.$route.params.id);
+      const scheda= JSON.parse(data).find(x => x.tag ==  this.paramId);
       
      return scheda
      
@@ -136,7 +170,7 @@ export default {
      
     },
     id() {
-      return this.$route.params.id;
+      return this.paramId;
     },
 
     name() {
@@ -160,42 +194,48 @@ export default {
       if (audio.audio) {
         console.log("audio ",audio.audio);
         return this.$store.getters.baseUrl+"/upload/"+audio.audio;
-      } else {
+      } else if (audio.video) {
          console.log("video ",audio.video);
         return this.$store.getters.baseUrl+"/upload/"+ audio.video;
+      }else{
+        console.log("URL"+ null)
+        return null
       }
     }
   },
   mounted() {
-     this.schedaState(true);
-    Amplitude.init({
-      /* eslint-disable */
-      songs: [
-        {
-          name: "Song Name 1",
-          artist: "Artist Name",
-          album: "Album Name",
-          url: this.url,
-          cover_art_url: "/assets/icon/icon.png"
-        }
-      ],
-      callbacks: {
-			 ended: ()=>{
-				console.log("Audio has been stopped.");
-        console.log("Document " + document.visibilityState)
-        if(document.visibilityState=="visible"){
-          this.setTimer();
-        }else{
-           this.back();
-        }
-         
+    
+    if(this.url!=null){
+      Amplitude.init({
+        /* eslint-disable */
+        songs: [
+          {
+            name: "Song Name 1",
+            artist: "Artist Name",
+            album: "Album Name",
+            url: this.url,
+            cover_art_url: "/assets/icon/icon.png"
+          }
+        ],
+        callbacks: {
+          ended: ()=>{
+            console.log("Audio has been stopped.");
+            console.log("Document " + document.visibilityState)
+            if(document.visibilityState=="visible"){
+              this.setTimer();
+            }else{
+              this.back();
+            }
+            
 
-			 }
-		  }
-    });
-   
+          }
+        }
+      });
+      this.audio=Amplitude.getAudio();
 
-    document
+    
+
+      document
       .getElementById("song-played-progress-1")
       .addEventListener("click", function(e) {
         if (Amplitude.getActiveIndex() == 0) {
@@ -210,27 +250,59 @@ export default {
         }
       });
 
-      
-    console.log("AMPLI ",Amplitude);
+        
+      console.log("AMPLI ",Amplitude);
 
-     this.play();
-  } ,
+      this.play();
+    }
+    this.addtoBucket(this.paramId);
+  },
   methods:{
-    back() {
+    goingback() {
        this.schedaState(false);
-      if (window.history.length > 1) {
+    /*  if (window.history.length > 1) {
         this.$router.go(-1);
-      } else {
-        this.$router.push({ name: "wave" });
-      }
+      } */
+      this.$router.replace({path:"/"});
+      
+      
     },
     play() {
       Amplitude.play();
       
       $('.amplitude-play-pause').addClass('amplitude-playing').removeClass('amplitude-paused');
+      if(this.timer){
+         clearTimeout(this.timer);
+      }
     },
     pause() {
       Amplitude.pause();
+    },
+
+    minus(){
+      
+      if(this.audio.currentTime> 0.0){
+      this.audio.currentTime= this.audio.currentTime-5;
+        
+      }
+      if(this.timer){
+        clearTimeout(this.timer);
+      }
+
+
+    },
+    plus(){
+     
+      if(this.audio.currentTime< this.audio.duration){
+        this.audio.currentTime= this.audio.currentTime+5;
+       
+      }
+      if(this.timer){
+        clearTimeout(this.timer);
+      }
+      
+        
+
     },
   
     inactivityTime(){
@@ -246,7 +318,7 @@ export default {
 
     setTimer(){
        this.inactivityTime();
-      this.timer = setTimeout(this.timeout, 10 * 1000);
+      this.timer = setTimeout(this.timeout, 30 * 1000);
     },
     timeout() { 
       console.log("timeout");
@@ -257,11 +329,37 @@ export default {
 
     
     async schedaState(state) {
-      console.log("openScheda");
+      console.log(" openscheda state");
       await Storage.set({
         key: 'openScheda',
         value:state
       });
+    },
+    async showOptions() {
+      const alert = await alertController.create({
+          header: this.$t('update.title') ,
+          message: this.$t('update.text') ,
+          buttons: [
+              {
+                  text:this.$t('action.download'),
+                  handler: () => {
+                      localStorage.setItem('provToOpen', this.$route.params.id);
+                      this.emitter.emit('aggiorna','main');
+                  },
+              },
+              {
+              text: this.$t('action.postponi') ,
+              role: "cancel",
+              handler: () => {
+                  console.log("Declined the offer");
+                  this.updateNotification(true);
+                  
+              },
+              },
+          ],
+      });
+
+      await alert.present();
     },
  
       
@@ -308,21 +406,17 @@ div.player img.album-art {
 
 .descrArea{
   float: left;
-  /* width: calc(100% - 60px); */
   padding: 5px 25px;
   max-height: 40vh;
   overflow: overlay;
-  margin-top: 3vh;
+  margin-top: 2vh;
   margin-bottom: 2vh;
-  /*bottom: 3vh;
-  position: absolute;*/
 
 }
 
 .content-scheda{
-   /* overflow: overlay;*/
-  height: 57vh;
-
+     overflow: overlay;
+    height: 57vh;
 }
 /*
   Small only
@@ -399,7 +493,7 @@ div.control-container {
   text-align: center;
   margin-top: 2vh;
 }
-div.control-container div.amplitude-prev {
+div.control-container div.prev {
   width: 28px;
   height: 24px;
   cursor: pointer;
@@ -422,7 +516,7 @@ div.control-container div.amplitude-play-pause.amplitude-playing {
   background: url("https://521dimensions.com/img/open-source/amplitudejs/examples/multiple-songs/pause.svg");
       background-size: cover;
 }
-div.control-container div.amplitude-next {
+div.control-container div.next {
   width: 28px;
   height: 24px;
   cursor: pointer;
@@ -435,10 +529,10 @@ div.control-container div.amplitude-next {
   Small only
 */
 @media screen and (max-width: 39.9375em) {
-  div.control-container div.amplitude-prev {
+  div.control-container div.prev {
     margin-right: 75px;
   }
-  div.control-container div.amplitude-next {
+  div.control-container div.next {
     margin-left: 75px;
   }
 }
@@ -446,10 +540,10 @@ div.control-container div.amplitude-next {
   Medium only
 */
 @media screen and (min-width: 40em) and (max-width: 63.9375em) {
-  div.control-container div.amplitude-prev {
+  div.control-container div.prev {
     margin-right: 40px;
   }
-  div.control-container div.amplitude-next {
+  div.control-container div.next {
     margin-left: 40px;
   }
 }
@@ -457,10 +551,10 @@ div.control-container div.amplitude-next {
   Large Only
 */
 @media screen and (min-width: 64em) {
-  div.control-container div.amplitude-prev {
+  div.control-container div.prev {
     margin-right: 75px;
   }
-  div.control-container div.amplitude-next {
+  div.control-container div.next {
     margin-left: 75px;
   }
 

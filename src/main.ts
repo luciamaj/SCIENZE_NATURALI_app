@@ -77,12 +77,6 @@ router.isReady().then(() => {
 app.config.globalProperties.emitter = emitter;
 
 
-/*fetch('')
-  .then(response => response.json())
-  .catch(error => console.log("Si è verificato un errore!"+ error))
-  .then(data => console.log("sto tirando giù un data",data));
-*/
- 
 
 
 defineCustomElements(window);

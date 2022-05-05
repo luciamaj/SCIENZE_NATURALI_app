@@ -18,12 +18,13 @@
 </ion-modal-->
       <div class="vertical-center view-wwave-container">
         <div class="center">
-          <div class="logo-container"><img class="logo" src="/assets/background/dos.png"/></div>
+          <div class="logo-container"><img class="logo" :src="logo"/></div>
             {{ntag}}
           <div class="buttons">
-          <ion-button expand="block" class="capture-btn" @click="onSend" id="captureStart">{{$t('main.start')}}</ion-button>
+          <ion-button v-if="interactionMode=='mix'" expand="block" class="capture-btn" @click="onSend" id="captureStart">{{$t('main.start')}}</ion-button>
           <ion-button expand="block" class="capture-btn" id="captureStop" hidden>{{$t('main.stop')}}</ion-button>
-            <IonButton class="scan-btn" @click="openModal">{{$t('main.scan')}}</IonButton>
+
+          <IonButton class="scan-btn" @click="openModal">{{$t('main.scan')}}</IonButton>
 
             <!--ion-button  class="test-btn" id="test" @click="openpage" >TEST</ion-button-->
           </div>
@@ -88,8 +89,24 @@ export default {
   },
   mounted(){
     this.store=JSON.parse(localStorage.getItem('pubblication'));
-   
     
+  },
+  computed:{
+    interactionMode(){
+      console.log("interactionMode "+ process.env.VUE_APP_MODE );
+      return process.env.VUE_APP_MODE;
+    },
+    logo() {
+      const imgMostra=this.store.img;
+      if (imgMostra) {
+        console.log("c'è logo");
+        return this.$store.getters.baseUrl+"/upload/"+imgMostra;
+      } else {
+        return '/assets/background/dos.png'
+       
+      }
+     
+    },
   },
   components: {
     IonToolbar,
@@ -247,18 +264,18 @@ export default {
   },
   async showOptions() {
     const alert = await alertController.create({
-      header: "Aggiornamento",
-      message: "Sono disponibili aggiornamenti dei contenuti",
+      header: this.$t('update.title'),
+      message:  this.$t('update.text'),
       buttons: [
         {
           text: "Scarica",
           handler: () => {
             console.log("Accepted");
-             this.emitter.emit('aggiorna');
+             this.emitter.emit('aggiorna','main');
           },
         },
         {
-          text: "Postponi",
+          text: this.$t('action.postponi'),
           role: "cancel",
           handler: () => {
             console.log("Declined the offer");
@@ -271,20 +288,7 @@ export default {
     await alert.present();
   },
 
-
-
-
- /* inizialize(){
-    //navigator.mediaDevices.getUserMedia({audio: true});
-    navigator.mediaDevices.enumerateDevices().then((devices)=>{ 
-    const availableOutputDevices = devices.filter(device => device.kind === "audioinput");
-    this.selectedDeviceId = availableOutputDevices[1].deviceId;
-    console.log("DEV ", this.selectedDeviceId);
-    });
-       
-  },*/
-
-  openFirst() {
+    openFirst() {
       menuController.enable(true, 'first');
       menuController.open('first');
     },
@@ -297,14 +301,8 @@ export default {
       
       const captureStop = document.getElementById("captureStop");
       
-        // Dispatch/Trigger/Fire the event
-       // const event = new Event('pause');
-      //  window.dispatchEvent(event);
-    
          
         if (scheda != null) {
-          console.log("schedaaao ", scheda);
-
           const content=scheda.content.find(x => x.lang == localStorage.getItem("lang"));
           console.log("scheda.type "+ content.type);
           
@@ -330,6 +328,9 @@ export default {
 
     onSend() {
      //  this.inizialize();
+      this.waitingTime=setTimeout(() => {
+        this.presentAlert();
+      }, 10000);
       this.setActiveTour();
       this. ggwave=null
       factory().then((obj) =>{
@@ -356,7 +357,7 @@ export default {
         video: false
       };
 
-      navigator.mediaDevices.enumerateDevices() .then(function(devices) {
+      /*navigator.mediaDevices.enumerateDevices() .then(function(devices) {
         devices.forEach(function(device) {
           console.log(device.kind + ": " , device);
         });
@@ -364,7 +365,7 @@ export default {
       })
       .catch(function(err) {
         console.log(err.name + ": " + err.message);
-      });
+      });*/
       /*const stream=audio.captureStream();
        this.streamhandler(stream);*/
 
@@ -373,20 +374,12 @@ export default {
         console.log("audiotracks 2 ",stream.getAudioTracks());
         const track=stream.getAudioTracks()[0]
         if(track){
-          
-          console.log("PIPPO ");
-          console.log("TRACK constr ",track.getConstraints());
-          console.log("TRACK settings ",track.getSettings());
-          console.log(" capabilities ",track.getCapabilities());
           this.settingSampleRate=track.getSettings().sampleRate;
         }
       
         this.streamhandler(stream);
         
       }).catch(function (e) {   console.error(e);})
-
-    
-   
 
 
       captureStop.addEventListener("click", ()=> {
@@ -395,6 +388,7 @@ export default {
          this.mediaStream.disconnect(this.recorder);
           this.recorder = null;
         }
+        clearTimeout(this.waitingTime);
         this.setInactiveTour();
         this.schedaState(false);
         this.decodedValue = "stopped recording";
@@ -412,25 +406,19 @@ export default {
         captureStart.hidden = false;
         captureStop.hidden = true;
       });
-        this.decodedValue = "recording";
+      this.decodedValue = "recording";
       captureStart.hidden = true;
       captureStop.hidden = false;
 
-
       });
-     
-     
 
     },
     audioRecorder(stream){
      
       const options = {mimeType: 'audio/webm'};
       const mediaRecorder = new MediaRecorder(stream, options);
-     
-      setTimeout(()=>{mediaRecorder.stop();},12000);
-
-      
-       mediaRecorder.ondataavailable = this.handleDataAvailable;
+      setTimeout(()=>{mediaRecorder.stop();},12000);  
+      mediaRecorder.ondataavailable = this.handleDataAvailable;
       mediaRecorder.start();
 
     },
@@ -476,23 +464,19 @@ export default {
 
     streamhandler(stream){
        this.initcontext();   
-      console.log("audiotracks 2 ",stream.getAudioTracks());
       this.mediaStream = this.context.createMediaStreamSource(stream);
-      console.log("mdiastream handler ",  stream);
-    const bufferSize = 16 * 1024;
+      const bufferSize = 16 * 1024;
       const numberOfInputChannels = 1;
       const numberOfOutputChannels = 1;
   
       if (this.context.createScriptProcessor) {
-
         console.log("createScriptProcessor");
         this.recorder = this.context.createScriptProcessor(
-          bufferSize,
-          numberOfInputChannels,
-          numberOfOutputChannels
+        bufferSize,
+        numberOfInputChannels,
+        numberOfOutputChannels
         );
       } else {
-        console.log("createJavaScriptNode");
           this.recorder = this.context.createJavaScriptNode(
           bufferSize,
           numberOfInputChannels,
@@ -505,10 +489,10 @@ export default {
         const source = e.inputBuffer.getChannelData(0);      
         (async () => {
        this.stato = await this.getSchedaState();
-          //console.log("statooo "+stato);
           if( this.stato==false|| this.stato==null){
              const res = this.ggwave.decode(this.instance, this.convertTypedArray(new Float32Array(source), Int8Array));
             if (res) {
+               clearTimeout( this.waitingTime);
                   this.findRoute(res);
                   this.decodedValue = res;
             }
@@ -525,6 +509,17 @@ export default {
     openpage(){
      // this.$router.push({ path: "/audio/A0002"  });
       this.$router.push({ path: "/testjava"  });
+    },
+
+    presentAlert() {
+      const alert = document.createElement('ion-alert');
+      alert.header = 'Alert';
+      alert.subHeader = 'sottotitolo';
+      alert.message = 'Avvicinarsi al tag oppure usare il qr code';
+      alert.buttons = ['OK'];
+
+      document.body.appendChild(alert);
+      return alert.present();
     },
 
     async setObject(param) {
@@ -558,23 +553,30 @@ ion-content {
   display: block;
   position: absolute;
   bottom: 0;
-  padding-bottom: 20vh;
+  padding-bottom: 10vh;
+  height: 90vh;
+  width: 100%;
 }
 
 .logo-container {
-  background-color: #fff;
+ /*background-color: #fff;*/
+  position: relative;
+  /* top: 9px; */
+  top: 20%;
 }
 
 .logo {
   object-fit: contain;
-  max-height: 30vh;
-  margin-bottom: 50px;
+  max-height: 40vh;
+  margin-bottom: 30px;
   object-position: center;
   width: 100%;
 }
 .buttons{
   width: 100%;
   text-align: center;
+  top: 75%;
+  position: absolute;
 }
 .view-wwave-container {
   background-color: white;

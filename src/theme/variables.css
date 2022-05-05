@@ -3,8 +3,8 @@ http://ionicframework.com/docs/theming/ */
 
 /** Ionic CSS Variables **/
 :root {
-  --ion-color-primary: #626262;
-  --ion-color-primary-rgb: 6,105,136;
+  --ion-color-primary: #989898;
+  --ion-color-primary-rgb: 152,152,152;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255,255,255;
   --ion-color-primary-shade: #000000;
@@ -12,16 +12,13 @@ http://ionicframework.com/docs/theming/ */
 
   --ion-background-color: #ffffff;
 
-  --plyr-color-main: #066988;
+  --plyr-color-main: #136c97;
   --plyr-video-controls-background: #ffffff;
   --plyr-range-fill-background: #066988;
   --plyr-video-control-color: #066988;
   --plyr-video-progress-buffered-background: lightgray;
   --plyr-audio-progress-buffered-background: var(--ion-color-light-shade);
  
-  /* --plyr-color-main: #ffffff;
-  --plyr-video-controls-background: #066988;
-  --plyr-range-fill-background: #ffffff; */
   --ion-font-family:"Open Sans", sans-serif;
   --plyr-control-icon-size: 20px;
   --plyr-font-size-time: 15px;
@@ -35,6 +32,8 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-secondary-contrast-rgb: 255,255,255;
   --ion-color-secondary-shade: #075478;
   --ion-color-secondary-tint: #136c97;
+  --ion-color-secondary-whitened:#89b6cb;
+
 
   --ion-color-tertiary: #5260ff;
   --ion-color-tertiary-rgb: 82,96,255;
@@ -50,7 +49,7 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-success-shade: #28ba62;
   --ion-color-success-tint: #42d77d;
 
-  --ion-color-warning: #ffc409;
+  --ion-color-warning: #f7a823;
   --ion-color-warning-rgb: 255,196,9;
   --ion-color-warning-contrast: #000000;
   --ion-color-warning-contrast-rgb: 0,0,0;
@@ -84,6 +83,7 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-light-contrast-rgb: 0,0,0;
   --ion-color-light-shade: #d7d8da;
   --ion-color-light-tint: #f5f6f9;
+
 }
 
 .plyr--video {
@@ -110,4 +110,9 @@ progress {
 
 progress::-webkit-progress-value {
   background: #066988 !important;
+}
+
+.slides-ios {
+  --bullet-background-active: #075478;
+
 }
