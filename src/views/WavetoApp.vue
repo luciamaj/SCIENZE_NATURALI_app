@@ -2,13 +2,21 @@
   <ion-page>
     <ion-header class="ion-no-border">
       <ion-toolbar >
-        <ion-title slot="start" v-html="store.mostra" ></ion-title>
-        <ion-buttons slot="primary">
+        <ion-title slot="start" v-html="store.mostra" class="main-title"></ion-title>
+        <ion-buttons slot="end" v-if="history=='true'" >
+              <ion-button color="secondary"  @click="openHistory()" class="collection-button">
+                <ion-icon  size="large" name="file-tray-full-outline" class="history-icon"></ion-icon>
+                <!--ion-label color="dark">{{$t('raccolta.title')}}</ion-label-->
+              </ion-button>
+        </ion-buttons>
+        
+        <ion-buttons slot="end">
           <ion-button @click="openMenuModal(notification)">
             <ion-icon slot="start" ios="ellipsis-horizontal" md="ellipsis-vertical"></ion-icon>
             <ion-badge  mode="ios" id="badge" color="warning" class="notification" :class="{showNotification:notification}">0</ion-badge>
           </ion-button>
-         </ion-buttons>
+        </ion-buttons>
+       
       </ion-toolbar> 
     </ion-header>
   
@@ -133,6 +141,9 @@ export default {
       }
      
     },
+    history(){
+      return process.env.VUE_APP_HISTORY;
+    }
   },
   components: {
     IonToolbar,
@@ -224,9 +235,9 @@ export default {
     this.showOptions=common.showOptions;
     this.setInactiveTour=common.setInactiveTour;
     this.setActiveTour=common.setActiveTour;
-    this.getNotificstionState=common.getNotificstionState;
+    this.getNotificationState=common.getNotificationState;
 
-     this.emitter.on('changeVersion', _ => {
+    this.emitter.on('changeVersion', _ => {
       this.showOptions();
     });
     
@@ -235,7 +246,7 @@ export default {
       this.notification=false;
     });
 
-    this.getNotificstionState().then(state=>{this.notification=state});
+    this.getNotificationState().then(state=>{this.notification=state});
 
 
 
@@ -340,6 +351,9 @@ export default {
       //captureStop.click();
         
     },
+    openHistory(){
+       this.$router.push({ path: "/raccolta", replace:true});
+    },
 
        
     callJava(){
@@ -357,8 +371,13 @@ export default {
       }catch(e){
         clearTimeout(this.waitingTime);
       //  console.log("catch "+e);
-       // alert("catch "+e);
-        this.openAppModal();
+      // alert("catch "+e);
+       if(typeof AndroidObject=="undefined"){
+           this.openAppModal();
+       }else{
+         alert("An error occurred, please restart the app")
+       }
+      
 
       }
      
@@ -389,7 +408,7 @@ export default {
           buttons: [
              
               {
-                text: this.$t('action.postponi') ,
+                text: this.$t('action.close') ,
                 role: "cancel",
                 handler: () => {
                     console.log("Declined the offer");
@@ -461,12 +480,17 @@ ion-content {
   height: 90vh;
   width: 100%;
 }
-
+.main-title{
+  width: 65%;
+  font-size: 1em;
+}
 .logo-container {
  /*background-color: #fff;*/
   position: relative;
   /* top: 9px; */
-  top: 14%;
+  top: 16%;
+  width: 77vw;
+  margin: auto;
 }
 
 .logo {
@@ -490,6 +514,10 @@ ion-content {
   background-size: cover;
   background-blend-mode: saturation;
 }
+.history-icon{
+  
+    width: 0.8em
+}
 
 .title {
   color: #2d9fe3;
@@ -500,6 +528,19 @@ ion-content {
 
 .toolbar {
    --background:  red;
+}
+
+.collection-button{
+   /* border: 2px solid aliceblue;*/
+    border-radius: 50px;
+    margin: 5px 17px;
+   /* background: #d9d9d9;*/
+    height: 36.7px;
+}
+.collection-button>ion-label{
+    margin: 5px 6px;
+    font-size: 13px;
+    text-transform: capitalize;
 }
 
 .capture-btn {
