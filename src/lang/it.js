@@ -8,7 +8,9 @@ export const it = {
         declina:"Declina",
         cancel:"Annulla",
         download:"Scarica",
-        app:"Apri in App"
+        app:"Apri in App",
+        salta:"Salta",
+        close:"Chiudi"
     },
     onboard:{
         lang:{
@@ -76,6 +78,11 @@ export const it = {
         termini:"Termini di servizio"
 
     },
+    raccolta:{
+        title:"Raccolta",
+        subtitle:"Rivivi l'esperienza",
+        alerttext:"Non hai ancora aperto le schede. \n Alla fine del tour potrai rivedere qui le scehde trovate lungo il percorso."
+    }
    
 
 }

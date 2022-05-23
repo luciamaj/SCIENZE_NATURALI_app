@@ -5,7 +5,9 @@ export const en= {
         declina:"Ablehnen",
         cancel:"Abbrechen",
         download:"Herunterladen",
-        app:"Gehe zur App"
+        app:"Gehe zur App",
+        salta:"Überspringen",
+        close:"Close"
     },
     onboard:{
         lang:{
@@ -72,5 +74,9 @@ export const en= {
         termini:"Nutzungsbedingungen"
         
     },
-    menulangtitle:""
+    raccolta:{
+        title:"Sammlung",
+        subtitle:"Erleben Sie die Erfahrung noch einmal",
+        alerttext:"Es wurde noch kein Inhalt angesehen. \n Kommen Sie am Ende der Tour zurück, um die Inhalte zu überprüfen, die Sie auf dem Weg gefunden haben."
+    }
 }

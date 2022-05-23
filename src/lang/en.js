@@ -5,7 +5,9 @@ export const en= {
         declina:"Decline",
         cancel:"Cancel",
         download:"Download",
-        app:"Go to App"
+        app:"Go to App",
+        salta:"Skip",
+        close:"Close"
     },
     onboard:{
         lang:{
@@ -74,5 +76,10 @@ export const en= {
         termini:"Terms of Service"
         
     },
+    raccolta:{
+        title:"Collection",
+        subtitle:"Live the experience again",
+        alerttext:"No content has been viewed yet. \n Come back at the tour's end to view the content found along the way."
+    }
    
 }
