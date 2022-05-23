@@ -18,7 +18,7 @@
           </ion-buttons>
           <ion-buttons slot="end" v-if="context=='help'">
               <ion-button color="dark" v-on:click="skip()">
-              skip
+              {{$t('action.salta')}}
               </ion-button>
           </ion-buttons>
         </ion-toolbar>
@@ -195,8 +195,13 @@ export default {
   methods:{
 
     async skip() {
-      const top = await modalController.getTop();
-      top.dismiss();
+      this.pushPage();
+    },
+
+    pushPage() {
+        const ionNav = document.querySelector('ion-nav') ;
+            ionNav.pop();    
+       
     },
 
   

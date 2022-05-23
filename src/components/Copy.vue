@@ -27,7 +27,7 @@ export default ({
     },
     data(){
         return{
-            input:"<p>loading</p>"
+            input:'<p style="font-size:3em">loading</p>'
         }
 
     },
@@ -78,4 +78,5 @@ export default ({
   font-size: 22px;
 
 }
+
 </style>

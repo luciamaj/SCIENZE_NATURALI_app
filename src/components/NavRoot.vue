@@ -23,7 +23,7 @@
             <div class="button-text">{{$t('menu.lang.title')}}</div>
             <ion-icon  slot="end" size="large" name="chevron-forward" />
         </ion-button>
-        <ion-button expand="block" size="large" color="secondary"  @click="openHelpModal"> 
+        <ion-button expand="block" size="large" color="secondary"  @click="pushPage('help')"> 
             <ion-icon  slot="start" size="large" name="help-circle-outline" />
             <div class="button-text"> {{$t("menu.help")}}</div>
             <ion-icon  slot="end" size="large" name="chevron-forward" />
@@ -144,6 +144,8 @@ export default ({
             ionNav.push(Copy,  {page:"privacy" });
         }else if(page=="terms"){
             ionNav.push(Copy,  {page:"termini" });
+        }else if(page=="help"){
+            ionNav.push(Instructions,  {context:"help" });
         }
         else{
             ionNav.push(NavChild, { title: 'Custom Title' });
