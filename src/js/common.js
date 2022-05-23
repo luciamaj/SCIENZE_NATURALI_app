@@ -5,7 +5,7 @@ import { Thumbs } from "swiper";
 const { Storage } = Plugins;
 
 export default {
-  
+    
     detectMobileType(){
         console.log("USER AGENT ",navigator);
           const userAgent = navigator.userAgent.toLowerCase();
@@ -59,37 +59,37 @@ export default {
     ////alert
 
     async showOptions() {
-        const alert = await alertController.create({
-          header: this.$t('update.title'),
-          message:  this.$t('update.text'),
-          buttons: [
-            {
-              text: this.$t('action.postponi'),
-              role: "cancel",
-              handler: () => {
-                console.log("Declined the offer");
+      const alert = await alertController.create({
+        header: this.$t('update.title'),
+        message:  this.$t('update.text'),
+        buttons: [
+          {
+            text: this.$t('action.postponi'),
+            role: "cancel",
+            handler: () => {
+              console.log("Declined the offer");
+              this.notification=true;
+            },
+          },
+          {
+            text:  this.$t('action.download'),
+            handler: () => {
+              if(window.navigator.onLine){
+                console.log("Accepted");
+                this.emitter.emit('aggiorna','main');
+              }else{
+                console.log("THIS ", this)   
+                this.networkError;  
+                            
                 this.notification=true;
-              },
+              }
+              
             },
-            {
-              text:  this.$t('action.download'),
-              handler: () => {
-                if(window.navigator.onLine){
-                  console.log("Accepted");
-                  this.emitter.emit('aggiorna','main');
-                }else{
-                  console.log("THIS ", this)   
-                  this.networkError;  
-                             
-                  this.notification=true;
-                }
-                
-              },
-            },
-          ],
-        });
-    
-        await alert.present();
+          },
+        ],
+      });
+  
+      await alert.present();
     },
 
     async networkError() {
@@ -140,7 +140,7 @@ export default {
       });
     },
 
-    async getNotificstionState(){
+    async getNotificationState(){
       const notification=await Storage.get({key:"update"});
       if(notification){
         return JSON.parse(notification.value);
