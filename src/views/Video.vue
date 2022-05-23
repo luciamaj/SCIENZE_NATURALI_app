@@ -140,7 +140,9 @@ export default {
   },
   created(){
    
-
+   document.addEventListener('backbutton',()=>{
+      this.$router.replace('/');
+    });
     this.addtoBucket=common.addtoBucket;
     this.paramId=this.$route.params.id;
      this.schedaState(true);
@@ -516,7 +518,7 @@ div.control-container div.amplitude-prev {
   width: 28px;
   height: 24px;
   cursor: pointer;
-  background: url("https://521dimensions.com/img/open-source/amplitudejs/examples/multiple-songs/previous.svg");
+  background: url("/assets/icon/playerIcon/previous.svg");
   display: inline-block;
   vertical-align: middle;
 }
@@ -528,22 +530,18 @@ div.control-container div.amplitude-play-pause {
   vertical-align: middle;
 }
 div.control-container div.amplitude-play-pause.amplitude-paused {
-  background: url("https://521dimensions.com/img/open-source/amplitudejs/examples/multiple-songs/play.svg");
-  
-    background-size: cover;
-
+  background: url("/assets/icon/playerIcon/play.svg");
+      background-size: cover;
 }
 div.control-container div.amplitude-play-pause.amplitude-playing {
-  background: url("https://521dimensions.com/img/open-source/amplitudejs/examples/multiple-songs/pause.svg");
-  
-    background-size: cover;
-
+  background: url("/assets/icon/playerIcon/pause.svg");
+      background-size: cover;
 }
 div.control-container div.amplitude-next {
   width: 28px;
   height: 24px;
   cursor: pointer;
-  background: url("https://521dimensions.com/img/open-source/amplitudejs/examples/multiple-songs/next.svg");
+  background: url("/assets/icon/playerIcon/next.svg");
   display: inline-block;
   vertical-align: middle;
 }
