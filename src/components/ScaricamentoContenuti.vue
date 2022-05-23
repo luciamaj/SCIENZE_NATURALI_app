@@ -90,7 +90,7 @@ export default {
   },
   mounted(){
    
-    
+
     setTimeout(() => {
       if(this.online){
         this.searchMedia();
@@ -114,7 +114,7 @@ export default {
 
 
   methods:{
-
+  
     async networkError() {
       const alert = await alertController.create({
         header:  this.$t('networkerror.title'),
@@ -249,8 +249,6 @@ export default {
             ionNav.pop();
             
         }
-        
-       
     },
 
     openNext(){

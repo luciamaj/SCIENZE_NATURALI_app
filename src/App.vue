@@ -60,13 +60,21 @@ export default defineComponent({
   created(){
     this.setInactiveTour=common.setInactiveTour;
     this.updateNotification=common.updateNotification;
-    this.getNotificstionState=common.getNotificstionState;
+    this.getNotificationState=common.getNotificationState;
   
     window.document.addEventListener("visibilitychange", ()=> {
       console.log('VISIBILITY CHANGE', window.document.visibilityState);
       if(window.document.visibilityState=="visible"){ 
+        this.getinfo((info) => {
+          this.pubblicazione=info.pubblicazione;
+          this.infoPubbl=info;
+          this.infoPubbl.lang= this.infoPubbl.lang.map(element => {
+            return element.toLowerCase();
+          });
+        });
+        this.savedPubblication=JSON.parse(localStorage.getItem('pubblication'));
         if(this.savedPubblication.pubblicazione!= this.pubblicazione){
-          this.getNotificstionState().then(state=>{
+          this.getNotificationState().then(state=>{
             if(state==false ||state==null){
               this.emitter.emit('changeVersion');
               this.updateNotification(true);

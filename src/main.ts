@@ -10,7 +10,6 @@ import { defineCustomElements } from '@ionic/pwa-elements/loader';
 
 import VuePlyr from "vue-plyr";
 import "vue-plyr/dist/vue-plyr.css";
-import { loadScript } from "vue-plugin-load-script";
 //import { conf } from "../config/config";
 
 /* Core CSS required for Ionic components to work properly */
@@ -68,11 +67,10 @@ const app = createApp(App)
   .use(VuePlyr, {
     plyr: {}
   });
-  
-router.isReady().then(() => {
+ 
+  router.isReady().then(() => {
   app.mount('#app');
 });
-
 
 app.config.globalProperties.emitter = emitter;
 
