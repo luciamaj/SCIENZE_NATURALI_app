@@ -1,50 +1,52 @@
-workbox.core.setCacheNameDetails({prefix: "silence-museum"});
- 
- self.addEventListener('message', (event) => {
-   if (event.data && event.data.type === 'SKIP_WAITING') {
-	 self.skipWaiting();
-   }
- });
- 
- /**
-  * The workboxSW.precacheAndRoute() method efficiently caches and responds to
-  * requests for URLs in the manifest.
-  * See https://goo.gl/S9QRab
-  */
- self.__precacheManifest = [].concat(self.__precacheManifest || []);
- workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
- 
+const latest = {
+	cache: 'some-cache-name/v1'
+};
 
-
- workbox.routing.registerRoute(
-	new RegExp('/'),
-	new  workbox.strategies.CacheFirst()
-);
-
-workbox.routing.registerRoute(
-	new RegExp(process.env.VUE_APP_BASE_URL+'/upload/'),
-	new  workbox.strategies.cacheFirst({
-		cacheName: 'media-cache',
+self.addEventListener('install', event => {
+	event.waitUntil(
+	caches.open(latest.cache).then(cache => {
+		return cache.addAll([
+		'/',
+		'/assets/icon/playerIcon/pause.svg',
+		'/assets/icon/playerIcon/play.svg',
+		'/assets/icon/playerIcon/previous.svg',
+		'/assets/icon/playerIcon/next.svg',
+		
+		]);
 	})
-);
+	);
+});
 
-//network first for data download
+self.addEventListener('fetch', event => {
+	// exclude requests that start with chrome-extension://
+	if (event.request.url.startsWith('chrome-extension://')) return;
+	event.respondWith(
+		caches.open(latest.cache).then(cache => {
+			return cache.match(event.request).then(response => {
+				return response || fetch(event.request).then(networkResponse => {
+					cache.put(event.request, networkResponse.clone());
+					return networkResponse;
+			})
+			
+			})
+		})
+	);
+});
 
-workbox.routing.registerRoute(
-	new RegExp(process.env.VUE_APP_BASE_URL+ '/service/rest/v1/mostra-attiva'),
-	new  workbox.strategies.NetworkFirst()
-);
+self.addEventListener('activate', event => {
+	event.waitUntil(
+	caches.keys().then(cacheNames => {
+		return Promise.all(
+		cacheNames.filter(cacheName => {
+			if (cacheName === latest.cache) {
+			return false;
+			}
 
-
-workbox.routing.registerRoute(
-	new RegExp(process.env.VUE_APP_BASE_URL+'/service/rest/v1/app-schede-audible'),
-	new  workbox.strategies.NetworkFirst()
-);
-
-workbox.routing.registerRoute(
-	/.*\.(?:mp4|mp3|wav)/,
-	workbox.strategies.cacheFirst({
-	  cacheName: 'media-cache',
-	  
+			return true;
+		}).map(cacheName => {
+			return caches.delete(cacheName)
+		})
+		);
 	})
-)
+	);
+});

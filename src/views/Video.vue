@@ -65,6 +65,7 @@ import {
 import Amplitude from "amplitudejs";
 import { Plugins } from "@capacitor/core";
 import common from './../js/common'
+import {global} from '../js/global'
 
 const { Storage } = Plugins;
 
@@ -131,7 +132,9 @@ export default {
    
         if (video) {
         console.log("video ",video);
-        return this.$store.getters.baseUrl+"/upload/"+video;
+       // return this.$store.getters.baseUrl+"/upload/"+video;
+       this.getvideo(video)
+       return "videoo"
       } else {
         
         return "";
@@ -141,7 +144,7 @@ export default {
   created(){
    
    document.addEventListener('backbutton',()=>{
-      this.$router.replace('/');
+      this.$router.replace('/');  this.vid.play()
     });
     this.addtoBucket=common.addtoBucket;
     this.paramId=this.$route.params.id;
@@ -191,6 +194,88 @@ export default {
   },
 
    methods: {
+     getvideo(name){
+      /*const mediaRequest = fetch(this.$store.getters.baseUrl+"/upload/"+name).then(response => response.blob()).catch(err => {console.error(err); console.log("sono in errore")});
+      
+       mediaRequest.then(blob => {
+        const request = indexedDB.open('mediaStore', 1);
+        request.onsuccess = event => {
+          const db = event.target.result;
+           
+          const transaction = db.transaction(['media-'+this.lang],'readwrite');
+          const objectStore = transaction.objectStore('media-'+this.lang);
+
+        
+          const test = objectStore.get(name);
+
+          test.onerror = event => {
+            console.log('error');
+           
+          };
+
+          test.onsuccess = event => {
+           document.getElementById('video').src=  URL.createObjectURL(test.result.blob);
+          };
+        }
+        })*/
+         
+        this.request = indexedDB.open('mediaStore', global.dbVersion);
+        this.request.onsuccess = event => {
+         this.db = event.target.result;
+          
+          const transaction = this.db.transaction(['media-'+this.lang],'readwrite');
+          const objectStore = transaction.objectStore('media-'+this.lang);
+
+          const test = objectStore.get(name);
+      
+
+         test.onerror = event => {
+            console.log('error');
+           
+          };
+
+          test.onsuccess = event => {
+            console.log("GET RESULT ",test.result)
+            const testget = test.result;
+             if (testget) {
+              document.getElementById('video').src=  URL.createObjectURL(test.result.blob);
+            } else {
+              console.log('testget dont exixst error');
+                this.fetchFile(name);
+            }
+
+            
+          };
+        }
+
+       
+  
+  
+
+     },
+     fetchFile(name){
+       console.log("TRYIN FETCH")
+        const mediaRequest = fetch(this.$store.getters.baseUrl+"/upload/"+name).then(response => response.blob()).catch(err => {console.error(err); console.log("sono in errore")});
+    
+        mediaRequest.then(blob => {
+          const fileblob=blob;
+          document.getElementById('video').src=  URL.createObjectURL(fileblob)
+          document.getElementById('video').play();
+          
+          const objectStore =this.db.transaction(['media-'+this.lang],'readwrite').objectStore('media-'+this.lang);
+            console.log('blobb ',fileblob)
+            const objectStoreRequest = objectStore.add({name: name, blob: fileblob});
+            objectStoreRequest.onsuccess = (event) =>{
+            // report the success of our request
+            console.log(name+ " Successs");
+              
+          };
+        
+        })
+        
+        
+
+     },
     back() {
       /*if (window.history.length > 1) {
         this.$router.go(-1);

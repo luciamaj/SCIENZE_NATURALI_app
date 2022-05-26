@@ -2,15 +2,16 @@
 module.exports = {
 
     pwa: {
-        theme_color: '#000',
+        name: "Biblioteca Sonora",
+        theme_color: '#086a9f',
         msTileColor: '#000',
 
         manifestOptions:{
             name: `'Biblioteca Sonora'`,
             short_name:`'Biblioteca Sonora'`,
             start_url: `'.'`,
-            display: `'fullscreen'`,
-            theme_color: `process.env.VUE_APP_COLOR`,
+            display: 'fullscreen',
+            theme_color:'#086a9f',
 
         },
         iconPaths: {
@@ -23,14 +24,15 @@ module.exports = {
         appleMobileWebAppCapable: 'yes',
 
         appleMobileWebAppStatusBarStyle: 'blue',
-        //workboxPluginMode: 'InjectManifest',
-      
-        workboxPluginMode: 'GenerateSW',
-
+              
+    //   workboxPluginMode: 'GenerateSW',
+       workboxPluginMode: "InjectManifest",
+ 
         workboxOptions: {
-            
-            swSrc: 'src/service-worker.js',
-            exclude: [
+           // importScripts: ['src/service-worker.js'],
+           
+           swSrc: "src/service-worker.js",
+            /*exclude: [
 
                 /\.map$/, 
 
@@ -84,7 +86,7 @@ module.exports = {
                 
 
 
-            ]
+            ]*/
 
         }
 

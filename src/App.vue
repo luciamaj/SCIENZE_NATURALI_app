@@ -9,9 +9,7 @@
 import { IonApp, IonRouterOutlet } from "@ionic/vue";
 import { defineComponent, ref, provide } from "vue";
 import { Plugins, StatusBarStyle } from "@capacitor/core";
-import { HeaderColor } from "@ionic-native/header-color/ngx";
-import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
- import { loadScript } from "vue-plugin-load-script";
+
 //constructor(private screenOrientation: ScreenOrientation) { }
 import Loader from "./components/Loader.vue"
 import common from "./js/common"

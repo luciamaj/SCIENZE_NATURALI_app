@@ -14,7 +14,7 @@
       <div class="vertical-center">       
         <div class="player">
           <div class="img-container"> 
-            <img :src="cover()" class="album-art" :key="imageUrl"/>
+            <img :src="cover" class="album-art" />
           </div>
           
           <div class="ion-no-border content-scheda">
@@ -109,9 +109,16 @@ export default {
     this.schedaState(false);
     console.log("Unmounting page");
   },
-
+  
+ /* async created() {
+    
+  },*/
   created(){
-     document.addEventListener('backbutton',()=>{
+   this.db = await this.getDb();
+    this.audiosrc = await this.getAudiofromDB(this.contentScheda.audio);
+    this.ready = true;
+
+    document.addEventListener('backbutton',()=>{
       this.$router.replace('/');
     });
     this.addtoBucket=common.addtoBucket;
@@ -131,8 +138,7 @@ export default {
     return {
       title: "Audioguida",
       timer:"",
-      fileUrl:"",
-      imageUrl:0,
+      fileUrl:""
     };
   },
   computed: {
@@ -163,19 +169,19 @@ export default {
      
     },
    
-   /* cover() {
+    cover() {
       const audio=this.contentScheda.audio; 
       console.log("che c'è? "+ audio + this.dataSchede.img);
       if (audio && this.dataSchede.img) {
         console.log("c'è audio e iimmmagine");
-        this.getCoverImg(this.dataSchede.img);
-        return 'i'
+      //  this.getCoverImg(this.dataSchede.img);
+        return this.$store.getters.baseUrl+"/upload/"+this.dataSchede.img;
       } else {
         return this.$store.getters.baseUrl+'/upload/329.jpg'
        
       }
      
-    },*/
+    },
     id() {
       return this.paramId;
     },
@@ -201,7 +207,7 @@ export default {
       if (audio.audio) {
         console.log("audio ",audio.audio);
         //return this.$store.getters.baseUrl+"/upload/"+audio.audio;
-        this.getaudio(audio.audio)
+        //this.getaudio(audio.audio)
         return 'a'
       } else if (audio.video) {
          console.log("video ",audio.video);
@@ -214,7 +220,7 @@ export default {
   },
   mounted() {
     this.fileUrl=this.url
-    if(this.fileUrl!=null){
+    if(this.fileUrl!=null && this.ready){
       Amplitude.init({
         /* eslint-disable */
         songs: [
@@ -222,7 +228,7 @@ export default {
             name: "Song Name 1",
             artist: "Artist Name",
             album: "Album Name",
-            url: this.fileUrl,
+            url: await this.audiosrc,
             cover_art_url: "/assets/icon/icon.png"
           }
         ],
@@ -265,24 +271,68 @@ export default {
     this.addtoBucket(this.paramId);
   },
   methods:{
-    cover() {
-      const audio=this.contentScheda.audio; 
-      console.log("che c'è? "+ audio + this.dataSchede.img);
-      if (audio && this.dataSchede.img) {
-        console.log("c'è audio e iimmmagine");
-        this.getCoverImg(this.dataSchede.img);
-        return this.$store.getters.baseUrl+'/upload/'+this.dataSchede.img
-      } else {
-        return this.$store.getters.baseUrl+'/upload/329.jpg'
-       
-      }
-     
-    },
-
-    getCoverImg(name){
-       this.request = indexedDB.open('mediaStore', global.dbVersion);
+     /* openDB(){
+        this.request = indexedDB.open('mediaStore', global.dbVersion);
         this.request.onsuccess = event => {
-             this.db = event.target.result;
+         this.db = event.target.result;
+        }
+
+      },*/
+
+      async getAudiofromDB(name) {
+        console.log("getAudiofromDB ", name)
+        return new Promise((resolve, reject) => {
+
+          let trans = this.db.transaction(['media-'+this.lang],'readwrite');
+          trans.oncomplete = e => {
+            resolve(audiosrc);
+          };
+          
+          let objectStore = trans.objectStore(['media-'+this.lang]);
+          let audiosrc;
+  
+          const test = objectStore.get(name);
+          
+          test.onsuccess = event => {
+            console.log("GET RESULT ",test.result)
+            const testget = test.result;
+             if (testget) {
+                audiosrc=URL.createObjectURL(test.result.blob);
+               console.log(" audio ",this.audio)
+              //this.audio.load()
+              //this.audio.onloadeddata=()=>  this.play();
+            
+            } else {
+              console.log('testget dont exixst error');
+                this.fetchFile(name);
+            }
+
+            
+          };
+
+        });
+      },
+
+    async getDb() {
+      return new Promise((resolve, reject) => {
+
+        let request = indexedDB.open('mediaStore', global.dbVersion);
+        
+        request.onerror = e => {
+          console.log('Error opening db', e);
+          reject('Error');
+        };
+
+        request.onsuccess = e => {
+          resolve(e.target.result);
+        };
+        
+        
+      });
+    },
+    getCoverImg(name){
+
+   
         const transaction = this.db.transaction(['media-'+this.lang],'readwrite');
         const objectStore = transaction.objectStore('media-'+this.lang);
 
@@ -292,31 +342,29 @@ export default {
             console.log("GET RESULT ",test.result)
             const testget = test.result;
             if (testget) {
-              this.imageUrl =1;
-               
-              document.getElementsByClassName('album-art').src=URL.createObjectURL(test.result.blob)
+             
+              document.getElementsByClassName('album-art').src=URL.createObjectURL(test.result.blob);
             
             } else {
               console.log('testget dont exixst error');
-                this.fetchimg(name);
+              this.fetchimg(name);
             }
 
             
-          };
-        }
+        };
+      
     
     },
 
     fetchImg(name){
-       console.log("TRYIN FETCH")
+       console.log("TRYIN FETCH IMG")
         const mediaRequest = fetch(this.$store.getters.baseUrl+"/upload/"+name).then(response => response.blob()).catch(err => {console.error(err); console.log("sono in errore")});
     
         mediaRequest.then(blob => {
           const fileblob=blob;
-          document.getElementsByClassName('album-art').src=  URL.createObjectURL(fileblob)
-            this.imgsrc=true
-         
-          /*
+           document.getElementsByClassName('album-art').src=  URL.createObjectURL(fileblob)
+          
+        /* 
           const objectStore =this.db.transaction(['media-'+this.lang],'readwrite').objectStore('media-'+this.lang);
             console.log('blobb ',fileblob)
             const objectStoreRequest = objectStore.add({name: name, blob: fileblob});
@@ -357,9 +405,9 @@ export default {
         })*/
       
 
-         this.request = indexedDB.open('mediaStore', global.dbVersion);
-        this.request.onsuccess = event => {
-         this.db = event.target.result;
+         //this.request = indexedDB.open('mediaStore', global.dbVersion);
+        
+         //this.db = event.target.result;
           
           const transaction = this.db.transaction(['media-'+this.lang],'readwrite');
           const objectStore = transaction.objectStore('media-'+this.lang);
@@ -367,7 +415,7 @@ export default {
           const test = objectStore.get(name);
       
 
-         test.onerror = event => {
+          test.onerror = event => {
             console.log('error');
            
           };
@@ -388,7 +436,7 @@ export default {
 
             
           };
-        }
+        
 
   
 

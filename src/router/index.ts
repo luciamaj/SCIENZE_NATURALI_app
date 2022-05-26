@@ -110,6 +110,12 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/Visited.vue'),
     props:true
   },
+  {
+    path: '/testsw',
+    name: 'swt',
+    component: () => import('@/views/testsw.vue'),
+  },
+
 
   
  /* {

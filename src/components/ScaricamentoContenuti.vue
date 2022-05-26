@@ -34,7 +34,7 @@ import {
  alertController
 
 } from "@ionic/vue";
-
+import {global} from '../js/global'
 
 import Lang from '@/components/ChangeLang.vue';
 
@@ -56,13 +56,6 @@ export default {
         media:0,
         mediafetched:0,
 
-        swiperOption:{
-            slidesPerView: 1,
-            spaceBetween: 100,
-            observer:true,
-            navigation:{ nextEl: '.next',  prevEl: '.prev' } ,
-            pagination:{ clickable: true ,  el: '.swiper-pagination', type: 'bullets'} 
-        }
         };
     },
 
@@ -85,6 +78,11 @@ export default {
           return element.toLowerCase();
         });
       })
+      const newdbV=global.dbVersion+1
+      global.dbVersion=newdbV;
+      console.log("WEN DBV"+newdbV)
+      localStorage.setItem("dbVersion",newdbV);
+     
     }
 
   },
@@ -176,7 +174,8 @@ export default {
     jsonSchede.forEach(scheda => {
       if(scheda.img!=null){
         this.mediaCounter();
-        this.getmedia(scheda.img)
+       // this.getmedia(scheda.img)
+          this.getvideo(scheda.img)
       }else{
         console.log("Non ci sono immagini per la scheda ")
       }
@@ -184,11 +183,13 @@ export default {
       console.log("Cont ", contenuto);
       if(contenuto.audio!=null){
           this.mediaCounter();
-        this.getmedia(contenuto.audio);
+       // this.getmedia(contenuto.audio);
+        this.getvideo(contenuto.audio);
           console.log("Getaudio ")
       }else if(contenuto.video!=null){
           this.mediaCounter();
-        this.getmedia(contenuto.video);
+       // this.getmedia(contenuto.audio);
+        this.getvideo(contenuto.video);
         console.log("Getvideo ")
       }else{
           console.log("Non ci sono Media per la scheda ")
@@ -237,6 +238,96 @@ export default {
         }
       });
 
+
+    },
+
+    getvideo(name){
+     
+       
+        const mediaRequest = fetch(this.$store.getters.baseUrl+"/upload/"+name).then(response => response.blob()).catch(err => {console.error(err); console.log("sono in errore")});
+        mediaRequest.then(blob => {
+          navigator.storage.estimate().then((estimate)=> {
+            console.log("estimate ",estimate.quota," ",estimate )
+            this.remainingquota=estimate.quota-estimate.usage;
+             console.log("this.remainingquota ",  this.remainingquota)
+             console.log(" this.filesize ",   blob.size)
+            if(this.remainingquota> blob.size){
+                console.log("CI STA")
+                this.saveinDB(name, blob)
+            }else{
+              alert("Spazio insufficente alcuni contenuti non possono essere scaricati, usa l'app online")
+              this.mediafetched++
+              this.progress=Math.round(this.mediafetched/this.media*100 )/100;
+              console.log("progress ",  this.progress);
+              if(this.progress==1){
+                this.openNext();
+              }
+            }
+           });
+          
+        });
+        
+       
+
+    },
+
+    saveinDB(name, blob){
+
+      console.log("GDBV "+global.dbVersion)
+          const request = indexedDB.open('mediaStore', global.dbVersion);
+          console.log( "REQUESTING ",global.dbVersion)
+          let transaction;
+          let objectStore;
+          request.onsuccess = event => {
+            const db = event.target.result;
+            
+            transaction = db.transaction(['media-'+this.lang],'readwrite');
+            objectStore = transaction.objectStore('media-'+this.lang);
+
+          
+            const objectStoreRequest = objectStore.add({name: name, blob: blob});
+            objectStoreRequest.onsuccess = (event) =>{
+              // report the success of our request
+              console.log(name+ " Successs");
+                if(this.progress==1){
+                  this.openNext();
+                }
+            };
+
+            // const file = objectStore.get(name);
+
+            /* file.onerror = event => {
+              console.log('error');
+              };
+
+              file.onsuccess = event => {
+            // videos.one.src = window.URL.createObjectURL(test.result.blob);
+              console.log(name+ " Successs");
+              };*/
+          }
+
+          request.onupgradeneeded = event => {
+            const db = event.target.result;
+            const objectStore = db.createObjectStore('media-'+this.lang, { keyPath: 'name' });
+                console.log( " request.onupgradeneeded");
+            objectStore.transaction.oncomplete = event => {
+            
+              
+              const mediaObjectStore = db.transaction('media-'+this.lang, 'readwrite').objectStore('media-'+this.lang);
+
+              //const videoObjectStore = db.transaction('videos', 'readwrite').objectStore('videos');
+                mediaObjectStore.add({name: name, blob: blob});
+            };
+          }
+          request.onerror =  event => {
+            console.log("Error ", event)
+          };
+          this.mediafetched++
+          this.progress=Math.round(this.mediafetched/this.media*100 )/100;
+          console.log("progress ",  this.progress);
+          if(this.progress==1){
+            this.openNext();
+          }
 
     },
 
