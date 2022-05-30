@@ -3,7 +3,7 @@
     <ion-header class="ion-no-border">
       <ion-toolbar >
         <ion-title slot="start" v-html="store.mostra" class="main-title"></ion-title>
-        <ion-buttons slot="end" v-if="history=='true'" >
+        <ion-buttons slot="end" v-if="history==true" >
               <ion-button color="secondary"  @click="openHistory()" class="collection-button">
                 <ion-icon  size="large" name="file-tray-full-outline" class="history-icon"></ion-icon>
                 <!--ion-label color="dark">{{$t('raccolta.title')}}</ion-label-->
@@ -68,6 +68,7 @@ import { useRouter } from "vue-router";
 import {AudioProcessing} from "../audioWorklet/audioWorker.js";
 import common from "../js/common"
 const { Storage } = Plugins;
+import { useStore } from 'vuex'
 
 export default {
   name: "Tab",
@@ -84,12 +85,12 @@ export default {
   ionViewWillEnter(){
    
    this.getTour().then(x => {
-    const tour=x;
+    this.tour=x;
    
-    console.log("upTour ", tour)
-    if(tour){
+    console.log("upTour ", this.tour)
+    if(this.tour){
         //const captureStart = document.getElementById("captureStart");
-         this.captureStart = document.getElementById("captureStart");
+        this.captureStart = document.getElementById("captureStart");
         this.captureStop = document.getElementById("captureStop");
         this.captureStart.hidden = true;
         this.captureStop.hidden = false;
@@ -127,8 +128,8 @@ export default {
   },
   computed:{
     interactionMode(){
-      console.log("interactionMode "+ process.env.VUE_APP_MODE );
-      return process.env.VUE_APP_MODE;
+      console.log("interactionMode "+this.conf.interactionMode );
+      return this.conf.interactionMode;
     },
     logo() {
       const imgMostra=this.store.img;
@@ -142,8 +143,9 @@ export default {
      
     },
     history(){
-      return process.env.VUE_APP_HISTORY;
+      return this.conf.history;
     }
+
   },
   components: {
     IonToolbar,
@@ -157,13 +159,15 @@ export default {
   
   },
   setup() {
-  
+     const store = useStore()
     const router = useRouter();
-    const openModal = async () => {
-      if(process.env.VUE_APP_MODE=="mix"){
-        const captureStop=document.getElementById("captureStop");
-        captureStop.click();
-        
+   /* const openModal = async () => {
+      if(store.getters.conf.interactionMode=="mix"){
+        if(this.tour==true){
+          const captureStop=document.getElementById("captureStop");
+          captureStop.click();
+        }
+       
 
       }
       
@@ -195,7 +199,7 @@ export default {
       await Storage.remove({ key: "scheda" });
 
       return modal.present();
-    };
+    };*/
 
     const openMenuModal = async (notification) => {
       const top = await modalController.getTop();
@@ -222,7 +226,7 @@ export default {
 
   
     return {
-      openModal,
+    //  openModal,
       openMenuModal,
      
 
@@ -256,7 +260,46 @@ export default {
 
 
   methods: {
-  
+    
+    async openModal  ()  {
+      if(this.$store.getters.conf.interactionMode=="mix"){
+        if(this.tour==true){
+          const captureStop=document.getElementById("captureStop");
+          captureStop.click();
+        }
+       
+
+      }
+      
+      const top = await modalController.getTop();
+
+      const modal = await modalController.create({
+        component: Scanner,
+        swipeToClose: true,
+        presentingElement: top
+      });
+
+      modal.onDidDismiss().then(async _ => {
+        console.log("dismissed");
+        const objStr = await Storage.get({ key: "scheda" });
+        const obj = JSON.parse(objStr.value);
+
+        if (obj != null) {
+            console.log("OGGETTO ",obj)
+          if (obj.path.type == "audio") {
+            this.$router.replace({ path: "/audio/" + obj.path.index });
+          } else  if (obj.path.type == "video") {
+              this.$router.replace({ path: "/video/" + obj.path.index });
+          }else{
+            this.$router.replace({ path: "/audio/" + obj.path.index });
+          }
+        }
+      });
+
+      await Storage.remove({ key: "scheda" });
+
+      return modal.present();
+    },
   
   async getTour() {
     const ret = await Storage.get({ key: 'tourActive' });

@@ -151,8 +151,8 @@ export default {
   },
   computed:{
     interactionMode(){
-      console.log("interactionMode "+ process.env.VUE_APP_MODE );
-      return process.env.VUE_APP_MODE;
+      console.log("interactionMode "+this.conf.interactionMode );
+      return this.conf.interactionMode;
     }
   },
   mounted(){

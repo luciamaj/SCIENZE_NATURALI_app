@@ -36,6 +36,7 @@ import './theme/variables.css';
 import { addIcons } from 'ionicons';
 import * as allIcons from 'ionicons/icons';
 import mitt from 'mitt';
+const emitter = mitt();
 
 const currentIcons = Object.keys(allIcons).map(i => {
   const key = i.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)
@@ -49,31 +50,39 @@ const currentIcons = Object.keys(allIcons).map(i => {
     ['md-' + key]: allIcons[i].md,
   };
 });
+let confvar;
+const confurl = "./config/config.json";
+fetch(confurl)
+  .then((response) => response.json())
+  .then((configuration) => {
+      // Vue.prototype.$config = config
+      confvar=configuration;
+    console.log(" esiste? ",configuration)
+    const app = createApp(App)
+      .use(IonicVue)
+      .use(router)
+      .use(store)
+      .use(i18n)
+      .use(VuePlyr, {
+        plyr: {}
+      });
+    
+      router.isReady().then(() => {
+      app.mount('#app');
+    });
 
-const confurl = "../config/config.js";
+    app.config.globalProperties.emitter = emitter;
 
-const emitter = mitt();
+    app.config.globalProperties.conf=configuration;
+    console.log("aaa ",configuration.baseUrl);
+    store.commit("baseUrlSet", configuration.baseUrl);
+    store.commit("confSet", configuration);
+       
+  })
+
 
 const iconsObject = Object.assign({}, ...currentIcons);
 addIcons(iconsObject);
-console.log("aaa", process.env.VUE_APP_BASE_URL);
-store.commit("baseUrlSet", process.env.VUE_APP_BASE_URL);
-
-const app = createApp(App)
-  .use(IonicVue)
-  .use(router)
-  .use(store)
-  .use(i18n)
-  .use(VuePlyr, {
-    plyr: {}
-  });
- 
-  router.isReady().then(() => {
-  app.mount('#app');
-});
-
-app.config.globalProperties.emitter = emitter;
-
 
 
 

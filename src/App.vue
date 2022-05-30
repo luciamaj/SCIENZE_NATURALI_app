@@ -56,11 +56,12 @@ export default defineComponent({
   },
  
   created(){
+    console.log("APP"+ this.conf.nameMuseum);
     this.setInactiveTour=common.setInactiveTour;
     this.updateNotification=common.updateNotification;
     this.getNotificationState=common.getNotificationState;
   
-    window.document.addEventListener("visibilitychange", ()=> {
+    window.document.addEventListener("visibilitychange", ()=> { this.mostra
       console.log('VISIBILITY CHANGE', window.document.visibilityState);
       if(window.document.visibilityState=="visible"){ 
         this.getinfo((info) => {
@@ -87,6 +88,7 @@ export default defineComponent({
     });
     
     document.addEventListener("swUpdated", this.showRefreshUI, { once: true });
+
     this.emitter.on('aggiorna',(from) => {
       this.aggiorna(from);
     });
@@ -208,6 +210,11 @@ export default defineComponent({
 
     aggiorna(from){
       console.log("aggiorno pubblicazione");
+      const prevPubb= JSON.parse(localStorage.getItem("pubblication"));
+      console.log(prevPubb.mostra+"  mostre "+this.infoPubbl.mostra);
+      if(prevPubb.mostra!=this.infoPubbl.mostra){
+        this.mostraCambiata=true;
+      }
       localStorage.setItem('pubblication', JSON.stringify(this.infoPubbl));
       this.aggiornaInfo(from);
      // const newData= localStorage.getItem('dataMostra');
@@ -254,7 +261,7 @@ export default defineComponent({
 
     evendata(data){
       const lang=this.infoPubbl.lang.filter( ( el ) =>{
-        return el!=process.env.VUE_APP_LANG_DEFAULT;
+        return el!=this.conf.langDefault;
       });
       console.log("lang filter", this.infoPubbl.lang, " ", lang )
       if(lang.length>0){
@@ -263,7 +270,7 @@ export default defineComponent({
          const contenuto=scheda.content.find(el=> el.lang==lang);
             // console.log("Cont ", contenuto);
             console.log("Conttype ", contenuto.type);
-            const contenutodefault=scheda.content.find(el=> el.lang==process.env.VUE_APP_LANG_DEFAULT);
+            const contenutodefault=scheda.content.find(el=> el.lang==this.conf.langDefault);
             if(contenuto.type==null) {
                   
               console.log("Non ci sono Media per la scheda  in "+ lang)

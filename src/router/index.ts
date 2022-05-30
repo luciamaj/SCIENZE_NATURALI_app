@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
 import WaveApp from '@/views/WavetoApp.vue'
 import Wave from '@/views/WaveB.vue'
+import store from '../store/store'
 //import Tabs from '../views/Tabs.vue'
 
 const routes: Array<RouteRecordRaw> = [
@@ -27,11 +28,10 @@ const routes: Array<RouteRecordRaw> = [
     name:"scheda",
     component: '',
     beforeEnter: (to, from, next) => {
-      if(process.env.VUE_APP_MODE=='mix'){
+      if(store.getters.conf.interactionMode=='mix'){
       
         next({name:'open-app', params:{tag:to.params.id}});
-       // window.location.replace('intent://instagram.com/#Intent;scheme=https;package=com.instagram.android;end');
-        //window.location.replace('instagram');
+       
         return;
       }else{
         const data=localStorage.getItem("dataMostra")
@@ -157,7 +157,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (localStorage.getItem('pubblication')==null && to.path !== '/onboard') {
-    if((to.name == 'scheda'||to.name == 'open-app' ) && process.env.VUE_APP_MODE=='mix'){
+    if((to.name == 'scheda'||to.name == 'open-app' ) && store.getters.conf.interactionMode=='mix'){
       return  next();
     }else{
       console.log("pubblication Null")

@@ -36,17 +36,17 @@ export default {
       
         if(android) {
             console.log( "Device is Android Phone");
-            window.location.replace("intent://#Intent;scheme="+process.env.VUE_APP_ANDROID_APPNAME+";S.browser_fallback_url="+process.env.VUE_APP_ANDROID_STORE_URL+";end");
+            window.location.replace("intent://#Intent;scheme="+this.conf.androidAppName+";S.browser_fallback_url="+this.conf.androidStoreUrl+";end");
         }
         if(iphone) {
             console.log( "Device is iPhone");
             if(tag!=0){
-              window.location.replace(process.env.VUE_APP_APPLE_APPNAME+tag);
+              window.location.replace(this.conf.appleAppName+tag);
             }else{
-              window.location.replace(process.env.VUE_APP_APPLE_APPNAME);
+              window.location.replace(this.conf.appleAppName);
             }
             setTimeout(()=> {
-              window.location = process.env.VUE_APP_APPLE_STORE_URL;
+              window.location = this.conf.appleStoreUrl
             }, 500);
             
         }
