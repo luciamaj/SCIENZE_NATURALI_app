@@ -2,7 +2,7 @@
   <ion-page>
      <ion-content>
      
-      <download-cont :lang="lang"></download-cont>
+      <download-cont :lang="lang" :fromC="from"></download-cont>
 
     </ion-content>
   </ion-page>
@@ -36,6 +36,10 @@ export default {
     lang(){
    
       return this.$route.params.lang;
+    },
+     from(){
+   
+      return this.$route.params.fromC;
     },
 
    

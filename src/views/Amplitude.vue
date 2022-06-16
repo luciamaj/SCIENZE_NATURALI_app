@@ -14,7 +14,7 @@
       <div class="vertical-center">       
         <div class="player">
           <div class="img-container"> 
-            <img :src="cover()" class="album-art" :key="imageUrl"/>
+            <img :src="imgSrc" class="album-art" :key="imageUrl"/>
           </div>
           
           <div class="ion-no-border content-scheda">
@@ -22,12 +22,12 @@
               <div class="song-title" v-html="contentScheda.titolo"></div>
 
               
-              <progress v-if="url!=null"
+              <progress v-if="fileUrl!=null"
                 class="amplitude-song-played-progress"
                 data-amplitude-song-index="0"
                 id="song-played-progress-1"
               ></progress>
-              <div class="time-container" v-if="url!=null">
+              <div class="time-container" v-if="fileUrl!=null">
                 <div class="current-time">
                   <span class="amplitude-current-minutes" data-amplitude-song-index="0">00</span>:
                   <span class="amplitude-current-seconds" data-amplitude-song-index="0">00</span>
@@ -38,7 +38,7 @@
                   <span class="amplitude-duration-seconds" data-amplitude-song-index="0">30</span>
                 </div>
               </div>
-              <div class="control-container" v-if="url!=null">
+              <div class="control-container" v-if="fileUrl!=null">
                 <div class="prev" @click="minus"></div>
                 <div class="amplitude-play-pause" data-amplitude-song-index="0"></div>
                 <div class="next" @click="plus"></div>
@@ -131,8 +131,9 @@ export default {
     return {
       title: "Audioguida",
       timer:"",
-      fileUrl:"",
+      fileUrl:true,
       imageUrl:0,
+      imgSrc:''
     };
   },
   computed: {
@@ -196,84 +197,29 @@ export default {
         return this.$i18n.locale;
       }
     },
-    url() {
-      const audio=this.contentScheda;
-      if (audio.audio) {
-        console.log("audio ",audio.audio);
-        //return this.$store.getters.baseUrl+"/upload/"+audio.audio;
-        this.getaudio(audio.audio)
-        return 'a'
-      } else if (audio.video) {
-         console.log("video ",audio.video);
-        return this.$store.getters.baseUrl+"/upload/"+ audio.video;
-      }else{
-        console.log("URL"+ null)
-        return null
-      }
-    }
+  
+  },
+  beforeMount(){
+    this.url();
+    this.cover();
+
   },
   mounted() {
-    this.fileUrl=this.url
-    if(this.fileUrl!=null){
-      Amplitude.init({
-        /* eslint-disable */
-        songs: [
-          {
-            name: "Song Name 1",
-            artist: "Artist Name",
-            album: "Album Name",
-            url: this.fileUrl,
-            cover_art_url: "/assets/icon/icon.png"
-          }
-        ],
-        callbacks: {
-          ended: ()=>{
-            console.log("Audio has been stopped.");
-            console.log("Document " + document.visibilityState)
-            if(document.visibilityState=="visible"){
-              this.setTimer();
-            }else{
-              this.back();
-            }
-            
-
-          }
-        }
-      });
-      this.audio=Amplitude.getAudio();
-
-      document
-      .getElementById("song-played-progress-1")
-      .addEventListener("click", function(e) {
-        if (Amplitude.getActiveIndex() == 0) {
-          var offset = this.getBoundingClientRect();
-          var x = e.pageX - offset.left;
-
-          Amplitude.setSongPlayedPercentage(
-            (parseFloat(x.toString()) /
-              parseFloat(this.offsetWidth.toString())) *
-              100
-          );
-        }
-      });
-
-        
-      console.log("AMPLI ",Amplitude);
-
-     // this.play();
-    }
+  
     this.addtoBucket(this.paramId);
   },
   methods:{
+
+ 
     cover() {
-      const audio=this.contentScheda.audio; 
-      console.log("che c'è? "+ audio + this.dataSchede.img);
-      if (audio && this.dataSchede.img) {
+      const type=this.contentScheda.type; 
+      console.log("che c'è? "+ this.contentScheda.audio + this.dataSchede.img);
+      if ((type=="audio"|| type==null) && this.dataSchede.img) {
         console.log("c'è audio e iimmmagine");
         this.getCoverImg(this.dataSchede.img);
-        return this.$store.getters.baseUrl+'/upload/'+this.dataSchede.img
+        //return this.$store.getters.baseUrl+'/upload/'+this.dataSchede.img
       } else {
-        return this.$store.getters.baseUrl+'/upload/329.jpg'
+         this.getCoverImg(this.$store.getters.pubblication.img) 
        
       }
      
@@ -289,16 +235,18 @@ export default {
         const test = objectStore.get(name);
 
         test.onsuccess = event => {
-            console.log("GET RESULT ",test.result)
-            const testget = test.result;
+            console.log("GET RESULT ", event.target.result)
+            const testget = event.target.result;      
             if (testget) {
-              this.imageUrl =1;
-               
-              document.getElementsByClassName('album-art').src=URL.createObjectURL(test.result.blob)
+             this.imgSrc= URL.createObjectURL(testget.blob);
+                
+            // this.imgSrc='data:'+testget.blob.type+';base64,'+btoa(testget.data);
+              console.log("img ",this.imgSrc);
+             
             
             } else {
               console.log('testget dont exixst error');
-                this.fetchimg(name);
+                this.fetchImg(name);
             }
 
             
@@ -313,87 +261,113 @@ export default {
     
         mediaRequest.then(blob => {
           const fileblob=blob;
-          document.getElementsByClassName('album-art').src=  URL.createObjectURL(fileblob)
-            this.imgsrc=true
+           this.imgSrc=  URL.createObjectURL(fileblob)
          
-          /*
+        
           const objectStore =this.db.transaction(['media-'+this.lang],'readwrite').objectStore('media-'+this.lang);
             console.log('blobb ',fileblob)
             const objectStoreRequest = objectStore.add({name: name, blob: fileblob});
             objectStoreRequest.onsuccess = (event) =>{
             // report the success of our request
-            console.log(name+ " Successs");
+            console.log(name+ " Successs put");
               
-          };*/
+          };
         
         })
         
         
 
      },
-     getaudio(name){
-       /*const mediaRequest = fetch(this.$store.getters.baseUrl+"/upload/"+name).then(response => response.blob()).catch(err => {console.error(err); console.log("sono in errore")});
-      
-       mediaRequest.then(blob => {
-        const request = indexedDB.open('mediaStore', 1);
-        request.onsuccess = event => {
-          const db = event.target.result;
-           console.log("langg ", this.lang);
-          const transaction = db.transaction(['media-'+this.lang],'readwrite');
-          const objectStore = transaction.objectStore('media-'+this.lang);
 
-        
-          const test = objectStore.get(name);
-
-          test.onerror = event => {
-            console.log('error');
-           
-          };
-
-          test.onsuccess = event => {
-           this.audio.src=  URL.createObjectURL(test.result.blob);
-          };
-        }
-        })*/
-      
-
-         this.request = indexedDB.open('mediaStore', global.dbVersion);
+    url() {
+      const audio=this.contentScheda;
+      if (audio.audio) {
+        console.log("audio ",audio.audio);  
+        this.request = indexedDB.open('mediaStore', global.dbVersion);
         this.request.onsuccess = event => {
-         this.db = event.target.result;
+          this.db = event.target.result;
           
           const transaction = this.db.transaction(['media-'+this.lang],'readwrite');
           const objectStore = transaction.objectStore('media-'+this.lang);
 
-          const test = objectStore.get(name);
+          const test = objectStore.get(audio.audio);
       
 
-         test.onerror = event => {
-            console.log('error');
-           
-          };
+          test.onerror = event => {
+              console.log('error');
+            
+            };
 
           test.onsuccess = event => {
-            console.log("GET RESULT ",test.result)
-            const testget = test.result;
+            console.log("GET RESULT ",event.target.result)
+            const testget = event.target.result;
              if (testget) {
-              this.audio.src=URL.createObjectURL(test.result.blob);
-               console.log(" audio ",this.audio)
-              this.audio.load()
-              this.audio.onloadeddata=()=>  this.play();
+                this.fileUrl=URL.createObjectURL(testget.blob);
+               console.log(" audio ", this.fileUrl )
+             // this.audio.load()
+             // this.audio.onloadeddata=()=>  this.play();
+              Amplitude.init({
+                  /* eslint-disable */
+                  songs: [
+                    {
+                      name: "Song Name 1",
+                      artist: "Artist Name",
+                      album: "Album Name",
+                      url: this.fileUrl,
+                      cover_art_url: "/assets/icon/icon.png"
+                    }
+                  ],
+                  callbacks: {
+                    ended: ()=>{
+                      console.log("Audio has been stopped.");
+                      console.log("Document " + document.visibilityState)
+                      if(document.visibilityState=="visible"){
+                        this.setTimer();
+                      }else{
+                        this.back();
+                      }
+                      
+
+                    }
+                  }
+                });
+                this.audio=Amplitude.getAudio();
+
+                document.getElementById("song-played-progress-1")
+                .addEventListener("click", function(e) {
+                  if (Amplitude.getActiveIndex() == 0) {
+                    var offset = this.getBoundingClientRect();
+                    var x = e.pageX - offset.left;
+
+                    Amplitude.setSongPlayedPercentage(
+                      (parseFloat(x.toString()) /
+                        parseFloat(this.offsetWidth.toString())) *
+                        100
+                    );
+                  }
+                });
+
+                 this.play();
+                console.log("AMPLI ",Amplitude);
             
             } else {
               console.log('testget dont exixst error');
-                this.fetchFile(name);
+                this.fetchFile(audio.audio);
             }
 
             
           };
         }
-
-  
-
-     },
-
+       
+      } else if (audio.video) {
+         console.log("video ",audio.video);
+        this.fileUrl= this.$store.getters.baseUrl+"/upload/"+ audio.video;
+      }else{
+        console.log("URL"+ null)
+        this.fileUrl= null
+      }
+    },
+    
      fetchFile(name){
        console.log("TRYIN FETCH")
         const mediaRequest = fetch(this.$store.getters.baseUrl+"/upload/"+name).then(response => response.blob()).catch(err => {console.error(err); console.log("sono in errore")});
@@ -651,19 +625,20 @@ div.meta-container div.time-container div.duration {
 */
 div.control-container {
   text-align: center;
-  margin-top: 2vh;
+  margin-top: 1.7vh;
 }
 div.control-container div.prev {
-  width: 28px;
-  height: 24px;
+  width: 24px;
+  height: 22px;
   cursor: pointer;
   background: url("/assets/icon/playerIcon/previous.svg");
+  background-size: cover;
   display: inline-block;
   vertical-align: middle;
 }
 div.control-container div.amplitude-play-pause {
-  width: 35px;
-  height: 40px;
+  width: 31px;
+  height: 35px;
   cursor: pointer;
   display: inline-block;
   vertical-align: middle;
@@ -677,10 +652,11 @@ div.control-container div.amplitude-play-pause.amplitude-playing {
       background-size: cover;
 }
 div.control-container div.next {
-  width: 28px;
-  height: 24px;
+  width: 24px;
+  height: 22px;
   cursor: pointer;
   background: url("/assets/icon/playerIcon/next.svg");
+   background-size: cover;
   display: inline-block;
   vertical-align: middle;
 }
@@ -690,10 +666,10 @@ div.control-container div.next {
 */
 @media screen and (max-width: 39.9375em) {
   div.control-container div.prev {
-    margin-right: 75px;
+    margin-right: 65px;
   }
   div.control-container div.next {
-    margin-left: 75px;
+    margin-left: 65px;
   }
 }
 /*

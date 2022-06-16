@@ -30,6 +30,11 @@ export const en= {
         text:"Inhalte können nicht heruntergeladen werden, es wurden Verbindungsprobleme festgestellt",
         action:"Versuche es später"
     },
+    storageError:{
+		title:"Unzureichender Speicherplatz",
+        text:"Es ist nicht möglich, alle Inhalte herunterzuladen, nutzen Sie die App im Online-Modus!",
+        action:"Ok"
+    },
     update:{
 		title:"Update",
         text:"There is new content available, please update it before using the app"

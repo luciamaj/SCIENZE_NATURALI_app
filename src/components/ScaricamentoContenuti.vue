@@ -3,7 +3,7 @@
      
       <div  class="onboard-main">
 
-       
+  
 
           <div class="onb-desc ion-text-center">
             <h4> {{$t('scarica.title')}}</h4>
@@ -42,7 +42,7 @@ export default {
     name: "scaricamento",
     props: {
         lang: { type: String, default: 'it' },
-        from: { type: String, default: 'main' }
+        fromC: { type: String, default: 'main' }
     },
     data() {
         return {
@@ -55,6 +55,7 @@ export default {
         progress:0,
         media:0,
         mediafetched:0,
+        quotaExcided:false
 
         };
     },
@@ -67,6 +68,7 @@ export default {
     }else{
        this.online=false
     }
+    this.storageError=common.storageError;
     this.updateNotification=common.updateNotification;
     this.savedlangs=localStorage.getItem('savedLangs');
     console.log("svd lng",this.savedlangs);
@@ -78,10 +80,24 @@ export default {
           return element.toLowerCase();
         });
       })
-      const newdbV=global.dbVersion+1
-      global.dbVersion=newdbV;
-      console.log("WEN DBV"+newdbV)
-      localStorage.setItem("dbVersion",newdbV);
+     
+      if(this.fromC=="onboard"|| this.fromC=="lang"){
+        const newdbV=global.dbVersion+1
+        global.dbVersion=newdbV;
+        console.log("WEN DBV"+newdbV)
+        localStorage.setItem("dbVersion",newdbV);
+      }
+      
+      const toremove=localStorage.getItem("conttoRemove");
+      
+      if(toremove){
+        console.log('saved to remove '+toremove)
+        this.toremove=toremove.split(",");
+        if(this.toremove.length>0)
+       // this.toremove.forEach(media=>{
+          this.removeMedia();
+       // })
+      }
      
     }
 
@@ -166,34 +182,48 @@ export default {
   },
 
   searchMedia(){
+    console.log('VEDO FROM? '+ this.fromC )
     console.log("lingua? "+ this.lang);
     const schede=localStorage.getItem('dataMostra');
     const jsonSchede=JSON.parse(schede);
     let contenuto="";
     console.log("->>", JSON.parse(schede));
-    jsonSchede.forEach(scheda => {
-      if(scheda.img!=null){
-        this.mediaCounter();
-       // this.getmedia(scheda.img)
-          this.getvideo(scheda.img)
-      }else{
-        console.log("Non ci sono immagini per la scheda ")
-      }
-      contenuto=scheda.content.find(el=> el.lang== this.lang )
-      console.log("Cont ", contenuto);
-      if(contenuto.audio!=null){
+    let counter=1;
+    this.mediaCounter();
+    this.getvideo(this.$store.getters.pubblication.img);
+    jsonSchede.forEach((scheda, index) => {
+      console.log("n° ",counter++ )
+      if(this.quotaExcided==false){
+        if(scheda.img!=null){
           this.mediaCounter();
-       // this.getmedia(contenuto.audio);
-        this.getvideo(contenuto.audio);
-          console.log("Getaudio ")
-      }else if(contenuto.video!=null){
-          this.mediaCounter();
-       // this.getmedia(contenuto.audio);
-        this.getvideo(contenuto.video);
-        console.log("Getvideo ")
-      }else{
-          console.log("Non ci sono Media per la scheda ")
+        // this.getmedia(scheda.img)
+            this.getvideo(scheda.img)
+        }else{
+          console.log("Non ci sono immagini per la scheda ")
+        }
+        contenuto=scheda.content.find(el=> el.lang== this.lang )
+        console.log("Cont ", contenuto);
+        if(contenuto.audio!=null){
+            this.mediaCounter();
+        // this.getmedia(contenuto.audio);
+          this.getvideo(contenuto.audio);
+            console.log("Getaudio ")
+        }else if(contenuto.video!=null){
+            this.mediaCounter();
+        // this.getmedia(contenuto.audio);
+          this.getvideo(contenuto.video);
+          console.log("Getvideo ")
+        }else{
+            console.log("Non ci sono Media per la scheda ")
+        }
+
+         console.log('index', index, jsonSchede.length )
+        if(index==jsonSchede.length-1){
+          this.last=true;
+          console.log('entro è last')
+        }
       }
+      
 
     });
   },
@@ -242,93 +272,194 @@ export default {
     },
 
     getvideo(name){
-     
-       
-        const mediaRequest = fetch(this.$store.getters.baseUrl+"/upload/"+name).then(response => response.blob()).catch(err => {console.error(err); console.log("sono in errore")});
-        mediaRequest.then(blob => {
-          navigator.storage.estimate().then((estimate)=> {
-            console.log("estimate ",estimate.quota," ",estimate )
-            this.remainingquota=estimate.quota-estimate.usage;
-             console.log("this.remainingquota ",  this.remainingquota)
-             console.log(" this.filesize ",   blob.size)
-            if(this.remainingquota> blob.size){
-                console.log("CI STA")
-                this.saveinDB(name, blob)
-            }else{
-              alert("Spazio insufficente alcuni contenuti non possono essere scaricati, usa l'app online")
-              this.mediafetched++
-              this.progress=Math.round(this.mediafetched/this.media*100 )/100;
-              console.log("progress ",  this.progress);
-              if(this.progress==1){
-                this.openNext();
-              }
+           
+      const mediaRequest = fetch(this.$store.getters.baseUrl+"/upload/"+name).then(response => response.blob()).catch(err => {console.error(err); console.log("sono in errore")});
+      mediaRequest.then(blob => {
+        navigator.storage.estimate().then((estimate)=> {
+          console.log("estimate ",estimate.quota," ",estimate )
+          this.remainingquota=estimate.quota-estimate.usage;
+            console.log("this.remainingquota ",  this.remainingquota)
+            console.log(" this.filesize ",   blob.size)
+          if(this.remainingquota> blob.size){
+              console.log("CI STA ",name)
+              this.saveinDB(name, blob)
+          }else{
+            if(this.quotaExcided==false){
+              this.storageError();
             }
-           });
-          
-        });
+            console.log("NON CI STA ",name)
+            this.quotaExcided=true;
+            this.mediafetched++
+            this.progress=Math.round(this.mediafetched/this.media*100 )/100;
+            //this.progress=1
+            console.log("progress ",  this.progress);
+            if(this.progress==1){
+              this.openNext();
+            }
+          }
+          });
+        
+      });
         
        
 
     },
+    async removeMedia(){
+     
+ 
+      const open = indexedDB.open('mediaStore',  global.dbVersion)
+
+      open.onupgradeneeded = ()=>{
+          const db = open.result
+      }
+
+      open.onsuccess = ()=> {
+          const db = open.result
+          const tx = db.transaction(['media-'+this.lang],'readwrite');
+          const store = tx.objectStore(['media-'+this.lang])
+          this.toremove.forEach(mediaName=>{
+            store.delete(mediaName)
+            console.log("tryng to remove ",mediaName);
+
+          })
+          
+
+          tx.oncomplete = ()=> {
+            localStorage.removeItem("conttoRemove");
+              db.close()
+          }
+      }
+     
+     
+      open.onerror = (err)=> {
+          console.error('Error to delete media: ',err)
+      }
+    },
 
     saveinDB(name, blob){
 
-      console.log("GDBV "+global.dbVersion)
-          const request = indexedDB.open('mediaStore', global.dbVersion);
-          console.log( "REQUESTING ",global.dbVersion)
-          let transaction;
-          let objectStore;
-          request.onsuccess = event => {
-            const db = event.target.result;
-            
-            transaction = db.transaction(['media-'+this.lang],'readwrite');
-            objectStore = transaction.objectStore('media-'+this.lang);
+      console.log("GDBV "+global.dbVersion+ ' type '+ typeof  global.dbVersion)
+      const request = indexedDB.open('mediaStore', global.dbVersion);
+      console.log( "REQUESTING ",global.dbVersion)
+      let transaction;
+      let objectStore;
+      request.onsuccess = event => {
 
+        console.log("REQUEStt SUCCESS, prvo a salvare "+ name,' ', this.fromC)
+        const db = event.target.result;
+        
+        transaction = db.transaction(['media-'+this.lang],'readwrite');
+        objectStore = transaction.objectStore('media-'+this.lang);
+        
+        const file=objectStore.get(name);
+        file.onsuccess=(event)=>{
+            const testget = event.target.result;      
+          if (!testget) {
           
-            const objectStoreRequest = objectStore.add({name: name, blob: blob});
+            console.log(" il file non presente "+name);
+              const objectStoreRequest = objectStore.add({name: name, blob: blob});
             objectStoreRequest.onsuccess = (event) =>{
               // report the success of our request
               console.log(name+ " Successs");
-                if(this.progress==1){
+               this.incProgress();
+               if(this.last==true){
+                  db.close();
+               }
+                /*if(this.progress==1){
                   this.openNext();
-                }
+                }*/
             };
-
-            // const file = objectStore.get(name);
-
-            /* file.onerror = event => {
-              console.log('error');
-              };
-
-              file.onsuccess = event => {
-            // videos.one.src = window.URL.createObjectURL(test.result.blob);
-              console.log(name+ " Successs");
-              };*/
-          }
-
-          request.onupgradeneeded = event => {
-            const db = event.target.result;
-            const objectStore = db.createObjectStore('media-'+this.lang, { keyPath: 'name' });
-                console.log( " request.onupgradeneeded");
-            objectStore.transaction.oncomplete = event => {
+            objectStoreRequest.onerror=(event)=>{
+                  console.log(" ERROR in add "+name , event);
+                //alert( 'ERROR objectStoreRequest'+ name +' '+ event.target.error );
+            }
             
+          }else{
+                console.log("file già presente "+name);
+          }
+
+
+        }
+        
+
+        transaction.onerror=()=>{
+          console.log('ERROR transaction '+name +' ', event);
+             // alert( 'ERROR transaction '+name +' '+ event.target.error );
+        }
+
+      }
+
+      request.onupgradeneeded = event => {
+        console.log("REQUESR SUCCESS")
+        const db = event.target.result;
+        let objectStore;
+        console.log('VEDO FROM? '+ this.fromC )
+        if(this.fromC=="aggiorna" || this.fromC=="main" ){
+
+          objectStore = request.transaction.objectStore('media-'+this.lang);
+
+          const objectStoreRequest = objectStore.add({name: name, blob: blob});
+          objectStoreRequest.onsuccess = (event) =>{
+            // report the success of our request
+            console.log(name+ " Successs");
+            this.incProgress();
+            /*if(this.progress==1){
+                  this.openNext();
+            }*/
               
-              const mediaObjectStore = db.transaction('media-'+this.lang, 'readwrite').objectStore('media-'+this.lang);
-
-              //const videoObjectStore = db.transaction('videos', 'readwrite').objectStore('videos');
-                mediaObjectStore.add({name: name, blob: blob});
-            };
-          }
-          request.onerror =  event => {
-            console.log("Error ", event)
           };
-          this.mediafetched++
-          this.progress=Math.round(this.mediafetched/this.media*100 )/100;
-          console.log("progress ",  this.progress);
-          if(this.progress==1){
-            this.openNext();
+          console.log('entroo')
+        }else  if(this.fromC=="onboard" || this.fromC=="lang" ){
+          console.log("Arrivo da: ", this.fromC)
+          objectStore = db.createObjectStore('media-'+this.lang, { keyPath: 'name' });
+          objectStore.transaction.oncomplete = event => {
+      
+          
+            const mediaObjectStore = db.transaction('media-'+this.lang, 'readwrite').objectStore('media-'+this.lang);
+
+            //const videoObjectStore = db.transaction('videos', 'readwrite').objectStore('videos');
+            // const newMedia=mediaObjectStore.add({name: name, blob: blob});
+            /* newMedia.onsuccess = (event) =>{
+            
+            console.log(name+ " Successs");
+              
+            };
+            newMedia.onerror = (event) =>{
+            
+              console.log(" ERROR in add " +name, event);
+              alert( 'ERROR in add onb lang ' +name+' '+ event.target.error );
+              
+            };*/
+          };
+
+          objectStore.transaction.onerror= (event) => {
+            console.log("error transaction in upgrade");
+           // alert("error transaction in upgrade");
           }
 
+        }
+        
+          console.log( " request.onupgradeneeded");
+        
+      }
+      request.onerror =  event => {
+        console.log("Error ", event)
+        //alert("error in request")
+      }
+      request.onblocked=event=>{
+        console.log("BLOCKED ",event)
+      }
+      
+
+    },
+
+    incProgress(){
+      this.mediafetched++
+      this.progress=Math.round(this.mediafetched/this.media*100 )/100;
+      console.log("progress ",  this.progress);
+      if(this.progress==1){
+        this.openNext();
+      }
     },
 
     mediaCounter(){
@@ -345,7 +476,7 @@ export default {
     openNext(){
       this.emitter.emit("fineAggiornamento");
       this.updateNotification(false);
-      if(this.from=="main"){
+      if(this.fromC=="main" || this.fromC=="onboard"|| this.fromC=="aggiorna"){
         if(localStorage.getItem('provToOpen')!=null){
           const tag= localStorage.getItem('provToOpen');
           localStorage.removeItem('provToOpen');
@@ -354,15 +485,16 @@ export default {
           this.$router.replace({ name: "wave" });
         }
             
-      }else if(this.from=="update"){
+      }else if(this.fromC=="update"){
         this.pushPage("update");
-      } else if(this.from=="lang"){
+      } else if(this.fromC=="lang"){
         this.pushPage("lang");
+        this.emitter.emit('addLang',this.lang);
       }
     },
 
     gotoFrom(){
-      if(this.from=="main"){
+      if(this.fromC=="main" || this.fromC=="onboard"|| this.fromC=="aggiorna"){
         if(localStorage.getItem('provToOpen')!=null){
           const tag= localStorage.getItem('provToOpen');
           localStorage.removeItem('provToOpen');
@@ -371,9 +503,9 @@ export default {
           this.$router.replace({ name: "wave" });
         }
             
-      }else if(this.from=="update"){
+      }else if(this.fromC=="update"){
         this.pushPage("update");
-      } else if(this.from=="lang"){
+      } else if(this.fromC=="lang"){
         this.pushPage("lang");
       }
       
@@ -542,7 +674,7 @@ ion-spinner{
   height: 25px;
 }
 ion-progress-bar {
-  background-color: #d7dee3;
+  background-color: #e1e1e1;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -555,7 +687,7 @@ ion-progress-bar {
 }
 
 ion-progress-bar[value]::-webkit-progress-bar {
-  background-color: #d7dee3;
+  background-color: #e1e1e1;
   border-radius: 3px;
 }
 

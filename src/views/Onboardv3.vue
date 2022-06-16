@@ -248,7 +248,7 @@ export default {
       console.log(this.slideLength);
       if(this.currSlide==this.slideLength-1){
         if(this.context=="onboard"){
-          this.$router.replace({ path: "/scarica/"+ this.currLang});
+          this.$router.replace({ name: 'scarica', params:{ lang:this.currLang, fromC:"onboard"}});
 
         }else{
           this.skip();
@@ -419,7 +419,7 @@ ion-grid{
   object-fit: cover;
 }
 .checked{
-   border: solid 5px #377999b8;
+   border: solid 5px var(--ion-color-secondary-whitened);
      opacity: 1;
 }
 .swiper-pagination {

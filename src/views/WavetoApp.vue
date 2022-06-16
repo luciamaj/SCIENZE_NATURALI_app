@@ -30,8 +30,8 @@
           <div class="buttons">
           <ion-button expand="block" class="capture-btn" @click="callJava" id="captureStart">{{$t('main.start')}}</ion-button>
           <ion-button expand="block" class="capture-btn" id="captureStop" hidden>
-            <ion-badge  mode="ios" id="badge" color="danger" class="listen">0</ion-badge>
-            {{$t('main.stop')}}</ion-button>
+          <ion-badge  mode="ios" id="badge" color="danger" class="listen">0</ion-badge>
+           {{$t('main.stop')}}</ion-button>
 
           <ion-button expand="block" class="scan-btn" @click="openModal">{{$t('main.scan')}}</ion-button>
 
@@ -68,7 +68,7 @@ import { useRouter } from "vue-router";
 import {AudioProcessing} from "../audioWorklet/audioWorker.js";
 import common from "../js/common"
 const { Storage } = Plugins;
-import { useStore } from 'vuex'
+
 
 export default {
   name: "Tab",
@@ -143,7 +143,12 @@ export default {
      
     },
     history(){
-      return this.conf.history;
+      if(this.swiConf.abilita_archivio==1){
+        return true;
+      }else{
+        return false;
+      }
+      
     }
 
   },
@@ -159,7 +164,7 @@ export default {
   
   },
   setup() {
-     const store = useStore()
+     
     const router = useRouter();
    /* const openModal = async () => {
       if(store.getters.conf.interactionMode=="mix"){
@@ -596,7 +601,7 @@ ion-content {
     --background:var(--ion-color-secondary);
 }
 #captureStop {
-  --background: #2d9fe3;
+  --background:var(--ion-color-secondary-whitened);
 }
 .scan-btn{
   font-weight: 700;

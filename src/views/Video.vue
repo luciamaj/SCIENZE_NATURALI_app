@@ -11,41 +11,55 @@
       </ion-toolbar>
     </ion-header>
     <ion-content>
-      <div class="player-container">
-        <video  id="video" >
-          <source :src="url" type="video/mp4" />
-         </video>
-       <ion-icon class="expand" name="expand-outline" @click="expand()"></ion-icon>
+      <div class="supercontainer">
+        <div class="player-container">
+          <video  id="video" >
+            <source :src="url" type="video/mp4" />
+          </video>
+          <ion-icon class="expand" name="expand-outline" @click="launchIntoFullscreen()"></ion-icon>
 
-      </div>
-     
-
-      <div class="ion-no-border content-scheda">
-
-        <div class="meta-container">
-
-          <div class="song-title" v-html="contenuto.titolo"></div>
-          <progress class="amplitude-song-played-progress" :value="progress" :buffer="1" color="secondary"></progress>
-            <div class="time-container">
-            <div class="current-time">
-              <span class="amplitude-current-minutes" data-amplitude-song-index="0">{{current.min}}</span>:
-              <span class="amplitude-current-seconds" data-amplitude-song-index="0">{{current.sec}}</span>
-            </div>
-
-            <div class="duration">
-              <span class="amplitude-duration-minutes" data-amplitude-song-index="0">{{duration.min}}</span>:
-              <span class="amplitude-duration-seconds" data-amplitude-song-index="0">{{duration.sec}}</span>
-            </div>
-          </div>
-          <div class="control-container">
-            <div class="amplitude-prev" @click="minus"></div>
-            <div class="amplitude-play-pause " :class="checkPlay()" @click="playpause"></div>
-            <div class="amplitude-next" @click="plus"></div>
-          </div>
         </div>
-        <div class="descrArea"   v-html="contenuto.testo"> </div>
+      
+
+        <div class="ion-no-border content-scheda">
+
+          <div class="meta-container">
+
+            <div class="song-title" v-html="contenuto.titolo"></div>
+            <progress class="amplitude-song-played-progress" :value="progress" :buffer="1" color="secondary"></progress>
+              <div class="time-container">
+              <div class="current-time">
+                <span class="amplitude-current-minutes" data-amplitude-song-index="0">{{current.min}}</span>:
+                <span class="amplitude-current-seconds" data-amplitude-song-index="0">{{current.sec}}</span>
+              </div>
+
+              <div class="duration">
+                <span class="amplitude-duration-minutes" data-amplitude-song-index="0">{{duration.min}}</span>:
+                <span class="amplitude-duration-seconds" data-amplitude-song-index="0">{{duration.sec}}</span>
+              </div>
+            </div>
+            <div class="control-container">
+              <div class="amplitude-prev" @click="minus"></div>
+              <div class="amplitude-play-pause " :class="checkPlay()" @click="playpause('normale')"></div>
+              <div class="amplitude-next" @click="plus"></div>
+            </div>
+          </div>
+          <div class="descrArea"   v-html="contenuto.testo"> </div>
+        </div>
+        
       </div>
     </ion-content>
+    <div class="video-full-container" :class="(fullscreen? 'show': 'hideFull') ">
+          <video  class="videoFull"  id="videoFull" >
+              <source :src="videoSrc" type="video/mp4" />
+          </video>
+          <div class="controls">
+             <div  class="amplitude-play-pause play " :class="checkPlay()" @click="playpause('full')" data-icon="P" aria-label="play pause toggle"></div>
+             <progress class="amplitude-song-played-progress" :value="progress" :buffer="1" color="secondary"></progress>
+             <div  class="exitFull" @click="exitFull"><ion-icon class="close-expand" name="expand-outline"></ion-icon></div>
+          </div>
+
+        </div>
   </ion-page>
 </template>
 
@@ -161,6 +175,7 @@ export default {
   mounted(){
    
     this.vid=document.getElementById("video");
+    this.vidFull=document.getElementById("videoFull");
     console.log("video ",this.vid);
     this.vid.load();
     this.vid.onloadeddata = ()=> {
@@ -178,6 +193,10 @@ export default {
     this.vid.ontimeupdate = ()=> {
       this.current= this.getminsec(this.vid.currentTime);
       this.calcProgress(this.vid.currentTime, this.vid.duration);
+    },
+    this.vidFull.ontimeupdate = ()=> {
+      this.current= this.getminsec(this.vidFull.currentTime);
+      this.calcProgress(this.vidFull.currentTime, this.vid.duration);
     },
     this.vid.onended=()=>{
       console.log("FINIOTOO")
@@ -238,7 +257,8 @@ export default {
             console.log("GET RESULT ",test.result)
             const testget = test.result;
              if (testget) {
-              document.getElementById('video').src=  URL.createObjectURL(test.result.blob);
+              this.videoSrc=URL.createObjectURL(test.result.blob);
+              document.getElementById('video').src= this.videoSrc;
             } else {
               console.log('testget dont exixst error');
                 this.fetchFile(name);
@@ -299,12 +319,23 @@ export default {
       console.log("prog "+current+" " +duration+" "+ this.progress)
 
     },
-    playpause(){
+    playpause(video){
+      this.vidFull=document.getElementById("videoFull")
       if(this.videoPlay){
-        this.vid.pause();
+        if(video=="full"){
+          this.vidFull.pause();
+        }else{
+          this.vid.pause();
+        }
+        
         this.videoPlay=false;
       }else{
-        this.vid.play();
+        
+        if(video=="full"){
+          this.vidFull.play();
+        }else{
+          this.vid.play();
+        }
        
           this.videoPlay=true;
           if(this.timer){
@@ -351,6 +382,70 @@ export default {
         
 
     },
+
+    
+    // Find the right method, call on correct element
+    launchIntoFullscreen() {
+      
+      this.vid.pause();
+      this.videoPlay=false;
+      this.fullscreen=true;
+     
+      this.vidFull.load();
+      this.vidFull.onloadeddata = ()=> {
+    
+       this.vidFull.currentTime=this.vid.currentTime;
+       this.vidFull.play();
+        if(this.vidFull.paused){
+          this.videoPlay=false;
+        }else{
+          this.videoPlay=true;
+        }
+      }
+ 
+    
+      
+      //window.location.replace(videosrc);
+      /*if(element.requestFullscreen) {
+        element.requestFullscreen(void 0);
+      } else if(element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+      } else if(element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen();
+      } else if(element.msRequestFullscreen) {
+        element.msRequestFullscreen();
+      }else if( element.webkitEnterFullscreen){
+         element.webkitEnterFullscreen();
+      } else {
+        return alert("Fullscreen API unavailable");
+      }*/
+    },
+    exitFull(){
+      this.vidFull.pause();
+      this.videoPlay=false;
+      this.vid.currentTime=this.vidFull.currentTime;
+      this.fullscreen=false;
+      this.vid.play();
+      if(this.vid.paused){
+          this.videoPlay=false;
+        }else{
+          this.videoPlay=true;
+        }
+      
+
+    },
+
+     exitFullscreen() {
+      if(document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if(document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if(document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
+    },
+  
+    
     expand(){
       const vid=document.getElementById('video');
       if (vid.requestFullscreen) {
@@ -446,11 +541,12 @@ export default {
       duration:{
           min:"00",
           sec:"00",
-        },
-        current:{
-          min:"00",
-          sec:"00",
-        },
+      },
+      current:{
+        min:"00",
+        sec:"00",
+      },
+      fullscreen:false,
     };
   }
 };
@@ -514,6 +610,64 @@ video {
   object-fit: cover;
   height: 100%;
 }
+.videoFull{
+
+}
+
+.video-full-container{
+      position: fixed;
+    top: 0;
+    left: 100%;
+    z-index: 100;
+    height: 100vw;
+    width: 100vh;
+    transform: rotate(90deg);
+    transform-origin: 0 0;
+    transform-origin: 0 0;
+}
+.hideFull{
+  opacity: 0;
+   z-index: -100;
+}
+.controls {
+  /*visibility: hidden;*/
+  opacity: 0.5;
+  width: 400px;
+  border-radius: 10px;
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  margin-left: -200px;
+  background-color: black;
+  box-shadow: 3px 3px 5px black;
+  transition: 1s all;
+  display: flex;
+  align-items: center;
+}
+div.controls div.amplitude-play-pause {
+  height: 20px;
+  width: 25px;
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: middle;
+   margin: 10px 15px;
+   color: #ffffff;
+}
+div.controls div.amplitude-play-pause.amplitude-paused {
+  background: url("/assets/icon/playerIcon/play_white.svg");
+      background-size: cover;
+}
+div.controls div.amplitude-play-pause.amplitude-playing {
+  background: url("/assets/icon/playerIcon/pause_white.svg");
+      background-size: cover;
+}
+
+.video-full-container:hover .controls, 
+.video-full-containeryer:focus-within .controls {
+  opacity: 1;
+}
+
+
 .expand{
   position: relative;
   bottom: 43px;
@@ -523,6 +677,19 @@ video {
   height: 3vh;
   width: 3vh;
   background: #ffffff21;
+
+}
+.exitFull{
+  height: 25px;
+}
+.close-expand{
+  position: relative;
+
+  color: white;
+  height: 3vh;
+  width: 3vh;
+  background: #ffffff21;
+  margin: 0 15px;
 
 }
 .player-container{

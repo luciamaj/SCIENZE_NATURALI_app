@@ -10,7 +10,7 @@
                 &
             </div-->
             <div class="img-museum">
-                <img src="/assets/background/logo_biblioteca.png" alt="">
+                <img src="/assets/background/logo.png" alt="">
             </div>
 
         </div>

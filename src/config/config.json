@@ -8,8 +8,9 @@
     "androidStoreUrl":"https://play.google.com/store/apps/details?id=com.bibliotecasonora.ggwave",
     "interactionMode":"mix",
     "langDefault":"it",
-    "history":true,
 
-    "VUE_APP_COLOR":"#086a9f"
+    "app_primary_color":"#989898",
+    "app_secondary_color":"#136c97",
+    "app_secondary_opacity":"#377999b8"
 
 }

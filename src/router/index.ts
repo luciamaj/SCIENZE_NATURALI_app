@@ -3,6 +3,7 @@ import { RouteRecordRaw } from 'vue-router';
 import WaveApp from '@/views/WavetoApp.vue'
 import Wave from '@/views/WaveB.vue'
 import store from '../store/store'
+import common from '../js/common'
 //import Tabs from '../views/Tabs.vue'
 
 const routes: Array<RouteRecordRaw> = [
@@ -53,9 +54,10 @@ const routes: Array<RouteRecordRaw> = [
   },
   
   {
-    path: '/scarica/:lang',
+    path: '/scarica',
     name: 'scarica',
-    component: () => import('@/views/Scaricamento.vue')
+    component: () => import('@/views/Scaricamento.vue'),
+    props: true
   },
   {
     path: '/waveApp',
@@ -171,10 +173,26 @@ router.beforeEach((to, from, next) => {
     }
     
    
-    } else {
+  } else if(localStorage.getItem('pubblication')!=null){
+   
+    const confsaved=JSON.parse(localStorage.getItem("pubblication"))
+    const releaseNew=parseInt(store.getters.pubblication.config.app_release)
+    const savedRelease=(confsaved && confsaved.config)?parseInt(confsaved.config.app_release):null
+   // console.log(releaseNew+" - "+savedRelease);
+    if((releaseNew>savedRelease || savedRelease==null)){
+        navigator.serviceWorker.controller.postMessage('addversion');
+        common.deleteDB().then(()=>{ console.log("DB deleted!!")})
+        localStorage.clear();
+       return next('/onboard');
+    } else{
       return  next();
+    }    
+   
     
-    }
+  } else {
+    return  next();
+  
+  }
 });
 
 export default router

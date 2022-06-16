@@ -121,6 +121,10 @@ export default ({
   created(){
     this.networkError=common.networkError;
 
+    this.emitter.on('addLang', (lang)=>{
+      this.addLang(lang);
+    })
+
   },
   mounted(){
     this.savedLangs
@@ -134,6 +138,10 @@ export default ({
   },
 
   methods:{
+    addLang(lang){
+      console.log("ADDO LANG", lang)
+      this.savedLangs=lang;
+    },
     checkIfActive(lang){
       if(this.currLang==lang){
         return "checked"
@@ -142,7 +150,7 @@ export default ({
     pushPage(passedLang) {
       const ionNav = document.querySelector('ion-nav') as any;
       
-      ionNav.push(Download,  { lang: passedLang , from:"lang"});
+      ionNav.push(Download,  { lang: passedLang , fromC:"lang"});
      
       
       
@@ -193,7 +201,7 @@ export default ({
             if(window.navigator.onLine){
               const pubblication=JSON.parse(localStorage.getItem("pubblication"))
               const suppLang=pubblication.lang.find(el=> el==lang);
-                this.savedLangs=lang;
+                //this.savedLangs=lang;
                 this.remaining=this.remaining.filter(item => item !== lang);
               if(suppLang){
                   //this.searchMedia(lang);
@@ -324,7 +332,8 @@ export default ({
 
 }
  .checked{
-       background: #377999b8;
+    /*background: #377999b8;*/
+    background: var(--ion-color-secondary-whitened);
     color: white;
  }
 

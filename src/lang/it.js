@@ -34,6 +34,11 @@ export const it = {
         text:"Impossibile scaricare i contenuti, sono stati rilevati problemi di connessione ",
         action:"Riprova più tardi"
     },
+    storageError:{
+		title:"Spazio insufficiente",
+        text:"Non è possibile scaricare tutti i contenuti, utilizzare l'app in modalità online!",
+        action:"Ok"
+    },
     update:{
 		title:"Aggiornamento",
         text:"Sono disponibili nuovi contenuti, aggiornali prima di usare l'app"

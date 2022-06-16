@@ -16,7 +16,7 @@
                         <div class="schede-cont"> 
                             <ion-col class="scheda-cont-thumb" size="4"  :value="lang"   >
                             
-                                <div class="thumb-cont"  > <img class="cover thumb" id="thumb-it" :src="this.$store.getters.baseUrl+'/upload/'+scheda.img" alt=""></div>
+                                <div class="thumb-cont"  > <img class="cover thumb"  :id="'thumb-'+scheda.img" src="scheda.img" alt=""></div>
                         
                             </ion-col>
                             <ion-col class="scheda-cont-name">
@@ -42,7 +42,11 @@
     export default ({
        
         computed:{
-
+            data(){
+                return{
+                    images:[],
+                }
+            },
             visited(){
                 let visitedTag=localStorage.getItem("schede_viste");
                 if(visitedTag){
@@ -67,7 +71,65 @@
                
             }
         },
+        
+        created(){
+             this.lang= localStorage.getItem("lang");
+            this.getImages();
+
+        },
+
         methods:{
+         
+            getImages(){
+                 this.images=[];
+                this.request = indexedDB.open('mediaStore', global.dbVersion);
+                this.request.onsuccess = event => {
+                    this.db = event.target.result;
+                    const transaction = this.db.transaction(['media-'+this.lang],'readwrite');
+                    const objectStore = transaction.objectStore('media-'+this.lang);
+                    if(this.visited){
+                        this.visited.forEach(scheda=>{
+                            const  test= objectStore.get(scheda.img);
+
+                            test.onsuccess = event => {
+                                console.log("GET RESULT ", event.target.result)
+                                const testget = event.target.result;      
+                                if (testget) {
+                                    const obj={}
+                                    obj['name=']=testget.name
+                                     obj['blob=']=testget.blob
+                                    this.images.push(obj);
+                                    document.getElementById("thumb-"+testget.name).src=URL.createObjectURL(testget.blob);
+                                    
+                                } else {
+                                /*console.log('testget dont exixst error');
+                                    this.fetchimg(name);*/
+                                }
+
+                                
+                            };
+                        })
+                     }
+                        
+                    
+
+                }
+
+            },
+
+            schedaImage(name){
+                console.log('tiro su le immagini ', this.images);
+                if(this.images){
+                    const img= this.images.find(image=>image.name==name);
+                if(img){
+                    console.log("tiro su le immagini "+img.blob)
+                   return URL.createObjectURL(img.blob);
+                }
+
+                }
+
+              
+            },
             back(){
                 this.$router.replace("/")
             },
@@ -96,7 +158,7 @@
     margin-top: 2vh;
     margin-left: 5vw;
     font-size: 18px;
-    color: #008dd1;
+    color: var(--ion-color-secondary);
 }
 .list-container{
     height: 80vh;

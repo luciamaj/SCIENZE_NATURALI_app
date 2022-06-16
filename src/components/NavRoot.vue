@@ -137,7 +137,7 @@ export default ({
         if(page=="lang"){
             ionNav.push(Lang, { title: 'Changeeee' });
         }else if(page=="aggiorna"){
-            ionNav.push(Download,  { lang: localStorage.getItem('lang'), from:"update" });
+            ionNav.push(Download,  { lang: localStorage.getItem('lang'), fromC:"update" });
         }else if(page=="copy"){
             ionNav.push(Copy,  {page:"copyright" });
         }else if(page=="privacy"){

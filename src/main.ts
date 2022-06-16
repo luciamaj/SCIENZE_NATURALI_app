@@ -52,7 +52,52 @@ const currentIcons = Object.keys(allIcons).map(i => {
 });
 let confvar;
 const confurl = "./config/config.json";
-fetch(confurl)
+let localConf;
+let confSwi;
+
+async function fetchlocalconf() {
+  const response = await fetch(confurl);
+  return  response.json()
+}
+async function fetchswiconf(url) {
+  const response = await fetch(url)
+  return  response.json()
+}
+
+fetchlocalconf().then(configuration=>{
+  localConf=configuration;
+  fetchswiconf(localConf.baseUrl+"/service/rest/v1/mostra-attiva")
+  .then(configswi=>{
+    console.log("swiconfig ", configswi.result[0].config)
+    confSwi=configswi.result[0].config
+    
+
+    const app = createApp(App)
+      .use(IonicVue)
+      .use(router)
+      .use(store)
+      .use(i18n)
+      .use(VuePlyr, {
+        plyr: {}
+      });
+    
+      router.isReady().then(() => {
+      app.mount('#app');
+    });
+
+    app.config.globalProperties.emitter = emitter;
+
+    app.config.globalProperties.conf=localConf;
+    app.config.globalProperties.swiConf=confSwi;
+    store.commit("pubblication", configswi.result[0]);
+    console.log("aaa ",localConf.baseUrl);
+    store.commit("baseUrlSet", localConf.baseUrl);
+    store.commit("confSet", localConf);
+  
+  });
+})
+
+/*fetch(confurl)
   .then((response) => response.json())
   .then((configuration) => {
       // Vue.prototype.$config = config
@@ -77,8 +122,9 @@ fetch(confurl)
     console.log("aaa ",configuration.baseUrl);
     store.commit("baseUrlSet", configuration.baseUrl);
     store.commit("confSet", configuration);
+    
        
-  })
+  })*/
 
 
 const iconsObject = Object.assign({}, ...currentIcons);

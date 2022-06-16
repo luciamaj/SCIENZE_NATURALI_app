@@ -31,6 +31,11 @@ export let fr ={
         text:"Impossible de télécharger le contenu, des problèmes de connexion ont été détectés",
         action:"Essayer plus tard"
     },
+    storageError:{
+		title:"Espace disque insuffisant",
+        text:"Il n'est pas possible de télécharger tout le contenu, utilisez l'application en mode en ligne !",
+        action:"Ok"
+    },
     update:{
 		title:"Nouveau contenu",
         text:"Un nouveau contenu est disponible, veuillez le mettre à jour avant d'utiliser l'application"

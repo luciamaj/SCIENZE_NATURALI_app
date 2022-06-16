@@ -10,8 +10,8 @@
     "langDefault":"it",
     "history":true,
 
-    "app_primary_color":"#086a9f",
-    "app_secondary_color":"#086a9f"
-   
+    "app_primary_color":"#989898",
+    "app_secondary_color":"#9402fb",
+    "app_version":1
 
 }

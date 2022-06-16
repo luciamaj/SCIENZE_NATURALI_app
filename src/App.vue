@@ -2,7 +2,9 @@
   <ion-app>
     <ion-router-outlet ref="routerOuteletRef" id="main-content"></ion-router-outlet>
   </ion-app>
-   <loader v-if="loading"/>
+  <KeepAlive>
+    <loader v-if="loading"/>
+  </KeepAlive>
 </template>
 
 <script>
@@ -13,7 +15,7 @@ import { Plugins, StatusBarStyle } from "@capacitor/core";
 //constructor(private screenOrientation: ScreenOrientation) { }
 import Loader from "./components/Loader.vue"
 import common from "./js/common"
-
+import {global} from './js/global'
 const { StatusBar } = Plugins;
 const { Storage } = Plugins;
 
@@ -54,8 +56,18 @@ export default defineComponent({
     });
 
   },
- 
+  beforeCreate(){
+    const r = document.querySelector(':root');
+   
+    r.style.setProperty('--ion-color-primary', (this.swiConf.colori.secondario!="") ? this.swiConf.colori.secondario : r.getPropertyValue('--ion-color-secondary') );
+    r.style.setProperty('--ion-color-secondary',  (this.swiConf.colori.primario!="") ? this.swiConf.colori.primario : r.getPropertyValue('--ion-color-primary'));
+    r.style.setProperty('--ion-color-primary-whitened', (this.swiConf.colori.secondario_opacizzato !="") ? this.swiConf.colori.secondario_opacizzato  : r.getPropertyValue('--ion-color-secondary-whitened'));
+    r.style.setProperty('--ion-color-secondary-whitened', (this.swiConf.colori.primario_opacizzato !="") ? this.swiConf.colori.primario_opacizzato  : r.getPropertyValue('--ion-color-primary-whitened'));
+    
+    
+  },
   created(){
+   
     console.log("APP"+ this.conf.nameMuseum);
     this.setInactiveTour=common.setInactiveTour;
     this.updateNotification=common.updateNotification;
@@ -96,10 +108,10 @@ export default defineComponent({
   },
  
   mounted() {
-        
+       this.currLang=localStorage.getItem('lang');  
     const routerOuteletRef = ref(null);
     provide("routerOutlet", routerOuteletRef);
-    //this.setInactiveTour();
+    this.setInactiveTour();
     this.getinfo((info) => {
       console.log("info", info);
       this.infoPubbl=info;
@@ -174,7 +186,7 @@ export default defineComponent({
         console.warn("No worker data found!");
       }
     },
-
+    
 
     getinfo(callback){
       //if (store.getters.baseUrl) {
@@ -212,8 +224,12 @@ export default defineComponent({
       console.log("aggiorno pubblicazione");
       const prevPubb= JSON.parse(localStorage.getItem("pubblication"));
       console.log(prevPubb.mostra+"  mostre "+this.infoPubbl.mostra);
+     console.log("sono uguali? ",prevPubb.mostra!=this.infoPubbl.mostra)
       if(prevPubb.mostra!=this.infoPubbl.mostra){
         this.mostraCambiata=true;
+        this.mostra=this.infoPubbl.mostra
+      }else{
+         this.mostraCambiata=false;
       }
       localStorage.setItem('pubblication', JSON.stringify(this.infoPubbl));
       this.aggiornaInfo(from);
@@ -231,8 +247,7 @@ export default defineComponent({
         
         const JSONstring= JSON.stringify(this.evendata(filtered));
         
-      localStorage.setItem('dataMostra',JSONstring );
-     
+        localStorage.setItem('dataMostra',JSONstring );
       
       });
         
@@ -246,17 +261,67 @@ export default defineComponent({
         const filtered= retrivedinfo.filter( x => (x.mostra == this.mostra));
       
         console.log("Filtered " , filtered);
-        const JSONstring= JSON.stringify(this.evendata(filtered));
-        localStorage.removeItem('dataMostra');
-        localStorage.setItem('dataMostra',JSONstring );
-        //this.searchMedia(JSONstring);
-        if(from!="menu"){
-          this.$router.replace({ path: "/scarica/"+ localStorage.getItem('lang')});
+        const newSchede=this.evendata(filtered)
+        const JSONstring= JSON.stringify(newSchede);
+        if(this.mostraCambiata==false){
+          console.log('mostra uguiale');
+            const oldData=JSON.parse(localStorage.getItem('dataMostra'));
+            const conttoRemove=[]
+            newSchede.forEach(scheda => {
+              const coincide= oldData.find(oldscheda=> oldscheda.tag==scheda.tag)
+              if(coincide){
+                console.log("presente ");
+               const contenutoNew= scheda.content.find(el=> el.lang== this.currLang)
+               const contenutoOld=coincide.content.find(el=> el.lang== this.currLang)
+               console.log( scheda.tag+" - "+ contenutoOld+" - "+ contenutoNew);
+               if(contenutoOld.type!=contenutoNew.type){
+                 if(contenutoNew.type=='audio'){
+                    conttoRemove.push(contenutoOld.video);
+
+                 }else{
+                    conttoRemove.push(contenutoOld.audio);
+                 }
+                
+               }else{
+                 if(contenutoOld.audio!=contenutoNew.audio){
+                   conttoRemove.push(contenutoOld.audio);
+                 }
+                 if(contenutoOld.video!=contenutoNew.video){
+                    conttoRemove.push(contenutoOld.video);
+                 }
+               }
+              }
+              
+            });
+
+            console.log("CONTENUTI DA RIMUOVERE ",conttoRemove)
+            localStorage.setItem('conttoRemove',conttoRemove );
+            this.endAggiornamento(JSONstring , from)
+
+        }else{
+          this.clearStore().then(()=>{
+            this.endAggiornamento(JSONstring , from)
+          });
         }
+      
+       /* localStorage.removeItem('dataMostra');
+        localStorage.setItem('dataMostra',JSONstring );
+        
+        if(from!="menu"){
+          this.$router.replace({ name: "scarica", params:{ lang:this.currLang ,  fromC:'aggiorna'}});
+        }*/
        
       
       });
         
+    },
+
+    endAggiornamento(datatoSave,from){
+      localStorage.removeItem('dataMostra');
+      localStorage.setItem('dataMostra', datatoSave );
+      if(from!="menu"){
+        this.$router.replace({ name: "scarica", params:{ lang:this.currLang ,  fromC:'aggiorna'}});
+      }
     },
 
     evendata(data){
@@ -266,37 +331,36 @@ export default defineComponent({
       console.log("lang filter", this.infoPubbl.lang, " ", lang )
       if(lang.length>0){
         data.forEach(scheda => {
-        lang.forEach(lang => {
-         const contenuto=scheda.content.find(el=> el.lang==lang);
-            // console.log("Cont ", contenuto);
-            console.log("Conttype ", contenuto.type);
-            const contenutodefault=scheda.content.find(el=> el.lang==this.conf.langDefault);
-            if(contenuto.type==null) {
-                  
-              console.log("Non ci sono Media per la scheda  in "+ lang)
-             
-
-              console.log("contenutoita "+ contenutodefault.type)
-              if(contenutodefault.type!=null){
-                contenuto.type=contenutodefault.type
-              }
-
-              if(contenutodefault.type=="audio") {
-                contenuto.audio=contenutodefault.audio;
-                console.log("Getaudio default ")
-              }else if(contenutodefault.type=="video"){
-                 contenuto.video=contenutodefault.video;
-             
-                console.log("Getvideo default ")
-              }
+          lang.forEach(lang => {
+            const contenuto=scheda.content.find(el=> el.lang==lang);
+              // console.log("Cont ", contenuto);
+              console.log("Conttype ", contenuto.type);
+              const contenutodefault=scheda.content.find(el=> el.lang==this.conf.langDefault);
+              if(contenuto.type==null) {
+                    
+                console.log("Non ci sono Media per la scheda  in "+ lang)
               
-            }
-            if(contenuto.titolo==null){
-              contenuto.titolo=contenutodefault.titolo;
-            }
-            if(contenuto.testo==null){
-              contenuto.testo=contenutodefault.testo;
-            }
+                console.log("contenutoita "+ contenutodefault.type)
+                if(contenutodefault.type!=null){
+                  contenuto.type=contenutodefault.type
+                }
+
+                if(contenutodefault.type=="audio") {
+                  contenuto.audio=contenutodefault.audio;
+                  console.log("Getaudio default ")
+                }else if(contenutodefault.type=="video"){
+                  contenuto.video=contenutodefault.video;
+              
+                  console.log("Getvideo default ")
+                }
+                
+              }
+              if(contenuto.titolo==null){
+                contenuto.titolo=contenutodefault.titolo;
+              }
+              if(contenuto.testo==null){
+                contenuto.testo=contenutodefault.testo;
+              }
 
          });
         });
@@ -305,63 +369,89 @@ export default defineComponent({
       return data
     },
 
-     searchMedia(schede){
-       console.log("I MEDIA SONO: "+ this.media);
-       console.log("progresss: "+ this.media);
-       const currLang=localStorage.getItem('lang');
-      const jsonSchede=JSON.parse(schede);
-      let contenuto="";
-      console.log("->>", jsonSchede);
-      jsonSchede.forEach(scheda => {
-        if(scheda.img!=null){
-          this.mediaCounter();
-          this.getmedia(scheda.img)
-        }else{
-          console.log("Non ci sono immagini per la scheda ")
-        }
-        contenuto=scheda.content.find(el=> el.lang==currLang )
-        //console.log("Cont ", contenuto);
-        if(contenuto.audio!=null){
-           this.mediaCounter();
-          this.getmedia(contenuto.audio);
-           //console.log("Getaudio ")
-        }else if(contenuto.video!=null){
-         this.mediaCounter();
-          this.getmedia(contenuto.video);
-          //console.log("Getvideo ")
-        }else{
-           console.log("Non ci sono Media per la scheda ")
-        }
+    
 
-      });
-    },
-    getmedia(name){
-     console.log("numero di media "+ this.media );
-     // fetch(this.$store.getters.baseUrl+"/inventario/download.php?id="+name+"&link=1")
-      fetch(this.$store.getters.baseUrl+"/upload/"+name)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status}`)
-        }
-        console.log("OK Resp", response);
-        if(response.status==200){
-          this.mediafetched++
-        }
-        this.progress=this.mediafetched/this.media;
-        console.log("progress ",  this.progress);
-        if(this.progress==1){
-          this.emitter.emit("fineAggiornamento");
-           this.$router.push({ name: "wave" });
-        }
-        return response
-      })
-      .catch(error => console.log(error))
-    },
+  incrementdb(){
+    const newdbV=global.dbVersion+1
+    global.dbVersion=newdbV;
+    console.log("WEN DBV"+newdbV)
+    localStorage.setItem("dbVersion",newdbV);
 
-    mediaCounter(){
-      this.media++;
-    },
+  },
+   async clearStore(){
+     this.incrementdb();
+    console.log("global.dbVersion" +global.dbVersion)
+      
+    
+      const open = indexedDB.open('mediaStore',  global.dbVersion)
 
+     /* open.onupgradeneeded = ()=>{
+         console.log("request onupgradeneeded")
+           const db = open.result
+
+            objectStore = open.transaction.objectStore('media-'+this.lang);
+            const clearRequest =store.clear();
+          
+            clearRequest.onsuccess = event=> {
+              console.log("clearRequest SUCCEESS")
+              db.deleteObjectStore(['media-'+ this.currLang]);
+              db.close()
+            }
+                  
+           // db.deleteObjectStore(['media-'+ this.currLang]);
+          /*const tx = db.transaction(['media-'+ this.currLang],'readwrite');
+          const store = tx.objectStore(['media-'+ this.currLang])
+          const clearRequest =store.clear();
+          
+
+        tx.oncomplete = ()=> {
+           localStorage.removeItem('schede_viste');
+          // localStorage.setItem('savedLangs','')
+           console.log("tx SUCCEESS")
+         
+        }
+        clearRequest.onsuccess = event=> {
+          console.log("clearRequest SUCCEESS")
+           db.deleteObjectStore(['media-'+ this.currLang]);
+          db.close()
+        }
+      }*/
+
+      open.onsuccess = ()=> {
+        const db = open.result
+        console.log("ILDB ", db);
+        db.objectStoreNames.forEach(objStore => {
+          console.log("obstores ",objStore)
+          const tx = db.transaction([objStore],'readwrite');
+          const store = tx.objectStore([objStore])
+          const clearRequest =store.clear();
+
+          tx.oncomplete = ()=> {
+        
+            // localStorage.setItem('savedLangs','')
+            /*db.deleteObjectStore(['media-'+ this.currLang]);
+            db.close()*/
+            
+          }
+
+          clearRequest.onsuccess = event=> {
+            localStorage.removeItem('schede_viste');
+            console.log("clearRequest SUCCEESS")
+            //  db.deleteObjectStore(['media-'+ this.currLang]);
+            //db.close()
+          }
+
+        });
+
+      }
+     
+      open.onerror = (err)=> {
+          
+        console.error('Error to clear store: ',err)
+      }
+         
+
+    },
     
     async schedaState(state) {
       await Storage.set({

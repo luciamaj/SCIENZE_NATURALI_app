@@ -31,6 +31,11 @@ export const en= {
         text:"Connection problems have been detected, the content cannot be downloaded",
         action:"Try later"
     },
+    storageError:{
+		title:"Insufficient space",
+        text:"It's not possible to download all the contents, use the app in online mode!",
+        action:"Ok"
+    },
     update:{
 		title:"Updates",
         text:"There are new updates avaiable, do you want to update the app now?"
