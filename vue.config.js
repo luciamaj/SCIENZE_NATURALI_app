@@ -27,9 +27,10 @@ module.exports = {
               
     //   workboxPluginMode: 'GenerateSW',
        workboxPluginMode: "InjectManifest",
- 
+
         workboxOptions: {
-           // importScripts: ['src/service-worker.js'],
+            
+         
            
            swSrc: "src/service-worker.js",
             /*exclude: [

@@ -61,7 +61,14 @@ async function fetchlocalconf() {
 }
 async function fetchswiconf(url) {
   const response = await fetch(url)
-  return  response.json()
+  if(response){
+    console.log("RESPONSE")
+    return  response.json()
+  }
+ else{
+  console.log("NO RESPONSE, cerco pubblication")
+  return JSON.parse(localStorage.getItem('pubblication'))
+ }
 }
 
 fetchlocalconf().then(configuration=>{
@@ -90,11 +97,12 @@ fetchlocalconf().then(configuration=>{
     app.config.globalProperties.conf=localConf;
     app.config.globalProperties.swiConf=confSwi;
     store.commit("pubblication", configswi.result[0]);
-    console.log("aaa ",localConf.baseUrl);
+    //console.log("aaa ",localConf.baseUrl);
+   
     store.commit("baseUrlSet", localConf.baseUrl);
     store.commit("confSet", localConf);
   
-  });
+  }).catch(event=>alert(event))
 })
 
 /*fetch(confurl)

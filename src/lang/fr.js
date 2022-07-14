@@ -28,7 +28,7 @@ export let fr ={
     },
     networkerror:{
 		title:"Défaillance du réseau",
-        text:"Impossible de télécharger le contenu, des problèmes de connexion ont été détectés",
+        text:"Impossible de télécharger du contenu, vous ne pourrez pas utiliser l'application en mode hors ligne!",
         action:"Essayer plus tard"
     },
     storageError:{

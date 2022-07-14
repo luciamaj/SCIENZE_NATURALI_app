@@ -64,7 +64,6 @@ export default defineComponent({
     r.style.setProperty('--ion-color-primary-whitened', (this.swiConf.colori.secondario_opacizzato !="") ? this.swiConf.colori.secondario_opacizzato  : r.getPropertyValue('--ion-color-secondary-whitened'));
     r.style.setProperty('--ion-color-secondary-whitened', (this.swiConf.colori.primario_opacizzato !="") ? this.swiConf.colori.primario_opacizzato  : r.getPropertyValue('--ion-color-primary-whitened'));
     
-    
   },
   created(){
    

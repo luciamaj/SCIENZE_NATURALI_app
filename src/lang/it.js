@@ -31,7 +31,7 @@ export const it = {
     },
     networkerror:{
 		title:"Errore di rete",
-        text:"Impossibile scaricare i contenuti, sono stati rilevati problemi di connessione ",
+        text:"Impossibile scaricare i contenuti, non sarà possibile utilizzare l'app in modalità offline!",
         action:"Riprova più tardi"
     },
     storageError:{

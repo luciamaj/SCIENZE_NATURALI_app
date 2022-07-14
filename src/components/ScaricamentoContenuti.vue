@@ -36,7 +36,6 @@ import {
 } from "@ionic/vue";
 import {global} from '../js/global'
 
-import Lang from '@/components/ChangeLang.vue';
 
 export default {
     name: "scaricamento",
@@ -63,11 +62,15 @@ export default {
 
   
   created(){
-    if(window.navigator.onLine){
+   /* if(window.navigator.onLine){
       this.online=true
     }else{
        this.online=false
-    }
+       //alert("Connection lost, controllare la connessione alla rete")
+    }*/
+
+    this.online=true
+    this.testChiamata();
     this.storageError=common.storageError;
     this.updateNotification=common.updateNotification;
     this.savedlangs=localStorage.getItem('savedLangs');
@@ -75,18 +78,6 @@ export default {
     this.currLang=this.$i18n.locale;
 
     if(this.online){
-      this.getinfo((info) => {
-        this.publishedLang=info.lang.map(element => {
-          return element.toLowerCase();
-        });
-      })
-     
-      if(this.fromC=="onboard"|| this.fromC=="lang"){
-        const newdbV=global.dbVersion+1
-        global.dbVersion=newdbV;
-        console.log("WEN DBV"+newdbV)
-        localStorage.setItem("dbVersion",newdbV);
-      }
       
       const toremove=localStorage.getItem("conttoRemove");
       
@@ -100,10 +91,16 @@ export default {
       }
      
     }
+      if(this.fromC=="onboard"|| this.fromC=="lang"){
+        const newdbV=global.dbVersion+1
+        global.dbVersion=newdbV;
+        console.log("WEN DBV"+newdbV)
+        localStorage.setItem("dbVersion",newdbV);
+      }
 
   },
   mounted(){
-   
+    this.openDB();
 
     setTimeout(() => {
       if(this.online){
@@ -128,6 +125,39 @@ export default {
 
 
   methods:{
+
+    testChiamata(){
+      this.getinfo((info) => {
+        this.publishedLang=info.lang.map(element => {
+          return element.toLowerCase();
+        });
+      })
+
+    },
+
+    openDB(){
+        this.request = indexedDB.open('mediaStore', global.dbVersion);
+        this.request.onsuccess = event => {
+
+        console.log("REQUEStt SUCCESS, "+ this.fromC)
+        const db = event.target.result;
+        
+        transaction = db.transaction(['media-'+this.lang],'readwrite');
+        objectStore = transaction.objectStore('media-'+this.lang);
+        }
+        this.request.onupgradeneeded = event => {
+          console.log("REQUESR SUCCESS")
+          const db = event.target.result;
+          let objectStore;
+          console.log('VEDO FROM? '+ this.fromC )
+          if(this.fromC=="update" || this.fromC=="main" ){
+
+            objectStore = request.transaction.objectStore('media-'+this.lang);
+          }else{
+            objectStore = db.createObjectStore('media-'+this.lang,  {keyPath: "name"});
+          }
+        }
+    },
   
     async networkError() {
       const alert = await alertController.create({
@@ -138,6 +168,7 @@ export default {
           {
             text: this.$t('networkerror.action'), 
             handler: () => {
+              this.updateNotification(true);
               this.gotoFrom();
               
             },
@@ -161,25 +192,11 @@ export default {
       .then(data => {
         callback(data.result[0]);
       })
-      .catch(error => console.log(error))
+      .catch(error =>{console.log(error)
+        this.online=false;
+      } )
 
     },
-
-  checkProgress(){
-    if(this.currSlide>0){
-      this.isFirst=false;
-      console.log("isfirst "+ this.isFirst);
-      if(this.currSlide==3){
-        this.last=true;
-      }else{
-        this.last=false;
-      }
-    }else{
-      this.isFirst=true;
-        console.log("isfirst "+ this.isFirst);
-        
-    }
-  },
 
   searchMedia(){
     console.log('VEDO FROM? '+ this.fromC )
@@ -273,7 +290,7 @@ export default {
 
     getvideo(name){
            
-      const mediaRequest = fetch(this.$store.getters.baseUrl+"/upload/"+name).then(response => response.blob()).catch(err => {console.error(err); console.log("sono in errore")});
+      const mediaRequest = fetch(this.$store.getters.baseUrl+"/upload/"+name).then(response => response.blob()).catch(err => {console.error(err); console.log("sono in errore"); alert('Errore nello scaricamnto');});
       mediaRequest.then(blob => {
         navigator.storage.estimate().then((estimate)=> {
           console.log("estimate ",estimate.quota," ",estimate )
@@ -357,21 +374,22 @@ export default {
           if (!testget) {
           
             console.log(" il file non presente "+name);
-              const objectStoreRequest = objectStore.add({name: name, blob: blob});
+            const objectStoreRequest = objectStore.add({name: name, blob: blob});
             objectStoreRequest.onsuccess = (event) =>{
-              // report the success of our request
-              console.log(name+ " Successs");
-               this.incProgress();
-               if(this.last==true){
-                  db.close();
-               }
-                /*if(this.progress==1){
-                  this.openNext();
-                }*/
+            // report the success of our request
+            console.log(name+ " Successs");
+              this.incProgress();
+              if(this.last==true){
+                db.close();
+              }
+              /*if(this.progress==1){
+                this.openNext();
+              }*/
             };
             objectStoreRequest.onerror=(event)=>{
                   console.log(" ERROR in add "+name , event);
-                //alert( 'ERROR objectStoreRequest'+ name +' '+ event.target.error );
+
+                  alert( 'ERROR objectStoreRequest'+ name +' '+ event.target.error );
             }
             
           }else{
@@ -444,7 +462,7 @@ export default {
       }
       request.onerror =  event => {
         console.log("Error ", event)
-        //alert("error in request")
+        alert("error opening db")
       }
       request.onblocked=event=>{
         console.log("BLOCKED ",event)

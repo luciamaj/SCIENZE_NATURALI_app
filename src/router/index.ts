@@ -180,7 +180,7 @@ router.beforeEach((to, from, next) => {
     const savedRelease=(confsaved && confsaved.config)?parseInt(confsaved.config.app_release):null
    // console.log(releaseNew+" - "+savedRelease);
     if((releaseNew>savedRelease || savedRelease==null)){
-        navigator.serviceWorker.controller.postMessage('addversion');
+        navigator.serviceWorker.controller.postMessage({type:'addversion'});
         common.deleteDB().then(()=>{ console.log("DB deleted!!")})
         localStorage.clear();
        return next('/onboard');

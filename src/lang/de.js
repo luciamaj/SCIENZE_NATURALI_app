@@ -27,7 +27,7 @@ export const en= {
     },
     networkerror:{
 		title:"Netzwerkfehler",
-        text:"Inhalte können nicht heruntergeladen werden, es wurden Verbindungsprobleme festgestellt",
+        text:"Inhalte können nicht heruntergeladen werden, Sie können die App nicht im Offline-Modus verwenden!",
         action:"Versuche es später"
     },
     storageError:{

@@ -286,8 +286,18 @@ export default {
         this.request = indexedDB.open('mediaStore', global.dbVersion);
         this.request.onsuccess = event => {
           this.db = event.target.result;
+          if(this.db){
+            console.log("ildb ",this.db)
+           
           
+          }else{
+            alert("no DB")
+          }
           const transaction = this.db.transaction(['media-'+this.lang],'readwrite');
+          transaction.onerror= event => {
+              alert('notransaction ', event);
+            
+            };
           const objectStore = transaction.objectStore('media-'+this.lang);
 
           const test = objectStore.get(audio.audio);
@@ -306,46 +316,7 @@ export default {
                console.log(" audio ", this.fileUrl )
              // this.audio.load()
              // this.audio.onloadeddata=()=>  this.play();
-              Amplitude.init({
-                  /* eslint-disable */
-                  songs: [
-                    {
-                      name: "Song Name 1",
-                      artist: "Artist Name",
-                      album: "Album Name",
-                      url: this.fileUrl,
-                      cover_art_url: "/assets/icon/icon.png"
-                    }
-                  ],
-                  callbacks: {
-                    ended: ()=>{
-                      console.log("Audio has been stopped.");
-                      console.log("Document " + document.visibilityState)
-                      if(document.visibilityState=="visible"){
-                        this.setTimer();
-                      }else{
-                        this.back();
-                      }
-                      
-
-                    }
-                  }
-                });
-                this.audio=Amplitude.getAudio();
-
-                document.getElementById("song-played-progress-1")
-                .addEventListener("click", function(e) {
-                  if (Amplitude.getActiveIndex() == 0) {
-                    var offset = this.getBoundingClientRect();
-                    var x = e.pageX - offset.left;
-
-                    Amplitude.setSongPlayedPercentage(
-                      (parseFloat(x.toString()) /
-                        parseFloat(this.offsetWidth.toString())) *
-                        100
-                    );
-                  }
-                });
+              this.ampliInit();
 
                  this.play();
                 console.log("AMPLI ",Amplitude);
@@ -367,6 +338,50 @@ export default {
         this.fileUrl= null
       }
     },
+
+    ampliInit(){
+      Amplitude.init({
+        /* eslint-disable */
+        songs: [
+          {
+            name: "Song Name 1",
+            artist: "Artist Name",
+            album: "Album Name",
+            url: this.fileUrl,
+            cover_art_url: "/assets/icon/icon.png"
+          }
+        ],
+        callbacks: {
+          ended: ()=>{
+            console.log("Audio has been stopped.");
+            console.log("Document " + document.visibilityState)
+            if(document.visibilityState=="visible"){
+              this.setTimer();
+            }else{
+              this.back();
+            }
+            
+
+          }
+        }
+      });
+      this.audio=Amplitude.getAudio();
+
+      document.getElementById("song-played-progress-1")
+      .addEventListener("click", function(e) {
+        if (Amplitude.getActiveIndex() == 0) {
+          var offset = this.getBoundingClientRect();
+          var x = e.pageX - offset.left;
+
+          Amplitude.setSongPlayedPercentage(
+            (parseFloat(x.toString()) /
+              parseFloat(this.offsetWidth.toString())) *
+              100
+          );
+        }
+      });
+
+    },
     
      fetchFile(name){
        console.log("TRYIN FETCH")
@@ -375,16 +390,24 @@ export default {
         mediaRequest.then(blob => {
           const fileblob=blob;
           this.fileUrl=  URL.createObjectURL(fileblob)
-          this.play();
+          this.ampliInit();
+          this.play(); // manca init amplitude, mettere un loader da qualche parte
           
           const objectStore =this.db.transaction(['media-'+this.lang],'readwrite').objectStore('media-'+this.lang);
             console.log('blobb ',fileblob)
+            if(objectStore){
+              console.log("objS presente ", objectStore)
+            }
             const objectStoreRequest = objectStore.add({name: name, blob: fileblob});
             objectStoreRequest.onsuccess = (event) =>{
             // report the success of our request
-            console.log(name+ " Successs");
+            console.log(name+ " Added Successfully");
               
           };
+          objectStoreRequest.onerror=(event)=>{
+            alert ('error objectstore rquest');
+          }
+
         
         })
         

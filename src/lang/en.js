@@ -28,7 +28,7 @@ export const en= {
     },
     networkerror:{
 		title:"Network error",
-        text:"Connection problems have been detected, the content cannot be downloaded",
+        text:"The contents cannot be downloaded, the app will be available in online mode!",
         action:"Try later"
     },
     storageError:{
@@ -38,7 +38,7 @@ export const en= {
     },
     update:{
 		title:"Updates",
-        text:"There are new updates avaiable, do you want to update the app now?"
+        text:"There are new updates available, do you want to update the app now?"
     },
     scarica:{
 		title:"Download the contents",							 
