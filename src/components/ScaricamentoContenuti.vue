@@ -394,6 +394,10 @@ export default {
             
           }else{
                 console.log("file già presente "+name);
+                this.incProgress();
+                if(this.last==true){
+                db.close();
+              }
           }
 
 
