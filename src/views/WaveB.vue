@@ -320,8 +320,7 @@ export default {
           }
         
         }
-       
-       
+
       //captureStop.click();
         
     },

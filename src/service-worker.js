@@ -1,6 +1,7 @@
 self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
-
+const {precacheAndRoute}= workbox.precaching;
+const {registerRoute}= workbox.routing;
 
 const latest = {
 	cache: 'cache/v',
@@ -11,7 +12,7 @@ self.addEventListener('install', event => {
 	event.waitUntil(
 	caches.open(latest.cache+latest.version).then(cache => {
 		return cache.addAll([
-		'/',
+		'/index.html',
 		'/assets/icon/playerIcon/pause.svg',
 		'/assets/icon/playerIcon/pause_white.svg',
 		'/assets/icon/playerIcon/play.svg',
@@ -20,8 +21,8 @@ self.addEventListener('install', event => {
 		'/assets/icon/playerIcon/next.svg',
 		'/assets/background/logo.png',
 		'/raccolta',
-		'/audio\/(.*)',
-		'/video\/(.*)',
+		'/audio/E01',
+		'/video/E01',
 		'/service/rest/v1/mostra-attiva'
 		
 		]);
