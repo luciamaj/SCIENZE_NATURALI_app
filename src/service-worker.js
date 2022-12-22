@@ -1,7 +1,5 @@
 self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
-const {precacheAndRoute}= workbox.precaching;
-const {registerRoute}= workbox.routing;
 
 const latest = {
 	cache: 'cache/v',
@@ -12,7 +10,7 @@ self.addEventListener('install', event => {
 	event.waitUntil(
 	caches.open(latest.cache+latest.version).then(cache => {
 		return cache.addAll([
-		'/index.html',
+		'/',
 		'/assets/icon/playerIcon/pause.svg',
 		'/assets/icon/playerIcon/pause_white.svg',
 		'/assets/icon/playerIcon/play.svg',
@@ -23,8 +21,9 @@ self.addEventListener('install', event => {
 		'/raccolta',
 		'/audio/E01',
 		'/video/E01',
-		'/service/rest/v1/mostra-attiva'
-		
+		'/index.html',
+		'/dataoversound-swi/service/rest/v1/mostra-attiva',
+		"/config/config.json"
 		]);
 	})
 	);
@@ -57,11 +56,11 @@ var ignoreRequests = new RegExp('(' + [
 
 var netFirstRequests = new RegExp('(' + [
 
-	'/service/rest/v1/app-schede-audible',
+	'/dataoversound-swi/service/rest/v1/app-schede-audible',
 	].join('(\/?)|\\') + ')$')
   
 	var netFirstmostraAttiva = new RegExp('(' + [
-		'/service/rest/v1/mostra-attiva',
+		'/dataoversound-swi/service/rest/v1/mostra-attiva',
 		
 		].join('(\/?)|\\') + ')$')
 	  
@@ -187,10 +186,10 @@ self.addEventListener('activate', event => {
 			}
 
 			return true;
-		}).map(cacheName => {
+		})/*.map(cacheName => {
 			console.log("cache delete");
 			return caches.delete(cacheName)
-		})
+		})*/
 		);
 	})
 	);
