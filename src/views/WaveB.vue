@@ -296,8 +296,16 @@ export default {
     findRoute(decodedString) {
       console.log(decodedString);
        const data=localStorage.getItem("dataMostra")
-     
-      const scheda= JSON.parse(data).find(x => x.tag == decodedString);
+       let idvid;
+       let timeStamp=null;
+       if(decodedString.length>4){
+        console.log("decoded>4");
+         idvid= decodedString.substring(0,2);
+         timeStamp=decodedString.substring(2);
+       }else{
+        idvid=decodedString
+       }
+      const scheda= JSON.parse(data).find(x => x.tag == idvid);
       
       const captureStop = document.getElementById("captureStop");
       
@@ -308,13 +316,19 @@ export default {
           
           if (content.type == "audio") {
             console.log("audio");
+
+            if(timeStamp!=null){
+               this.$router.push({ path: "/audiosync/" + idvid +"/"+timeStamp, });
+            }else{
+              this.$router.push({ path: "/audio/" + decodedString });
+            }
             //this.schedaState(true);
-            this.$router.push({ path: "/audio/" + decodedString });
+          
 
           }else if (content.type == "video"){
             console.log("video");
             //this.schedaState(true);
-            this.$router.push({ path: "/video/" + decodedString });
+            this.$router.push({ path: "/video/" + idvid });
           }else{
               console.log("null");
           }
@@ -492,6 +506,8 @@ export default {
              const res = this.ggwave.decode(this.instance, this.convertTypedArray(new Float32Array(source), Int8Array));
             if (res) {
                clearTimeout( this.waitingTime);
+               console.log(res);
+               
                   this.findRoute(res);
                   this.decodedValue = res;
             }

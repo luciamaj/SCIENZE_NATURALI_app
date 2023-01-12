@@ -11,7 +11,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'wave',
-    component: WaveApp,
+    component: Wave,
     beforeEnter: (to, from, next) => {
       if(localStorage.getItem('pubblication')==null) {
         next('/onboard');
@@ -89,6 +89,12 @@ const routes: Array<RouteRecordRaw> = [
         next(from)
 
     },
+  },
+  {
+    path: '/audiosync/:id/:timestamp',
+    name: 'audio-sync',
+    component: () => import('@/views/AmplitudeSync.vue'),
+      
   },
   {
     path: '/open-scanner/',

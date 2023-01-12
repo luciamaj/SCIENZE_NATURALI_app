@@ -64,8 +64,7 @@ async function fetchswiconf(url) {
   if(response){
     console.log("RESPONSE")
     return  response.json()
-  }
- else{
+  }else{
   console.log("NO RESPONSE, cerco pubblication")
   return JSON.parse(localStorage.getItem('pubblication'))
  }
@@ -78,7 +77,6 @@ fetchlocalconf().then(configuration=>{
     console.log("swiconfig ", configswi.result[0].config)
     confSwi=configswi.result[0].config
     
-
     const app = createApp(App)
       .use(IonicVue)
       .use(router)

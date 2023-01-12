@@ -366,15 +366,18 @@ export default {
     findRoute(decodedString) {
       console.log(decodedString);
        const data=localStorage.getItem("dataMostra")
+       let idvid;
+       let timeStamp;
+       if(decodedString.length>4){
+         idvid= decodedString.substring(0,2);
+         timeStamp=decodedString.substring(2);
+       }else{
+        idvid=decodedString
+       }
      
-      const scheda= JSON.parse(data).find(x => x.tag == decodedString);
+      const scheda= JSON.parse(data).find(x => x.tag == idvid);
       
-      const captureStop = document.getElementById("captureStop");
-      
-        // Dispatch/Trigger/Fire the event
-       // const event = new Event('pause');
-      //  window.dispatchEvent(event);
-    
+      const captureStop = document.getElementById("captureStop");  
          
         if (scheda != null) {
           const content=scheda.content.find(x => x.lang == localStorage.getItem("lang"));
@@ -383,14 +386,14 @@ export default {
           if (content.type == "audio") {
             console.log("audio");
             //this.schedaState(true);
-            this.$router.push({ path: "/audio/" + decodedString , replace:true});
+            this.$router.push({ path: "/audio/" + idvid , replace:true});
 
           }else if (content.type == "video"){
             console.log("video");
             //this.schedaState(true);
-            this.$router.push({ path: "/video/" + decodedString, replace:true });
+            this.$router.push({ path: "/video/" + idvid, replace:true });
           }else{
-              this.$router.push({ path: "/audio/" + decodedString , replace:true});
+              this.$router.push({ path: "/audio/" + idvid , replace:true});
           }
         
         }
@@ -438,6 +441,12 @@ export default {
           //console.log("statooo "+stato);
           if( this.stato==false|| this.stato==null){
              const res = tag
+             //condizioni per sync
+            if(tag.length>4){
+              res= res.substring(0, 2);
+              console.log(res);
+            //  res.split;
+             }
             if (res) {
                   this.findRoute(res);
                   this.decodedValue = res;
