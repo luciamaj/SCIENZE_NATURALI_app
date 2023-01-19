@@ -213,9 +213,10 @@ export default {
   },
   methods:{
     gettimestampS(time){
-      const min=parseInt(time.substring(0,2));
-      const sec=parseInt(time.substring(2));
-      console.log(min + " " +sec);
+      const h=parseInt(time.substring(0,1));
+      const min=parseInt(time.substring(1,3));
+      const sec=parseInt(time.substring(3));
+      console.log("hmmss "+h+" "+min + " " +sec);
 
       const sTime=(min*60)+sec;
       console.log(sTime);

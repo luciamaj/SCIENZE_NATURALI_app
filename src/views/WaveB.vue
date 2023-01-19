@@ -298,10 +298,14 @@ export default {
        const data=localStorage.getItem("dataMostra")
        let idvid;
        let timeStamp=null;
+       let split;
        if(decodedString.length>4){
         console.log("decoded>4");
-         idvid= decodedString.substring(0,2);
-         timeStamp=decodedString.substring(2);
+         idvid= decodedString.split("_")[0];
+         timeStamp=decodedString.split("_")[1];
+         console.log("log ide t");
+         console.log(idvid);
+         console.log(timeStamp);
        }else{
         idvid=decodedString
        }
