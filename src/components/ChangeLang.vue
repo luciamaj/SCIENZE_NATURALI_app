@@ -157,15 +157,17 @@ export default ({
     },
     buttons(){
       const remainingArray=[];
-      const lang={};
         this.remaining.forEach(element => {
-
-          lang["text"]= this.$t('menu.lang.'+element);
-          lang[ "handler"]=() => {
-                  console.log('clicked')
-                  this.add(element)
+          const langtoPush={
+            text: this.$t('menu.lang.'+element),
+            handler: () => {
+              
+                console.log('clicked')
+                this.add(element)
+              },
           }
-          remainingArray.push(lang)
+          remainingArray.push(langtoPush);
+         
         });
         const cancelbutton={
               text: this.$t('action.cancel'),
@@ -175,6 +177,7 @@ export default ({
               },
             }
              remainingArray.push(cancelbutton)
+             console.log(remainingArray);
         return remainingArray
       },
     async presentActionSheet() {

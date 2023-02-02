@@ -1,13 +1,13 @@
 
 module.exports = {
     pwa: {
-        name: "Museo Delle Storie",
+        name: "Biblioteca Sonora",
         theme_color: '#086a9f',
         msTileColor: '#000',
 
         manifestOptions:{
-            name: `'Museo Delle Storie'`,
-            short_name:`'Museo Delle Storie'`,
+            name: `'Biblioteca Sonora'`,
+            short_name:`'Biblioteca Sonora'`,
             start_url: `'.'`,
             display: 'fullscreen',
             theme_color:'#086a9f',

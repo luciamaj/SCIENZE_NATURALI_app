@@ -1,11 +1,5 @@
 {
   "name": "silence-museum",
-  "vue": {
-    "pwa": {
-      "name": "Biblioteca Sonora",
-      "themeColor": "#086a9f"
-    }
-  },
   "version": "1.0.0",
   "private": true,
   "description": "An Ionic project",
@@ -49,7 +43,7 @@
     "quagga": "^0.12.1",
     "register-service-worker": "^1.7.1",
     "sass-loader": "7.3.1",
-    "swiper": "6.7.5",
+    "swiper": "7.4.1",
     "video.js": "^7.11.4",
     "vue": "^3.0.0-0",
     "vue-audio-recorder": "^3.0.1",

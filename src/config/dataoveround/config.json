@@ -1,0 +1,16 @@
+{
+    "nameMuseum": "dataoversound",
+    "baseUrl":"https://dataoversound.test.eadev.it/dataoversound-swi",
+
+    "appleAppName":"com.ea.BibliotecaSonoraApp://",
+    "appleStoreUrl":"https://itunes.apple.com/it/app/itunes-connect/id376771144",
+    "androidAppName":"com.bibliotecasonora.ggwave;package=com.bibliotecasonora.ggwave",
+    "androidStoreUrl":"https://play.google.com/store/apps/details?id=com.bibliotecasonora.ggwave",
+    "interactionMode":"mix",
+    "langDefault":"it",
+
+    "app_primary_color":"#989898",
+    "app_secondary_color":"#136c97",
+    "app_secondary_opacity":"#377999b8"
+
+}

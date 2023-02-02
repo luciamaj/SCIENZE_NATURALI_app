@@ -69,10 +69,11 @@ export let fr ={
             add:"Ajouter une nouvelle langue",
             select:"Available content",
             alert:"Attention : cette opération consiste à télécharger le contenu dans la langue choisie",
-            it:"Italian",
-            en:"English",
-            fr:"French",
-            de:"German"
+            it:"Italien",
+            en:"Anglais",
+            fr:"Français",
+            de:"Allemand",
+            es:"Espagnol"
         },
         help:"Aiuto",
         copyright:"Copyright",

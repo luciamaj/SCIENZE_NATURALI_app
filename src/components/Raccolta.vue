@@ -140,8 +140,10 @@
                 if(type=="video"){
                     this.$router.replace({ path: "/video/" + tag});
 
-                }else{
+                }else   if(type=="audio"){
                     this.$router.replace({ path: "/audio/" + tag});
+                }else{
+                    this.$router.replace({ path: "/soloImg/" + tag});
                 }
 
             },

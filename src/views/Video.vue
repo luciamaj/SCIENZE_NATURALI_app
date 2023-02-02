@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header collapse="fade">
       <ion-toolbar  mode="ios">
-        <ion-title v-html="contenuto.titolo"></ion-title>
+        <!--ion-title v-html="contenuto.titolo"></ion-title-->
         <ion-buttons>
           <ion-button v-on:click="back()">
             <ion-icon name="arrow-back"></ion-icon>
@@ -68,7 +68,7 @@ import {
   IonPage,
   IonHeader,
   IonToolbar,
-  IonTitle,
+  //IonTitle,
   IonContent,
   IonButtons,
   IonButton,
@@ -88,7 +88,7 @@ export default {
   components: {
     IonHeader,
     IonToolbar,
-    IonTitle,
+    //IonTitle,
     IonContent,
     IonPage,
     IonButtons,

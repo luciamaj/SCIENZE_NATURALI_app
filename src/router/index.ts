@@ -11,7 +11,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'wave',
-    component: Wave,
+    component: WaveApp,
     beforeEnter: (to, from, next) => {
       if(localStorage.getItem('pubblication')==null) {
         next('/onboard');
@@ -105,6 +105,12 @@ const routes: Array<RouteRecordRaw> = [
     path: '/video/:id',
     name: 'video',
     component: () => import('@/views/Video.vue')
+  },
+  {
+    path: '/soloImg/:id',
+    name: 'solo-image',
+    component: () => import('@/views/SoloImage.vue'),
+      
   },
   {
     path: '/openapp',

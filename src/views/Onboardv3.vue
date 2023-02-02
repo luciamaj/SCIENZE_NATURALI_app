@@ -11,6 +11,7 @@
     
       <div class="onboard-top">
         <ion-toolbar>
+          
           <ion-buttons >
             <ion-button color="primary" v-on:click="goBack()" class="goback" :class="{invisible:isFirst}">
                 <ion-icon name="chevron-back" ></ion-icon>
@@ -45,7 +46,7 @@
             </div>
 
           </ion-slide>
-          <ion-slide v-if="interactionMode=='mix'">
+          <!--ion-slide v-if="interactionMode=='mix'">
               <div class="slide-inner">
                   <div class="onb-img">
                       <img class="cover" src="/assets/background/dos2.png" alt="">
@@ -65,13 +66,39 @@
               </div>
               <div class="onb-desc ion-text-center">
                   <h4><h4 v-if="interactionMode=='mix'">{{$t('onboard.qr.alternative')}}</h4>{{$t('onboard.qr.title')}}</h4>
-                  <!--p class="ion-no-margin">  Utilizza l'app per accedere a contenuti di approfondimento</p-->
+                  <p class="ion-no-margin">  Utilizza l'app per accedere a contenuti di approfondimento</p>
                   <p class="ion-no-margin desc-text" > {{$t('onboard.qr.text')}}  </p>
 
               </div>
             </div>
+          </ion-slide-->
+          <ion-slide v-for="sli in contentsonb" :key="sli">
+            <div class="slide-inner">
+              <div class="onb-img">
+                  <img class="cover" :src="sli.img" alt="">
+              </div>
+              <template v-for="info in sli.info " :key="info">
+                <div v-if="info.lang==currLang" class="onb-desc ion-text-center">
+                  <h4> {{info.title}}</h4>
+                  <p class="ion-no-margin desc-text" > {{info.txt}}  </p>
+                  <p class="ion-no-margin">  </p>
+
+                </div>
+                <template v-else>
+                  <div v-if="info.lang==en" class="onb-desc ion-text-center">
+                    <h4> {{info.title}}</h4>
+                    <p class="ion-no-margin desc-text" > {{info.txt}}  </p>
+                    <p class="ion-no-margin">  </p>
+
+                  </div>
+              </template>
+
+              </template>
+             
+            </div>
           </ion-slide>
         </ion-slides>
+
       </div>
     </div>
     </ion-content>
@@ -82,7 +109,7 @@
 
 <script>
 
-
+import {contents} from "../data/contentOnb";
 
 import {
   IonPage,
@@ -106,9 +133,9 @@ import { Navigation, Pagination, Scrollbar, A11y } from 'swiper';
 import "swiper/swiper.scss";
 import 'swiper/swiper-bundle.min.css'
 import 'swiper/swiper.min.css'
-import 'swiper/components/navigation/navigation.min.css'
-import 'swiper/components/pagination/pagination.min.css'
-import"swiper/components/pagination/pagination.scss"
+import 'swiper/modules/navigation/navigation.min.css'
+import 'swiper/modules/pagination/pagination.min.css'
+import"swiper/modules/pagination/pagination.scss"
 
 
 
@@ -153,11 +180,15 @@ export default {
     interactionMode(){
       console.log("interactionMode "+this.conf.interactionMode );
       return this.conf.interactionMode;
+    },
+
+    contentsonb(){
+      return contents;
     }
   },
   mounted(){
  
-   
+    console.log('? '+ contents[0].name);
     this.currLang=this.$i18n.locale;
     
     this.getinfo((info) => {
@@ -193,6 +224,7 @@ export default {
 
 
   methods:{
+
 
     async skip() {
       this.pushPage();

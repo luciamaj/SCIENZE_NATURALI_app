@@ -73,7 +73,8 @@ export const en= {
             it:"Italian",
             en:"English",
             fr:"French",
-            de:"German"
+            de:"German",
+            es:"Spanish"
         },
         help:"Help",
         copyright:"Copyright",

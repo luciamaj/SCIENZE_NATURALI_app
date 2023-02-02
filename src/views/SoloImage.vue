@@ -2,7 +2,7 @@
   <ion-page>
      <ion-header collapse="fade">
       <ion-toolbar  mode="ios">
-        <!--ion-title v-html="contentScheda.titolo" > </ion-title-->
+        <ion-title > </ion-title>
         <ion-buttons>
           <ion-button v-on:click="goingback()">
             <ion-icon name="arrow-back"></ion-icon>
@@ -13,7 +13,7 @@
     <ion-content :fullscreen="true">
       <div class="vertical-center">       
         <div class="player">
-          <div :class="[hastext? 'img-container': 'img-container-notext']"> 
+          <div class="img-container"> 
             <img :src="imgSrc" class="album-art" :key="imageUrl"/>
           </div>
           
@@ -22,27 +22,7 @@
               <div class="song-title" v-html="contentScheda.titolo"></div>
 
               
-              <progress v-if="fileUrl!=null"
-                class="amplitude-song-played-progress"
-                data-amplitude-song-index="0"
-                id="song-played-progress-1">
-              </progress>
-              <div class="time-container" v-if="fileUrl!=null">
-                <div class="current-time">
-                  <span class="amplitude-current-minutes" data-amplitude-song-index="0">00</span>:
-                  <span class="amplitude-current-seconds" data-amplitude-song-index="0">00</span>
-                </div>
-
-                <div class="duration">
-                  <span class="amplitude-duration-minutes" data-amplitude-song-index="0">03</span>:
-                  <span class="amplitude-duration-seconds" data-amplitude-song-index="0">30</span>
-                </div>
-              </div>
-              <div class="control-container" v-if="fileUrl!=null">
-                <div class="prev" @click="minus"></div>
-                <div class="amplitude-play-pause" data-amplitude-song-index="0"></div>
-                <div class="next" @click="plus"></div>
-              </div>
+              
             </div>
             <div class="descrArea"   v-html="contentScheda.testo"> </div>
           </div>
@@ -59,7 +39,6 @@ import {
   IonPage,
   IonHeader,
   IonToolbar,
-  //IonTitle,
   IonContent,
  alertController,
   IonButtons,
@@ -70,16 +49,16 @@ import {
 import Amplitude from "amplitudejs";
 import { data } from "../data/data";
 import { Plugins } from "@capacitor/core";
-import common from "./../js/common"
-import {global} from "./../js/global"
+import common from "../js/common"
+import {global} from "../js/global"
 const { Storage } = Plugins;
 
 export default {
   name: "Amplitude",
+ // props:['id', 'timestamp'],
   components: {
     IonHeader,
     IonToolbar,
-    //IonTitle,
     IonContent,
     IonPage,
    
@@ -89,13 +68,9 @@ export default {
 
   },
   ionViewWillLeave() {
-    console.log('Ampli will leave');
-    if(this.fileUrl){
+    console.log('solo will leave');
       clearTimeout(this.timer);
-      Amplitude.pause();
-      this.audio.currentTime=0;
-      this.audio.src="";
-    }
+ 
 
   },
 
@@ -129,12 +104,12 @@ export default {
 
   data() {
     return {
+   
       title: "Audioguida",
       timer:"",
       fileUrl:true,
       imageUrl:0,
-      imgSrc:'',
-      hastext:true,
+      imgSrc:''
     };
   },
   computed: {
@@ -201,16 +176,15 @@ export default {
   
   },
   beforeMount(){
-    this.url();
     this.cover();
-
+    
   },
   mounted() {
-  
+   
     this.addtoBucket(this.paramId);
   },
   methods:{
-
+    
  
     cover() {
       const type=this.contentScheda.type; 
@@ -222,11 +196,6 @@ export default {
       } else {
          this.getCoverImg(this.$store.getters.pubblication.img) 
        
-      }
-      if(this.contentScheda.testo==null){
-        this.hastext=false;
-      }else{
-        this.hastext=true;
       }
      
     },
@@ -285,109 +254,8 @@ export default {
 
      },
 
-    url() {
-      const audio=this.contentScheda;
-      if (audio.audio) {
-        console.log("audio ",audio.audio);  
-        this.request = indexedDB.open('mediaStore', global.dbVersion);
-        this.request.onsuccess = event => {
-          this.db = event.target.result;
-          if(this.db){
-            console.log("ildb ",this.db)
-           
-          
-          }else{
-            alert("no DB")
-          }
-          const transaction = this.db.transaction(['media-'+this.lang],'readwrite');
-          transaction.onerror= event => {
-              alert('notransaction ', event);
-            
-            };
-          const objectStore = transaction.objectStore('media-'+this.lang);
+    
 
-          const test = objectStore.get(audio.audio);
-      
-
-          test.onerror = event => {
-              console.log('error');
-            
-            };
-
-          test.onsuccess = event => {
-            console.log("GET RESULT ",event.target.result)
-            const testget = event.target.result;
-             if (testget) {
-                this.fileUrl=URL.createObjectURL(testget.blob);
-               console.log(" audio ", this.fileUrl )
-             // this.audio.load()
-             // this.audio.onloadeddata=()=>  this.play();
-              this.ampliInit();
-
-                 this.play();
-                console.log("AMPLI ",Amplitude);
-            
-            } else {
-              console.log('testget dont exixst error');
-                this.fetchFile(audio.audio);
-            }
-
-            
-          };
-        }
-       
-      } else if (audio.video) {
-         console.log("video ",audio.video);
-        this.fileUrl= this.$store.getters.baseUrl+"/upload/"+ audio.video;
-      }else{
-        console.log("URL"+ null)
-        this.fileUrl= null
-      }
-    },
-
-    ampliInit(){
-      Amplitude.init({
-        /* eslint-disable */
-        songs: [
-          {
-            name: "Song Name 1",
-            artist: "Artist Name",
-            album: "Album Name",
-            url: this.fileUrl,
-            cover_art_url: "/assets/icon/icon.png"
-          }
-        ],
-        callbacks: {
-          ended: ()=>{
-            console.log("Audio has been stopped.");
-            console.log("Document " + document.visibilityState)
-            if(document.visibilityState=="visible"){
-              this.setTimer();
-            }else{
-              this.back();
-            }
-            
-
-          }
-        }
-      });
-      this.audio=Amplitude.getAudio();
-
-      document.getElementById("song-played-progress-1")
-      .addEventListener("click", function(e) {
-        if (Amplitude.getActiveIndex() == 0) {
-          var offset = this.getBoundingClientRect();
-          var x = e.pageX - offset.left;
-
-          Amplitude.setSongPlayedPercentage(
-            (parseFloat(x.toString()) /
-              parseFloat(this.offsetWidth.toString())) *
-              100
-          );
-        }
-      });
-
-    },
     
      fetchFile(name){
        console.log("TRYIN FETCH")
@@ -429,44 +297,8 @@ export default {
       
       
     },
-    play() {
-      console.log(" audio ",this.audio)
-      Amplitude.play();
-      
-      $('.amplitude-play-pause').addClass('amplitude-playing').removeClass('amplitude-paused');
-      if(this.timer){
-         clearTimeout(this.timer);
-      }
-    },
-    pause() {
-      Amplitude.pause();
-    },
+   
 
-    minus(){
-      
-      if(this.audio.currentTime> 0.0){
-      this.audio.currentTime= this.audio.currentTime-5;
-        
-      }
-      if(this.timer){
-        clearTimeout(this.timer);
-      }
-
-
-    },
-    plus(){
-     
-      if(this.audio.currentTime< this.audio.duration){
-        this.audio.currentTime= this.audio.currentTime+5;
-       
-      }
-      if(this.timer){
-        clearTimeout(this.timer);
-      }
-      
-        
-
-    },
   
     inactivityTime(){
        document.ontouchmove = this.resetTimer;
@@ -538,9 +370,6 @@ ion-content {
 .img-container{
   height: 40vh;
 }
-.img-container-notext{
-  height: 60vh;
-}
 
 div.player {
   margin-bottom: 20px;
@@ -591,7 +420,7 @@ div.player img.album-art {
   div.player img.album-art {
     width: 100%;
     height: 100%;
-    /*max-height: 40vh;*/
+    max-height: 40vh;
     object-fit: cover;
   }
 }
@@ -613,7 +442,7 @@ div.meta-container div.song-title {
   font-size: 25px;
   font-weight: 600;
   font-family: "Open Sans", sans-serif;
-  margin: 14px 0;
+  margin: 5px 0;
 
 }
 div.meta-container div.song-artist {
@@ -657,7 +486,7 @@ div.meta-container div.time-container div.duration {
 */
 div.control-container {
   text-align: center;
-  margin-top: 2vh;
+  margin-top: 1.7vh;
 }
 div.control-container div.prev {
   width: 24px;

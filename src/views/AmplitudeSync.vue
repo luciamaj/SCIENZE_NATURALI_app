@@ -2,7 +2,7 @@
   <ion-page>
      <ion-header collapse="fade">
       <ion-toolbar  mode="ios">
-        <ion-title v-html="contentScheda.titolo" > </ion-title>
+        <!--ion-title v-html="contentScheda.titolo" > </ion-title-->
         <ion-buttons>
           <ion-button v-on:click="goingback()">
             <ion-icon name="arrow-back"></ion-icon>
@@ -59,7 +59,7 @@ import {
   IonPage,
   IonHeader,
   IonToolbar,
-  IonTitle,
+ // IonTitle,
   IonContent,
  alertController,
   IonButtons,
@@ -80,7 +80,7 @@ export default {
   components: {
     IonHeader,
     IonToolbar,
-    IonTitle,
+    //IonTitle,
     IonContent,
     IonPage,
    
@@ -542,7 +542,7 @@ ion-content {
   --overflow: hidden;
 }
 .img-container{
-  height: 30vh;
+  height: 40vh;
 }
 
 div.player {

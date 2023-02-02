@@ -69,9 +69,10 @@ export const en= {
             select:"Available content",
             alert:"Achtung: Bei diesem Vorgang werden die Inhalte in der gewählten Sprache heruntergeladen",
             it:"Italian",
-            en:"English",
-            fr:"French",
-            de:"German"
+            en:"Englisch",
+            fr:"Französisch",
+            de:"Deutsch",
+            es:"Spanisch"
         },
         help:"Aiuto",
         copyright:"Copyright",

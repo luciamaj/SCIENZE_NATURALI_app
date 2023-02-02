@@ -75,7 +75,8 @@ export const it = {
             it:"Italiano",
             en:"Inglese",
             fr:"Francese",
-            de:"Tedesco"
+            de:"Tedesco",
+            es:"Spagnolo"
         },
         help:"Aiuto",
         copyright:"Copyright",
@@ -86,7 +87,7 @@ export const it = {
     raccolta:{
         title:"Raccolta",
         subtitle:"Rivivi l'esperienza",
-        alerttext:"Non hai ancora aperto le schede. \n Alla fine del tour potrai rivedere qui le scehde trovate lungo il percorso."
+        alerttext:"Non hai ancora aperto le schede. \n Alla fine del tour potrai rivedere qui le schede trovate lungo il percorso."
     }
    
 

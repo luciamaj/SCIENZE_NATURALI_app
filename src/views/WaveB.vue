@@ -18,8 +18,8 @@
 </ion-modal-->
       <div class="vertical-center view-wwave-container">
         <div class="center">
-          <div class="logo-container"><img class="logo" :src="logo"/></div>
-            {{ntag}}
+          <div class="logo-container" id="logomostra"><img class="logo" :src="logo"/></div>
+          <div class="logo-container" id="anima" hidden><img class="gif-listen" src="assets/background/anima.gif"/></div>
           <div class="buttons">
           <ion-button v-if="interactionMode=='mix'" expand="block" class="capture-btn" @click="onSend" id="captureStart">{{$t('main.start')}}</ion-button>
           <ion-button expand="block" class="capture-btn" id="captureStop" hidden>{{$t('main.stop')}}</ion-button>
@@ -69,7 +69,7 @@ export default {
       name: "AUDIBLE MUSEUM",
       store:"",
       notification:false,
-     ntag:"",
+     ntag:"a",
      playing:false,
     };
   },
@@ -324,7 +324,7 @@ export default {
             if(timeStamp!=null){
                this.$router.push({ path: "/audiosync/" + idvid +"/"+timeStamp, });
             }else{
-              this.$router.push({ path: "/audio/" + decodedString });
+              this.$router.push({ path: "/audio/" + idvid });
             }
             //this.schedaState(true);
           
@@ -360,7 +360,8 @@ export default {
         
       const captureStart = document.getElementById("captureStart");
       const captureStop = document.getElementById("captureStop");
-
+      const anima=document.getElementById("anima");
+      const mostra=document.getElementById("logomostra");
    
 
        const constraints = {
@@ -411,6 +412,8 @@ export default {
         this.decodedValue = "stopped recording";
         captureStart.hidden = false;
         captureStop.hidden = true;
+        anima.hidden=true;
+        mostra.hidden=false;
       });
 
       window.addEventListener('pause', ()=> {
@@ -426,6 +429,8 @@ export default {
       this.decodedValue = "recording";
       captureStart.hidden = true;
       captureStop.hidden = false;
+      anima.hidden=false;
+      mostra.hidden=true;
 
       });
 
@@ -582,6 +587,7 @@ ion-content {
   position: relative;
   /* top: 9px; */
   top: 20%;
+  height: 300px;
 }
 
 .logo {

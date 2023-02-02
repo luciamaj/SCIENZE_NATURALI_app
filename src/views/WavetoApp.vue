@@ -26,7 +26,8 @@
 </ion-modal-->
       <div class="vertical-center view-wwave-container">
         <div class="center">
-          <div class="logo-container"><img class="logo" :src="logo"/></div>
+          <div class="logo-container" id="mostra"><img class="logo" :src="logo"/></div>
+          <div class="logo-container" id="anima" hidden><img class="gif-listen" src="assets/background/anima.gif"/></div>
           <div class="buttons">
           <ion-button expand="block" class="capture-btn" @click="callJava" id="captureStart">{{$t('main.start')}}</ion-button>
           <ion-button expand="block" class="capture-btn" id="captureStop" hidden>
@@ -94,6 +95,7 @@ export default {
         this.captureStop = document.getElementById("captureStop");
         this.captureStart.hidden = true;
         this.captureStop.hidden = false;
+       
          //captureStart.click();
     }
     } );
@@ -104,6 +106,8 @@ export default {
     this.store=JSON.parse(localStorage.getItem('pubblication'));
     this.captureStart = document.getElementById("captureStart");
     this.captureStop = document.getElementById("captureStop");
+    this.anima=document.getElementById("anima");
+    this.mostra=document.getElementById("mostra");
 
      window["answMessage"] = (tag) => {
       this.answMessage(tag);
@@ -122,6 +126,8 @@ export default {
       this.decodedValue = "stopped recording";
       this.captureStart.hidden = false;
       this.captureStop.hidden = true;
+      this.anima.hidden=true;
+      this.mostra.hidden=false;
     });
    
     
@@ -369,8 +375,11 @@ export default {
        let idvid;
        let timeStamp;
        if(decodedString.length>4){
-         idvid= decodedString.substring(0,2);
-         timeStamp=decodedString.substring(2);
+        idvid= decodedString.split("_")[0];
+         timeStamp=decodedString.split("_")[1];
+         console.log("log ide t");
+         console.log(idvid);
+         console.log(timeStamp);
        }else{
         idvid=decodedString
        }
@@ -386,14 +395,19 @@ export default {
           if (content.type == "audio") {
             console.log("audio");
             //this.schedaState(true);
-            this.$router.push({ path: "/audio/" + idvid , replace:true});
+            //this.$router.push({ path: "/audio/" + idvid , replace:true});
+            if(timeStamp!=null){
+               this.$router.push({ path: "/audiosync/" + idvid +"/"+timeStamp, replace:true });
+            }else{
+              this.$router.push({ path: "/audio/" + idvid,  replace:true });
+            }
 
           }else if (content.type == "video"){
             console.log("video");
             //this.schedaState(true);
             this.$router.push({ path: "/video/" + idvid, replace:true });
           }else{
-              this.$router.push({ path: "/audio/" + idvid , replace:true});
+              this.$router.push({ path: "/soloImg/" + idvid , replace:true});
           }
         
         }
@@ -416,6 +430,8 @@ export default {
           this.decodedValue = "recording";
           this.captureStart.hidden = true;
           this.captureStop.hidden = false; 
+          this.anima.hidden=false;
+          this.mostra.hidden=true;
           this.waitingTime=setTimeout(() => {
             this.presentAlert();
         }, 20000);
@@ -442,11 +458,11 @@ export default {
           if( this.stato==false|| this.stato==null){
              const res = tag
              //condizioni per sync
-            if(tag.length>4){
+            /*if(tag.length>4){
               res= res.substring(0, 2);
               console.log(res);
             //  res.split;
-             }
+             }*/
             if (res) {
                   this.findRoute(res);
                   this.decodedValue = res;
@@ -548,6 +564,7 @@ ion-content {
   top: 16%;
   width: 77vw;
   margin: auto;
+  height: 300px;
 }
 
 .logo {
