@@ -1,5 +1,5 @@
 {
-    "nameMuseum": "dataoversound",
+    "nameMuseum": "museodellestorie",
     "baseUrl":"https://museodellestorie.eadev.it/dataoversound-swi",
 
     "appleAppName":"com.ea.MuseoDelleStorie://",
@@ -7,7 +7,7 @@
     "androidAppName":"com.museodellestorie.ggwave;package=com.bibliotecasonora.ggwave",
     "androidStoreUrl":"https://play.google.com/store/apps/details?id=com.bibliotecasonora.ggwave",
     "interactionMode":"mix",
-    "langDefault":"it",
+    "langDefault":"it"
 
     
 }

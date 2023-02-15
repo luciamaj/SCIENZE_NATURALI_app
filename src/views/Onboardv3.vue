@@ -422,18 +422,19 @@ ion-grid{
   margin-bottom: 20px;
 }
 .text-one{
-    margin-bottom: 13vh;
-    margin-top: 6vh;
+    margin-bottom: 6vh;
+    margin-top: 4vh;
 }
 
 
 .lang{
  text-align: center;
+ font-size: 0.9em;
  
 }
 .circle-cont{
-  height:100px;
-  width: 100px;
+  height:10vh;
+  width: 10vh;
   margin: 0 auto 10px;
 }
 .circle{

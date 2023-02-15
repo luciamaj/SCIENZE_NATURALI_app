@@ -368,7 +368,7 @@ ion-content {
   --overflow: hidden;
 }
 .img-container{
-  height: 40vh;
+  height: 45vh;
 }
 
 div.player {
@@ -401,11 +401,14 @@ div.player img.album-art {
 
 .descrArea{
   float: left;
-  padding: 5px 25px;
-  max-height: 40vh;
+  padding: 5px 29px;
+ /* max-height: 40vh;*/
   overflow: overlay;
-  margin-top: 2vh;
+ /* margin-top: 2vh;*/
   margin-bottom: 2vh;
+  font-size: 1.1em;
+  line-height: 1.6em;
+
 
 }
 
@@ -442,7 +445,7 @@ div.meta-container div.song-title {
   font-size: 25px;
   font-weight: 600;
   font-family: "Open Sans", sans-serif;
-  margin: 5px 0;
+  margin: 25px 0 5px;
 
 }
 div.meta-container div.song-artist {

@@ -24,7 +24,7 @@
           <ion-button v-if="interactionMode=='mix'" expand="block" class="capture-btn" @click="onSend" id="captureStart">{{$t('main.start')}}</ion-button>
           <ion-button expand="block" class="capture-btn" id="captureStop" hidden>{{$t('main.stop')}}</ion-button>
 
-          <IonButton class="scan-btn" @click="openModal">{{$t('main.scan')}}</IonButton>
+          <ion-button class="scan-btn" @click="openModal">{{$t('main.scan')}}</ion-button>
 
             <!--ion-button  class="test-btn" id="test" @click="openpage" >TEST</ion-button-->
           </div>
@@ -625,7 +625,9 @@ ion-content {
 
 .capture-btn {
   font-weight: 700;
-  width: 280px;
+  /*width: 280px;*/
+  width: 30vw;
+  height: 30vw;
   margin: 15px auto;
 }
 #captureStart{

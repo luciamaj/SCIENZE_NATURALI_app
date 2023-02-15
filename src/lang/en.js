@@ -12,37 +12,37 @@ export const en= {
     onboard:{
         lang:{
             title:"Select",
-            text:"in which language do you prefer to listen to the contents?"
+            text:"Which language do you prefer the contents to be in?"
         },
         tag:{
-            title:"Bring the smartphone closer to the SilenceTags",
+            title:"Bring your smartphone close to the SilenceTags",
             text:"Use the APP to access the contents"
         },
         qr:{
             alternative:"Otherwise",
             title:"Scan",
-            text:"Frame the QR Codes you will find along the way"
+            text:"Scan the QR Codes placed all around"
         },
 
 
     },
     networkerror:{
 		title:"Network error",
-        text:"The contents cannot be downloaded, the app will be available in online mode!",
+        text:"The contents cannot be downloaded. The app is available only online!",
         action:"Try later"
     },
     storageError:{
-		title:"Insufficient space",
-        text:"It's not possible to download all the contents, use the app in online mode!",
+		title:"Not enough space",
+        text:"It's not possible to download all the contents. Use the app online!",
         action:"Ok"
     },
     update:{
 		title:"Updates",
-        text:"There are new updates available, do you want to update the app now?"
+        text:"There are new updates available. Do you want to update the app now?"
     },
     scarica:{
 		title:"Download the contents",							 
-        text:"The application will be available shortly, this may take some time."
+        text:"The application will be available shortly. This may take some time."
     },
     main:{
 
@@ -54,7 +54,7 @@ export const en= {
             text:"This feature is only available on the app",
         },
 		timeoutTagTitle:"ATTENTION",
-		timeoutTagText:"SilenceTag NOT detected, it may be off, use the \"Scan QR Code\" button",
+		timeoutTagText:"SilenceTag NOT detected, it may be off. Use the \"Scan QR Code\" button",
 		timeoutTagAccept:"Continue"
     
     },
@@ -69,7 +69,7 @@ export const en= {
             subtitile:"Dowloaded languages",
             add:"Add new language",
             select:"Available content",
-            alert:"Attention this operation will download the content in the language selected",
+            alert:"Attention, the contents will be downloaded in the language that you have chosen",
             it:"Italian",
             en:"English",
             fr:"French",
@@ -85,7 +85,7 @@ export const en= {
     raccolta:{
         title:"Collection",
         subtitle:"Live the experience again",
-        alerttext:"No content has been viewed yet. \n Come back at the tour's end to view the content found along the way."
+        alerttext:"No content has been viewed yet. \n All contents viewed throughout the visit will be available here"
     }
    
 }

@@ -538,8 +538,9 @@ ion-content {
 .img-container{
   height: 40vh;
 }
+
 .img-container-notext{
-  height: 60vh;
+  height: 73vh;
 }
 
 div.player {
@@ -594,6 +595,9 @@ div.player img.album-art {
     /*max-height: 40vh;*/
     object-fit: cover;
   }
+  .img-container-notext{
+    height: 60vh;
+  }
 }
 /*
   Medium only
@@ -602,8 +606,8 @@ div.player img.album-art {
   Large Only
 */
 div.meta-container {
-  float: left;
-  width: calc(100% - 270px);
+  /*float: left;*/
+  /*width: calc(100% - 270px);*/
   padding: 10px 20px;
   max-height: 40vh;
 }

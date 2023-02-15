@@ -193,7 +193,7 @@
     width: 100%;
     padding: 0.4em 0.5em;
     border-radius: 4px;
-    box-shadow: 1px 4px 5px 2px #136c974a;
+    box-shadow: 1px 4px 5px 2px #9797974a;
  }
   .scheda-cont-thumb{
    

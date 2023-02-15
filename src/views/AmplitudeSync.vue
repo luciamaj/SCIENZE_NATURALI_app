@@ -13,7 +13,7 @@
     <ion-content :fullscreen="true">
       <div class="vertical-center">       
         <div class="player">
-          <div class="img-container"> 
+          <div :class="[hastext? 'img-container': 'img-container-notext']"> 
             <img :src="imgSrc" class="album-art" :key="imageUrl"/>
           </div>
           
@@ -136,7 +136,8 @@ export default {
       timer:"",
       fileUrl:true,
       imageUrl:0,
-      imgSrc:''
+      imgSrc:'',
+      hastext:true,
     };
   },
   computed: {
@@ -232,7 +233,11 @@ export default {
         //return this.$store.getters.baseUrl+'/upload/'+this.dataSchede.img
       } else {
          this.getCoverImg(this.$store.getters.pubblication.img) 
-       
+      }
+      if(this.contentScheda.testo==null){
+        this.hastext=false;
+      }else{
+        this.hastext=true;
       }
      
     },
@@ -594,8 +599,11 @@ div.player img.album-art {
   div.player img.album-art {
     width: 100%;
     height: 100%;
-    max-height: 40vh;
+    /*max-height: 40vh;*/
     object-fit: cover;
+  }
+  .img-container-notext{
+    height: 60vh;
   }
 }
 /*
@@ -604,9 +612,12 @@ div.player img.album-art {
 /*
   Large Only
 */
+.img-container-notext{
+    height: 73vh;
+  }
 div.meta-container {
-  float: left;
-  width: calc(100% - 270px);
+ /* float: left;*/
+  /*width: calc(100% - 270px);*/
   padding: 10px 20px;
   max-height: 40vh;
 }

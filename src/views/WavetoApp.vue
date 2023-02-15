@@ -29,12 +29,14 @@
           <div class="logo-container" id="mostra"><img class="logo" :src="logo"/></div>
           <div class="logo-container" id="anima" hidden><img class="gif-listen" src="assets/background/anima.gif"/></div>
           <div class="buttons">
-          <ion-button expand="block" class="capture-btn" @click="callJava" id="captureStart">{{$t('main.start')}}</ion-button>
+          <!--ion-button expand="block" class="capture-btn" @click="callJava" id="captureStart">{{$t('main.start')}}</ion-button-->
+           <ion-button expand="block" class="capture-btn" @click="callJava" id="captureStart"><img class="icon-button" src="assets/background/onda.png"></ion-button>
           <ion-button expand="block" class="capture-btn" id="captureStop" hidden>
           <ion-badge  mode="ios" id="badge" color="danger" class="listen">0</ion-badge>
            {{$t('main.stop')}}</ion-button>
 
-          <ion-button expand="block" class="scan-btn" @click="openModal">{{$t('main.scan')}}</ion-button>
+          <!--ion-button expand="block" class="scan-btn" @click="openModal">{{$t('main.scan')}}</ion-button-->
+          <ion-button expand="block" class="scan-btn" @click="openModal"><img class="icon-button" src="assets/background/qrI.png"></ion-button>
 
           </div>
         </div>
@@ -549,8 +551,8 @@ ion-content {
   display: block;
   position: absolute;
   bottom: 0;
-  padding-bottom: 20vh;
-  height: 90vh;
+  padding-bottom: 10vh;
+  height: 92vh;
   width: 100%;
 }
 .main-title{
@@ -561,7 +563,7 @@ ion-content {
  /*background-color: #fff;*/
   position: relative;
   /* top: 9px; */
-  top: 16%;
+  top: 19%;
   width: 77vw;
   margin: auto;
   height: 300px;
@@ -577,8 +579,10 @@ ion-content {
 .buttons{
   width: 100%;
   text-align: center;
-  top: 66%;
+  top:64vh;
   position: absolute;
+  display: flex;
+  padding: 0 6vw;
 }
 .view-wwave-container {
   background-color: white;
@@ -617,11 +621,18 @@ ion-content {
     text-transform: capitalize;
 }
 
+.icon-button{
+  max-height: 65%;
+  max-width:70%;
+}
 .capture-btn {
   font-weight: 700;
-  width: 280px;
+  /*width: 280px;*/
+  width: 25vw;
   margin: 17px auto;
-   height: 41px;
+  /* height: 41px;*/
+  height: 25vw;
+  --border-radius: 10px;
 }
 #captureStart{
     --background:var(--ion-color-secondary);
@@ -631,9 +642,13 @@ ion-content {
 }
 .scan-btn{
   font-weight: 700;
-  width: 280px;
+  /*width: 280px;*/
+  width: 25vw;
   margin: 17px auto;
-  height: 41px;
+ /* height: 41px;*/
+ height: 25vw;
+  --background: #e1e1e1;
+  --border-radius: 10px;
 }
 .toolbar-background {
   color: black !important;
