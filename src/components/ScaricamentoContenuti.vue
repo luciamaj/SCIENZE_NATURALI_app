@@ -109,7 +109,6 @@ export default {
         this.networkError();
       }
        
-    
     },1000);
     
        
@@ -139,12 +138,19 @@ export default {
         this.request = indexedDB.open('mediaStore', global.dbVersion);
         this.request.onsuccess = event => {
 
-        console.log("REQUEStt SUCCESS, "+ this.fromC)
-        const db = event.target.result;
-        
-        transaction = db.transaction(['media-'+this.lang],'readwrite');
-        objectStore = transaction.objectStore('media-'+this.lang);
+
+          console.log("REQUEStt SUCCESS, "+ this.fromC)
+          const db = event.target.result;
+          db.onversionchange = function() {
+            db.close();
+            console.log("version changed");
+          };
+
+         // transaction = db.transaction(['media-'+this.lang],'readwrite');
+          //objectStore = transaction.objectStore('media-'+this.lang);
+
         }
+        
         this.request.onupgradeneeded = event => {
           console.log("REQUESR SUCCESS")
           const db = event.target.result;
@@ -156,7 +162,19 @@ export default {
           }else{
             objectStore = db.createObjectStore('media-'+this.lang,  {keyPath: "name"});
           }
+
+
         }
+        
+       
+        this.request.onerror =  event => {
+          console.log("error opening db dal mounted Error  ", event)
+          alert("error opening db dal mounted")
+        }
+        this.request.onblocked=event=>{
+          console.log("dal mounted  BLOCKED ",event)
+        }
+      
     },
   
     async networkError() {
@@ -379,8 +397,9 @@ export default {
             // report the success of our request
             console.log(name+ " Successs");
               this.incProgress();
-              if(this.last==true){
+              if(this.progress==1){
                 db.close();
+                console.log("qui chiudevo");
               }
               /*if(this.progress==1){
                 this.openNext();
@@ -402,7 +421,6 @@ export default {
 
 
         }
-        
 
         transaction.onerror=()=>{
           console.log('ERROR transaction '+name +' ', event);
@@ -431,7 +449,7 @@ export default {
               
           };
           console.log('entroo')
-        }else  if(this.fromC=="onboard" || this.fromC=="lang" ){
+        }/*else  if(this.fromC=="onboard" || this.fromC=="lang" ){ //check se usavo ono
           console.log("Arrivo da: ", this.fromC)
           objectStore = db.createObjectStore('media-'+this.lang, { keyPath: 'name' });
           objectStore.transaction.oncomplete = event => {
@@ -441,7 +459,7 @@ export default {
 
             //const videoObjectStore = db.transaction('videos', 'readwrite').objectStore('videos');
             // const newMedia=mediaObjectStore.add({name: name, blob: blob});
-            /* newMedia.onsuccess = (event) =>{
+            /* newMedia.onsuccess = (event) =>{ già commentati 
             
             console.log(name+ " Successs");
               
@@ -451,15 +469,15 @@ export default {
               console.log(" ERROR in add " +name, event);
               alert( 'ERROR in add onb lang ' +name+' '+ event.target.error );
               
-            };*/
-          };
+            };*/ 
+         /* -- };
 
           objectStore.transaction.onerror= (event) => {
             console.log("error transaction in upgrade");
            // alert("error transaction in upgrade");
           }
 
-        }
+        }*/
         
           console.log( " request.onupgradeneeded");
         

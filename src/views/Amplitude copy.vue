@@ -633,7 +633,6 @@ div.player img.album-art {
   div.player img.album-art {
     width: 100%;
     height: 100%;
-    max-height: 40vh;
     object-fit: cover;
   }
 }

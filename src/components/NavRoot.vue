@@ -43,6 +43,11 @@
             <div class="button-text"> {{$t("menu.termini")}}</div>
             <ion-icon  slot="end" size="large" name="chevron-forward" />
         </ion-button>
+        <ion-button expand="block" size="large" color="secondary" @click="pushPage('test')" > 
+            <ion-icon  slot="start" size="large" name="shield-checkmark-outline"/>
+            <div class="button-text"> TEST {{$t("menu.termini")}}</div>
+            <ion-icon  slot="end" size="large" name="chevron-forward" />
+        </ion-button>
        
     </div>
     <div class="powered" @click="openWebSite">Powered by Engineering Associates</div>
@@ -65,7 +70,8 @@ import NavChild from '@/components/NavChild.vue';
 import Lang from '@/components/ChangeLang.vue';
 import Download from '@/components/ScaricamentoContenuti.vue';
 import Copy from '@/components/Copy.vue';
-import Instructions from '@/views/Onboardv3.vue'
+import Instructions from '@/views/Onboardv3.vue';
+import Test from '@/components/TestTag.vue';
 import common from '@/js/common';
 export default ({
     
@@ -146,6 +152,9 @@ export default ({
             ionNav.push(Copy,  {page:"termini" });
         }else if(page=="help"){
             ionNav.push(Instructions,  {context:"help" });
+        }
+        else if(page=="test"){
+            ionNav.push(Test,{ title: 'Test silence tag' }  );
         }
         else{
             ionNav.push(NavChild, { title: 'Custom Title' });

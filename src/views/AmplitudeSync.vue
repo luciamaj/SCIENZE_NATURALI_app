@@ -603,7 +603,7 @@ div.player img.album-art {
     object-fit: cover;
   }
   .img-container-notext{
-    height: 60vh;
+    height: 50vh;
   }
 }
 /*
