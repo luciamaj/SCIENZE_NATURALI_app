@@ -69,7 +69,7 @@ export default ({
   },
   data(){
     return{
-      availableLangs:['it','en','fr','de'],
+      availableLangs:['it','en','fr','de','es'],
       saved:[],
       remaining:[],
       currLang:this.currentLang,
@@ -96,7 +96,7 @@ export default ({
         },
       // setter
       set(newLang) {
-        // Note: we are using destructuring assignment syntax here.
+      
         this.saved.push(newLang);
         localStorage.setItem('savedLangs', this.saved)
       }

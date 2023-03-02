@@ -2,9 +2,12 @@
 import {createI18n } from 'vue-i18n';
 import { it } from '../lang/it.js'
 import { en } from '../lang/en.js'
+import { fr } from '../lang/fr.js'
+import { de } from '../lang/de.js'
+import { es } from '../lang/es.js'
 
 
-const messages = {  'it': it, 'en': en};
+const messages = {  'it': it, 'en': en, 'fr':fr, 'de':de, 'es':es};
 const langsaved=localStorage.getItem('lang');
 let navlang=navigator.language.split("-")[0];
 if(localStorage.getItem('savedLangs')!=null){

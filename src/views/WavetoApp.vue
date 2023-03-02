@@ -27,13 +27,13 @@
       <div class="vertical-center view-wwave-container">
         <div class="center">
           <div class="logo-container" id="mostra"><img class="logo" :src="logo"/></div>
-          <div class="logo-container" id="anima" hidden><img class="gif-listen" src="assets/background/anima.gif"/></div>
+          <!--div class="logo-container" id="anima" hidden><img class="gif-listen" src="assets/background/anima.gif"/></div-->
           <div class="buttons">
           <!--ion-button expand="block" class="capture-btn" @click="callJava" id="captureStart">{{$t('main.start')}}</ion-button-->
            <ion-button expand="block" class="capture-btn" @click="callJava" id="captureStart"><img class="icon-button" src="assets/background/onda.png"></ion-button>
-          <ion-button expand="block" class="capture-btn" id="captureStop" hidden>
-          <ion-badge  mode="ios" id="badge" color="danger" class="listen">0</ion-badge>
-           {{$t('main.stop')}}</ion-button>
+          <ion-button expand="block" class="capture-btn" id="captureStop" hidden><img class="icon-button" src="assets/background/onda.png"/>
+          <!--ion-badge  mode="ios" id="badge" color="danger" class="listen">0</ion-badge-->
+           </ion-button>
 
           <!--ion-button expand="block" class="scan-btn" @click="openModal">{{$t('main.scan')}}</ion-button-->
           <ion-button expand="block" class="scan-btn" @click="openModal"><img class="icon-button" src="assets/background/qrI.png"></ion-button>
@@ -108,12 +108,14 @@ export default {
     this.store=JSON.parse(localStorage.getItem('pubblication'));
     this.captureStart = document.getElementById("captureStart");
     this.captureStop = document.getElementById("captureStop");
-    this.anima=document.getElementById("anima");
-    this.mostra=document.getElementById("mostra");
+   // this.anima=document.getElementById("anima");
+   // this.mostra=document.getElementById("mostra");
 
-     window["answMessage"] = (tag) => {
+    /* window["answMessage"] = (tag) => {
       this.answMessage(tag);
-    };
+      console.log("nella HOME!!");
+
+    };*/
 
     this.captureStop.addEventListener("click", ()=> {
       try{
@@ -128,8 +130,7 @@ export default {
       this.decodedValue = "stopped recording";
       this.captureStart.hidden = false;
       this.captureStop.hidden = true;
-      this.anima.hidden=true;
-      this.mostra.hidden=false;
+     
     });
    
     
@@ -304,7 +305,7 @@ export default {
           } else  if (obj.path.type == "video") {
               this.$router.replace({ path: "/video/" + obj.path.index });
           }else{
-            this.$router.replace({ path: "/audio/" + obj.path.index });
+            this.$router.replace({ path: "/soloImg/" + obj.path.index });
           }
         }
       });
@@ -393,7 +394,7 @@ export default {
         if (scheda != null) {
           const content=scheda.content.find(x => x.lang == localStorage.getItem("lang"));
           console.log("scheda.type "+ content.type);
-          
+          captureStop.click();
           if (content.type == "audio") {
             console.log("audio");
             //this.schedaState(true);
@@ -424,7 +425,12 @@ export default {
 
        
     callJava(){
-     
+
+      window["answMessage"] = (tag) => {
+        this.answMessage(tag);
+        console.log("nella HOME!!");
+
+      };
      
       try{
          AndroidObject.executeJavaCode(true);  //aggiungere parametro  true
@@ -432,8 +438,7 @@ export default {
           this.decodedValue = "recording";
           this.captureStart.hidden = true;
           this.captureStop.hidden = false; 
-          this.anima.hidden=false;
-          this.mostra.hidden=true;
+          
           this.waitingTime=setTimeout(() => {
             this.presentAlert();
         }, 20000);
@@ -459,12 +464,7 @@ export default {
           //console.log("statooo "+stato);
           if( this.stato==false|| this.stato==null){
              const res = tag
-             //condizioni per sync
-            /*if(tag.length>4){
-              res= res.substring(0, 2);
-              console.log(res);
-            //  res.split;
-             }*/
+             
             if (res) {
                   this.findRoute(res);
                   this.decodedValue = res;

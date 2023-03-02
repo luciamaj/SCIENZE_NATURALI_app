@@ -1,4 +1,4 @@
-export let fr ={
+export const fr ={
     action:{
         accept:"J'accepte",
         postponi:"Plus tard",
@@ -75,10 +75,18 @@ export let fr ={
             de:"Allemand",
             es:"Espagnol"
         },
-        help:"Aiuto",
+        help:"Aider",
         copyright:"Copyright",
         privacy:"Privacy",
-        termini:"Conditions d'utilisation"
+        termini:"Conditions d'utilisation",
+        test:{
+            title:"Test",
+            inizioTest:"Démarrer les TEST",
+            stopTest:"Arrêtez les TEST",
+            testoIstruzioni:"Débranchez vos écouteurs, montez le volume et lancez le test",
+            compatibileTest:"Votre appareil est compatible",
+            nonCompatibileTest:"L'appareil n'est pas compatible",
+        }
         
     },
     raccolta:{

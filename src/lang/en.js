@@ -79,7 +79,15 @@ export const en= {
         help:"Help",
         copyright:"Copyright",
         privacy:"Privacy",
-        termini:"Terms of Service"
+        termini:"Terms of Service",
+        test:{
+            title:"Test",
+            inizioTest:"Start TEST",
+            stopTest:"Stop TEST",
+            testoIstruzioni:"Unplug your headphones, turn up the volume, and run the test",
+            compatibileTest:"The device is compatible",
+            nonCompatibileTest:"The device is not compatible",
+        }
         
     },
     raccolta:{

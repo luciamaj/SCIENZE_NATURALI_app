@@ -1,4 +1,4 @@
-export const en= {
+export const es= {
     action:{
         accept:"Acepta",
         postponi:"Pospón",
@@ -79,7 +79,15 @@ export const en= {
         help:"Ayuda",
         copyright:"Copyright",
         privacy:"Política de Privacidad",
-        termini:"Términos de servicio"
+        termini:"Términos de servicio",
+        test:{
+            title:"Test",
+            inizioTest:"Iniciar TEST",
+            stopTest:"Dejar TEST",
+            testoIstruzioni:"Desconecte sus auriculares, suba el volumen y ejecute la prueba",
+            compatibileTest:"El dispositivo es compatible",
+            nonCompatibileTest:"El dispositivo no es compatible",
+        }
         
     },
     raccolta:{

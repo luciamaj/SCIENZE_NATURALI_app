@@ -1,4 +1,4 @@
-export const en= {
+export const de= {
     action:{
         accept:"Annehmen",
         postponi:"Später",
@@ -77,7 +77,15 @@ export const en= {
         help:"Aiuto",
         copyright:"Copyright",
         privacy:"Privacy",
-        termini:"Nutzungsbedingungen"
+        termini:"Nutzungsbedingungen",
+        test:{
+            title:"Test",
+            inizioTest:"Starten Sie den Test",
+            stopTest:"Test stoppen",
+            testoIstruzioni:"Trennen Sie Ihre Kopfhörer, drehen Sie die Lautstärke auf und führen Sie den Test durch",
+            compatibileTest:"Das Gerät ist kompatibel",
+            nonCompatibileTest:"Das Gerät ist nicht kompatibel",
+        }
         
     },
     raccolta:{

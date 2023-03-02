@@ -1,19 +1,17 @@
 <template>
   <ion-page>
      <ion-header collapse="fade">
-      <ion-toolbar  mode="ios">
+      <ion-toolbar >
         <!--ion-title v-html="contentScheda.titolo" > </ion-title-->
-        <ion-buttons>
-          <ion-button v-on:click="goingback()">
-            <ion-icon name="arrow-back"></ion-icon>
-          </ion-button>
+        <ion-buttons  slot="start" >
+          <ion-button v-on:click="goingback()"><ion-icon size="large" name="arrow-back"></ion-icon></ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
       <div class="vertical-center">       
         <div class="player">
-          <div :class="[hastext? 'img-container': 'img-container-notext']"> 
+          <div :class="[hastext? 'img-container': 'img-container-audio-notext']"> 
             <img :src="imgSrc" class="album-art" :key="imageUrl"/>
           </div>
           
@@ -350,9 +348,9 @@ export default {
         /* eslint-disable */
         songs: [
           {
-            name: "Song Name 1",
-            artist: "Artist Name",
-            album: "Album Name",
+            name: "",
+            artist: "",
+            album: "",
             url: this.fileUrl,
             cover_art_url: "/assets/icon/icon.png"
           }
@@ -539,7 +537,7 @@ ion-content {
   height: 40vh;
 }
 
-.img-container-notext{
+.img-container-audio-notext{
   height: 73vh;
 }
 
@@ -595,8 +593,8 @@ div.player img.album-art {
     /*max-height: 40vh;*/
     object-fit: cover;
   }
-  .img-container-notext{
-    height: 50vh;
+  .img-container-audio-notext{
+    height: 60vh;
   }
 }
 /*

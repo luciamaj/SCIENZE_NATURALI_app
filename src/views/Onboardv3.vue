@@ -190,19 +190,22 @@ export default {
  
     console.log('? '+ contents[0].name);
     this.currLang=this.$i18n.locale;
+
+    if(this.context=='onboard'){
+      this.getinfo((info) => {
+        this.publishedLang=info.lang.map(element => {
+          return element.toLowerCase();
+        });
+        console.log("LANG PUBB ", this.publishedLang.length)
+        if(this.publishedLang.find( element => element ==this.currLang)){
+          this.setLang(this.currLang);
+        }else{
+          this.setLang(this.publishedLang[0]);
+        }
+      })
+
+    }
     
-    this.getinfo((info) => {
-      this.publishedLang=info.lang.map(element => {
-        return element.toLowerCase();
-      });
-      console.log("LANG PUBB ", this.publishedLang.length)
-      if(this.publishedLang.find( element => element ==this.currLang)){
-         this.setLang(this.currLang);
-      }else{
-         this.setLang(this.publishedLang[0]);
-      }
-    })
-   
     this.slidelength();
 
       
@@ -266,6 +269,7 @@ export default {
       localStorage.setItem('lang', lang);
       //if(localStorage.getItem('savedLangs')==null){
         localStorage.setItem('savedLangs', lang);
+        this.$i18n.locale = lang;
     // }
       
       
@@ -350,6 +354,12 @@ ion-content {
 }
 .invisible{
   visibility:hidden
+}
+
+ion-toolbar{
+  --background: transparent;
+  --min-height: 40px;
+  --max-height: 520px;
 }
 ion-grid{
   width: 100%;
@@ -461,7 +471,9 @@ ion-grid{
 .swiper-pagination-bullets{
   bottom: 40px!important;
 }
-
+.swiper-pagination-bullet-active{
+  background:var(--ion-color-secondary)!important;
+}
 .vertical-center {
   display: flex;
   justify-content: center;
@@ -476,7 +488,7 @@ ion-grid{
 }
 .lang-title{
   position: relative;
-  top: 3%;
+  top: 1vh;
 
 }
 .logo-container {
@@ -494,6 +506,7 @@ ion-grid{
 .onb-img{
   height: 230px;
   text-align: center;
+  padding: 25px;
 }
 .onb-img > img{
   height: 100%;

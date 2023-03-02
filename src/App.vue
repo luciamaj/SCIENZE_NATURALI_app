@@ -475,4 +475,12 @@ export default defineComponent({
 body{
    font-family: "Open Sans", sans-serif;
 }
+
+ion-header ion-toolbar:first-of-type {
+    padding-left: 7px;
+}
+
+.accept-button{
+  color: var(--ion-color-primary);
+}
 </style>

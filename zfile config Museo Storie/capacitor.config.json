@@ -1,6 +1,6 @@
 {
   "appId": "io.ionic.starter",
-  "appName": "Biblioteca Sonora",
+  "appName": "MSB Museum",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "dist",

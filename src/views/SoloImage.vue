@@ -1,11 +1,11 @@
 <template>
   <ion-page>
      <ion-header collapse="fade">
-      <ion-toolbar  mode="ios">
+      <ion-toolbar >
         <ion-title > </ion-title>
         <ion-buttons>
           <ion-button v-on:click="goingback()">
-            <ion-icon name="arrow-back"></ion-icon>
+            <ion-icon size="large" name="arrow-back"></ion-icon>
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
@@ -13,7 +13,7 @@
     <ion-content :fullscreen="true">
       <div class="vertical-center">       
         <div class="player">
-          <div class="img-container"> 
+          <div class="img-container-solo"> 
             <img :src="imgSrc" class="album-art" :key="imageUrl"/>
           </div>
           
@@ -24,7 +24,7 @@
               
               
             </div>
-            <div class="descrArea"   v-html="contentScheda.testo"> </div>
+            <div class="descrAreaSolo"   v-html="contentScheda.testo"> </div>
           </div>
         </div>
 
@@ -367,7 +367,7 @@ export default {
 ion-content {
   --overflow: hidden;
 }
-.img-container{
+.img-container-solo{
   height: 45vh;
 }
 
@@ -399,7 +399,7 @@ div.player img.album-art {
   width: 100vw;
 }
 
-.descrArea{
+.descrAreaSolo{
   float: left;
   padding: 5px 29px;
  /* max-height: 40vh;*/
@@ -423,7 +423,6 @@ div.player img.album-art {
   div.player img.album-art {
     width: 100%;
     height: 100%;
-    max-height: 40vh;
     object-fit: cover;
   }
 }

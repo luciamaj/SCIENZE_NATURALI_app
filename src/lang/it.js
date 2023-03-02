@@ -81,7 +81,15 @@ export const it = {
         help:"Aiuto",
         copyright:"Copyright",
         privacy:"Privacy",
-        termini:"Termini di servizio"
+        termini:"Termini di servizio",
+        test:{
+            title:"Test",
+            inizioTest:"Inizio TEST",
+            stopTest:"Stop TEST",
+            testoIstruzioni:"scollega le cuffie, alza il volume e esegui il test",
+            compatibileTest:"Il dispositivo è compatibile",
+            nonCompatibileTest:"Il dispositivo non è compatibile",
+        }
 
     },
     raccolta:{

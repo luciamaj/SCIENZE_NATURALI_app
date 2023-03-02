@@ -4,7 +4,7 @@
     <ion-toolbar >
       <ion-title color="secondary" > Test</ion-title>
         <ion-buttons slot="start" >
-          <ion-back-button></ion-back-button>
+          <ion-back-button ></ion-back-button>
         </ion-buttons>
       </ion-toolbar> 
     </ion-header>
@@ -13,16 +13,19 @@
    
       <div class="vertical-center ">
         <div class="center">
+          <div class="player-test">
 
-          <!--div class="logo-container" id="mostra"><img class="logo" :src="logo"/></div-->
-          <div class="test-text-container" id="mostra">Assicurati di aver staccato le cuffie e alzato il volume del telefono, poi effettua il test cliccando qui</div>
+          </div>
 
-          <div class="logo-container" id="anima" hidden><img class="gif-listen" src="assets/background/anima.gif"/></div>
+         
+          <div class="test-text-container" id="istruzioni">{{$t('menu.test.testoIstruzioni')}}</div>
+
+          <!--div class="logo-container" id="anima" hidden><img class="gif-listen" src="assets/background/anima.gif"/></div-->
           <div class="buttons-test">
-          <ion-button expand="block" class="capture-btn" @click="callJava" id="captureStart">Start Test</ion-button>
-            <ion-button expand="block" class="capture-btn" id="captureStop" hidden>
-          <ion-badge  mode="ios" id="badge" color="danger" class="listen">0</ion-badge>
-          Stop Test</ion-button>
+          <ion-button expand="block" class="capture-btn-test" @click="callJava" id="captureStartTest">{{$t('menu.test.inizioTest')}}</ion-button>
+            <ion-button expand="block" class="capture-btn-test" id="captureStopTest" hidden>
+            <ion-badge  mode="ios" id="badge" color="danger" class="listen">0</ion-badge>
+            {{$t('menu.test.stopTest')}}</ion-button>
 
        
          
@@ -46,16 +49,14 @@ import {
   //IonModal
   
 } from "@ionic/vue";
-
-import { data } from "../data/data";
+import Amplitude from "amplitudejs";
 import Scanner from "../views/Scanner.vue";
 import Menu from "../views/Menu.vue";
 import Nav from "./Nav.vue";
 import factory from "ggwave";
 import { Plugins } from "@capacitor/core";
-
+import Home from "../views/WavetoApp.vue" 
 import { useRouter } from "vue-router";
-import {AudioProcessing} from "../audioWorklet/audioWorker.js";
 import common from "../js/common"
 const { Storage } = Plugins;
 
@@ -68,39 +69,60 @@ export default {
       store:"",
      ntag:"",
      playing:false,
+     fileUrl:"assets/sounds/TEST.wav",
+     msgUltrasuoni:"TEST",
+     inTest:true,
     };
+  },
+
+  ionViewWillLeave() {
+    console.log('test will leave');
+    if(this.fileUrl){
+  
+      Amplitude.pause();
+      
+    }
+
   },
   ionViewWillEnter(){
-   
-   this.getTour().then(x => {
-    this.tour=x;
-   
-    console.log("upTour ", this.tour)
-    if(this.tour){
-        //const captureStart = document.getElementById("captureStart");
-        this.captureStart = document.getElementById("captureStart");
-        this.captureStop = document.getElementById("captureStop");
-        this.captureStart.hidden = true;
-        this.captureStop.hidden = false;
-       
-         //captureStart.click();
-    }
-    } );
-   
+          
+ /*   this.captureStartTest = document.getElementById("captureStartTest");
+    this.captureStopTest = document.getElementById("captureStopTest");
+    this.captureStartTest.hidden = true;
+    this.captureStopTest.hidden = false;*/
+
 
   },
+  unmounted(){
+    
+    console.log("Unmounting test- stop audio");
+    Amplitude.pause();
+    this.inTest=false;
+ 
+    
+  },
+ 
   mounted(){
     this.store=JSON.parse(localStorage.getItem('pubblication'));
-    this.captureStart = document.getElementById("captureStart");
-    this.captureStop = document.getElementById("captureStop");
-    this.anima=document.getElementById("anima");
-    this.mostra=document.getElementById("mostra");
+    this.captureStartTest = document.getElementById("captureStartTest");
+    this.captureStopTest = document.getElementById("captureStopTest");
+    /*this.anima=document.getElementById("anima");
+    this.mostra=document.getElementById("mostra");*/
 
      window["answMessage"] = (tag) => {
-      this.answMessage(tag);
+      if(this.inTest){
+        this.answMessageTest(tag);
+        console.log("in test, arrivato "+ tag);
+      }else{
+       
+        console.log("Test FALSE "+ tag);
+
+     
+      }
+      
     };
 
-    this.captureStop.addEventListener("click", ()=> {
+    this.captureStopTest.addEventListener("click", ()=> {
       try{
         AndroidObject.executeJavaCode(false);//aggiungere parametro  false
       }catch(e){
@@ -108,14 +130,15 @@ export default {
       }
 
       clearTimeout(this.waitingTime);
-      this.setInactiveTour();
       this.schedaState(false);
       this.decodedValue = "stopped recording";
-      this.captureStart.hidden = false;
-      this.captureStop.hidden = true;
-      this.anima.hidden=true;
-      this.mostra.hidden=false;
+      this.captureStartTest.hidden = false;
+      this.captureStopTest.hidden = true;
+      /*this.anima.hidden=true;
+      this.mostra.hidden=false;*/
+      
     });
+    this.ampliInit();
    
     
   },
@@ -124,25 +147,8 @@ export default {
       console.log("interactionMode "+this.conf.interactionMode );
       return this.conf.interactionMode;
     },
-    logo() {
-      const imgMostra=this.store.img;
-      if (imgMostra) {
-        console.log("c'è logo");
-        return this.$store.getters.baseUrl+"/upload/"+imgMostra;
-      } else {
-        return '/assets/background/dos.png'
-       
-      }
-     
-    },
-    history(){
-      if(this.swiConf.abilita_archivio==1){
-        return true;
-      }else{
-        return false;
-      }
-      
-    }
+    
+  
 
   },
   components: {
@@ -195,7 +201,6 @@ export default {
   created(){
     this.goToApp=common.openApp;
     this.showOptions=common.showOptions;
-    this.setInactiveTour=common.setInactiveTour;
     this.setActiveTour=common.setActiveTour;
     this.getNotificationState=common.getNotificationState;
 
@@ -308,65 +313,62 @@ export default {
 
     await alert.present();
   },*/
+ 
 
+  ampliInit(){
+      Amplitude.init({
+        /* eslint-disable */
+        songs: [
+          {
+            name: "",
+            artist: "",
+            album: "",
+            url: this.fileUrl,
+            cover_art_url: "/assets/icon/icon.png"
+          }
+        ],
+        callbacks: {
+          ended: ()=>{
+            console.log("Audio has been stopped.");
+            console.log("Document " + document.visibilityState)
+            /*if(document.visibilityState=="visible"){
+              this.setTimer();
+            }else{
+              this.back();
+            }*/
+            
+            
 
+          }
+        }
+      });
+      this.audio=Amplitude.getAudio();
+      Amplitude.play();
+      Amplitude.setRepeat( true );
+
+      /*document.getElementById("song-played-progress-1")
+      .addEventListener("click", function(e) {
+        if (Amplitude.getActiveIndex() == 0) {
+          var offset = this.getBoundingClientRect();
+          var x = e.pageX - offset.left;
+
+          Amplitude.setSongPlayedPercentage(
+            (parseFloat(x.toString()) /
+              parseFloat(this.offsetWidth.toString())) *
+              100
+          );
+        }
+      });*/
+
+    },
 
   openFirst() {
       menuController.enable(true, 'first');
       menuController.open('first');
     },
 
-    findRoute(decodedString) {
-      console.log(decodedString);
-       const data=localStorage.getItem("dataMostra")
-       let idvid;
-       let timeStamp;
-       if(decodedString.length>4){
-        idvid= decodedString.split("_")[0];
-         timeStamp=decodedString.split("_")[1];
-         console.log("log ide t");
-         console.log(idvid);
-         console.log(timeStamp);
-       }else{
-        idvid=decodedString
-       }
-     
-      const scheda= JSON.parse(data).find(x => x.tag == idvid);
-      
-      const captureStop = document.getElementById("captureStop");  
-         
-        if (scheda != null) {
-          const content=scheda.content.find(x => x.lang == localStorage.getItem("lang"));
-          console.log("scheda.type "+ content.type);
-          
-          if (content.type == "audio") {
-            console.log("audio");
-            //this.schedaState(true);
-            //this.$router.push({ path: "/audio/" + idvid , replace:true});
-            if(timeStamp!=null){
-               this.$router.push({ path: "/audiosync/" + idvid +"/"+timeStamp, replace:true });
-            }else{
-              this.$router.push({ path: "/audio/" + idvid,  replace:true });
-            }
-
-          }else if (content.type == "video"){
-            console.log("video");
-            //this.schedaState(true);
-            this.$router.push({ path: "/video/" + idvid, replace:true });
-          }else{
-              this.$router.push({ path: "/soloImg/" + idvid , replace:true});
-          }
-        
-        }
-       
-       
-      //captureStop.click();
-        
-    },
-    openHistory(){
-       this.$router.push({ path: "/raccolta", replace:true});
-    },
-
+    
+   
        
     callJava(){
      
@@ -375,13 +377,13 @@ export default {
          AndroidObject.executeJavaCode(true);  //aggiungere parametro  true
           this.setActiveTour();
           this.decodedValue = "recording";
-          this.captureStart.hidden = true;
-          this.captureStop.hidden = false; 
-          this.anima.hidden=false;
-          this.mostra.hidden=true;
+          this.captureStartTest.hidden = true;
+          this.captureStopTest.hidden = false; 
+         /* this.anima.hidden=false;
+          this.mostra.hidden=true;*/
           this.waitingTime=setTimeout(() => {
             this.presentAlert();
-        }, 20000);
+        }, 10000);
       }catch(e){
         clearTimeout(this.waitingTime);
       //  console.log("catch "+e);
@@ -397,26 +399,20 @@ export default {
      
 
     },
-    answMessage(tag){
+    answMessageTest(tag){
      clearTimeout(this.waitingTime);
-      (async () => {
-       this.stato = await this.getSchedaState();
-          //console.log("statooo "+stato);
-          if( this.stato==false|| this.stato==null){
-             const res = tag
-             //condizioni per sync
-            /*if(tag.length>4){
-              res= res.substring(0, 2);
-              console.log(res);
-            //  res.split;
-             }*/
-            if (res) {
-                  this.findRoute(res);
-                  this.decodedValue = res;
-            }
+      const res = tag
+      if (res==this.msgUltrasuoni) {
+          this.captureStopTest.click();
+          this.alertCpatibilità(true);
+            //this.decodedValue = res;
+            
+      }
+      else{
+        this.captureStopTest.click();
+        this.alertCpatibilità(false);
+      }
 
-          }
-        })();
 
     },
    
@@ -453,17 +449,33 @@ export default {
     const alert = document.createElement('ion-alert');
     alert.mode='ios'
     alert.header = 'Alert';
-    alert.message = this.$t('main.timeoutTagText');
-    alert.buttons = ['OK'];
+    alert.message =  this.$t('menu.test.nonCompatibileTest');
+    alert.buttons =  ['Riprova'];
+
+    document.body.appendChild(alert);
+    return alert.present();
+  },
+  alertCpatibilità(compatibile) {
+    const alert = document.createElement('ion-alert');
+    alert.mode='ios'
+    alert.header = 'Alert';
+    if(compatibile){
+      alert.message = this.$t('menu.test.compatibileTest');
+      alert.buttons = ['Chiudi'];
+    }else{
+      alert.message = this.$t('menu.test.nonCompatibileTest');
+      alert.buttons = ['Riprova'];
+    }
+
+    
+   
 
     document.body.appendChild(alert);
     return alert.present();
   },
 
-    openpage(){
-     // this.$router.push({ path: "/audio/A0002"  });
-      this.$router.push({ path: "/testjava"  });
-    },
+
+    
 
     async setObject(param) {
       await Storage.set({
@@ -506,12 +518,16 @@ ion-content {
 }
 .test-text-container {
  /*background-color: #fff;*/
+ padding: 17px;
+ text-align: center;
+
   position: relative;
   /* top: 9px; */
   top: 19%;
   width: 77vw;
   margin: auto;
-  height: 300px;
+  height: 20vh;
+  line-height: 2em;
 }
 
 .buttons-test{
@@ -530,10 +546,7 @@ ion-content {
   background-size: cover;
   background-blend-mode: saturation;
 }
-.history-icon{
-  
-    width: 0.8em
-}
+
 
 .title {
   color: #2d9fe3;
@@ -563,19 +576,19 @@ ion-content {
   max-height: 65%;
   max-width:70%;
 }
-.capture-btn {
+.capture-btn-test {
   font-weight: 700;
   /*width: 280px;*/
-  width: 25vw;
+  width: 45vw;
   margin: 17px auto;
   /* height: 41px;*/
-  height: 25vw;
+  height: 15vw;
   --border-radius: 10px;
 }
-#captureStart{
+#captureStartTest{
     --background:var(--ion-color-secondary);
 }
-#captureStop {
+#captureStopTest {
   --background:var(--ion-color-secondary-whitened);
 }
 .scan-btn{

@@ -1,11 +1,10 @@
 <template>
   <ion-page>
      <ion-header collapse="fade">
-      <ion-toolbar  mode="ios">
+      <ion-toolbar >
         <!--ion-title v-html="contentScheda.titolo" > </ion-title-->
         <ion-buttons>
-          <ion-button v-on:click="goingback()">
-            <ion-icon name="arrow-back"></ion-icon>
+          <ion-button v-on:click="goingback()"><ion-icon  size="large" name="arrow-back"></ion-icon>
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
@@ -595,17 +594,7 @@ div.player img.album-art {
 /*
   Small only
 */
-@media screen and (max-width: 39.9375em) {
-  div.player img.album-art {
-    width: 100%;
-    height: 100%;
-    /*max-height: 40vh;*/
-    object-fit: cover;
-  }
-  .img-container-notext{
-    height: 50vh;
-  }
-}
+
 /*
   Medium only
 */
@@ -662,7 +651,17 @@ div.meta-container div.time-container div.duration {
   div.meta-container {
     width: 100%;
   }
+  div.player img.album-art {
+    width: 100%;
+    height: 100%;
+    /*max-height: 40vh;*/
+    object-fit: cover;
+  }
+  .img-container-notext{
+    height: 60vh;
+  }
 }
+
 /*
   Medium only
 */

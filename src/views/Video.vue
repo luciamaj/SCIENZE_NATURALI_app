@@ -1,11 +1,11 @@
 <template>
   <ion-page>
     <ion-header collapse="fade">
-      <ion-toolbar  mode="ios">
+      <ion-toolbar >
         <!--ion-title v-html="contenuto.titolo"></ion-title-->
         <ion-buttons>
           <ion-button v-on:click="back()">
-            <ion-icon name="arrow-back"></ion-icon>
+            <ion-icon size="large" name="arrow-back"></ion-icon>
           </ion-button>
         </ion-buttons>
       </ion-toolbar>

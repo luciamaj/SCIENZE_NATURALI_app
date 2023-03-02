@@ -44,8 +44,8 @@
             <ion-icon  slot="end" size="large" name="chevron-forward" />
         </ion-button>
         <ion-button expand="block" size="large" color="secondary" @click="pushPage('test')" > 
-            <ion-icon  slot="start" size="large" name="shield-checkmark-outline"/>
-            <div class="button-text"> TEST {{$t("menu.termini")}}</div>
+            <ion-icon slot="start" size="large" name="checkmark-circle-outline"/>
+            <div class="button-text">  {{$t("menu.test.title")}}</div>
             <ion-icon  slot="end" size="large" name="chevron-forward" />
         </ion-button>
        

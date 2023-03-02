@@ -1,28 +1,28 @@
 
 module.exports = {
     pwa: {
-        name: "Museo Delle Storie",
+        name: "MS Bergamo",
         theme_color: '#086a9f',
         msTileColor: '#000',
 
         manifestOptions:{
-            name: `'Museo Delle Storie'`,
-            short_name:`'Museo Delle Storie'`,
+            name: `'MS Bergamo'`,
+            short_name:`'MS Bergamo'`,
             start_url: `'.'`,
             display: 'fullscreen',
             theme_color:'#086a9f',
 
         },
         iconPaths: {
-            favicon32: 'img/icons/favicon-32x32.png',
-            favicon16: 'img/icons/favicon-16x16.png',
-            appleTouchIcon: 'img/icons/apple-touch-icon-152x152.png',
+            favicon32: 'img/icons/msBergamo/favicon-32x32.png',
+            favicon16: 'img/icons/msBergamo/favicon-16x16.png',
+            appleTouchIcon: 'img/msBergamo/mipmap-hdpi/ic_launcher_round.png',
             maskIcon: 'img/icons/safari-pinned-tab.svg',
-            msTileImage: 'img/icons/msapplication-icon-144x144.png'
+            msTileImage: 'img/icons/msBergamo/mipmap-xxhdpi/ic_launcher.png'
         },
         appleMobileWebAppCapable: 'yes',
 
-        appleMobileWebAppStatusBarStyle: 'blue',
+        appleMobileWebAppStatusBarStyle: '086a9f',
               
     //   workboxPluginMode: 'GenerateSW',
        workboxPluginMode: "InjectManifest",

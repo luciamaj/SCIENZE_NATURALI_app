@@ -71,11 +71,12 @@ export default {
 
     this.online=true
     this.testChiamata();
+    this.datetoVersion=common.datetoversion;
     this.storageError=common.storageError;
     this.updateNotification=common.updateNotification;
     this.savedlangs=localStorage.getItem('savedLangs');
     console.log("svd lng",this.savedlangs);
-    this.currLang=this.$i18n.locale;
+    this.currLang=this.$i18n.locale;//controllare se uso la lingua giusta
 
     if(this.online){
       
