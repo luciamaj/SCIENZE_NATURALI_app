@@ -480,7 +480,7 @@ ion-header ion-toolbar:first-of-type {
     padding-left: 7px;
 }
 
-.accept-button{
+.modal-accept-button{
   color: var(--ion-color-primary);
 }
 </style>

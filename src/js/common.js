@@ -86,7 +86,7 @@ export default {
           },
           {
             text:  this.$t('action.download'),
-            cssClass:"accept-button",
+            cssClass:"modal-accept-button",
             handler: () => {
               if(window.navigator.onLine){
                 console.log("Accepted");
@@ -267,7 +267,7 @@ export default {
       });
     },
 
-    datetoversion(date){
+    datetoVersion(date){
       const splitted=date.split("-");
       const year=splitted[2].substring(2);
       const recompose=year+splitted[1]+splitted[0];

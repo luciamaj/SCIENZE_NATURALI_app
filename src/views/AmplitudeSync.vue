@@ -109,6 +109,8 @@ export default {
   unmounted(){
     this.schedaState(false);
     console.log("Unmounting page");
+    console.log('DB? '+this.db)
+    this.db.close();
   },
 
   created(){

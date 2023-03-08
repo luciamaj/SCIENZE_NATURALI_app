@@ -83,6 +83,7 @@ export default {
   unmounted(){
     this.schedaState(false);
     console.log("Unmounting page");
+    console.log('DB? ', this.db);
   },
 
   created(){
@@ -224,7 +225,7 @@ export default {
                 this.fetchImg(name);
             }
 
-            
+            this.db.close();
           };
         }
     

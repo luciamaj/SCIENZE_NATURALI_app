@@ -93,6 +93,7 @@ export default {
       Amplitude.pause();
       this.audio.currentTime=0;
       this.audio.src="";
+      
     }
 
   },
@@ -106,6 +107,8 @@ export default {
   unmounted(){
     this.schedaState(false);
     console.log("Unmounting page");
+    console.log('DB? ', this.db)
+    
   },
 
   created(){
@@ -253,8 +256,11 @@ export default {
                 this.fetchImg(name);
             }
 
-            
+            this.db.close();
           };
+        }
+        this.request.onerror= event=>{
+          this.fetchImg(name);
         }
     
     },
@@ -330,7 +336,7 @@ export default {
                 this.fetchFile(audio.audio);
             }
 
-            
+            this.db.close();
           };
         }
        
