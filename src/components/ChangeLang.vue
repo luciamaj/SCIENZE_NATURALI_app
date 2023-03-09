@@ -29,7 +29,7 @@
     </ion-grid>
 
 
-    <ion-button v-if="remaining.length>0" expand="block" size="slim" color="primary" class="add-lang" @click="presentActionSheet">  {{$t('menu.lang.add')}} </ion-button>
+    <ion-button v-if="remaining.length>0" expand="block" size="slim" color="secondary" class="add-lang" @click="presentActionSheet">  {{$t('menu.lang.add')}} </ion-button>
 
 
      
@@ -84,7 +84,16 @@ export default ({
   computed:{
 
     
-
+    versionLangs(){
+       
+      let versionLangs= [];
+        console.log("linguee ", localStorage.getItem('versionLangs'))
+        versionLangs=  JSON.parse(localStorage.getItem('versionLangs'));
+        console.log("linguee versionLangs ", versionLangs)
+                
+      return versionLangs
+        
+    },
     savedLangs:{
         get() {
           console.log("linguee ", localStorage.getItem('savedLangs'))
@@ -104,7 +113,9 @@ export default ({
     },
 
     remainingLang(){
-      const publishedLang=JSON.parse(localStorage.getItem('pubblication')).lang
+      const pubblication=JSON.parse(localStorage.getItem('pubblication'))
+      const publishedLang=pubblication.lang;
+      this.currPubbDate(pubblication);
      
       const myArray = publishedLang.filter( ( el ) =>{
         console.log("?? "+!this.savedLangs.includes( el ));
@@ -119,6 +130,7 @@ export default ({
     
   },
   created(){
+    this.datetoVersion=common.datetoVersion;
     this.networkError=common.networkError;
 
     this.emitter.on('addLang', (lang)=>{
@@ -129,9 +141,9 @@ export default ({
   mounted(){
     this.savedLangs
     this.remainingLang
-
+    this.versionLangs;
   
-      this.currLang=localStorage.getItem("lang")
+    this.currLang=localStorage.getItem("lang")
      
 
     
@@ -152,8 +164,12 @@ export default ({
       
       ionNav.push(Download,  { lang: passedLang , fromC:"lang"});
      
+    },
+    pushPageAggiorna(passedLang) {
+      const ionNav = document.querySelector('ion-nav') as any;
       
-      
+      ionNav.push(Download,  { lang: passedLang , fromC:"update"});
+     
     },
     buttons(){
       const remainingArray=[];
@@ -194,53 +210,104 @@ export default ({
 
     async showOptions(lang) {
       const alert = await alertController.create({
-      header: this.$t('menu.lang.add') ,
-      message:  this.$t('menu.lang.alert') ,
-      buttons: [
-        {
-          text: this.$t('action.download'),
-          handler: () => {
-            console.log("Accepted");
-            if(window.navigator.onLine){
-              const pubblication=JSON.parse(localStorage.getItem("pubblication"))
-              const suppLang=pubblication.lang.find(el=> el==lang);
-                //this.savedLangs=lang;
-                this.remaining=this.remaining.filter(item => item !== lang);
-              if(suppLang){
-                  //this.searchMedia(lang);
-                // this.$router.replace({ path: "/scarica/"+ lang});
-                  this.pushPage(lang);
+        header: this.$t('menu.lang.add') ,
+        message:  this.$t('menu.lang.alert') ,
+        buttons: [
+          {
+            text: this.$t('action.download'),
+            handler: () => {
+              console.log("Accepted");
+              if(window.navigator.onLine){
+                const pubblication=JSON.parse(localStorage.getItem("pubblication"))
+                const suppLang=pubblication.lang.find(el=> el==lang);
+                  //this.savedLangs=lang;
+                  this.remaining=this.remaining.filter(item => item !== lang);
+                if(suppLang){
+                    //this.searchMedia(lang);
+                  // this.$router.replace({ path: "/scarica/"+ lang});
+                    this.pushPage(lang);
+                }else{
+                    //this.searchMedia('it');
+                    //this.$router.replace({ path: "/scarica/it"});
+                  this.pushPage("it");
+                }
               }else{
-                  //this.searchMedia('it');
-                  //this.$router.replace({ path: "/scarica/it"});
-                this.pushPage("it");
+                console.log("NON C?èRETE");
+                this.networkError();
               }
-            }else{
-              console.log("NON C?èRETE");
-              this.networkError();
-            }
-           
-           
+            
+            
+            },
           },
-        },
-        {
-          text: this.$t('action.cancel') ,
-          role: "cancel",
-        },
-      ],
-    });
+          {
+            text: this.$t('action.cancel') ,
+            role: "cancel",
+          },
+        ],
+      });
 
-    await alert.present();
+      await alert.present();
     },
 
+    async updateLang(lang) {
+            if(window.navigator.onLine){
+                 const alert = await alertController.create({
+                    header: this.$t('update.title') ,
+                    message: this.$t('update.text') ,
+                    buttons: [
+                        
+                        {
+                            text: this.$t('action.postponi') ,
+                            role: "cancel",
+                            handler: () => {
+                                console.log("Declined the offer");
+                                
+                            },
+                        },
+                        {
+                            text:this.$t('action.download'),
+                            handler: () => {
+                                console.log("Accepted");
+                                this.emitter.emit('aggiorna', "menu");
+                                this.pushPageAggiorna(lang);
+                            
+                            },
+                        },
+                    ],
+                });
 
-   
+                await alert.present();
+
+            }else{
+                this.networkError();
+            }
+           
+        },
+
+    currPubbDate(pubblication){
+      this.pubblication=pubblication;
+    },
+
+    checkVersion(lang){
+      const currentVersion=this.datetoVersion(this.pubblication.pubblicazione);
+      const langVersion=this.versionLangs.find(el=> el.lang==lang).vers;
+
+      if(currentVersion>langVersion){
+        console.log("LA LINGUA NON è AGGIORNATA"); 
+        this.updateLang(lang);
+      }else{
+        console.log("versione ok"); 
+      }
+
+    },
 
     switchLang(lang){
        /* if (this.$i18n.locale !== lang) {
            this.$i18n.locale = lang;
            localStorage.setItem('lang', lang);
         }*/
+        this.checkVersion(lang);
+
         if (localStorage.getItem('lang')!= lang) {
           localStorage.setItem('lang', lang);
           this.currLang=lang;

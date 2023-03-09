@@ -57,10 +57,38 @@ export default {
         mediafetched:0,
         quotaExcided:false,
         mediaArray:[],
+        vLangs:[],
 
         };
     },
 
+    computed:{
+      versionLangs:{
+        get() {
+          let versionLangs= [];
+          if(localStorage.hasOwnProperty(('versionLangs'))){
+            console.log("linguee ", localStorage.getItem('versionLangs'))
+            versionLangs=  JSON.parse(localStorage.getItem('versionLangs'));
+           
+            console.log("linguee versionLangs ", versionLangs)
+            this.copyVLangs(versionLangs);
+          }
+          return versionLangs
+        },
+      // setter
+      set(newLVersion) {
+        if(!this.vLangs.find(e=>e.lang==newLVersion.lang)){
+          this.vLangs.push(newLVersion);
+        }else{
+          const langIndex=this.vLangs.findIndex(e=>e.lang==newLVersion.lang);
+          this.vLangs[langIndex].vers=newLVersion.vers;
+        }
+        
+        localStorage.setItem('versionLangs',JSON.stringify(this.vLangs));
+      }
+
+    },
+    },
 
   
   created(){
@@ -103,6 +131,7 @@ export default {
 
   },
   mounted(){
+    this.versionLangs
    // this.openDB();
    // this.openDBAltern();
     setTimeout(() => {
@@ -127,16 +156,24 @@ export default {
 
 
   methods:{
+    copyVLangs(vLangs){
+      this.vLangs=vLangs;
+    },
 
     saveVersionLang(){
       const dataPubb=JSON.parse(localStorage.getItem('pubblication'));
      const version =this.datetoVersion(dataPubb.pubblicazione);
+    
       const langDate={
         lang:this.lang,
         vers:version
       }
+      if(!localStorage.hasOwnProperty("versionLangs")){
+        localStorage.setItem("versionLangs", JSON.stringify([langDate]));
+      }else{
+        this.versionLangs=langDate;
+      }
       
-      localStorage.setItem("versionLang", JSON.stringify(langDate));
     },
 
     testChiamata(){
@@ -574,14 +611,7 @@ export default {
             // report the success of our request
             console.log(el.name+ " Successs");
               console.log("INDEX E ARR LENGH" +index+  " "+this.mediaArray.length);
-              if(index==this.mediaArray.length-1){
-                this.saveVersionLang();
-                this.incProgress();
-                if(this.progress==1){
-                  db.close();
-                  console.log("qui chiudevo");
-                }
-              }
+              
               
               /*if(this.progress==1){
                 this.openNext();
@@ -595,10 +625,19 @@ export default {
             
           }else{
                 console.log("file già presente "+name);
-                this.incProgress();
+                //this.incProgress();
                 if(this.last==true){
-                db.close();
+                //db.close();
               }
+          }
+
+          if(index==this.mediaArray.length-1){
+            this.saveVersionLang();
+            this.incProgress();
+            if(this.progress==1){
+              db.close();
+              console.log("qui chiudevo");
+            }
           }
 
 
