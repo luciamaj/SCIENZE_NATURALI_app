@@ -11,6 +11,7 @@ module.exports = {
             start_url: `'.'`,
             display: 'fullscreen',
             theme_color:'#086a9f',
+           // permissions:["unlimitedStorage"],
 
         },
         iconPaths: {
@@ -44,7 +45,6 @@ module.exports = {
             runtimeCaching: [
 
                 {
-
                     urlPattern: new RegExp('/offline'),
 
                     handler: 'staleWhileRevalidate',

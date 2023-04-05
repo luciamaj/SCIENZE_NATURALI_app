@@ -98,6 +98,7 @@ export default defineComponent({
           buttons: [
               {
                   text:this.$t('action.download'),
+                  cssClass:'modal-accept-button',
                   handler: () => {
                       console.log("Accepted");
                       this.emitter.emit('aggiorna','');

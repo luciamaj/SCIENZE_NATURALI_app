@@ -269,6 +269,7 @@ export default {
       buttons: [
         {
           text: "Scarica",
+          cssClass:'modal-accept-button',
           handler: () => {
             console.log("Accepted");
              this.emitter.emit('aggiorna','main');

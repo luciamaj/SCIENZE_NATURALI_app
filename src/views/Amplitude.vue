@@ -509,6 +509,7 @@ export default {
           buttons: [
               {
                   text:this.$t('action.download'),
+                  cssClass:'modal-accept-button',
                   handler: () => {
                       localStorage.setItem('provToOpen', this.$route.params.id);
                       this.emitter.emit('aggiorna','main');

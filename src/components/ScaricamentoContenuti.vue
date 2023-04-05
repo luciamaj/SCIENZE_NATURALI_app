@@ -137,12 +137,21 @@ export default {
     setTimeout(() => {
       if(this.online){
         this.searchMedia();
+        console.log("SET timer 3 minuti");
+        this.timerScaricamento= setTimeout(() => {
+          console.log("scaduto il timer");
+          this.timeoutAlert();
+       
+        },60000*3);
+    
       }else{
         this.networkError();
       }
        
     },1000);
+
     
+   
        
       
   },
@@ -156,6 +165,34 @@ export default {
 
 
   methods:{
+    async timeoutAlert(){
+      const alert = await alertController.create({
+        header: "Problema di scaricamento" ,
+        message: "è stato riscontrato un problema di scaricamento, controlla la connessione e riprova" ,
+        buttons: [
+            
+            {
+                text:"Annulla",
+                role: "cancel",
+                handler: () => {
+                    console.log("Declined the offer");
+                    
+                },
+            },
+            {
+                text:"Riprova",
+                handler: () => {
+                    console.log("Riprovo");
+                    this.saveinDB();
+                    
+                },
+            },
+        ],
+      });
+      await alert.present();
+    },
+  
+
     copyVLangs(vLangs){
       this.vLangs=vLangs;
     },
@@ -287,14 +324,14 @@ export default {
     console.log("->>", JSON.parse(schede));
     let counter=1;
     this.mediaCounter();
-    this.getvideo(this.$store.getters.pubblication.img);
+    this.getMedia(this.$store.getters.pubblication.img);
     jsonSchede.forEach((scheda, index) => {
       console.log("n° ",counter++ )
       if(this.quotaExcided==false){
         if(scheda.img!=null){
           this.mediaCounter();
         // this.getmedia(scheda.img)
-            this.getvideo(scheda.img)
+            this.getMedia(scheda.img)
         }else{
           console.log("Non ci sono immagini per la scheda ")
         }
@@ -303,18 +340,18 @@ export default {
         if(contenuto.audio!=null){
             this.mediaCounter();
         // this.getmedia(contenuto.audio);
-          this.getvideo(contenuto.audio);
+          this.getMedia(contenuto.audio);
             console.log("Getaudio ")
         }else if(contenuto.video!=null){
             this.mediaCounter();
         // this.getmedia(contenuto.audio);
-          this.getvideo(contenuto.video);
+          this.getMedia(contenuto.video);
           console.log("Getvideo ")
         }else{
             console.log("Non ci sono Media per la scheda ")
         }
 
-         console.log('index', index, jsonSchede.length )
+        // console.log('index', index, jsonSchede.length )
         if(index==jsonSchede.length-1){
           this.last=true;
           console.log('entro è last')
@@ -368,7 +405,7 @@ export default {
 
     },
 
-    getvideo(name){
+    getMedia(name){
            
       const mediaRequest = fetch(this.$store.getters.baseUrl+"/upload/"+name).then(response => response.blob()).catch(err => {console.error(err); console.log("sono in errore"); alert('Errore nello scaricamnto');});
       mediaRequest.then(blob => {
@@ -466,6 +503,7 @@ export default {
               if(this.progress==1){
                 db.close();
                 console.log("qui chiudevo");
+                clearTimeout(this.timerScaricamento);
               }
               /*if(this.progress==1){
                 this.openNext();
@@ -637,6 +675,7 @@ export default {
             if(this.progress==1){
               db.close();
               console.log("qui chiudevo");
+              clearTimeout(this.timerScaricamento);
             }
           }
 

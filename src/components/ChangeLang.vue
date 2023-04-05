@@ -84,16 +84,6 @@ export default ({
   computed:{
 
     
-    versionLangs(){
-       
-      let versionLangs= [];
-        console.log("linguee ", localStorage.getItem('versionLangs'))
-        versionLangs=  JSON.parse(localStorage.getItem('versionLangs'));
-        console.log("linguee versionLangs ", versionLangs)
-                
-      return versionLangs
-        
-    },
     savedLangs:{
         get() {
           console.log("linguee ", localStorage.getItem('savedLangs'))
@@ -141,7 +131,7 @@ export default ({
   mounted(){
     this.savedLangs
     this.remainingLang
-    this.versionLangs;
+   
   
     this.currLang=localStorage.getItem("lang")
      
@@ -150,6 +140,17 @@ export default ({
   },
 
   methods:{
+
+    getversionLangs(){
+       
+       let versionLangs= [];
+         console.log("linguee ", localStorage.getItem('versionLangs'))
+         versionLangs=  JSON.parse(localStorage.getItem('versionLangs'));
+         console.log("linguee versionLangs ", versionLangs)
+          
+    return versionLangs;
+         
+     },
     addLang(lang){
       console.log("ADDO LANG", lang)
       this.savedLangs=lang;
@@ -215,6 +216,7 @@ export default ({
         buttons: [
           {
             text: this.$t('action.download'),
+            cssClass:'modal-accept-button',
             handler: () => {
               console.log("Accepted");
               if(window.navigator.onLine){
@@ -266,6 +268,7 @@ export default ({
                         },
                         {
                             text:this.$t('action.download'),
+                            cssClass:'modal-accept-button',
                             handler: () => {
                                 console.log("Accepted");
                                 this.emitter.emit('aggiorna', "menu");
@@ -290,7 +293,7 @@ export default ({
 
     checkVersion(lang){
       const currentVersion=this.datetoVersion(this.pubblication.pubblicazione);
-      const langVersion=this.versionLangs.find(el=> el.lang==lang).vers;
+      const langVersion=this.getversionLangs().find(el=> el.lang==lang).vers;
 
       if(currentVersion>langVersion){
         console.log("LA LINGUA NON è AGGIORNATA"); 
@@ -306,13 +309,12 @@ export default ({
            this.$i18n.locale = lang;
            localStorage.setItem('lang', lang);
         }*/
-        this.checkVersion(lang);
-
         if (localStorage.getItem('lang')!= lang) {
           localStorage.setItem('lang', lang);
           this.currLang=lang;
           this.$i18n.locale = lang;
         }
+        this.checkVersion(lang);
     },
     add(lang){
 
@@ -328,6 +330,7 @@ export default ({
       console.log("REMAINING ",  this.remaining.length);
 
     },
+  
     searchMedia(lang){
       const schede=localStorage.getItem('dataMostra');
       const jsonSchede=JSON.parse(schede);
@@ -442,6 +445,9 @@ export default ({
     bottom: 5vh;
     width: 91vw;
  }
+ .modal-accept-button{
+  color: var(--ion-color-primary);
+}
 
 
 

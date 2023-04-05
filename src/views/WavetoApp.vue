@@ -60,15 +60,11 @@ import {
   
 } from "@ionic/vue";
 
-import { data } from "../data/data";
 import Scanner from "./Scanner.vue";
-import Menu from "./Menu.vue";
 import Nav from "../components/Nav.vue";
-import factory from "ggwave";
 import { Plugins } from "@capacitor/core";
 import Subtitles from "./Subtitles.vue";
 import { useRouter } from "vue-router";
-import {AudioProcessing} from "../audioWorklet/audioWorker.js";
 import common from "../js/common"
 const { Storage } = Plugins;
 
@@ -492,6 +488,7 @@ export default {
               },
                {
                   text:this.$t('action.app'),
+                  cssClass:'modal-accept-button',
                   handler: () => {
                     console.log(this)
                    this.goToApp();
@@ -687,6 +684,9 @@ ion-content {
     height: 100vw;
     transform: rotate(90deg);
   }
+}
+.modal-accept-button{
+  color: var(--ion-color-primary);
 }
 
 </style>

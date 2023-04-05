@@ -117,6 +117,7 @@ export default defineComponent({
       this.infoPubbl.lang= this.infoPubbl.lang.map(element => {
         return element.toLowerCase();
       });
+      this.infoPubbl.lingua_default=this.infoPubbl.lingua_default.toLowerCase();
       this.mostra=info.mostra;
       this.pubblicazione=info.pubblicazione;
       this.savedPubblication=JSON.parse(localStorage.getItem('pubblication'));
@@ -334,12 +335,13 @@ export default defineComponent({
             const contenuto=scheda.content.find(el=> el.lang==lang);
               // console.log("Cont ", contenuto);
               console.log("Conttype ", contenuto.type);
-              const contenutodefault=scheda.content.find(el=> el.lang==this.conf.langDefault);
+             // const contenutodefault=scheda.content.find(el=> el.lang==this.conf.langDefault);
+             const contenutodefault=scheda.content.find(el=> el.lang==this.infoPubbl.lingua_default);
               if(contenuto.type==null) {
                     
                 console.log("Non ci sono Media per la scheda  in "+ lang)
               
-                console.log("contenutoita "+ contenutodefault.type)
+                console.log("contenutoDefault ", contenutodefault)
                 if(contenutodefault.type!=null){
                   contenuto.type=contenutodefault.type
                 }
@@ -481,6 +483,6 @@ ion-header ion-toolbar:first-of-type {
 }
 
 .modal-accept-button{
-  color: var(--ion-color-primary);
+  color: var(--ion-color-secondary)!important;
 }
 </style>

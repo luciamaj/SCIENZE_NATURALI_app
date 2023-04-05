@@ -6,36 +6,53 @@
         <ion-buttons slot="start" >
           <ion-back-button ></ion-back-button>
         </ion-buttons>
-        <ion-buttons slot="end" >
-          <ion-button color="#efecec40"  @click="openDebug()" >
-                <ion-icon  size="large" name="bug-outline" class="debug-icon"></ion-icon>
-                
-              </ion-button>
-        </ion-buttons>
       </ion-toolbar> 
     </ion-header>
-
+  
     <ion-content :fullscreen="true">
    
       <div class="vertical-center ">
         <div class="center">
-          <div class="player-test">
+          <div class="containInfo">
+            <h5>Storage &amp; Quota Test</h5>
+    
+          <p>
+            <b>Quota:</b>
+            <span id="quota">{{quota}}</span><br>
+            <b>Used:</b>
+            <span id="used">{{used}}</span><br>
+            <b>Remaining:</b>
+            <span id="remaining">{{remaining}}</span>
+          </p>
+          <p>
+            <b>Items Stored:</b> <br>
+            <code id="countIDB">{{countIDB}}</code> (IndexedDB) <br>
+            <code id="countCache">{{ countCache }}</code> (Cache API) <br>
+            <code id="countLocalStorage">{{ countLocalStorage }}</code> (LocalStorage) <br>
+      
+          </p>
+            <div class="" id=""><b>INDEXDB</b></div>
+            {{ this.media }}
+            <div class="" id="">size </div>
+            <div class="infoPubb" id=""><b>Pubblicazione</b> 
+              {{ store}}
+            </div>
+            <div class="infoVersLang" id=""><b>Versioni Lingue</b>
+              {{ vLang}}
+            </div>
+            
+            <div class="infoSchede" id="">{{schede}}</div>
+            
+
+            <div class="buttons-test">
+            
+            </div>
 
           </div>
+          
 
          
-          <div class="test-text-container" id="istruzioni">{{$t('menu.test.testoIstruzioni')}}</div>
-
-          <!--div class="logo-container" id="anima" hidden><img class="gif-listen" src="assets/background/anima.gif"/></div-->
-          <div class="buttons-test">
-          <ion-button expand="block" class="capture-btn-test" @click="callJava" id="captureStartTest">{{$t('menu.test.inizioTest')}}</ion-button>
-            <ion-button expand="block" class="capture-btn-test" id="captureStopTest" hidden>
-            <ion-badge  mode="ios" id="badge" color="danger" class="listen">0</ion-badge>
-            {{$t('menu.test.stopTest')}}</ion-button>
-
-       
-         
-          </div>
+          
         </div>
       </div>
     </ion-content>
@@ -48,20 +65,27 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
-  IonButton,
   modalController,
   alertController,
-  IonBadge
+ 
   //IonModal
   
 } from "@ionic/vue";
 import Amplitude from "amplitudejs";
 import Scanner from "../views/Scanner.vue";
 import Nav from "./Nav.vue";
+import factory from "ggwave";
 import { Plugins } from "@capacitor/core";
-import Debug from '@/components/DebugPage.vue';
 import { useRouter } from "vue-router";
 import common from "../js/common"
+import { get, set, clear, keys, del } from 'idb-keyval';
+      window.idbKV = {
+        get: get,
+        set: set,
+        clear: clear,
+        keys: keys,
+        del: del
+      };
 const { Storage } = Plugins;
 
 
@@ -76,6 +100,7 @@ export default {
      fileUrl:"assets/sounds/TEST.wav",
      msgUltrasuoni:"TEST",
      inTest:true,
+     media:[],
     };
   },
 
@@ -108,41 +133,17 @@ export default {
  
   mounted(){
     this.store=JSON.parse(localStorage.getItem('pubblication'));
-    this.captureStartTest = document.getElementById("captureStartTest");
-    this.captureStopTest = document.getElementById("captureStopTest");
+    this.schede=JSON.parse(localStorage.getItem('dataMostra'));
+    this.vLang=JSON.parse(localStorage.getItem('versionLangs'));
+    this.getDBInfo();
+
+    this.updateCount();
+    this.updateQuota();
     /*this.anima=document.getElementById("anima");
     this.mostra=document.getElementById("mostra");*/
 
-     window["answMessage"] = (tag) => {
-      if(this.inTest){
-        this.answMessageTest(tag);
-        console.log("in test, arrivato "+ tag);
-      }else{
-       
-        console.log("Test FALSE "+ tag);
-
-     
-      }
+    
       
-    };
-
-    this.captureStopTest.addEventListener("click", ()=> {
-      try{
-        AndroidObject.executeJavaCode(false);//aggiungere parametro  false
-      }catch(e){
-        console.log(e);
-      }
-
-      clearTimeout(this.waitingTime);
-      this.schedaState(false);
-      this.decodedValue = "stopped recording";
-      this.captureStartTest.hidden = false;
-      this.captureStopTest.hidden = true;
-      /*this.anima.hidden=true;
-      this.mostra.hidden=false;*/
-      
-    });
-    this.ampliInit();
    
     
   },
@@ -159,8 +160,7 @@ export default {
     IonToolbar,
     IonTitle,
     IonContent,
-    IonButton,
-    IonBadge
+   
     
     //IonModal
   
@@ -203,10 +203,9 @@ export default {
 
   },
   created(){
-    this.goToApp=common.openApp;
+   
     this.showOptions=common.showOptions;
-    this.setActiveTour=common.setActiveTour;
-    this.getNotificationState=common.getNotificationState;
+   
 
     this.emitter.on('changeVersion', _ => {
       this.showOptions();
@@ -217,22 +216,117 @@ export default {
       this.notification=false;
     });
 
-    this.getNotificationState().then(state=>{this.notification=state});
-
-
-
+ 
    
   },
 
 
 
   methods: {
-    
-    openDebug(){
-      const ionNav = document.querySelector('ion-nav');
-      ionNav.push(Debug,{ title: 'Test silence tag' }  );
-    },
 
+    updateQuota() {
+      navigator.storage.estimate().then((quota) => {
+        // console.log('quota', quota.quota);
+        const remaining = quota.quota - quota.usage;
+        this.quota = this.formatToMB(quota.quota);
+        this.used =  this.formatToMB(quota.usage);
+        this.remaining=  this.formatToMB(remaining);
+        this.countIDB=this.formatToMB(quota.usageDetails.indexedDB);
+        this.countCache=this.formatToMB(quota.usageDetails.caches);
+      }).catch((err) => {
+        console.error('*** Unable to update quota ***', err);
+      }).then(() => {
+        setTimeout(() => {
+          this.updateQuota();
+        }, 500);    
+      });
+
+    },
+    formatToMB(val) {
+      const ONE_MEG = 1000000;
+      const opts = {
+        maximumFractionDigits: 0,
+      };
+      let result;
+      try {
+        result = new Intl.NumberFormat('en-us', opts).format(val / ONE_MEG);
+      } catch (ex) {
+        result = Math.round(val / ONE_MEG);
+      }
+      return `${result} MB`;
+    },
+    updateCount() {
+    this.countLocalStorage = localStorage.length;
+    this.countSessionStorage = sessionStorage.length;
+    console.log("idbKV", idbKV);
+    //this.countIDB=navigator.indexedDB.estimate();
+    //this.countCache=navigator.caches.estimate();
+    /*idbKV.keys()
+      .then((keys) => {
+      
+        this.countIDB = keys.length;
+       
+      }).catch((err) => {
+        console.error('*** Unable to update IDB count ***', err);
+      }).then(() => {
+        return caches.open('cache/v1');
+      }).then((cache) => {
+        return cache.keys();
+      }).then((keys) => {
+        console.log("entro keyscache");
+        this.countCache = keys.length; 
+      }).catch((err) => {
+        console.error('*** Unable to update Cache count ***', err);
+      }).then(() => {
+        this.elemCountTotal = this.countIDB + this.countCache + this.countLocalStorage + this.countSessionStorage;    
+        setTimeout(() => {
+          this.updateCount();
+        }, 500);
+      });*/
+  },
+
+
+
+
+    getDBInfo(){
+
+      this.request = indexedDB.open('mediaStore', global.dbVersion);
+        this.request.onsuccess = event => {
+          this.db = event.target.result;
+          if(this.db){
+            console.log("ildb ",this.db)
+          }else{
+            alert("no DB")
+          }
+          const lingue=["it",'en','es','fr','de'];
+          lingue.forEach(lang=>{
+            const transaction = this.db.transaction(['media-'+lang]);
+            transaction.onerror= event => {
+              alert('notransaction ', event);
+            
+            };
+
+            const media = transaction.objectStore('media-'+lang);
+            const reqM = media.getAllKeys();
+              
+              reqM.onsuccess=event=>{
+                const medialist=event.target.result;
+                if(medialist.length>0){
+                  this.media.push(lang);
+                  this.media.push(medialist);
+                }
+                
+              }
+              
+            
+          })
+          
+          
+         
+    }
+  },
+
+    
     async openModal  ()  {
       if(this.$store.getters.conf.interactionMode=="mix"){
         if(this.tour==true){
@@ -273,132 +367,7 @@ export default {
       return modal.present();
     },
   
-  async getTour() {
-    const ret = await Storage.get({ key: 'tourActive' });
-    const tour = JSON.parse(ret.value);
-    if(tour){
-       return tour.active;
-    }
-    else{
-      console.log("Not existing");
-      return null;
-    }
-   
-  },
-  async schedaState(state) {
-    console.log("openScheda");
-    await Storage.set({
-      key: 'openScheda',
-      value:state
-    });
-  },
-  async getSchedaState() {
-    const ret = await Storage.get({ key: 'openScheda' });
-    const scheda = JSON.parse(ret.value);
-    return scheda;
-  }, 
 
-  ampliInit(){
-      Amplitude.init({
-        /* eslint-disable */
-        songs: [
-          {
-            name: "",
-            artist: "",
-            album: "",
-            url: this.fileUrl,
-            cover_art_url: "/assets/icon/icon.png"
-          }
-        ],
-        callbacks: {
-          ended: ()=>{
-            console.log("Audio has been stopped.");
-            console.log("Document " + document.visibilityState)
-            /*if(document.visibilityState=="visible"){
-              this.setTimer();
-            }else{
-              this.back();
-            }*/
-            
-            
-
-          }
-        }
-      });
-      this.audio=Amplitude.getAudio();
-      Amplitude.play();
-      Amplitude.setRepeat( true );
-
-      /*document.getElementById("song-played-progress-1")
-      .addEventListener("click", function(e) {
-        if (Amplitude.getActiveIndex() == 0) {
-          var offset = this.getBoundingClientRect();
-          var x = e.pageX - offset.left;
-
-          Amplitude.setSongPlayedPercentage(
-            (parseFloat(x.toString()) /
-              parseFloat(this.offsetWidth.toString())) *
-              100
-          );
-        }
-      });*/
-
-    },
-
-  openFirst() {
-      menuController.enable(true, 'first');
-      menuController.open('first');
-    },
-
-    
-   
-       
-    callJava(){
-     
-     
-      try{
-         AndroidObject.executeJavaCode(true);  //aggiungere parametro  true
-          this.setActiveTour();
-          this.decodedValue = "recording";
-          this.captureStartTest.hidden = true;
-          this.captureStopTest.hidden = false; 
-         /* this.anima.hidden=false;
-          this.mostra.hidden=true;*/
-          this.waitingTime=setTimeout(() => {
-            this.presentAlert();
-        }, 10000);
-      }catch(e){
-        clearTimeout(this.waitingTime);
-      //  console.log("catch "+e);
-      // alert("catch "+e);
-       if(typeof AndroidObject=="undefined"){
-           this.openAppModal();
-       }else{
-         alert("An error occurred, please restart the app")
-       }
-      
-
-      }
-     
-
-    },
-    answMessageTest(tag){
-     clearTimeout(this.waitingTime);
-      const res = tag
-      if (res==this.msgUltrasuoni) {
-          this.captureStopTest.click();
-          this.alertCpatibilità(true);
-            //this.decodedValue = res;
-            
-      }
-      else{
-        this.captureStopTest.click();
-        this.alertCpatibilità(false);
-      }
-
-
-    },
-   
     async openAppModal() {
      
       const alert = await alertController.create({
@@ -451,27 +420,12 @@ export default {
       alert.buttons = ['Riprova'];
     }
 
-    
-   
 
     document.body.appendChild(alert);
     return alert.present();
   },
 
 
-    
-
-    async setObject(param) {
-      await Storage.set({
-        key: "scheda",
-        value: JSON.stringify({
-          path: param
-        })
-      });
-    },
-    async removeObj() {
-      await Storage.remove({ key: "scheda" });
-    },
   }
 };
 </script>
@@ -496,6 +450,13 @@ ion-content {
   height: 92vh;
   width: 100%;
 }
+
+.containInfo{
+  padding: 15px;
+  font-size: 15px;
+  overflow: scroll;
+
+}
 .main-title{
   width: 65%;
   font-size: 1em;
@@ -514,22 +475,22 @@ ion-content {
   line-height: 2em;
 }
 
-.buttons-test{
-  width: 100%;
-  text-align: center;
-  top:50vh;
-  position: absolute;
-  display: flex;
-  padding: 0 6vw;
+.infoVersLang{
+  margin: 20px 10px;
 }
-.view-wwave-container {
-  background-color: white;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-position: center;
-  background-size: cover;
-  background-blend-mode: saturation;
+.infoPubb{
+ margin: 20px 10px;
 }
+.infoSchede{
+  margin: 20px 10px;
+    width: 100%;
+    scroll-behavior: smooth;
+    overflow: scroll;
+    font-size: 14px;
+    height: 248px;
+
+}
+
 
 
 .title {
@@ -602,9 +563,8 @@ ion-content {
   color: transparent;
 
 }
-.debug-icon{
-  
-  color: #d4d4d45e;
+.showNotification{
+  visibility: visible;
 }
 
 .listen{
