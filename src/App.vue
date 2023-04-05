@@ -238,12 +238,12 @@ export default defineComponent({
     },
     scaricaInfoMostra(){
       this.getSchede((schede) => {
-      
-        console.log("schede info", schede);
+        //print Info
+        //console.log("schede info", schede);
         const retrivedinfo = schede;
         const filtered= retrivedinfo.filter( x => (x.mostra == this.mostra));
       
-        console.log("Filtered " , filtered);
+        //console.log("Filtered " , filtered);
         
         const JSONstring= JSON.stringify(this.evendata(filtered));
         
@@ -255,12 +255,12 @@ export default defineComponent({
     aggiornaInfo(from){
      
       this.getSchede((schede) => {
-      
-        console.log("schede info", schede);
+       //ptint schede 
+        //console.log("schede info", schede);
         const retrivedinfo = schede;
         const filtered= retrivedinfo.filter( x => (x.mostra == this.mostra));
-      
-        console.log("Filtered " , filtered);
+        //ptint schede filtrate
+        //console.log("Filtered " , filtered);
         const newSchede=this.evendata(filtered)
         const JSONstring= JSON.stringify(newSchede);
         if(this.mostraCambiata==false){
@@ -335,7 +335,7 @@ export default defineComponent({
             const contenuto=scheda.content.find(el=> el.lang==lang);
               // console.log("Cont ", contenuto);
               console.log("Conttype ", contenuto.type);
-             // const contenutodefault=scheda.content.find(el=> el.lang==this.conf.langDefault);
+           
              const contenutodefault=scheda.content.find(el=> el.lang==this.infoPubbl.lingua_default);
               if(contenuto.type==null) {
                     

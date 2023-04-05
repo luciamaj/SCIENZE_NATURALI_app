@@ -19,14 +19,20 @@ self.addEventListener('install', event => {
 		'/assets/icon/playerIcon/next.svg',
 		'/assets/background/logo.png',
 		'/raccolta',
-		'/audio/E01',
-		'/video/E01',
+		'/audio/E01A',
+		'/video/E01A',
 		'/index.html',
+		'/soloImg/E01A',
+		'/audiosync/01/00000',
+		'/open-scanner',
 		'/dataoversound-swi/service/rest/v1/mostra-attiva',
-		"/config/config.json"
+		"/config/config.json",
+		'https://cdn.jsdelivr.net/npm/jsqr@1.3.1/dist/jsQR.min.js',
+		'js/chunk-106fab1a.ade32bf8.js.map'
 		]);
 	})
 	);
+	//return self.skipWaiting(); 
 });
 
 const baseUrl="";
@@ -64,13 +70,13 @@ var netFirstRequests = new RegExp('(' + [
 		
 		].join('(\/?)|\\') + ')$')
 	  
-
+//Tolto il commento a questa parte 
 /*self.addEventListener('fetch', event => {
 	// exclude requests that start with chrome-extension://
 	if (event.request.url.startsWith('chrome-extension://')) return;
 	
 	event.respondWith(
-		caches.open(latest.cache).then(cache => {
+		caches.open(latest.cache+latest.version).then(cache => {
 			return cache.match(event.request).then(response => {
 				return response || fetch(event.request).then(networkResponse => {
 					cache.put(event.request, networkResponse.clone());
@@ -146,13 +152,28 @@ function fetchorCacheMA(event){
 function cacheorFetch(event) {
 return caches.match(event.request)
 	.then((cached)=> {
-	var networked = fetch(event.request)
-		.then(fetchedFromNetworkAndPutInCache(event)).catch( error=> console.log("error ", error))
-	return cached || networked
+		
+		if(cached){
+			console.log(" cached", cached);
+			return cached 
+			
+		}else{
+			var networked = fetch(event.request)
+			.then(fetchedFromNetworkAndPutInCache(event)).catch( error=> console.log("error scaricamento dalla rete ", error))
+			return  networked
+			
+		}
+	
+		/*return cached || fetch(event.request).then(networkResponse => {
+			console.log(" non era in cache cerco in rete", );
+			cache.put(event.request, networkResponse.clone());
+			return networkResponse;
+		})*/
 	})
 }
   
 function fetchedFromNetworkAndPutInCache(event) {
+	console.log(" non era in cache cerco in rete", ); 
 return function transform(response) {
 	var cacheCopy = response.clone()
 	caches.open(latest.cache+latest.version)
@@ -178,19 +199,30 @@ self.addEventListener('fetch', onFetch);
 self.addEventListener('activate', event => {
 	event.waitUntil(
 	caches.keys().then(cacheNames => {
-		return Promise.all(
-		cacheNames.filter(cacheName => {
+		console.log("nomii ", cacheNames);
+		return
+		/*return Promise.all(
+			cacheNames.map(cacheName => {
+				if(cacheName === latest.cache+latest.version){
+					console.log("caheuguali");
+					return;
+				}
+				console.log("cache delete");
+				return caches.delete(cacheName);
+			})
+		/*cacheNames.filter(cacheName => {
 			if (cacheName === latest.cache+latest.version) {
 				console.log("caheuguali");
 			return false;
 			}
 
 			return true;
-		})/*.map(cacheName => {
+		}).map(cacheName => {
 			console.log("cache delete");
 			return caches.delete(cacheName)
 		})*/
-		);
+	//	);*/
 	})
 	);
+	event.waitUntil(clients.claim());
 });
