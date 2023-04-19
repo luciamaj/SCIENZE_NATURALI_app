@@ -405,6 +405,7 @@ div.player img.album-art {
   float: left;
   padding: 5px 29px;
  /* max-height: 40vh;*/
+ height: 33vh;
   overflow: overlay;
  /* margin-top: 2vh;*/
   margin-bottom: 2vh;
@@ -415,8 +416,8 @@ div.player img.album-art {
 }
 
 .content-scheda{
-     overflow: overlay;
-    height: 57vh;
+     /*overflow: overlay;*/
+    height: 45vh;
 }
 /*
   Small only

@@ -232,7 +232,7 @@ export default {
     ///  set get storage
 
     async updateNotification(state) {
-      console.log("Update");
+      console.log("Update ", state);
       await Storage.set({
         key: 'update',
         value:state
@@ -275,5 +275,15 @@ export default {
     },
 
     
+    async checkOnlineStatus () {
+      try {
+        const online = await fetch("/1pixel.png");
+        console.log("online", online);
+        return online.status >= 200 && online.status < 300; // either true or false
+      } catch (err) {
+        return false; // definitely offline
+      }
+    },
+
 
 };

@@ -260,7 +260,9 @@ export default {
       this.notification=false;
     });
 
-    this.getNotificationState().then(state=>{this.notification=state});
+    this.getNotificationState().then(state=>{
+      console.log("notification", state );
+      this.notification=state});
 
 
 

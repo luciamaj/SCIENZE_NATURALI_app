@@ -58,6 +58,7 @@ function increaseV(){
 
 var ignoreRequests = new RegExp('(' + [
 	'/upload\/(.*)',
+	'/1pixel.png'
 	].join('(\/?)|\\') + ')$')
 
 var netFirstRequests = new RegExp('(' + [

@@ -118,6 +118,7 @@ export default ({
     },
     created(){
         this.networkError=common.networkError;
+        this.checkStatus=common.checkOnlineStatus;
          this.emitter.on('fineAggiornamento', _ => {
            this.notificationState=false;
         });
@@ -166,7 +167,9 @@ export default ({
         },
 
         async showOptions() {
-            if(window.navigator.onLine){
+            const online= await this.checkStatus();
+            console.log("online STATUS ",online);
+            if(online){
                  const alert = await alertController.create({
                     header: this.$t('update.title') ,
                     message: this.$t('update.text') ,
@@ -186,7 +189,6 @@ export default ({
                                 console.log("Accepted");
                                 this.emitter.emit('aggiorna', "menu");
                                 this.pushPage("aggiorna");
-                            
                             },
                         },
                     ],

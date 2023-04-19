@@ -122,8 +122,10 @@ export default ({
   created(){
     this.datetoVersion=common.datetoVersion;
     this.networkError=common.networkError;
+    this.checkStatus=common.checkOnlineStatus;
 
     this.emitter.on('addLang', (lang)=>{
+      this.remaining=this.remaining.filter(item => item !== lang);
       this.addLang(lang);
     })
 
@@ -217,13 +219,15 @@ export default ({
           {
             text: this.$t('action.download'),
             cssClass:'modal-accept-button',
-            handler: () => {
+            handler: async() => {
               console.log("Accepted");
-              if(window.navigator.onLine){
+              const online= await this.checkStatus();
+              console.log("onlòineSTATUS ",online);
+              if(online){
                 const pubblication=JSON.parse(localStorage.getItem("pubblication"))
                 const suppLang=pubblication.lang.find(el=> el==lang);
                   //this.savedLangs=lang;
-                  this.remaining=this.remaining.filter(item => item !== lang);
+                  //this.remaining=this.remaining.filter(item => item !== lang);
                 if(suppLang){
                     //this.searchMedia(lang);
                   // this.$router.replace({ path: "/scarica/"+ lang});
@@ -331,68 +335,7 @@ export default ({
 
     },
   
-    searchMedia(lang){
-      const schede=localStorage.getItem('dataMostra');
-      const jsonSchede=JSON.parse(schede);
-      let contenuto;
-      console.log("->>", JSON.parse(schede));
-      jsonSchede.forEach(scheda => {
-        contenuto=scheda.content.find(el=> el.lang==lang)
-        console.log("Cont ", contenuto);
-        console.log("Conttype ", contenuto.type);
-       if(contenuto.type=="audio") {
-           /*this.mediaCounter();*/
-          this.getmedia(contenuto.audio);
-           console.log("Getaudio ")
-        }else if(contenuto.type=="video"){
-        /*  this.mediaCounter();*/
-          this.getmedia(contenuto.video);
-          console.log("Getvideo ")
-        }else{
-          console.log("Non ci sono Media per la scheda  in "+ lang)
-          if(lang!= "it"){
-            const contenutoit=scheda.content.find(el=> el.lang=='it');
-
-             console.log("contenutoita "+ contenutoit.type)
-            if(contenutoit.type=="audio") {
-              /*this.mediaCounter();*/
-              this.getmedia(contenutoit.audio);
-              console.log("Getaudioita ")
-            }else if(contenutoit.type=="video"){
-            /*  this.mediaCounter();*/
-              this.getmedia(contenutoit.video);
-              console.log("Getvideoita ")
-            }
-          }
-        }
-
-      });
-    },
-
-    getmedia(name){
-     console.log("numero di media "+ this.media );
-     // fetch(this.$store.getters.baseUrl+"/inventario/download.php?id="+name+"&link=1")
-      fetch(this.$store.getters.baseUrl+"/upload/"+name)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status}`)
-        }
-        console.log("OK Resp", response);
-        if(response.status==200){
-           console.log("OK 200");
-        }
-        return response
-      })
-      .catch(error => console.log(error))
-    },
-
-    /*pushPage() {
-      const ionNav = document.querySelector('ion-nav') as any;
-  
-        ionNav.push(scaricamento, { title: 'Changeeee' });
-  
-    
-    },*/
+   
 
   }
 })
