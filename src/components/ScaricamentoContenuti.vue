@@ -200,12 +200,12 @@ export default {
     async errorDownloadAlert(){
       this.alertOpen=true;
       const alert = await alertController.create({
-        header: "Errore di scaricamento" ,
-        message: "è stato riscontrato un problema di scaricamento, controlla la connessione e riprova" ,
+        header: this.$t('scarica.errorconn.title') ,
+        message: this.$t('scarica.errorconn.text'),
         buttons: [
             
             {
-                text:"Annulla",
+                text: this.$t('action.cancel'),
                 role: "cancel",
                 handler: () => {
                   this.alertOpen=false;
@@ -219,7 +219,7 @@ export default {
                 },
             },
             {
-                text:"Riprova",
+                text:this.$t('action.riprova'),
                 cssClass:'modal-accept-button',
                 handler: () => {
                     console.log("Riprovo");
@@ -238,12 +238,12 @@ export default {
     async alertAnnullamento(){
       this.alertOpen=true;
       const alert = await alertController.create({
-        header: "Attenzione" ,
-        message: "I contenuti non sono stati scaricati, l'applicazione può funzionare solo online, riprova più tardi a scaricare per una migliore esperienza" ,
+        header: this.$t('scarica.alertannulla.title'),
+        message: this.$t('scarica.alertannulla.text') ,
         buttons: [
             
             {
-                text:"Salta",
+                text:this.$t('action.salta'),
                 role: "cancel",
                 handler: () => {
                   this.alertOpen=false;
@@ -257,7 +257,7 @@ export default {
                 },
             },
             {
-                text:"Riprova",
+                text:this.$t('action.riprova'),
                 cssClass:'modal-accept-button',
                 handler: () => {
                     console.log("Riprovo");

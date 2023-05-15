@@ -7,7 +7,8 @@ export const es= {
         download:"Descarga",
         app:"Abre la App",
         salta:"Salta",
-        close:"Cierra"
+        close:"Cierra",
+        riprova:"Intentar otra vez"
     },
     onboard:{
         lang:{
@@ -42,7 +43,15 @@ export const es= {
     },
     scarica:{
 		title:"Desacarga los contenidos",							 
-        text:"La APP estará disponible pronto. Puede requerir algunos minutos"
+        text:"La APP estará disponible pronto. Puede requerir algunos minutos",
+        errorconn:{
+            title:"Error de descarga",
+            text:"Se encontró un problema de descarga, verifique su conexión e intente nuevamente"
+        },
+        alertannulla:{
+            title:"Atención",
+            text:"Los contenidos no han sido descargados, la aplicación solo puede funcionar en línea. </br> Vuelva a intentarlo más tarde para descargar para una mejor experiencia"
+        }
     },
     main:{
 

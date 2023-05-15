@@ -7,7 +7,8 @@ export const en= {
         download:"Download",
         app:"Go to App",
         salta:"Skip",
-        close:"Close"
+        close:"Close",
+        riprova:"Try again"
     },
     onboard:{
         lang:{
@@ -42,7 +43,15 @@ export const en= {
     },
     scarica:{
 		title:"Download the contents",							 
-        text:"The application will be available shortly. This may take some time."
+        text:"The application will be available shortly. This may take some time.",
+        errorconn:{
+            title:"Download error",
+            text:"A download problem was encountered, please check your connection and try again"
+        },
+        alertannulla:{
+            title:"Attention",
+            text:"The contents have not been downloaded, the application can only work online.</br> Please try again later to download for a better experience"
+        }
     },
     main:{
 

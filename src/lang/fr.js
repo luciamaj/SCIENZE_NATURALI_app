@@ -7,7 +7,8 @@ export const fr ={
         download:"Télécharger",
         app:"Aller sur l'appli",
         salta:"Sauter",
-        close:"Close"
+        close:"Close",
+        riprova:"Réessayer"
     },
     onboard:{
         lang:{
@@ -42,7 +43,15 @@ export const fr ={
     },
     scarica:{
 		title:"Téléchargement de contenu",							 
-        text:"L'application sera disponible sous peu, cela peut prendre un certain temps."
+        text:"L'application sera disponible sous peu, cela peut prendre un certain temps.",
+        errorconn:{
+            title:"Erreur de téléchargement",
+            text:"Il y a eu un problème de téléchargement, veuillez vérifier votre connexion et réessayer"
+        },
+        alertannulla:{
+            title:"Attention",
+            text:"Le contenu n'a pas été téléchargé, l'application ne peut fonctionner qu'en ligne. Veuillez réessayer plus tard pour télécharger pour une meilleure expérience"
+        }
     },
     main:{
 

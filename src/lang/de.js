@@ -7,7 +7,8 @@ export const de= {
         download:"Herunterladen",
         app:"Gehe zur App",
         salta:"Überspringen",
-        close:"Close"
+        close:"Close",
+        riprova:"Versuch es noch einmal"
     },
     onboard:{
         lang:{
@@ -41,7 +42,15 @@ export const de= {
     },
     scarica:{
 		title:"Laden Sie den Inhalt herunter",							 
-        text:"Die Anwendung wird in Kürze verfügbar sein, dies kann einige Zeit dauern."
+        text:"Die Anwendung wird in Kürze verfügbar sein, dies kann einige Zeit dauern.",
+        errorconn:{
+            title:"Download Fehler",
+            text:"Beim Herunterladen ist ein Problem aufgetreten. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut"
+        },
+        alertannulla:{
+            title:"Download Fehler",
+            text:"Beim Herunterladen ist ein Problem aufgetreten. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut"
+        }
     },
     main:{
 

@@ -10,7 +10,8 @@ export const it = {
         download:"Scarica",
         app:"Apri in App",
         salta:"Salta",
-        close:"Chiudi"
+        close:"Chiudi",
+        riprova:"Riprova"
     },
     onboard:{
         lang:{
@@ -45,7 +46,15 @@ export const it = {
     },
     scarica:{
 		title:"Scaricamento dei contenuti",
-        text:"A breve l'applicazione sarà disponibile, l'operazione può richiedere qualche minuto."
+        text:"A breve l'applicazione sarà disponibile, l'operazione può richiedere qualche minuto.",
+        errorconn:{
+            title:"Errore nel download",
+            text:"Si è verificato un problema nello scaricamento, controlla la connessione e riprova"
+        },
+        alertannulla:{
+            title:"Attenzione",
+            text:"I contenuti non sono stati scaricati, l'applicazione può funzionare solo online. Riprova più tardi a scaricare per una migliore esperienza"
+        }
     },
     main:{
 
