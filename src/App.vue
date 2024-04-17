@@ -71,6 +71,8 @@ export default defineComponent({
     this.setInactiveTour=common.setInactiveTour;
     this.updateNotification=common.updateNotification;
     this.getNotificationState=common.getNotificationState;
+    this.getSchede=common.getSchede;
+    this.getinfo=common.getinfo;
   
     window.document.addEventListener("visibilitychange", ()=> { this.mostra
       console.log('VISIBILITY CHANGE', window.document.visibilityState);
@@ -104,15 +106,22 @@ export default defineComponent({
       this.aggiorna(from);
     });
 
-  },
- 
-  mounted() {
-       this.currLang=localStorage.getItem('lang');  
-    const routerOuteletRef = ref(null);
-    provide("routerOutlet", routerOuteletRef);
-    this.setInactiveTour();
+
+
+
     this.getinfo((info) => {
       console.log("info", info);
+      if(info.percorsi){
+       common.getPercorsi((perc)=>{
+          console.log("perc fromswi??", perc)
+          this.percorsiMosrtra = perc.filter(item => info.percorsi.includes(item.percorso));
+          console.log("perc filtrati",  this.percorsiMosrtra);
+          localStorage.setItem('percorsi', JSON.stringify(this.percorsiMosrtra));
+          //devo filtrare i percorsi per quelli compresi nella mostra
+        })
+
+      }
+     
       this.infoPubbl=info;
       this.infoPubbl.lang= this.infoPubbl.lang.map(element => {
         return element.toLowerCase();
@@ -120,12 +129,15 @@ export default defineComponent({
       this.infoPubbl.lingua_default=this.infoPubbl.lingua_default.toLowerCase();
       this.mostra=info.mostra;
       this.pubblicazione=info.pubblicazione;
+      
+      
       this.savedPubblication=JSON.parse(localStorage.getItem('pubblication'));
      
       if(this.savedPubblication==null ||this.savedPubblication=="" ){
         console.log("versione VUOTA");
          
         localStorage.setItem('pubblication', JSON.stringify(info));
+        
         this.scaricaInfoMostra();
        
     
@@ -144,11 +156,65 @@ export default defineComponent({
       
       }
    
-        const ogg=localStorage.getItem('dataMostra')
-
-
-        console.log("schede salvate "+ ogg);
     });
+
+  },
+ 
+  mounted() {
+    this.currLang=localStorage.getItem('lang');  
+    const routerOuteletRef = ref(null);
+    provide("routerOutlet", routerOuteletRef);
+    this.setInactiveTour();
+    /*this.getinfo((info) => {
+      console.log("info", info);
+      if(info.percorsi){
+       common.getPercorsi((perc)=>{
+          console.log("perc fromswi??", perc)
+          this.percorsiMosrtra = perc.filter(item => info.percorsi.includes(item.percorso));
+          console.log("perc filtrati",  this.percorsiMosrtra);
+          localStorage.setItem('percorsi', JSON.stringify(this.percorsiMosrtra));
+          //devo filtrare i percorsi per quelli compresi nella mostra
+        })
+
+      }
+     
+      this.infoPubbl=info;
+      this.infoPubbl.lang= this.infoPubbl.lang.map(element => {
+        return element.toLowerCase();
+      });
+      this.infoPubbl.lingua_default=this.infoPubbl.lingua_default.toLowerCase();
+      this.mostra=info.mostra;
+      this.pubblicazione=info.pubblicazione;
+      
+      
+      this.savedPubblication=JSON.parse(localStorage.getItem('pubblication'));
+     
+      if(this.savedPubblication==null ||this.savedPubblication=="" ){
+        console.log("versione VUOTA");
+         
+        localStorage.setItem('pubblication', JSON.stringify(info));
+        
+        this.scaricaInfoMostra();
+       
+    
+      }else{
+        if(this.savedPubblication.pubblicazione!= this.pubblicazione){
+          console.log("versione cambiata")///controllare e fare apparire popup di aggiornamento
+          this.emitter.emit('changeVersion');
+          this.updateNotification(true);
+         
+        }else{
+          console.log("versione uguale");
+          const dataMostra=localStorage.getItem('dataMostra')
+          this.setData(dataMostra);
+         
+        }
+      
+      }
+   
+      /*  const ogg=localStorage.getItem('dataMostra')
+        console.log("schede salvate "+ ogg);*/
+    /*});*/
     
    setTimeout(() => {
         this.loading = false
@@ -188,14 +254,46 @@ export default defineComponent({
     },
     
 
-    getinfo(callback){
+   /* getinfo(callback){
       //if (store.getters.baseUrl) {
-      
-       fetch(this.$store.getters.baseUrl+"/service/rest/v1/mostra-attiva")
+      if(this.conf.percorsi==true){
+        fetch(this.$store.getters.baseUrl+"/service/rest/v1/mostra-attiva/percorsi")
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}`)
+          }
+          return response.json()
+        })
+        .then(data => {
+          callback(data.result[0]);
+        })
+        .catch(error => console.log(error))
+      }else{
+        fetch(this.$store.getters.baseUrl+"/service/rest/v1/mostra-attiva")
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}`)
+          }
+          return response.json()
+        })
+        .then(data => {
+          callback(data.result[0]);
+        })
+        .catch(error => console.log(error))
+        
+      }
+       
+
+    },*/
+
+    
+    getPercorsi(callback){
+      fetch(this.$store.getters.baseUrl+"/service/rest/v1/percorsiMuseo")
       .then(response => {
         if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status}`)
+          throw new Error(`Request failed with status ${reponse.status}`)
         }
+        console.log(response.json())
         return response.json()
       })
       .then(data => {
@@ -204,21 +302,8 @@ export default defineComponent({
       .catch(error => console.log(error))
 
     },
-    getSchede(callback){
-      fetch(this.$store.getters.baseUrl+"/service/rest/v1/app-schede-audible")
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status}`)
-        }
-        return response.json()
-      })
-      .then(data => {
-       // console.log("schede", data.result);
-         callback(data.result);
-      
-      })
-      .catch(error => console.log(error))
-    },
+
+
 
     aggiorna(from){
       console.log("aggiorno pubblicazione");
@@ -241,12 +326,23 @@ export default defineComponent({
         //print Info
         //console.log("schede info", schede);
         const retrivedinfo = schede;
-        const filtered= retrivedinfo.filter( x => (x.mostra == this.mostra));
-      
+        let filtered= retrivedinfo.filter( x => (x.mostra == this.mostra));
+        if(this.infoPubbl.percorsi){
+          console.log("schede scaricate", filtered);
+            const alldata=filtered;
+          const filterbypercorsi = filtered.filter(scheda => {        
+            const found = scheda.percorsi.some(perc =>{ 
+              return this.infoPubbl.percorsi.includes(perc)});
+            return found;
+          })
+          filtered= filterbypercorsi; 
+          const JSONstringalldata= JSON.stringify(this.evendata(alldata));
+          localStorage.setItem('allDataMostra',JSONstringalldata);
+        }
+        
         //console.log("Filtered " , filtered);
         
         const JSONstring= JSON.stringify(this.evendata(filtered));
-        
         localStorage.setItem('dataMostra',JSONstring );
       
       });
@@ -258,7 +354,19 @@ export default defineComponent({
        //ptint schede 
         //console.log("schede info", schede);
         const retrivedinfo = schede;
-        const filtered= retrivedinfo.filter( x => (x.mostra == this.mostra));
+        let filtered= retrivedinfo.filter( x => (x.mostra == this.mostra));
+        if(this.infoPubbl.percorsi){
+          console.log("schede scaricate", filtered);
+            const alldata=filtered;
+          const filterbypercorsi = filtered.filter(scheda => {        
+            const found = scheda.percorsi.some(perc => perc.includes(this.infoPubbl.percorsi));
+            return found;
+          });
+          filtered= filterbypercorsi; 
+          //console.log("filter incl ?", filterbypercorsi);
+          const JSONstringalldata= JSON.stringify(this.evendata(alldata));
+          localStorage.setItem('allDataMostra',JSONstringalldata);
+        }
         //ptint schede filtrate
         //console.log("Filtered " , filtered);
         const newSchede=this.evendata(filtered)
@@ -320,7 +428,13 @@ export default defineComponent({
       localStorage.removeItem('dataMostra');
       localStorage.setItem('dataMostra', datatoSave );
       if(from!="menu"){
-        this.$router.replace({ name: "scarica", params:{ lang:this.currLang ,  fromC:'aggiorna'}});
+        if(this.conf.percorsi==true){
+          console.log("percorsi true")
+          this.$router.replace({ name: "scarica", params:{ lang:this.currLang ,  fromC:'aggiorna',perc: localStorage.getItem("percSel")}});
+        }else{
+          this.$router.replace({ name: "scarica", params:{ lang:this.currLang ,  fromC:'aggiorna'}});
+        }
+        
       }
     },
 
@@ -334,25 +448,25 @@ export default defineComponent({
           lang.forEach(lang => {
             const contenuto=scheda.content.find(el=> el.lang==lang);
               // console.log("Cont ", contenuto);
-              console.log("Conttype ", contenuto.type);
+             // console.log("Conttype ", contenuto.type);
            
              const contenutodefault=scheda.content.find(el=> el.lang==this.infoPubbl.lingua_default);
               if(contenuto.type==null) {
                     
-                console.log("Non ci sono Media per la scheda  in "+ lang)
+               // console.log("Non ci sono Media per la scheda  in "+ lang)
               
-                console.log("contenutoDefault ", contenutodefault)
+              //  console.log("contenutoDefault ", contenutodefault)
                 if(contenutodefault.type!=null){
                   contenuto.type=contenutodefault.type
                 }
 
                 if(contenutodefault.type=="audio") {
                   contenuto.audio=contenutodefault.audio;
-                  console.log("Getaudio default ")
+               //   console.log("Getaudio default ")
                 }else if(contenutodefault.type=="video"){
                   contenuto.video=contenutodefault.video;
               
-                  console.log("Getvideo default ")
+                 // console.log("Getvideo default ")
                 }
                 
               }

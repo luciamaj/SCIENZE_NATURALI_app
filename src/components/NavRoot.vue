@@ -18,6 +18,11 @@
             <div class="button-text"> {{$t('menu.content.title')}}</div>
             <ion-icon  slot="end" size="large" name="chevron-forward" />
         </ion-button>
+        <ion-button v-if="percorsi!=false && percorsi.length>1" expand="block" size="large" color="secondary"  @click="pushPage('percorso')" id="push-nav-child"> 
+            <ion-icon   slot="start" size="large" name="compass-outline" />
+            <div class="button-text">{{$t('menu.percorsi.title')}}</div>
+            <ion-icon  slot="end" size="large" name="chevron-forward" />
+        </ion-button>
         <ion-button expand="block" size="large" color="secondary"  @click="pushPage('lang')" id="push-nav-child"> 
             <ion-icon   slot="start" size="large" name="language" />
             <div class="button-text">{{$t('menu.lang.title')}}</div>
@@ -68,6 +73,7 @@ alertController,
 //import { defineComponent } from 'vue';
 import NavChild from '@/components/NavChild.vue';
 import Lang from '@/components/ChangeLang.vue';
+import Percorso from '@/components/ChangePercorso.vue';
 import Download from '@/components/ScaricamentoContenuti.vue';
 import Copy from '@/components/Copy.vue';
 import Instructions from '@/views/Onboardv3.vue';
@@ -119,6 +125,7 @@ export default ({
     created(){
         this.networkError=common.networkError;
         this.checkStatus=common.checkOnlineStatus;
+        this.percorsi = localStorage.getItem('percorsi') !=null?localStorage.getItem('percorsi') :null;
          this.emitter.on('fineAggiornamento', _ => {
            this.notificationState=false;
         });
@@ -128,11 +135,13 @@ export default ({
         return {
         title: "Menu",
         notificationState:false,
+        percorsi: null,
         };
     },
     mounted(){
         console.log("NOTIFICATON "+ this.notification);
-
+        
+       
         this.notificationState=this.notification;
     },
     methods: {
@@ -143,8 +152,15 @@ export default ({
         const ionNav = document.querySelector('ion-nav') as any;
         if(page=="lang"){
             ionNav.push(Lang, { title: 'Changeeee' });
+        }else if(page=="percorso"){
+            ionNav.push(Percorso, { title: 'Change Percorso' } );
         }else if(page=="aggiorna"){
-            ionNav.push(Download,  { lang: localStorage.getItem('lang'), fromC:"update" });
+            if(this.conf.percorsi==false){
+                ionNav.push(Download,  { lang: localStorage.getItem('lang'), fromC:"update" });
+            }else{
+                ionNav.push(Download,  { lang: localStorage.getItem('lang'), fromC:"update", perc:localStorage.getItem('percSel')});
+            }
+            
         }else if(page=="copy"){
             ionNav.push(Copy,  {page:"copyright" });
         }else if(page=="privacy"){

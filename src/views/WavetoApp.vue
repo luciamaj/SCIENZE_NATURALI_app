@@ -250,6 +250,7 @@ export default {
     this.setInactiveTour=common.setInactiveTour;
     this.setActiveTour=common.setActiveTour;
     this.getNotificationState=common.getNotificationState;
+    this.alertPercorso=common.alertPercorso;
 
     this.emitter.on('changeVersion', _ => {
       this.showOptions();
@@ -411,6 +412,23 @@ export default {
               this.$router.push({ path: "/soloImg/" + idvid , replace:true});
           }
         
+        }else{
+
+          const allschede=JSON.parse(localStorage.getItem("allDataMostra"))
+          if(allschede){
+            const media_in_altre = allschede.find(x => x.tag == this.tag);
+            console.log("MIA", media_in_altre)
+            if( media_in_altre){
+              this.alertPercorso()
+            
+            }else{
+              console.log("MIA non esiste")
+            }
+          
+          }else{
+            this.presentAlert();
+          }
+
         }
        
        

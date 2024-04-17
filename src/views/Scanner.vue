@@ -110,10 +110,35 @@ export default defineComponent({
         this.setObject(dataEl);
         this.close();
       }else{
-        this.presentAlert();
+        const allschede=JSON.parse(localStorage.getItem("allDataMostra"))
+        if(allschede){
+          const media_in_altre = allschede.find(x => x.tag == this.tag);
+          console.log("MIA", media_in_altre)
+          if( media_in_altre){
+            this.alertPercorso()
+           
+          }else{
+            console.log("MIA non esiste")
+          }
+         
+        }else{
+          this.presentAlert();
+        }
+       
+      
       }
 
      
+    },
+    alertPercorso() {
+      const alert = document.createElement('ion-alert');
+      alert.mode='ios'
+      alert.header = 'Alert';
+      alert.message = 'La scheda fa parte di un altro percorso';
+      alert.buttons = ['OK'];
+
+      document.body.appendChild(alert);
+      return alert.present();
     },
     presentAlert() {
       const alert = document.createElement('ion-alert');

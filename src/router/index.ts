@@ -65,6 +65,12 @@ const routes: Array<RouteRecordRaw> = [
     component: Wave
   },
   {
+    path: '/gps',
+    name: 'gps',
+    component: () => import('@/views/Gps.vue')
+  },
+  
+  {
     path: '/onboard',
     name: 'onboard',
     component: () => import('@/views/Onboardv3.vue')

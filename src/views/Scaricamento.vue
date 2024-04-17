@@ -2,7 +2,7 @@
   <ion-page>
      <ion-content>
      
-      <download-cont :lang="lang" :fromC="from"></download-cont>
+      <download-cont :lang="lang" :fromC="from" :perc="perc"></download-cont>
 
     </ion-content>
   </ion-page>
@@ -41,6 +41,10 @@ export default {
    
       return this.$route.params.fromC;
     },
+    perc(){
+   
+    return this.$route.params.perc;
+  },
 
    
   },

@@ -71,6 +71,10 @@ export const de= {
         content:{
             title:"Inhalt aktualisieren"
         },
+        percorsi:{
+            title:"Percorsi",
+            add:"Cambia percorso",
+        },
         lang:{
             title:"Sprache",
             subtitile:"Sprachen heruntergeladen",

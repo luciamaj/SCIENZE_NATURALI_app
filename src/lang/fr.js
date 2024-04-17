@@ -15,6 +15,10 @@ export const fr ={
             title:"Tu choisis",
             text:"dans quelle langue préférez-vous écouter le contenu ?"
         },
+        percorsi:{
+            title:"Select ",
+            text:"wich path do you want to follow"
+        },
         tag:{
             title:"Rapprocher le smartphone des SilenceTags",
             text:"Utilisez l'APP pour accéder au contenu détaillé"
@@ -71,6 +75,10 @@ export const fr ={
         titile:"Réglages",
         content:{
             title:"Mettre à jour le contenu"
+        },
+        percorsi:{
+            title:"Percorsi",
+            add:"Cambia percorso",
         },
         lang:{
             title:"Langues",

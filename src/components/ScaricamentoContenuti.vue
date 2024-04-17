@@ -36,7 +36,8 @@ export default {
     name: "scaricamento",
     props: {
         lang: { type: String, default: 'it' },
-        fromC: { type: String, default: 'main' }
+        fromC: { type: String, default: 'main'},
+        perc: { type: String, default: null}
     },
     data() {
         return {
@@ -417,9 +418,17 @@ export default {
     console.log('VEDO FROM? '+ this.fromC )
     console.log("lingua? "+ this.passedLang);
     const schede=localStorage.getItem('dataMostra');
-    const jsonSchede=JSON.parse(schede);
+    let jsonSchede=JSON.parse(schede);
+    if(this.perc!=null){
+      localStorage.setItem('allDataMostra',schede);
+       jsonSchede=jsonSchede.filter(scheda=>scheda.percorsi.includes(this.perc))
+      console.log("filtro per percorso scelto", jsonSchede)
+      localStorage.setItem('dataMostra',JSON.stringify(jsonSchede));
+    }
+    
+
     let contenuto="";
-    console.log("->>", JSON.parse(schede));
+    console.log("->>",jsonSchede);
     let counter=1;
     this.mediaCounter();
     this.mediatoGet.push(this.$store.getters.pubblication.img);
@@ -976,10 +985,11 @@ export default {
             
       }else if(this.fromC=="update"){
         this.pushPage("update");
-      } else if(this.fromC=="lang"){
+      } else if(this.fromC=="lang" ||this.fromC=="perc"){
         this.pushPage("lang");
         if(this.salvataggioCompleto==true){
-          this.emitter.emit('addLang',this.passedLang);
+          this.fromC=="lang"?this.emitter.emit('addLang',this.passedLang):this.emitter.emit('addPerc',this.perc);
+          
         }
        
         

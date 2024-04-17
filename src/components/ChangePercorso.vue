@@ -1,7 +1,7 @@
 <template>
   <ion-header>
     <ion-toolbar>
-       <ion-title color="secondary">{{$t('menu.lang.subtitile')}}</ion-title>
+       <ion-title color="secondary">{{$t('menu.percorsi.subtitile')}}</ion-title>
       <ion-buttons slot="start" >
         <ion-back-button></ion-back-button>
       </ion-buttons>
@@ -11,16 +11,16 @@
   <ion-content class="ion-padding" id="nav-child-content">
     <!--div>{{$t('menu.lang.subtitile')}}</div-->
     <ion-grid class="langs-grid">
-      <template v-for="lang in saved" v-bind:key="lang">
+      <template v-for="perc in savedperlang"  v-bind:key="perc">
         <ion-row>
-          <div :class="checkIfActive(lang)" class="lang-cont" v-on:click="switchLang(lang)"> 
-            <ion-col class="lang-cont-flag" size="6"  :value="lang"   >
+          <div :class="checkIfActive(perc)" class="lang-cont" v-on:click="switchPerc(perc)"> 
+            <ion-col class="lang-cont-flag" size="4"  :value="perc"   >
               
-                <div class="circle-cont"  > <img class="cover circle" id="circle-it" :src="'/assets/background/Flag_'+lang+'.png'" alt=""></div>
-        
+                <div class="circle-cont"  >  <!--img class="cover circle" id="circle-it" :src="imgPercorsi[index]" alt=""--></div>
+          
             </ion-col>
-            <ion-col class="lang-cont-name">
-               <div class="lang" >{{$t('menu.lang.'+lang)}}</div>
+            <ion-col class="lang-cont-name"  size="8">
+              <div class="percorso">{{perc}}</div>
 
             </ion-col> 
             </div>         
@@ -29,7 +29,7 @@
     </ion-grid>
 
 
-    <ion-button v-if="remaining.length>0" expand="block" size="slim" color="secondary" class="add-lang" @click="presentActionSheet">  {{$t('menu.lang.add')}} </ion-button>
+    <ion-button v-if="remaining.length>0" expand="block" size="slim" color="secondary" class="add-lang" @click="presentActionSheet">  {{$t('menu.percorsi.add')}} </ion-button>
 
 
      
@@ -54,7 +54,7 @@ import common from  "../js/common"
  import Download from '@/components/ScaricamentoContenuti.vue';
 //import { defineComponent } from 'vue';
 export default ({
-  name: "langSwitch",
+  name: "percswitch",
   props: {
     title: { type: String, default: 'Default Title' }
   },
@@ -69,11 +69,12 @@ export default ({
   },
   data(){
     return{
-     currPerc:null,
+     
       saved:[],
+      savedperlang:[],
       remaining:[],
       currLang:this.currentLang,
-
+      currPerc:""
     }
   },
   setup(){
@@ -85,36 +86,38 @@ export default ({
   computed:{
 
     
-    savedLangs:{
+    savedPerc:{
         get() {
-          console.log("linguee ", localStorage.getItem('savedLangs'))
-          let savedLangs= [];
-          savedLangs=  localStorage.getItem('savedLangs').split(",");
-          this.assignSaved(savedLangs)
-          console.log("linguee savedLangs ", savedLangs)
-          return savedLangs
+          
+          let getsaved=  localStorage.getItem('savedPerc');
+          const getlang=  localStorage.getItem('lang');
+          console.log("linguee savedLangs ",  getsaved)
+          getsaved=JSON.parse(getsaved)
+          this.assignSaved(getsaved,getlang)
+          
+          return getsaved
         },
       // setter
-      set(newLang) {
-      
-        this.saved.push(newLang);
-        localStorage.setItem('savedLangs', this.saved)
+      set(newSetPerc) {
+      console.log("lang",  this.saved[newSetPerc.lang] )
+        this.saved[newSetPerc.lang].push(newSetPerc.newPerc);
+        localStorage.setItem('savedPerc', JSON.stringify(this.saved))
       }
 
     },
 
-    remainingLang(){
+    remainingPerc(){
       const pubblication=JSON.parse(localStorage.getItem('pubblication'))
-      const publishedLang=pubblication.lang;
+      const publishedPerc=pubblication.percorsi;
       this.currPubbDate(pubblication);
      
-      const myArray = publishedLang.filter( ( el ) =>{
-        console.log("?? "+!this.savedLangs.includes( el ));
-        return !this.savedLangs.includes( el);
+      const myArray = publishedPerc.filter( ( el ) =>{
+        console.log("?? "+!this.savedperlang.includes( el ));
+        return !this.savedperlang.includes( el);
       
       });
       this.assignRemaining(myArray);
-    return myArray;
+      return myArray;
 
     }
 
@@ -125,24 +128,21 @@ export default ({
     this.networkError=common.networkError;
     this.checkStatus=common.checkOnlineStatus;
 
-    this.emitter.on('addLang', (lang)=>{
-      this.remaining=this.remaining.filter(item => item !== lang);
-      this.addLang(lang);
+    this.emitter.on('addPerc', (perc)=>{
+      this.remaining=this.remaining.filter(item => item !== perc);
+      this.addPerc(perc);
     })
 
   },
   mounted(){
-    this.savedLangs
-    this.remainingLang
+    this.savedPerc
+    this.remainingPerc
    
   
     this.currLang=localStorage.getItem("lang")
-
-    if(this.conf.percorsi==true){
-      this.currPerc=localStorage.getItem("percSel")
-    }
      
 
+    this.currPerc=localStorage.getItem("percSel")
     
   },
 
@@ -158,57 +158,43 @@ export default ({
     return versionLangs;
          
      },
-    addLang(lang){
-      console.log("ADDO LANG", lang)
-      this.savedLangs=lang;
-
-      if(this.currPerc){
-        const getsaved=  JSON.parse(localStorage.getItem('savedPerc'));
-       // let oggsaved=JSON.parse(getsaved);
-       getsaved[lang]=[this.currPerc];
-       console.log("GSAVED ", getsaved);
-       localStorage.setItem('savedPerc', JSON.stringify(getsaved))
-      }
+    addPerc(perc){
+      console.log("ADDO perc", perc)
+      this.savedPerc={
+        newPerc:perc, lang:this.currLang }
     },
-    checkIfActive(lang){
-      console.log("checkIfActivelang p")
-      if(this.currLang==lang){
-        console.log("checkIfActive lang dentro")
+    checkIfActive(perc){
+      console.log("checkIfActive p",this.currPerc)
+      if(this.currPerc==perc){
+        console.log("checkIfActive dentro")
         return "checked"
       }
     },
-    pushPage(passedLang) {
+    pushPage(passedPerc) {
+   
       const ionNav = document.querySelector('ion-nav') as any;
-      if(this.currPerc==null){
-        ionNav.push(Download,  { lang: passedLang , fromC:"lang"});
-      }else{
-        ionNav.push(Download,  { lang: passedLang , fromC:"lang", perc:this.currPerc});
-      }
       
+      ionNav.push(Download,  { lang: this.currLang , fromC:"perc", perc:passedPerc});
      
     },
-    pushPageAggiorna(passedLang) {
+    pushPageAggiorna(passedPerc) {
       const ionNav = document.querySelector('ion-nav') as any;
-    
-      if(this.currPerc==null){
-        ionNav.push(Download,  { lang: passedLang , fromC:"update"});
-      }else{
-        ionNav.push(Download,  { lang: passedLang , fromC:"update", perc:this.currPerc});
-      }
+      
+      ionNav.push(Download,  { lang: this.currLang , fromC:"update", perc:passedPerc});
      
     },
     buttons(){
       const remainingArray=[];
         this.remaining.forEach(element => {
-          const langtoPush={
-            text: this.$t('menu.lang.'+element),
+          const percPush={
+            text: this.$t(element),
             handler: () => {
               
                 console.log('clicked')
                 this.add(element)
               },
           }
-          remainingArray.push(langtoPush);
+          remainingArray.push(percPush);
          
         });
         const cancelbutton={
@@ -221,7 +207,7 @@ export default ({
              remainingArray.push(cancelbutton)
              console.log(remainingArray);
         return remainingArray
-      },
+    },
     async presentActionSheet() {
         const actionSheet = await actionSheetController.create({
             header: this.$t('menu.lang.select'),
@@ -234,7 +220,7 @@ export default ({
         console.log('onDidDismiss');
       },
 
-    async showOptions(lang) {
+    async showOptions(perc) {
       const alert = await alertController.create({
         header: this.$t('menu.lang.add') ,
         message:  this.$t('menu.lang.alert') ,
@@ -248,18 +234,20 @@ export default ({
               console.log("onlòineSTATUS ",online);
               if(online){
                 const pubblication=JSON.parse(localStorage.getItem("pubblication"))
-                const suppLang=pubblication.lang.find(el=> el==lang);
+                const suppLang=pubblication.percorsi.find(el=> el==perc);
+             
                   //this.savedLangs=lang;
                   //this.remaining=this.remaining.filter(item => item !== lang);
                 if(suppLang){
-                    //this.searchMedia(lang);
+                  //this.searchMedia(lang);
                   // this.$router.replace({ path: "/scarica/"+ lang});
-                    this.pushPage(lang);
-                }else{
-                    //this.searchMedia('it');
-                    //this.$router.replace({ path: "/scarica/it"});
-                  this.pushPage("it");
+                  this.pushPage(perc);
                 }
+                /*else{
+                  //this.searchMedia('it');
+                  //this.$router.replace({ path: "/scarica/it"});
+                  this.pushPage("it");
+                }*/
               }else{
                 console.log("NON C?èRETE");
                 this.networkError();
@@ -278,7 +266,7 @@ export default ({
       await alert.present();
     },
 
-    async updateLang(lang) {
+    async updatePerc(perc) {
             if(window.navigator.onLine){
                  const alert = await alertController.create({
                     header: this.$t('update.title') ,
@@ -299,7 +287,7 @@ export default ({
                             handler: () => {
                                 console.log("Accepted");
                                 this.emitter.emit('aggiorna', "menu");
-                                this.pushPageAggiorna(lang);
+                                this.pushPageAggiorna(perc);
                             
                             },
                         },
@@ -318,39 +306,53 @@ export default ({
       this.pubblication=pubblication;
     },
 
-    checkVersion(lang){
+    checkVersion(perc){
       const currentVersion=this.datetoVersion(this.pubblication.pubblicazione);
-      const langVersion=this.getversionLangs().find(el=> el.lang==lang).vers;
+      const langVersion=this.getversionLangs().find(el=> el.lang==this.currLang).vers;
 
       if(currentVersion>langVersion){
         console.log("LA LINGUA NON è AGGIORNATA"); 
-        this.updateLang(lang);
+        this.updatePerc(perc);
       }else{
         console.log("versione ok"); 
       }
 
     },
 
-    switchLang(lang){
+    switchPerc(perc){
        /* if (this.$i18n.locale !== lang) {
            this.$i18n.locale = lang;
            localStorage.setItem('lang', lang);
         }*/
-        if (localStorage.getItem('lang')!= lang) {
-          localStorage.setItem('lang', lang);
-          this.currLang=lang;
-          this.$i18n.locale = lang;
-        }
-        this.checkVersion(lang);
-    },
-    add(lang){
+        if (localStorage.getItem('percSel')!= perc) {
+          localStorage.setItem('percSel', perc);
+          console.log("entro,cambio era", this.currPerc,"sarà ", perc);
+          this.currPerc=perc;
+         
+           let  jsonSchede =JSON.parse(localStorage.getItem('allDataMostra'));
+            jsonSchede=jsonSchede.filter(scheda=>scheda.percorsi.includes(perc))
+            console.log("filtro per percorso scelto", jsonSchede)
+            localStorage.setItem('dataMostra',JSON.stringify(jsonSchede));
+          
 
-      this.showOptions(lang)
+          this.$forceUpdate()
+          
+        }
+        this.checkVersion(perc);
+    },
+    add(perc){
+
+      this.showOptions(perc)
     /*  this.savedLangs=lang;
       this.remaining=this.remaining.filter(item => item !== lang);*/
     },
-    assignSaved(savedLangs){
-      this.saved=savedLangs;
+    assignSaved(savedPerc, lang){
+      this.saved=savedPerc;
+      console.log("lllang",lang)
+      console.log("savedperlang",this.saved[lang]);
+      this.savedperlang= this.saved[lang]
+      //this.savedperlang=savedPerc["en"].split(",")
+     
     },
     assignRemaining(remainingLangs){
       this.remaining=remainingLangs;

@@ -4,6 +4,7 @@ import { Plugins } from "@capacitor/core";
 import { Thumbs } from "swiper";
 const { Storage } = Plugins;
 import {global} from '../js/global'
+import store from '../store/store'
 
 export default {
     
@@ -283,6 +284,103 @@ export default {
       } catch (err) {
         return false; // definitely offline
       }
+    },
+
+
+    getinfo(callback){
+      if(this.conf.percorsi==true){
+
+        fetch(store.getters.baseUrl+"/service/rest/v1/mostra-attiva/percorsi")
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Request failed with status ${reponse.status}`)
+          }
+          return response.json()
+        })
+        .then(data => {
+          callback(data.result[0]);
+        })
+        .catch(error => console.log(error))
+      }else{
+
+        fetch(store.getters.baseUrl+"/service/rest/v1/mostra-attiva")
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Request failed with status ${reponse.status}`)
+          }
+          return response.json()
+        })
+        .then(data => {
+          callback(data.result[0]);
+        })
+        .catch(error => console.log(error))
+      }
+
+       
+
+    },
+
+    getPercorsi(callback){
+      fetch(store.getters.baseUrl+"/service/rest/v1/percorsiMuseo")
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Request failed with status ${reponse.status}`)
+        }
+        return response.json()
+      })
+      .then(data => {
+        callback(data.result);
+      })
+      .catch(error => console.log(error))
+
+    },
+
+    getSchede(callback){
+      console.log("conf percorsi",this.conf)
+      if(this.conf.percorsi==true){
+        
+        fetch(store.getters.baseUrl+"/service/rest/v1/app-schede-audible/percorsi")
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}`)
+          }
+          return response.json()
+        })
+        .then(data => {
+        // console.log("schede", data.result);
+          callback(data.result);
+        
+        })
+        .catch(error => console.log(error))
+
+      }else{
+        fetch(store.getters.baseUrl+"/service/rest/v1/app-schede-audible")
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}`)
+          }
+          return response.json()
+        })
+        .then(data => {
+        // console.log("schede", data.result);
+          callback(data.result);
+        
+        })
+        .catch(error => console.log(error))
+
+      }
+
+    },
+
+    alertPercorso() {
+      const alert = document.createElement('ion-alert');
+      alert.mode='ios'
+      alert.header = 'Alert';
+      alert.message = 'La scheda fa parte di un altro percorso';
+      alert.buttons = ['OK'];
+
+      document.body.appendChild(alert);
+      return alert.present();
     },
 
 

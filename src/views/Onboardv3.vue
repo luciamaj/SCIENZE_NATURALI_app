@@ -25,7 +25,7 @@
         </ion-toolbar>
 
       </div>
-
+    
       <div class="onboard-bot">
         <ion-slides pager="true" :options="slideOpts"  @ionSlideDidChange="slidechanged" ref="slider">
           <ion-slide v-if="context=='onboard'">
@@ -46,6 +46,26 @@
             </div>
 
           </ion-slide>
+         
+          <ion-slide v-if="(context=='onboard'&& confPerc )" >
+            <div class="slide-inner">
+              <h5 class="lang-title"> {{$t('onboard.percorsi.title')}} </h5>
+              <div class="text-one"> {{$t('onboard.percorsi.text')}} </div>
+              <ion-grid>
+                  <ion-row v-for="(perc,index) in percorsiMostra" class="row" :key="(perc,index)" v-on:click="setPercorso(perc.percorso)">
+                    <ion-col  class="percorsi-cont" size="4" > <div class="circle-cont"  > <img class="cover circle" :class="checkPerc(perc.percorso)" id="circle-it" :src="imgPercorsi[index]" alt=""></div></ion-col>
+                    <ion-col  size="8"  >
+                      
+                      <div class="percorso">{{perc.percorso}}</div>
+                  
+                    </ion-col>
+                      
+                  </ion-row>
+              </ion-grid>
+            </div>
+
+          </ion-slide>
+          <!--Aggiungere slide per scelta percosri però controllare se abilitati-->
           <!--ion-slide v-if="interactionMode=='mix'">
               <div class="slide-inner">
                   <div class="onb-img">
@@ -100,6 +120,7 @@
         </ion-slides>
 
       </div>
+   
     </div>
     </ion-content>
   </ion-page>
@@ -136,6 +157,7 @@ import 'swiper/swiper.min.css'
 import 'swiper/modules/navigation/navigation.min.css'
 import 'swiper/modules/pagination/pagination.min.css'
 import"swiper/modules/pagination/pagination.scss"
+import common from  "../js/common"
 
 
 
@@ -147,16 +169,20 @@ export default {
   data() {
     return {
       publishedLang:[],
+      percorsiMostra:[],
       name: "onboard",
       store:"",
       currLang:"it",
+      currPerc:null,
       currSlide:0,
       isFirst:true,
       last:false,
       progress:0,
       media:0,
       mediafetched:0,
-      help:false
+      help:false,
+      percorsi:[],
+      showpage:false,
     
     };
   },
@@ -184,30 +210,45 @@ export default {
 
     contentsonb(){
       return contents;
-    }
+    },
+    confPerc(){
+    
+      return this.conf.percorsi;
+
+    },
+    
+    imgPercorsi() {
+   
+      if (this.percorsiMostra) {
+       const  arrImm=[];
+       this.percorsiMostra.forEach(perc => {
+        if(perc.img!=null){
+          arrImm.push(this.$store.getters.baseUrl+"/upload/"+perc.img)
+        }else{
+          arrImm.push('/assets/background/dos.png');
+        }
+        
+       });
+        return arrImm;
+      } 
+      return null
+     
+    },
+  },
+
+  created(){
+    this.getinfo=common.getinfo;
+    this.getinfoall();
+   
+
+ 
   },
   mounted(){
  
-    console.log('? '+ contents[0].name);
-    this.currLang=this.$i18n.locale;
-
-    if(this.context=='onboard'){
-      this.getinfo((info) => {
-        this.publishedLang=info.lang.map(element => {
-          return element.toLowerCase();
-        });
-        console.log("LANG PUBB ", this.publishedLang.length)
-        if(this.publishedLang.find( element => element ==this.currLang)){
-          this.setLang(this.currLang);
-        }else{
-          this.setLang(this.publishedLang[0]);
-        }
-      })
-
-    }
-    
-    this.slidelength();
-
+   
+    this.calcSlidelength();
+  
+   
       
   },
  
@@ -245,8 +286,69 @@ export default {
         return "checked"
       }
     },
+    checkPerc(perc){
+      if(perc==this.currPerc){
+        return "checked"
+      }
+    },
 
-    getinfo(callback){
+    checkdisplayPerc(){
+      if(this.percorsi.length<=1){
+        return "checkedDiaplay"
+       
+      }
+    },
+
+    getinfoall(){
+      console.log('? '+ contents[0].name);
+      this.currLang=this.$i18n.locale;
+
+      if(this.context=='onboard'){
+        this.getinfo((info) => {
+          this.publishedLang=info.lang.map(element => {
+            return element.toLowerCase();
+          });
+          console.log("LANG PUBB ", this.publishedLang.length)
+          if(this.publishedLang.find( element => element ==this.currLang)){
+            this.setLang(this.currLang);
+          }else{
+            this.setLang(this.publishedLang[0]);
+          }
+          if(info.percorsi){
+            console.log("onb Percorsi")
+          
+            this.percorsi=info.percorsi;
+            console.log("onb iiiiiiiiiiiiiiii", this.percorsi );
+            console.log("N oper",  this.percorsi.length)
+            
+            if(this.percorsi.length<=1){
+             // this.$refs.slider.$el.update(); 
+              
+              console.log("N oper2",  this.percorsi.length)
+            }
+                            
+            common.getPercorsi((perc)=>{
+                this.percorsiMostra = perc.filter(item => info.percorsi.includes(item.percorso));
+              
+                  this.setPercorso(this.percorsiMostra[0].percorso)
+                  
+                
+            })
+
+            this.calcSlidelength();
+          }
+          
+        })
+        
+        //  this.percorsiMostra = JSON.parse(localStorage.getItem("percorsi"));
+        
+          
+     
+
+      }
+    },
+
+   /* getinfo(callback){
       //if (store.getters.baseUrl) {
 
        fetch(this.$store.getters.baseUrl+"/service/rest/v1/mostra-attiva")
@@ -261,7 +363,9 @@ export default {
       })
       .catch(error => console.log(error))
 
-    },
+    },*/
+
+    
 
     setLang(lang){
       this.currLang=lang;
@@ -271,9 +375,25 @@ export default {
         localStorage.setItem('savedLangs', lang);
         this.$i18n.locale = lang;
     // }
-      
-      
     },
+
+    setPercorso(perc){
+      this.currPerc=perc;
+      console.log("click percorso" + perc);
+      localStorage.setItem('percSel', perc);
+      //if(localStorage.getItem('savedLangs')==null){
+        const percLang={};
+
+        console.log("cosa vedeee", this.currLang," ",perc )
+        percLang[this.currLang]=[perc];
+         
+         
+        localStorage.setItem('savedPerc',  JSON.stringify(percLang));
+        console.log("OGGGGGGGG", percLang)
+       
+    // }
+    },
+
 
     next(){
       console.log("nexxxt");
@@ -283,8 +403,11 @@ export default {
       this.slidechanged();
       console.log(this.slideLength);
       if(this.currSlide==this.slideLength-1){
+
         if(this.context=="onboard"){
-          this.$router.replace({ name: 'scarica', params:{ lang:this.currLang, fromC:"onboard"}});
+        this.setPercorso(this.currPerc)
+
+          this.$router.replace({ name: 'scarica', params:{ lang:this.currLang, fromC:"onboard", perc:this.currPerc}});
 
         }else{
           this.skip();
@@ -294,7 +417,8 @@ export default {
      }
   
     },
-    async slidelength(){
+    async calcSlidelength(){
+      
       this.slideLength= await this.$refs.slider.$el.length();
       console.log("N slides "+   this.slideLength)
     },
@@ -442,6 +566,13 @@ ion-grid{
  font-size: 0.9em;
  
 }
+
+.percorsi-cont{
+
+}
+.percorso{
+  text-align: left;
+}
 .circle-cont{
   height:10vh;
   width: 10vh;
@@ -464,6 +595,9 @@ ion-grid{
 .checked{
    border: solid 5px var(--ion-color-secondary-whitened);
      opacity: 1;
+}
+.checkedDiaplay{
+  display: none;
 }
 .swiper-pagination {
   color: red;

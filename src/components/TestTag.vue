@@ -33,6 +33,9 @@
             <ion-badge  mode="ios" id="badge" color="danger" class="listen">0</ion-badge>
             {{$t('menu.test.stopTest')}}</ion-button>
 
+
+            <ion-button expand="block" class="capture-btn-test" @click="opengps" >tst gps</ion-button>
+
        
          
           </div>
@@ -351,7 +354,9 @@ export default {
     },
 
     
-   
+   opengps(){
+    this.$router.replace({ path: "/gps"  });
+   },
        
     callJava(){
      
