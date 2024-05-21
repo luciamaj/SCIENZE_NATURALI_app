@@ -1,14 +1,14 @@
 {
-    "nameMuseum": "museo risorgimento Ravenna",
+    "nameMuseum": "museo Palazzo Guiccioli",
     "baseUrl":"https://museorisorgimentoravenna.eadev.it/dataoversound-swi",
     "percorsi":true,
     
-    "appleAppName":"com.ea.MuseoDelleStorie://",
+    "appleAppName":"com.ea.PalazzoGuiccioli://",
     "appleStoreUrl":"https://itunes.apple.com/it/app/itunes-connect/id376771144",
-    "androidAppName":"com.museodellestorie.ggwave;package=com.msbmuseum.ggwave",
-    "androidStoreUrl":"https://play.google.com/store/apps/details?id=com.msbmuseum.ggwave",
+    "androidAppName":"com.daisyravenna.ggwave;package=com.daisyravenna.ggwave",
+    "androidStoreUrl":"https://play.google.com/store/apps/details?id=com.daisyravenna.ggwave",
     "interactionMode":"mix",
-    "langDefault":"it"
+    "langDefault":"en"
 
     
 }

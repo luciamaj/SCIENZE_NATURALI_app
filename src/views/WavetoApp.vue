@@ -1,8 +1,8 @@
 <template>
   <ion-page>
     <ion-header class="ion-no-border">
-      <ion-toolbar >
-        <ion-title slot="start" v-html="store.mostra" class="main-title"></ion-title>
+      <ion-toolbar  class="toolbar">
+        <ion-title slot="start"  class="main-title"> {{percSel}}</ion-title>
         <ion-buttons slot="end" v-if="history==true" >
               <ion-button color="secondary"  @click="openHistory()" class="collection-button">
                 <ion-icon  size="large" name="file-tray-full-outline" class="history-icon"></ion-icon>
@@ -66,6 +66,9 @@ import { Plugins } from "@capacitor/core";
 import Subtitles from "./Subtitles.vue";
 import { useRouter } from "vue-router";
 import common from "../js/common"
+import { ref, onMounted, watch } from 'vue';
+import { useLocalStorage } from '@/composables/useLocalStorage';
+
 const { Storage } = Plugins;
 
 
@@ -79,8 +82,12 @@ export default {
       notification:false,
      ntag:"",
      playing:false,
+     percSel:"",
+     currLang:""
     };
   },
+
+  
   ionViewWillEnter(){
    
    this.getTour().then(x => {
@@ -104,6 +111,10 @@ export default {
     this.store=JSON.parse(localStorage.getItem('pubblication'));
     this.captureStart = document.getElementById("captureStart");
     this.captureStop = document.getElementById("captureStop");
+    this.currLang=localStorage.getItem("lang")
+    this.percSel=this.getpercselinlang();
+  
+
    // this.anima=document.getElementById("anima");
    // this.mostra=document.getElementById("mostra");
 
@@ -128,8 +139,15 @@ export default {
       this.captureStop.hidden = true;
      
     });
-   
+    watch(() => localStorage.getItem('lang'), (newLang) => {
+      console.log("WATCHOOOOOOOOOOOO",newLang)
+    this.currLang = newLang;
+    this.percSel = this.getpercselinlang();
+  });
     
+  },
+  beforeUnmount() {
+    window.removeEventListener('storage', this.updateTitle);
   },
   computed:{
     interactionMode(){
@@ -210,6 +228,10 @@ export default {
 
       return modal.present();
     };*/
+ 
+    
+
+
 
     const openMenuModal = async (notification) => {
       const top = await modalController.getTop();
@@ -225,8 +247,10 @@ export default {
       });
 
       menumodal.onDidDismiss().then(async _ => {
+
         console.log("dismissed");
          console.log("dismissed " +notification);
+         
       });
 
      
@@ -238,7 +262,7 @@ export default {
     return {
     //  openModal,
       openMenuModal,
-     
+    
 
     };
 
@@ -273,6 +297,10 @@ export default {
 
 
   methods: {
+    updateTitle(){
+      this.currLang=localStorage.getItem("lang")
+      this.percSel=this.getpercselinlang();
+    },
     
     async openModal  ()  {
       if(this.$store.getters.conf.interactionMode=="mix"){
@@ -363,7 +391,20 @@ export default {
 
     await alert.present();
   },*/
-
+  getpercselinlang(){
+   
+   const sel=common.getpercinfo();
+   common.setstorePerc(sel);
+  console.log("selll",sel)
+   if (sel){
+      const lan=sel.lingue.find(item=>item.lang==this.currLang);
+      console.log("enteraa",lan)
+    return lan.nome;
+    
+   }else{
+    return ""
+   }
+  },
 
 
   openFirst() {
@@ -391,7 +432,7 @@ export default {
       const captureStop = document.getElementById("captureStop");  
          
         if (scheda != null) {
-          const content=scheda.content.find(x => x.lang == localStorage.getItem("lang"));
+          const content=scheda.content.find(x => x.lang == this.currLang);
           console.log("scheda.type "+ content.type);
           captureStop.click();
           if (content.type == "audio") {
@@ -622,7 +663,12 @@ ion-content {
 }
 
 .toolbar {
-   --background:  red;
+  /* --background:  red;*/
+   --min-height: 48px!important;
+}
+.toolbar-container{
+  height: inherit;
+    
 }
 
 .collection-button{

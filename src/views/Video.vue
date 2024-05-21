@@ -592,13 +592,14 @@ div.player img.album-art {
   /* width: calc(100% - 60px); */
   padding:5px 25px;
   max-height: 40vh;
-  overflow: overlay;
+ /* overflow: overlay;*/
   margin-top: 2vh;
   margin-bottom: 2vh;
   /*bottom: 3vh;
   position: absolute;*/
 
 }
+.descrArea p{ margin-top: 0;}
 .content-scheda{
   overflow: overlay;
   height: 57vh;
@@ -718,7 +719,7 @@ div.meta-container {
  div.song-title {
   text-align: le;
   color: #263238;
-  font-size: 25px;
+  font-size: 22px;
   font-weight: 600;
   font-family: "Open Sans", sans-serif;
   margin: 5px 0;

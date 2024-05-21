@@ -11,16 +11,16 @@
   <ion-content class="ion-padding" id="nav-child-content">
     <!--div>{{$t('menu.lang.subtitile')}}</div-->
     <ion-grid class="langs-grid">
-      <template v-for="perc in savedperlang"  v-bind:key="perc">
+      <template v-for="perc in intersectarray"  v-bind:key="perc">
         <ion-row>
-          <div :class="checkIfActive(perc)" class="lang-cont" v-on:click="switchPerc(perc)"> 
+          <div :class="checkIfActive(perc.percorso)" class="lang-cont" v-on:click="switchPerc(perc)"> 
             <ion-col class="lang-cont-flag" size="4"  :value="perc"   >
               
-                <div class="circle-cont"  >  <!--img class="cover circle" id="circle-it" :src="imgPercorsi[index]" alt=""--></div>
+                <div class="circle-cont"  >  <img class="cover circle" id="circle-it" :src="imgPercorsi(perc.img)" alt=""></div>
           
             </ion-col>
             <ion-col class="lang-cont-name"  size="8">
-              <div class="percorso">{{perc}}</div>
+              <div class="percorso">{{nomeLingua(perc)}}</div>
 
             </ion-col> 
             </div>         
@@ -37,7 +37,6 @@
 </template>
 
 <script lang="ts">
-import router from '@/router';
 import {
   IonButtons,
   IonBackButton,
@@ -83,9 +82,23 @@ export default ({
       
     }
   },
+  
   computed:{
 
-    
+    infoPercorsi() {
+   
+       const percorsi=JSON.parse(localStorage.getItem('percorsi'))
+       
+        return percorsi;
+  
+    },
+    intersectarray(){
+     
+     const  intersected= this.infoPercorsi.filter(p=> this.savedperlang.includes(p.percorso));
+     console.log("intersected", intersected)
+     return intersected
+   },
+ 
     savedPerc:{
         get() {
           
@@ -147,6 +160,23 @@ export default ({
   },
 
   methods:{
+
+    imgPercorsi(img) {
+   
+   
+      if(img!=null){
+       return this.$store.getters.baseUrl+"/upload/"+img
+      }else{
+       return '/assets/background/dos.png';
+      }
+     
+    },
+    nomeLingua(perc){
+      
+      const retur= perc.lingue.find(item=>item.lang==this.currLang);
+        return retur.nome;
+
+    },
 
     getversionLangs(){
        
@@ -319,7 +349,8 @@ export default ({
 
     },
 
-    switchPerc(perc){
+    switchPerc(percorso){
+      const perc=percorso.percorso
        /* if (this.$i18n.locale !== lang) {
            this.$i18n.locale = lang;
            localStorage.setItem('lang', lang);
@@ -328,6 +359,8 @@ export default ({
           localStorage.setItem('percSel', perc);
           console.log("entro,cambio era", this.currPerc,"sarà ", perc);
           this.currPerc=perc;
+
+          common.setstorePerc(percorso);
          
            let  jsonSchede =JSON.parse(localStorage.getItem('allDataMostra'));
             jsonSchede=jsonSchede.filter(scheda=>scheda.percorsi.includes(perc))
@@ -359,7 +392,8 @@ export default ({
       console.log("REMAINING ",  this.remaining.length);
 
     },
-  
+
+   
    
 
   }

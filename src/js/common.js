@@ -267,6 +267,19 @@ export default {
         })
       });
     },
+    async setstorePerc(state){
+      await Storage.set({
+          key: 'percorsosel',
+          value:state
+        });
+    },
+
+    getpercinfo(){
+       const percorsi =JSON.parse(localStorage.getItem("percorsi"))
+       const sel= percorsi.find(perc=> perc.percorso==localStorage.getItem("percSel"));
+      return sel
+
+    },
 
     datetoVersion(date){
       const splitted=date.split("-");
@@ -319,9 +332,8 @@ export default {
        
 
     },
-
-    getPercorsi(callback){
-      fetch(store.getters.baseUrl+"/service/rest/v1/percorsiMuseo")
+    async  getPercorsi(callback){
+       fetch(store.getters.baseUrl+"/service/rest/v1/percorsiMuseo")
       .then(response => {
         if (!response.ok) {
           throw new Error(`Request failed with status ${reponse.status}`)
@@ -332,6 +344,24 @@ export default {
         callback(data.result);
       })
       .catch(error => console.log(error))
+
+    },
+
+  async  getPercorsiawait(){
+      const response= await fetch(store.getters.baseUrl+"/service/rest/v1/percorsiMuseo")
+     /// console.log("p response",response, response.json())
+      const ret=response.json();
+      return ret;
+    /*  .then(response => {
+        if (!response.ok) {
+          throw new Error(`Request failed with status ${reponse.status}`)
+        }
+        return response.json()
+      })
+      .then(data => {
+        callback(data.result);
+      })
+      .catch(error => console.log(error))*/
 
     },
 

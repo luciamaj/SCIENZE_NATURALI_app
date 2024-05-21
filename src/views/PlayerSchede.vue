@@ -317,7 +317,7 @@ div.meta-container {
 div.meta-container div.song-title {
   text-align: center;
   color: #263238;
-  font-size: 30px;
+  font-size: 22px;
   font-weight: 600;
   font-family: "Open Sans", sans-serif;
 }

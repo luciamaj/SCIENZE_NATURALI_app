@@ -3,12 +3,18 @@
     "baseUrl":"https://museorisorgimentoravenna.eadev.it/dataoversound-swi",
     "percorsi":true,
     
-    "appleAppName":"com.ea.museorisorgimentoravenna://",
+    "appleAppName":"com.ea.PalazzoGuiccioli://",
     "appleStoreUrl":"https://itunes.apple.com/it/app/itunes-connect/id376771144",
-    "androidAppName":"com.museodellestorie.ggwave;package=com.msbmuseum.ggwave",
-    "androidStoreUrl":"https://play.google.com/store/apps/details?id=com.msbmuseum.ggwave",
+    "androidAppName":"com.daisyravenna.ggwave;package=com.daisyravenna.ggwave",
+    "androidStoreUrl":"https://play.google.com/store/apps/details?id=com.daisyravenna.ggwave",
     "interactionMode":"mix",
-    "langDefault":"it"
+    "langDefault":"en",
 
-    
+    "coord":{
+        "NO":[ 45.58283251014277, 8.96687190033312],
+        "NE":[ 45.58283251014277, 9.429670949972401],
+        "SO":[ 45.35216866591035, 8.96687190033312],
+        "SE":[ 45.35216866591035, 9.429670949972401]
+
+    }
 }

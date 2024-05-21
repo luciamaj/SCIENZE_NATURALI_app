@@ -93,7 +93,7 @@ export const fr ={
             es:"Espagnol"
         },
         help:"Aider",
-        copyright:"Copyright",
+        copyright:"Copyright et Privacy",
         privacy:"Privacy",
         termini:"Conditions d'utilisation",
         test:{

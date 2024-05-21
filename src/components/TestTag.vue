@@ -34,7 +34,7 @@
             {{$t('menu.test.stopTest')}}</ion-button>
 
 
-            <ion-button expand="block" class="capture-btn-test" @click="opengps" >tst gps</ion-button>
+            <ion-button expand="block" class="capture-btn-test" id="testGps" @click="opengps" >test gps</ion-button>
 
        
          
@@ -60,11 +60,12 @@ import {
 } from "@ionic/vue";
 import Amplitude from "amplitudejs";
 import Scanner from "../views/Scanner.vue";
+import GPS from '../views/Map.vue';
 import Nav from "./Nav.vue";
 import { Plugins } from "@capacitor/core";
 import Debug from '@/components/DebugPage.vue';
 import { useRouter } from "vue-router";
-import common from "../js/common"
+import common from "../js/common";
 const { Storage } = Plugins;
 
 
@@ -355,7 +356,10 @@ export default {
 
     
    opengps(){
-    this.$router.replace({ path: "/gps"  });
+    Amplitude.pause();
+    Amplitude.setRepeat( false );
+    const ionNav = document.querySelector('ion-nav');
+    ionNav.push(GPS, { title: 'Changeeee' });
    },
        
     callJava(){
@@ -518,6 +522,9 @@ ion-content {
   height: 20vh;
   line-height: 2em;
 }
+#testGps{
+ color:var(--ion-color-secondary);
+}
 
 .buttons-test{
   width: 100%;
@@ -525,6 +532,7 @@ ion-content {
   top:50vh;
   position: absolute;
   display: flex;
+  flex-direction: column;
   padding: 0 6vw;
 }
 .view-wwave-container {
@@ -535,6 +543,7 @@ ion-content {
   background-size: cover;
   background-blend-mode: saturation;
 }
+
 
 
 .title {

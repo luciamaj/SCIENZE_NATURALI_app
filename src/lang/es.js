@@ -94,8 +94,8 @@ export const es= {
             es:"Español"
         },
         help:"Ayuda",
-        copyright:"Copyright",
-        privacy:"Política de Privacidad",
+        copyright:"Copyright y Privacy",
+        privacy:"Privacy",
         termini:"Términos de servicio",
         test:{
             title:"Test",

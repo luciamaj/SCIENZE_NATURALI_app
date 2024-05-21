@@ -97,7 +97,7 @@ export const en= {
             es:"Spanish"
         },
         help:"Help",
-        copyright:"Copyright",
+        copyright:"Copyright & Privacy",
         privacy:"Privacy",
         termini:"Terms of Service",
         test:{

@@ -1,5 +1,5 @@
 <template>
-  <ion-header>
+  <ion-header class="ion-no-border">
     <ion-toolbar>
      
       <ion-title > {{$t('menu.title')}} </ion-title>
@@ -38,11 +38,11 @@
             <div class="button-text"> {{$t("menu.copyright")}}</div>
             <ion-icon  slot="end" size="large" name="chevron-forward" />
         </ion-button>
-        <ion-button expand="block" size="large" color="secondary" @click="pushPage('privacy')" > 
+        <!--ion-button expand="block" size="large" color="secondary" @click="pushPage('privacy')" > 
             <ion-icon  slot="start" size="large" name="glasses" />
             <div class="button-text"> {{$t("menu.privacy")}}</div>
             <ion-icon  slot="end" size="large" name="chevron-forward" />
-        </ion-button>
+        </ion-button-->
         <ion-button expand="block" size="large" color="secondary" @click="pushPage('terms')" > 
             <ion-icon  slot="start" size="large" name="shield-checkmark-outline"/>
             <div class="button-text"> {{$t("menu.termini")}}</div>

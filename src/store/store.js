@@ -8,13 +8,17 @@ const store = new Vuex.Store({
         currentLang: "it",
         conf: null,
         baseUrl: "",
-        pubblication:""
+        pubblication:"",
+        percorsosel:""
         
        
     },
     mutations: {
         pubblication(state, data) {
             state.pubblication = data;
+        },
+        percorsosel(state, data){
+            state.percorsosel = data;
         },
         dataSchede(state, data) {
             state.dataSchede = data;
@@ -32,6 +36,7 @@ const store = new Vuex.Store({
     },
     getters: {
         pubblication: state => state.pubblication,
+        percorsosel: state => state.percorsosel,
         dataSchede: state => state.dataSchede,
         currentLang: state => state.currentLang,
         conf: state => state.conf,

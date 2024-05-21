@@ -221,6 +221,8 @@ export default defineComponent({
         this.schedaState(false);
     }, 1500);
 
+    window.addEventListener('storage', ()=>{console.log("listen changes")});
+
   },
 
 
@@ -323,7 +325,7 @@ export default defineComponent({
     },
     scaricaInfoMostra(){
       this.getSchede((schede) => {
-        //print Info
+       
         //console.log("schede info", schede);
         const retrivedinfo = schede;
         let filtered= retrivedinfo.filter( x => (x.mostra == this.mostra));
@@ -351,24 +353,25 @@ export default defineComponent({
     aggiornaInfo(from){
      
       this.getSchede((schede) => {
-       //ptint schede 
+       
         //console.log("schede info", schede);
         const retrivedinfo = schede;
         let filtered= retrivedinfo.filter( x => (x.mostra == this.mostra));
         if(this.infoPubbl.percorsi){
-          console.log("schede scaricate", filtered);
-            const alldata=filtered;
+         // console.log("schede scaricate", filtered);
+          const alldata=filtered;
           const filterbypercorsi = filtered.filter(scheda => {        
-            const found = scheda.percorsi.some(perc => perc.includes(this.infoPubbl.percorsi));
+          const found = scheda.percorsi.some(perc =>{ 
+            return this.infoPubbl.percorsi.includes(perc)});
             return found;
           });
           filtered= filterbypercorsi; 
           //console.log("filter incl ?", filterbypercorsi);
+          console.log("chiamo even con queste schede ",alldata)
           const JSONstringalldata= JSON.stringify(this.evendata(alldata));
           localStorage.setItem('allDataMostra',JSONstringalldata);
         }
-        //ptint schede filtrate
-        //console.log("Filtered " , filtered);
+        console.log("chiamo even su filtered ",filtered)
         const newSchede=this.evendata(filtered)
         const JSONstring= JSON.stringify(newSchede);
         if(this.mostraCambiata==false){
@@ -449,11 +452,12 @@ export default defineComponent({
             const contenuto=scheda.content.find(el=> el.lang==lang);
               // console.log("Cont ", contenuto);
              // console.log("Conttype ", contenuto.type);
-           
-             const contenutodefault=scheda.content.find(el=> el.lang==this.infoPubbl.lingua_default);
+             console.log("Lingua default ", this.infoPubbl.lingua_default, this.conf.langDefault)
+             const contenutodefault=scheda.content.find(el=> el.lang==this.infoPubbl.lingua_default.toLowerCase());
               if(contenuto.type==null) {
                     
-               // console.log("Non ci sono Media per la scheda  in "+ lang)
+               console.log("No Media per la scheda",contenuto.titolo, scheda.tag,  "in "+ lang)
+               console.log("cont default ", contenutodefault)
               
               //  console.log("contenutoDefault ", contenutodefault)
                 if(contenutodefault.type!=null){
@@ -588,6 +592,10 @@ export default defineComponent({
 </script>
 
 <style >
+.toolbar {
+  /* --background:  red;*/
+   --min-height: 39px!important;
+}
 body{
    font-family: "Open Sans", sans-serif;
 }

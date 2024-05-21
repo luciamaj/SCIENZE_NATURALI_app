@@ -47,16 +47,16 @@
 
           </ion-slide>
          
-          <ion-slide v-if="(context=='onboard'&& confPerc )" >
+          <ion-slide v-if="(context=='onboard'&& confPerc  )" >
             <div class="slide-inner">
               <h5 class="lang-title"> {{$t('onboard.percorsi.title')}} </h5>
               <div class="text-one"> {{$t('onboard.percorsi.text')}} </div>
               <ion-grid>
-                  <ion-row v-for="(perc,index) in percorsiMostra" class="row" :key="(perc,index)" v-on:click="setPercorso(perc.percorso)">
-                    <ion-col  class="percorsi-cont" size="4" > <div class="circle-cont"  > <img class="cover circle" :class="checkPerc(perc.percorso)" id="circle-it" :src="imgPercorsi[index]" alt=""></div></ion-col>
+                  <ion-row v-for="(perc,index) in percorsiMostra" class="row inline-row" :key="(perc,index)" v-on:click="setPercorso(perc.percorso)">
+                    <ion-col  class="percorsi-cont" size="4" > <div class="circle-cont-perc "  > <img class="cover circle" :class="checkPerc(perc.percorso)" id="circle-it" :src="imgPercorsi(perc)" alt=""></div></ion-col>
                     <ion-col  size="8"  >
                       
-                      <div class="percorso">{{perc.percorso}}</div>
+                      <div class="percorso">{{nomeLingua(perc)}}</div>
                   
                     </ion-col>
                       
@@ -202,6 +202,7 @@ export default {
       modules: [Navigation, Pagination, Scrollbar, A11y],
     };
   },
+
   computed:{
     interactionMode(){
       console.log("interactionMode "+this.conf.interactionMode );
@@ -216,29 +217,14 @@ export default {
       return this.conf.percorsi;
 
     },
+  
     
-    imgPercorsi() {
-   
-      if (this.percorsiMostra) {
-       const  arrImm=[];
-       this.percorsiMostra.forEach(perc => {
-        if(perc.img!=null){
-          arrImm.push(this.$store.getters.baseUrl+"/upload/"+perc.img)
-        }else{
-          arrImm.push('/assets/background/dos.png');
-        }
-        
-       });
-        return arrImm;
-      } 
-      return null
-     
-    },
+    
   },
 
-  created(){
+  async created(){
     this.getinfo=common.getinfo;
-    this.getinfoall();
+    await this.getinfoall();
    
 
  
@@ -246,7 +232,7 @@ export default {
   mounted(){
  
    
-    this.calcSlidelength();
+    //this.calcSlidelength();
   
    
       
@@ -299,12 +285,12 @@ export default {
       }
     },
 
-    getinfoall(){
+   async getinfoall(){
       console.log('? '+ contents[0].name);
       this.currLang=this.$i18n.locale;
 
       if(this.context=='onboard'){
-        this.getinfo((info) => {
+        this.getinfo(async(info) => {
           this.publishedLang=info.lang.map(element => {
             return element.toLowerCase();
           });
@@ -327,13 +313,12 @@ export default {
               console.log("N oper2",  this.percorsi.length)
             }
                             
-            common.getPercorsi((perc)=>{
-                this.percorsiMostra = perc.filter(item => info.percorsi.includes(item.percorso));
+           let perc= await common.getPercorsiawait();
+           perc=perc.result;
+           console.log("awaittt perc",perc);
+            this.percorsiMostra = perc.filter(item => info.percorsi.includes(item.percorso));
               
                   this.setPercorso(this.percorsiMostra[0].percorso)
-                  
-                
-            })
 
             this.calcSlidelength();
           }
@@ -346,6 +331,14 @@ export default {
      
 
       }
+    },
+
+
+    nomeLingua(perc){
+      
+      const retur= perc.lingue.find(item=>item.lang==this.currLang);
+        return retur.nome;
+
     },
 
    /* getinfo(callback){
@@ -366,7 +359,18 @@ export default {
     },*/
 
     
+    imgPercorsi(perc){
+      
+          
+      if(perc.img!=null){
+         return this.$store.getters.baseUrl+"/upload/"+perc.img
+      }else{
+       return '/assets/background/logo.png'
+      }
+    
+    
 
+  },
     setLang(lang){
       this.currLang=lang;
       console.log("click lang" + lang);
@@ -376,11 +380,14 @@ export default {
         this.$i18n.locale = lang;
     // }
     },
+  
 
     setPercorso(perc){
       this.currPerc=perc;
       console.log("click percorso" + perc);
       localStorage.setItem('percSel', perc);
+      
+      common.setstorePerc(this.percorsiMostra.find(itemperc=>itemperc.percorso==perc));
       //if(localStorage.getItem('savedLangs')==null){
         const percLang={};
 
@@ -566,17 +573,32 @@ ion-grid{
  font-size: 0.9em;
  
 }
+.inline-row{
+  margin-bottom: 15px;
+  align-items: center;
+  box-shadow: 0px 2px 2px 0px #00000033;
+  border-radius: 7px;
+  padding: 6px;
+  border: solid 0.5px #bfbfbf24;
+  background: #d6d1ca46;
+}
 
 .percorsi-cont{
-
+ display: flex;
+ justify-content: center;
 }
 .percorso{
   text-align: left;
+  padding-left: 2vw;
 }
 .circle-cont{
   height:10vh;
   width: 10vh;
   margin: 0 auto 10px;
+}
+.circle-cont-perc{
+  height:9vh;
+  width: 9vh;
 }
 .circle{
   

@@ -52,6 +52,7 @@ import {
   
 import common from  "../js/common"
  import Download from '@/components/ScaricamentoContenuti.vue';
+ 
 //import { defineComponent } from 'vue';
 export default ({
   name: "langSwitch",
@@ -141,8 +142,7 @@ export default ({
     if(this.conf.percorsi==true){
       this.currPerc=localStorage.getItem("percSel")
     }
-     
-
+  
     
   },
 
@@ -340,8 +340,11 @@ export default ({
           localStorage.setItem('lang', lang);
           this.currLang=lang;
           this.$i18n.locale = lang;
+          
         }
         this.checkVersion(lang);
+
+    
     },
     add(lang){
 

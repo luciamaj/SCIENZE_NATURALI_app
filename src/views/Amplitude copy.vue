@@ -614,12 +614,15 @@ div.player img.album-art {
 
 .descrArea{
   float: left;
-  padding: 5px 25px;
+  padding: 5px 25px 30px;
   max-height: 40vh;
   overflow: overlay;
   margin-top: 2vh;
   margin-bottom: 2vh;
 
+}
+.descrArea p{
+  margin-top: 0;
 }
 
 .content-scheda{
@@ -651,7 +654,7 @@ div.meta-container {
 div.meta-container div.song-title {
   text-align: left;
   color: #263238;
-  font-size: 25px;
+  font-size: 22px;
   font-weight: 600;
   font-family: "Open Sans", sans-serif;
   margin: 5px 0;

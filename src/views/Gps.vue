@@ -1,4 +1,13 @@
 <template>
+
+  <ion-header class="ion-no-border">
+    <ion-toolbar >
+      <ion-title > GPS</ion-title>
+      <ion-buttons slot="start" >
+        <ion-button  @click="back"><ion-icon size="large" name="chevron-back" /></ion-button>
+      </ion-buttons>
+    </ion-toolbar> 
+  </ion-header>
   <ion-page>
     <ion-header>
       
@@ -7,14 +16,17 @@
     <ion-content :fullscreen="true">
       <div class="vertical-center ">
         <div class="center-content">
+          <div class="map-container">
+            <img class="image" src="/assets/background/map/mappa.png">
+
+          </div>
+
           <div class="logo-container">
             lat: {{ userCoord.latitude }} -
             long {{ userCoord.longitude }} ---
             distanza {{ distance }} m
           </div>
-      
-       
-       
+
         </div>
       </div>
     </ion-content>
@@ -35,17 +47,23 @@ import {
 
 import common from "../js/common"
 import { useRouter } from "vue-router";
-
+import NavRoot from '@/components/NavRoot.vue';
 
 
 export default {
   name: "gps",
+  props: {
+    title: { type: String, default: 'Default Title' }
+  },
   data() {
     return {
       userCoord: { latitude: 0, longitude: 0 },
       distance: null,
       cityCoord: { latitude:  45.46836295570483, longitude:9.23224679549364 } 
     };
+  },
+  setup(){
+    NavRoot
   },
  
   components: {
@@ -67,6 +85,11 @@ export default {
 
 
   methods: {
+
+    back(){
+      const ionNav = document.querySelector('ion-nav') ;
+            ionNav.pop();    
+    },
 
     showPosition(position) {
      

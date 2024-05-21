@@ -99,7 +99,7 @@ export const it = {
             es:"Spagnolo"
         },
         help:"Aiuto",
-        copyright:"Copyright",
+        copyright:"Copyright e Privacy",
         privacy:"Privacy",
         termini:"Termini di servizio",
         test:{

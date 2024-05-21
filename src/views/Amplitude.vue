@@ -1,10 +1,10 @@
 <template>
   <ion-page>
      <ion-header collapse="fade">
-      <ion-toolbar >
+      <ion-toolbar class="toolbar" >
         <!--ion-title v-html="contentScheda.titolo" > </ion-title-->
         <ion-buttons  slot="start" >
-          <ion-button v-on:click="goingback()"><ion-icon size="large" name="arrow-back"></ion-icon></ion-button>
+          <ion-button v-on:click="goingback()"><ion-icon size="medium" name="arrow-back"></ion-icon></ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -221,7 +221,15 @@ export default {
         this.getCoverImg(this.dataSchede.img);
         //return this.$store.getters.baseUrl+'/upload/'+this.dataSchede.img
       } else {
-         this.getCoverImg(this.$store.getters.pubblication.img) 
+        if(this.conf.percorsi==false){
+          this.getCoverImg(this.$store.getters.pubblication.img) 
+        }else{
+          const sel=common.getpercinfo();
+          console.log("cosa è salvatop?",sel);
+         
+          this.getCoverImg(sel.img);
+        }
+         
        
       }
       if(this.contentScheda.testo==null){
@@ -578,13 +586,18 @@ div.player img.album-art {
 
 .descrArea{
   float: left;
-  padding: 5px 25px;
-  max-height: 40vh;
-  overflow: overlay;
-  margin-top: 2vh;
+  padding: 5px 27px 30px;
+ /* max-height: 40vh;*/
+ height: 39vh;
+ /* overflow: overlay;*/
+ /* margin-top: 2vh;*/
   margin-bottom: 2vh;
+  font-size: 1.1em;
+  line-height: 1.4em;
 
 }
+.descrArea p{ margin-top: 0;}
+
 
 .content-scheda{
      overflow: overlay;
@@ -619,10 +632,10 @@ div.meta-container {
 div.meta-container div.song-title {
   text-align: left;
   color: #263238;
-  font-size: 25px;
+  font-size: 22px;
   font-weight: 600;
   font-family: "Open Sans", sans-serif;
-  margin: 14px 0;
+  margin: 14px 0 5px;
 
 }
 div.meta-container div.song-artist {
