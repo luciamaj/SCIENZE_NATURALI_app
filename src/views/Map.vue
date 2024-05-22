@@ -45,7 +45,9 @@ import {
 import common from "../js/common"
 import { useRouter } from "vue-router";
 import NavRoot from '@/components/NavRoot.vue';
-import leaflet from "leaflet";
+import L from "leaflet";
+import 'leaflet/dist/leaflet.css';
+
 
 
 
@@ -69,7 +71,7 @@ export default {
      lastTouchDistance : 0,
     lastScale : 1,
     map: null,
-    bounds: [[0,0], [889,1371]],
+    bounds: [[0,0], [987,1248]],
     url: '/assets/background/map/mappa.png',
     itens: [],
     markers: []
@@ -103,17 +105,7 @@ this.getItens();
 
   methods: {
 
-    resizeMap() {
-      if (this.map) {
-        this.map.invalidateSize();
-        // Workaround to re-open popups at their correct position.
-        this.map.eachLayer((layer) => {
-          if (layer instanceof L.Marker) {
-            layer.openPopup();
-          }
-        });
-      }
-    },
+  
     getItens() {
       this.itens = [
         {id: '1', description: 'Centro', latLng: [ 398,589], status: Math.floor((Math.random() * 2) + 1)},
@@ -125,7 +117,11 @@ this.getItens();
     drawMap() {
      
       // Inicializa o mapa, utilizando o sistema de coordenadas simples
-      this.map = L.map('map', {crs: L.CRS.Simple, maxZoom: 3, minZoom: -2})
+      this.map = L.map('map', {
+        crs: L.CRS.Simple, zoom:1,
+        maxZoom: 3,
+        minZoom: -1,
+      }).setView([20, 1])
       // Carrega a imagem do mapa, com seus limites
 
       
@@ -135,7 +131,7 @@ this.getItens();
       // Carrega os itens
       this.getItens();
       // Exclui marcadores anteriores
-     this.markers = [];
+      this.markers = [];
       // Converte os itens em marcadores
       this.itens.forEach((item, index, array)=>{
         const markerX = L.marker(L.latLng(item.latLng), {draggable: false})
@@ -278,12 +274,12 @@ this.getItens();
 
     coordtopixel(){
 
-    const  lat1=  45.58678559205394
-    const  lon1= 8.966008767967141
 
-    const  lat2=  45.372793162134194
-    const  lon2= 9.426538516604417
-
+    const  lat1= 45.700181594151495
+    const  lon1= 8.703366353316119
+   
+    const  lat2=  45.186283162786154
+    const  lon2= 9.644047701438618
     
 
    
@@ -373,15 +369,15 @@ ion-content {
     flex-direction: column;
     justify-content: center;
 }
-.map-container{
+/*.map-container{
   height: 80vh;
-}
-.image-map{
+}*/
+/*.image-map{
   height: 100%;
   object-fit: contain;
     object-position: top;
 
-}
+}*/
 #map { 
   
   height: 80vh;

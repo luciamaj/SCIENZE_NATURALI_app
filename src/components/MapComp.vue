@@ -2,50 +2,36 @@
   <div id="map" ref="map" style="height: 100vh;"></div>
 </template>
 
-<script lang="ts">
+<script>
 
-
-import { onMounted, ref } from 'vue';
 import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
 //import { defineComponent } from 'vue';
 export default ({
-  setup() {
-    const map = ref(null);
-    
-    onMounted(() => {
-      // Definisci le dimensioni della tua immagine (in pixel)
-      const imageWidth = 1024;
-      const imageHeight = 768;
+  name: 'MapComponent',
+  mounted() {
+    this.initMap();
+  },
+  methods: {
+    initMap() {
+      const map = L.map('map').setView([51.505, -0.09], 13);
 
-      // Crea la mappa e disabilita le interazioni non necessarie
-      map.value = L.map('map', {
-        crs: L.CRS.Simple,
-        minZoom: -5,
-        maxZoom: 5,
-        zoomControl: true
-      }).setView([0, 0], 0);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
 
-      // Calcola le dimensioni dell'immagine in coordinate di Leaflet
-      const southWest = map.value.unproject([0, imageHeight], map.value.getMaxZoom());
-      const northEast = map.value.unproject([imageWidth, 0], map.value.getMaxZoom());
-      const bounds = new L.LatLngBounds(southWest, northEast);
-
-      // Aggiungi l'immagine alla mappa
-      L.imageOverlay('path/to/your/image.jpg', bounds).addTo(map.value);
-
-      // Limita la visualizzazione ai confini dell'immagine
-      map.value.setMaxBounds(bounds);
-      map.value.fitBounds(bounds);
-
-      // Aggiungi un marker come esempio
-      const marker = L.marker(map.value.unproject([512, 384], map.value.getMaxZoom())).addTo(map.value);
-      marker.bindPopup('Questo è un marker').openPopup();
-    });
-
-    return {
-      map
-    };
+      // Aggiungere un'immagine PNG come overlay
+      const imageUrl = '/assets/background/map/mappa.png';
+      const imageBounds = [[51.49, -0.08], [51.5, -0.06]];
+      L.imageOverlay(imageUrl, imageBounds).addTo(map);
+    }
   }
 })
 </script>
+<style scoped>
+#map {
+  height: 100%;
+}
+</style>
 

@@ -70,6 +70,10 @@ var netFirstRequests = new RegExp('(' + [
 		'/dataoversound-swi/service/rest/v1/mostra-attiva',
 		
 		].join('(\/?)|\\') + ')$')
+	var netFirstmostraAttivaPerc = new RegExp('(' + [
+		
+		'/dataoversound-swi/service/rest/v1/mostra-attiva/percorsi'
+		].join('(\/?)|\\') + ')$')
 	  
 //Tolto il commento a questa parte 
 /*self.addEventListener('fetch', event => {
@@ -102,6 +106,11 @@ function onFetch(event) {
 	}
 	if(netFirstmostraAttiva.test(event.request.url)){
 		console.log('netFirst MA: ', event.request.url)
+		event.respondWith(fetchorCacheMA(event))
+		return
+	}
+	if(netFirstmostraAttivaPerc.test(event.request.url)){
+		console.log('netFirst MA-P: ', event.request.url)
 		event.respondWith(fetchorCacheMA(event))
 		return
 	}

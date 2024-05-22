@@ -82,7 +82,8 @@ export const it = {
         percorsi:{
             title:"Percorsi",
             subtitile:"Percorsi scaricati",
-            add:"Cambia percorso",
+            change:"Cambia percorso",
+            add:"Aggiungi percorso",
             alert:"Attenzione questa operazione scaricherà i contenuti del nuovo percorso",
             select:"Percorsi attivi",
         },

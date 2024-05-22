@@ -72,8 +72,12 @@ export const de= {
             title:"Inhalt aktualisieren"
         },
         percorsi:{
-            title:"Percorsi",
-            add:"Cambia percorso",
+            title:"Routen",
+            subtitile:"Heruntergeladene Routen",
+            change:"Route ändern",
+            add:"Fügen Sie eine neue Reiseroute hinzu",
+            alert:"Achtung, dieser Vorgang lädt den Inhalt des neuen Pfads herunter",
+            select:"Aktive Routen",
         },
         lang:{
             title:"Sprache",

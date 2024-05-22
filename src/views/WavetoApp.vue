@@ -67,7 +67,7 @@ import Subtitles from "./Subtitles.vue";
 import { useRouter } from "vue-router";
 import common from "../js/common"
 import { ref, onMounted, watch } from 'vue';
-import { useLocalStorage } from '@/composables/useLocalStorage';
+
 
 const { Storage } = Plugins;
 

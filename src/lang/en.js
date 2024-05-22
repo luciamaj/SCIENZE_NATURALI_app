@@ -78,11 +78,12 @@ export const en= {
             title:"Update content"
         },
         percorsi:{
-            title:"Percorsi",
-            subtitile:"Percorsi scaricati",
-            add:"Cambia percorso",
-            alert:"Attenzione questa operazione scaricherà i contenuti del nuovo percorso",
-            select:"Percorsi attivi",
+            title:"Itineraries",
+            subtitile:"Downloaded itineraries",
+            change:"Change itinerary",
+            add:"Add new itinerary",
+            alert:"Attention: this operation will download the contents of the new itinerary",
+            select:"Active itineraries",
         },
         lang:{
             title:"Language",

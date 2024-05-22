@@ -78,8 +78,13 @@ export const es= {
             title:"Actualiza los contenidos"
         },
         percorsi:{
-            title:"Percorsi",
-            add:"Cambia percorso",
+            title:"Itinerarios",
+            subtitile:"Itinerarios descargados",
+            add:"Cambiar itinerario",
+            change:"Cambiar itinerario",
+            add:"Añadir un nuevo itinerario",
+            alert:"Atención: esta operación descargará el contenido del nuevo itinerario",
+            select:"Itinerarios activos",
         },
         lang:{
             title:"Idioma",

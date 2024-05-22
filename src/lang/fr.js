@@ -77,8 +77,12 @@ export const fr ={
             title:"Mettre à jour le contenu"
         },
         percorsi:{
-            title:"Percorsi",
-            add:"Cambia percorso",
+            title:"itinéraires",
+            subtitile:"Itinéraires téléchargés",
+            change:"Changer d'itinéraire",
+            add:"Ajouter un nouvel itinéraire",
+            alert:"Attention : cette opération téléchargera le contenu du nouvel itinéraire",
+            select:"Itinéraires actifs",
         },
         lang:{
             title:"Langues",

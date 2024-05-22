@@ -14,12 +14,12 @@
       <template v-for="perc in intersectarray"  v-bind:key="perc">
         <ion-row>
           <div :class="checkIfActive(perc.percorso)" class="lang-cont" v-on:click="switchPerc(perc)"> 
-            <ion-col class="lang-cont-flag" size="4"  :value="perc"   >
+            <ion-col class="lang-cont-flag" size="3"  :value="perc"   >
               
                 <div class="circle-cont"  >  <img class="cover circle" id="circle-it" :src="imgPercorsi(perc.img)" alt=""></div>
           
             </ion-col>
-            <ion-col class="lang-cont-name"  size="8">
+            <ion-col class="lang-cont-name"  size="9">
               <div class="percorso">{{nomeLingua(perc)}}</div>
 
             </ion-col> 
@@ -29,7 +29,7 @@
     </ion-grid>
 
 
-    <ion-button v-if="remaining.length>0" expand="block" size="slim" color="secondary" class="add-lang" @click="presentActionSheet">  {{$t('menu.percorsi.add')}} </ion-button>
+    <ion-button v-if="remaining.length>0" expand="block" size="slim" color="secondary" class="add-lang" @click="presentActionSheet">  {{$t('menu.percorsi.change')}} </ion-button>
 
 
      
@@ -125,7 +125,7 @@ export default ({
       this.currPubbDate(pubblication);
      
       const myArray = publishedPerc.filter( ( el ) =>{
-        console.log("?? "+!this.savedperlang.includes( el ));
+        console.log("?? "+el+ !this.savedperlang.includes( el ));
         return !this.savedperlang.includes( el);
       
       });
@@ -215,13 +215,13 @@ export default ({
     },
     buttons(){
       const remainingArray=[];
-        this.remaining.forEach(element => {
+        this.remainingIntersected.forEach(element => {
           const percPush={
-            text: this.$t(element),
+            text: this.nomeLingua(element),
             handler: () => {
               
                 console.log('clicked')
-                this.add(element)
+                this.add(element.percorso)
               },
           }
           remainingArray.push(percPush);
@@ -240,7 +240,7 @@ export default ({
     },
     async presentActionSheet() {
         const actionSheet = await actionSheetController.create({
-            header: this.$t('menu.lang.select'),
+            header: this.$t('menu.percorsi.select'),
             cssClass: 'my-custom-class',
             buttons: this.buttons(),
           });
@@ -252,8 +252,8 @@ export default ({
 
     async showOptions(perc) {
       const alert = await alertController.create({
-        header: this.$t('menu.lang.add') ,
-        message:  this.$t('menu.lang.alert') ,
+        header: this.$t('menu.percorsi.add') ,
+        message:  this.$t('menu.percorsi.alert') ,
         buttons: [
           {
             text: this.$t('action.download'),
@@ -389,7 +389,10 @@ export default ({
     },
     assignRemaining(remainingLangs){
       this.remaining=remainingLangs;
-      console.log("REMAINING ",  this.remaining.length);
+
+      this.remainingIntersected= this.infoPercorsi.filter(p=> this.remaining.includes(p.percorso));
+      console.log("REMAINING ",  this.remaining);
+      console.log("REMAINING Inter ",  this.remainingIntersected);
 
     },
 

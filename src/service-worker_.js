@@ -34,6 +34,10 @@ workbox.routing.registerRoute(
 	new RegExp(process.env.VUE_APP_BASE_URL+ '/service/rest/v1/mostra-attiva'),
 	new  workbox.strategies.NetworkFirst()
 );
+workbox.routing.registerRoute(
+	new RegExp(process.env.VUE_APP_BASE_URL+ '/service/rest/v1/mostra-attiva/percorsi'),
+	new  workbox.strategies.NetworkFirst()
+);
 
 
 workbox.routing.registerRoute(
