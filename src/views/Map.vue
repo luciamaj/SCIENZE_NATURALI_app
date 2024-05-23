@@ -22,6 +22,7 @@
             lat: {{ userCoord.latitude }} -
             long {{ userCoord.longitude }} ---
             distanza {{ distance }} m
+            <ion-button  @click="updateMap">remap</ion-button>
           </div>
 
         </div>
@@ -72,6 +73,7 @@ export default {
     lastScale : 1,
     map: null,
     bounds: [[0,0], [987,1248]],
+     imageBounds : [[0,0], [987,1248]],
     url: '/assets/background/map/mappa.png',
     itens: [],
     markers: []
@@ -96,6 +98,10 @@ export default {
   mounted(){
     this.getLocation();
     this.drawMap();
+    setTimeout(() => {
+      this.updateMap();
+    }, 500);
+  
 // this.getimagepos();
 this.getItens();
    
@@ -110,7 +116,7 @@ this.getItens();
       this.itens = [
         {id: '1', description: 'Centro', latLng: [ 398,589], status: Math.floor((Math.random() * 2) + 1)},
         {id: '2', description: 'Gaggiano', latLng: [171, 193 ], status: Math.floor((Math.random() * 2) + 1)},
-        {id: '3', description: 'caso', latLng: [ 189,700], status: Math.floor((Math.random() * 2) + 1)}
+        {id: '3', description: 'forna', latLng: this.coordtopixelPunti(45.49004314703912, 8.895382882487887), status: Math.floor((Math.random() * 2) + 1)}
       ];
     },
 
@@ -121,30 +127,28 @@ this.getItens();
         crs: L.CRS.Simple, zoom:1,
         maxZoom: 3,
         minZoom: -1,
-      }).setView([20, 1])
+        maxBounds:this.bounds,
+        maxBoundsViscosity: 1.0
+      }).setView([0, 0])
       // Carrega a imagem do mapa, com seus limites
 
       
-      L.imageOverlay(this.url, this.bounds).addTo(this.map);
-      this.map.fitBounds(this.bounds);
-      this.map.setMaxBounds(this.bounds);
-      // Carrega os itens
-      this.getItens();
+      L.imageOverlay(this.url, this.imageBounds).addTo(this.map);
+     this.map.fitBounds(this.bounds);
+      //this.map.setMaxBounds(this.bounds);
+      
       // Exclui marcadores anteriores
+      this.map.invalidateSize();
       this.markers = [];
       // Converte os itens em marcadores
       this.itens.forEach((item, index, array)=>{
         const markerX = L.marker(L.latLng(item.latLng), {draggable: false})
           .setIcon(this.getIcon(item.status))
-          .bindTooltip(item.description)
-          .on('moveend', function(e){
-            alert('Marcador do item: ' + item.id + ', nova posição: ' + e.target.getLatLng().toString());
-          });
         markerX.itemId = item.id;
         this.markers.push(markerX);
       });
       // Adiciona os marcadores ao mapa, setando as propriedades comuns
-      L.featureGroup(this.markers).addTo(this.map);
+     L.featureGroup(this.markers).addTo(this.map);
     },
 
     getIcon(status) {
@@ -167,7 +171,7 @@ this.getItens();
     },
     updateMap() {
       this.map.remove();
-      this.getItens();
+     // this.getItens();
       this.drawMap();
     },
 
@@ -274,24 +278,42 @@ this.getItens();
 
     coordtopixel(){
 
-
-    const  lat1= 45.700181594151495
-    const  lon1= 8.703366353316119
+     
+    const  lat1= 45.71241717967386
+    const  lon1= 8.69531166660485
    
-    const  lat2=  45.186283162786154
-    const  lon2= 9.644047701438618
-    
+    const  lat2=  45.18079075895875
+    const  lon2= 9.640075829782067
+
 
    
-      const pixel_x = 1371 * (this.userCoord.longitude - lon1) / (lon2 - lon1)
-      const pixel_y = 889 * (this.userCoord.latitude - lat1) / (lat2 - lat1)
+      const pixel_x = 1248 * (this.userCoord.longitude - lon1) / (lon2 - lon1)
+      const pixel_y = 987 * (this.userCoord.latitude - lat1) / (lat2 - lat1)
 
       console.log( "pixel",pixel_x,  pixel_y);
       this.punto= document.getElementById('punto');
-      this.punto.style.top=(pixel_y+63)+"px";
+      this.punto.style.top=(pixel_y)+"px";
       this.punto.style.left=pixel_x+"px";
 
     },
+    coordtopixelPunti(lat,lon){
+
+     
+const  lat1= 45.71241717967386
+const  lon1= 8.69531166660485
+
+const  lat2=  45.18079075895875
+const  lon2= 9.640075829782067
+
+
+
+  const pixel_x = 1248 * (lon - lon1) / (lon2 - lon1)
+  const pixel_y = 987 * (lat - lat1) / (lat2 - lat1)
+
+  console.log( "pixel",pixel_x,  pixel_y);
+  return [(987-pixel_y),(pixel_x )]
+
+},
 
      
     mercatorProjection(lat, lon) {
@@ -369,6 +391,9 @@ ion-content {
     flex-direction: column;
     justify-content: center;
 }
+.leaflet-container{
+  background: #ffffff!important;
+}
 /*.map-container{
   height: 80vh;
 }*/
@@ -379,8 +404,8 @@ ion-content {
 
 }*/
 #map { 
-  
-  height: 80vh;
+  width:100%;
+  height: 500px;
 
 
 }
