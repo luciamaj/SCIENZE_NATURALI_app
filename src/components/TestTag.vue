@@ -34,7 +34,7 @@
             {{$t('menu.test.stopTest')}}</ion-button>
 
 
-            <ion-button expand="block" class="capture-btn-test" id="testGps" @click="opengps" >test gps</ion-button>
+            <!--ion-button expand="block" class="capture-btn-test" id="testGps" @click="opengps" >test gps</ion--->
 
        
          

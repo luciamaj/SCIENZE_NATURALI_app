@@ -68,7 +68,12 @@ export const en= {
         },
 		timeoutTagTitle:"ATTENTION",
 		timeoutTagText:"SilenceTag NOT detected, it may be off. Use the \"Scan QR Code\" button",
-		timeoutTagAccept:"Continue"
+		timeoutTagAccept:"Continue",
+        capting:[
+            "Cerco dove sei", 
+            "Tieni fermo il telefono",
+            "Ancora un momento..."
+        ]
     
     },
 
@@ -115,6 +120,9 @@ export const en= {
         title:"Collection",
         subtitle:"Live the experience again",
         alerttext:"No content has been viewed yet. \n All contents viewed throughout the visit will be available here"
+    },
+    schede:{
+        back:"Back"
     }
    
 }

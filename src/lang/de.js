@@ -63,7 +63,12 @@ export const de= {
         },
 		timeoutTagTitle:"AUFMERKSAMKEIT",
 		timeoutTagText:"SilenceTag wird NICHT erkannt, möglicherweise ist es deaktiviert. Verwenden Sie die Schaltfläche \"QR-Code scannen\"",
-		timeoutTagAccept:"Fortsetzen"
+		timeoutTagAccept:"Fortsetzen",
+        capting:[
+            "Cerco dove sei", 
+            "Tieni fermo il telefono",
+            "Ancora un momento..."
+        ]
     },
 
     menu:{
@@ -109,5 +114,8 @@ export const de= {
         title:"Sammlung",
         subtitle:"Erleben Sie die Erfahrung noch einmal",
         alerttext:"Es wurde noch kein Inhalt angesehen. \n Kommen Sie am Ende der Tour zurück, um die Inhalte zu überprüfen, die Sie auf dem Weg gefunden haben."
+    },
+    schede:{
+        back:"Back"
     }
 }

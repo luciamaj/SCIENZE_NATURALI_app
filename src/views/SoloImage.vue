@@ -5,7 +5,7 @@
         <ion-title > </ion-title>
         <ion-buttons>
           <ion-button v-on:click="goingback()">
-            <ion-icon  class="icon-arrow"  name="arrow-back"></ion-icon>
+            <ion-icon  class="icon-arrow"  name="arrow-back"></ion-icon>{{$t('schede.back')}}
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
@@ -373,6 +373,9 @@ export default {
 </script>
 
 <style>
+ion-icon{
+  margin-right: 10px;
+}
 ion-content {
   --overflow: hidden;
 }

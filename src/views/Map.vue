@@ -184,6 +184,9 @@ this.getItens();
      
       this.userCoord.latitude= position.coords.latitude,
       this.userCoord.longitude= position.coords.longitude
+
+      const mypoint={id: '4', description: 'ME', latLng: this.coordtopixelPunti(this.userCoord.latitude,  this.userCoord.longitude), status: Math.floor((Math.random() * 2) + 1)}
+      this.itens.push(mypoint);
       console.log("mie coord ",   this.userCoord )
       this.calculateDistance(  this.userCoord, this.cityCoord);
      // this.getimagepos();

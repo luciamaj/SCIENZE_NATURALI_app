@@ -132,7 +132,7 @@ export default {
         return this.$store.getters.baseUrl+'/upload/329.jpg'
        
       }
-      return this.$store.getters.baseUrl+'/upload/(329)%2030_8_5.jpg';
+    
     },
     id() {
       return this.$route.params.id;

@@ -165,56 +165,7 @@ export default defineComponent({
     const routerOuteletRef = ref(null);
     provide("routerOutlet", routerOuteletRef);
     this.setInactiveTour();
-    /*this.getinfo((info) => {
-      console.log("info", info);
-      if(info.percorsi){
-       common.getPercorsi((perc)=>{
-          console.log("perc fromswi??", perc)
-          this.percorsiMosrtra = perc.filter(item => info.percorsi.includes(item.percorso));
-          console.log("perc filtrati",  this.percorsiMosrtra);
-          localStorage.setItem('percorsi', JSON.stringify(this.percorsiMosrtra));
-          //devo filtrare i percorsi per quelli compresi nella mostra
-        })
-
-      }
-     
-      this.infoPubbl=info;
-      this.infoPubbl.lang= this.infoPubbl.lang.map(element => {
-        return element.toLowerCase();
-      });
-      this.infoPubbl.lingua_default=this.infoPubbl.lingua_default.toLowerCase();
-      this.mostra=info.mostra;
-      this.pubblicazione=info.pubblicazione;
-      
-      
-      this.savedPubblication=JSON.parse(localStorage.getItem('pubblication'));
-     
-      if(this.savedPubblication==null ||this.savedPubblication=="" ){
-        console.log("versione VUOTA");
-         
-        localStorage.setItem('pubblication', JSON.stringify(info));
-        
-        this.scaricaInfoMostra();
-       
-    
-      }else{
-        if(this.savedPubblication.pubblicazione!= this.pubblicazione){
-          console.log("versione cambiata")///controllare e fare apparire popup di aggiornamento
-          this.emitter.emit('changeVersion');
-          this.updateNotification(true);
-         
-        }else{
-          console.log("versione uguale");
-          const dataMostra=localStorage.getItem('dataMostra')
-          this.setData(dataMostra);
-         
-        }
-      
-      }
    
-      /*  const ogg=localStorage.getItem('dataMostra')
-        console.log("schede salvate "+ ogg);*/
-    /*});*/
     
    setTimeout(() => {
         this.loading = false
@@ -255,38 +206,6 @@ export default defineComponent({
       }
     },
     
-
-   /* getinfo(callback){
-      //if (store.getters.baseUrl) {
-      if(this.conf.percorsi==true){
-        fetch(this.$store.getters.baseUrl+"/service/rest/v1/mostra-attiva/percorsi")
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`Request failed with status ${response.status}`)
-          }
-          return response.json()
-        })
-        .then(data => {
-          callback(data.result[0]);
-        })
-        .catch(error => console.log(error))
-      }else{
-        fetch(this.$store.getters.baseUrl+"/service/rest/v1/mostra-attiva")
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`Request failed with status ${response.status}`)
-          }
-          return response.json()
-        })
-        .then(data => {
-          callback(data.result[0]);
-        })
-        .catch(error => console.log(error))
-        
-      }
-       
-
-    },*/
 
     
     getPercorsi(callback){

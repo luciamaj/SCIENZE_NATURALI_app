@@ -68,7 +68,12 @@ export const es= {
         },
 		timeoutTagTitle:"ALERTA",
 		timeoutTagText:"SilenceTag NO detectado, quizá esté apagado. Utiliza el,\"Escanea el código QR\" botón",
-		timeoutTagAccept:"Continúa"
+		timeoutTagAccept:"Continúa",
+        capting:[
+            "Cerco dove sei", 
+            "Tieni fermo il telefono",
+            "Ancora un momento..."
+        ]
     
     },
 
@@ -116,6 +121,9 @@ export const es= {
         title:"Recolección de datos",
         subtitle:"Revive nuevamente la experiencia",
         alerttext:"Aún no hay contenidos visualizados. \n Al final del recorrido encontrarás los contenidos en esta sección"
+    },
+    schede:{
+        back:"Back"
     }
    
 }

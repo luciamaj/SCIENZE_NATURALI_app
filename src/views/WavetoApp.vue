@@ -26,7 +26,8 @@
 </ion-modal-->
       <div class="vertical-center view-wwave-container">
         <div class="center">
-          <div class="logo-container" id="mostra"><img class="logo" :src="logo"/></div>
+          <div class="logo-container" id="mostra"><img  id="logo" class="logo" :src="logo"/>
+          <capting :class="iscapting" id="captingIcon" hidden></capting></div>
           <!--div class="logo-container" id="anima" hidden><img class="gif-listen" src="assets/background/anima.gif"/></div-->
           <div class="buttons">
           <!--ion-button expand="block" class="capture-btn" @click="callJava" id="captureStart">{{$t('main.start')}}</ion-button-->
@@ -39,6 +40,7 @@
           <ion-button expand="block" class="scan-btn" @click="openModal"><img class="icon-button" src="assets/background/qrI.png"></ion-button>
 
           </div>
+          <!--div class="wait-tag"> </div-->
         </div>
       </div>
     </ion-content>
@@ -61,6 +63,8 @@ import {
 } from "@ionic/vue";
 
 import Scanner from "./Scanner.vue";
+//import Capting from "@/components/Capting.vue";
+import Capting from "@/components/Captingv2.vue";
 import Nav from "../components/Nav.vue";
 import { Plugins } from "@capacitor/core";
 import Subtitles from "./Subtitles.vue";
@@ -100,6 +104,7 @@ export default {
         this.captureStop = document.getElementById("captureStop");
         this.captureStart.hidden = true;
         this.captureStop.hidden = false;
+    
        
          //captureStart.click();
     }
@@ -111,6 +116,8 @@ export default {
     this.store=JSON.parse(localStorage.getItem('pubblication'));
     this.captureStart = document.getElementById("captureStart");
     this.captureStop = document.getElementById("captureStop");
+    this.captingIcon = document.getElementById("captingIcon");
+    this.logoi = document.getElementById("logo");
     this.currLang=localStorage.getItem("lang")
     this.percSel=this.getpercselinlang();
   
@@ -137,6 +144,9 @@ export default {
       this.decodedValue = "stopped recording";
       this.captureStart.hidden = false;
       this.captureStop.hidden = true;
+
+      this.logoi.hidden = false;
+      this.captingIcon.hidden = true;
      
     });
     watch(() => localStorage.getItem('lang'), (newLang) => {
@@ -181,7 +191,8 @@ export default {
     IonContent,
     IonPage,
     IonButton,
-    IonBadge
+    IonBadge,
+    Capting
     
     //IonModal
   
@@ -341,7 +352,41 @@ export default {
 
       return modal.present();
     },
-  
+
+
+
+    async captingModal  ()  {
+    
+      
+      const top = await modalController.getTop();
+
+      const modalCapt = await modalController.create({
+        component: Capting,
+        swipeToClose: true,
+        presentingElement: top
+      });
+
+      modalCapt.onDidDismiss().then(async _ => {
+        console.log("dismissed");
+        const captureStop=document.getElementById("captureStop");
+        captureStop.click();
+      });
+
+     
+      return modalCapt.present();
+    },
+
+
+    async closeCaptingModal  ()  {
+    
+      
+    const top = await modalController.getTop();
+
+    top.dismiss();
+  },
+
+
+    
   async getTour() {
     const ret = await Storage.get({ key: 'tourActive' });
     const tour = JSON.parse(ret.value);
@@ -482,7 +527,7 @@ export default {
 
        
     callJava(){
-
+     // this.captingModal();
       window["answMessage"] = (tag) => {
         this.answMessage(tag);
         console.log("nella HOME!!");
@@ -493,6 +538,8 @@ export default {
          AndroidObject.executeJavaCode(true);  //aggiungere parametro  true
           this.setActiveTour();
           this.decodedValue = "recording";
+          this.logoi.hidden = true;
+          this.captingIcon.hidden = false;
           this.captureStart.hidden = true;
           this.captureStop.hidden = false; 
           
@@ -523,8 +570,10 @@ export default {
              const res = tag
              
             if (res) {
+              this.closeCaptingModal();
                   this.findRoute(res);
                   this.decodedValue = res;
+                  
             }
 
           }

@@ -1,0 +1,17 @@
+{
+    "nameMuseum": "MIDeC – Museo Internazionale Design Ceramico",
+    "baseUrl":"https://museomideclaveno.eadev.it/dataoversound-swi",
+	"percorsi":true,
+
+    "appleAppName":"com.ea.MidecMuseum://",
+    "appleStoreUrl":"https://itunes.apple.com/it/app/itunes-connect/id6499144437",
+    "androidAppName":"com.daisymidec.ggwave;package=com.daisymidec.ggwave",
+    "androidStoreUrl":"https://play.google.com/store/apps/details?id=com.daisymidec.ggwave",
+    "interactionMode":"mix",
+    "langDefault":"en",
+    "history":true,
+
+    "app_primary_color":"#989898",
+    "app_secondary_color":"#9402fb"
+
+}

@@ -65,6 +65,11 @@ var netFirstRequests = new RegExp('(' + [
 
 	'/dataoversound-swi/service/rest/v1/app-schede-audible',
 	].join('(\/?)|\\') + ')$')
+
+	var netFirstRequestsPerc = new RegExp('(' + [
+
+		'/dataoversound-swi/service/rest/v1/app-schede-audible/percorsi',
+		].join('(\/?)|\\') + ')$')
   
 	var netFirstmostraAttiva = new RegExp('(' + [
 		'/dataoversound-swi/service/rest/v1/mostra-attiva',
@@ -100,6 +105,11 @@ function onFetch(event) {
 	  return
 	}
 	if(netFirstRequests.test(event.request.url)){
+		console.log('netFirst: ', event.request.url)
+		event.respondWith(fetchorCache(event))
+		return
+	}
+	if(netFirstRequestsPerc.test(event.request.url)){
 		console.log('netFirst: ', event.request.url)
 		event.respondWith(fetchorCache(event))
 		return

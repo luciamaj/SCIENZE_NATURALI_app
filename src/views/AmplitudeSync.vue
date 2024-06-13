@@ -4,7 +4,7 @@
       <ion-toolbar class="toolbar">
         <!--ion-title v-html="contentScheda.titolo" > </ion-title-->
         <ion-buttons>
-          <ion-button v-on:click="goingback()"><ion-icon  size="large" name="arrow-back"></ion-icon>
+          <ion-button v-on:click="goingback()"><ion-icon  size="large" name="arrow-back"></ion-icon>{{$t('schede.back')}}
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
@@ -553,6 +553,9 @@ export default {
 </script>
 
 <style>
+ion-icon{
+  margin-right: 10px;
+}
 ion-content {
   --overflow: hidden;
 }

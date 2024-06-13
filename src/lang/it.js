@@ -71,7 +71,12 @@ export const it = {
         },
 		timeoutTagTitle:"ATTENZIONE",
 		timeoutTagText:"SilenceTag NON rilevato, potrebbe essere spento, utilizza il pulsante \"Scansiona QR Code\"",
-		timeoutTagAccept:"Prosegui"
+		timeoutTagAccept:"Prosegui",
+        capting:[
+            "Cerco dove sei", 
+            "Tieni fermo il telefono",
+            "Ancora un momento..."
+        ]
     },
 
     menu:{
@@ -117,6 +122,9 @@ export const it = {
         title:"Raccolta",
         subtitle:"Rivivi l'esperienza",
         alerttext:"Non hai ancora aperto le schede. \n Alla fine del tour potrai rivedere qui le schede trovate lungo il percorso."
+    },
+    schede:{
+        back:"Indietro"
     }
    
 
