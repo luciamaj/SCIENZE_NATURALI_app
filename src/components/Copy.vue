@@ -72,6 +72,8 @@ export default ({
  width: 80vw;
  margin: auto;
  font-size: 0.35em;
+ height: 95%;
+ overflow: scroll;
 
 }
 .ex-page-container>h2{

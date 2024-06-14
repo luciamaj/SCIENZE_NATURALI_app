@@ -69,13 +69,13 @@ export const es= {
 		timeoutTagTitle:"ALERTA",
 		timeoutTagText:"SilenceTag NO detectado, quizá esté apagado. Utiliza el,\"Escanea el código QR\" botón",
 		timeoutTagAccept:"Continúa",
-        capting:[
-            "Cerco dove sei", 
-            "Tieni fermo il telefono",
-            "Ancora un momento..."
-        ]
+       
     
-    },
+    }, capting:[
+        "Te busco", 
+        "Mantén el teléfono quieto",
+        "Un momento más"
+    ],
 
     menu:{
         title:"Configuración",

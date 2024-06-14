@@ -60,6 +60,11 @@ export const it = {
             text:"I contenuti non sono stati scaricati, l'applicazione può funzionare solo online. Riprova più tardi a scaricare per una migliore esperienza"
         }
     },
+    capting:[
+        "Cerco dove sei", 
+        "Tieni fermo il telefono",
+        "Ancora un momento..."
+    ],
     main:{
 
         scan:"Scansiona QR Code",
@@ -72,11 +77,7 @@ export const it = {
 		timeoutTagTitle:"ATTENZIONE",
 		timeoutTagText:"SilenceTag NON rilevato, potrebbe essere spento, utilizza il pulsante \"Scansiona QR Code\"",
 		timeoutTagAccept:"Prosegui",
-        capting:[
-            "Cerco dove sei", 
-            "Tieni fermo il telefono",
-            "Ancora un momento..."
-        ]
+      
     },
 
     menu:{

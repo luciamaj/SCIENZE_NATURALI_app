@@ -4,7 +4,7 @@
       <ion-toolbar >
         <!--ion-title v-html="contenuto.titolo"></ion-title-->
         <ion-buttons>
-          <ion-button v-on:click="back()">
+          <ion-button v-on:click="back()" class="back-button">
             <ion-icon size="large" name="arrow-back"></ion-icon>
           </ion-button>
         </ion-buttons>
@@ -553,6 +553,13 @@ export default {
 </script>
 
 <style scoped>
+
+.back-button{
+  text-transform: capitalize;
+}
+ion-icon{
+  margin-right: 5px;
+}
 
 ion-content {
   --overflow: hidden;

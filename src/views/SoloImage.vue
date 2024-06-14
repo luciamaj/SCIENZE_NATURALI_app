@@ -4,7 +4,7 @@
       <ion-toolbar class="toolbar" >
         <ion-title > </ion-title>
         <ion-buttons>
-          <ion-button v-on:click="goingback()">
+          <ion-button v-on:click="goingback()" class="back-button">
             <ion-icon  class="icon-arrow"  name="arrow-back"></ion-icon>{{$t('schede.back')}}
           </ion-button>
         </ion-buttons>
@@ -373,6 +373,9 @@ export default {
 </script>
 
 <style>
+.back-button{
+  text-transform: capitalize;
+}
 ion-icon{
   margin-right: 10px;
 }

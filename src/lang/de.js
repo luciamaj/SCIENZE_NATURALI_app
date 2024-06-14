@@ -52,6 +52,11 @@ export const de= {
             text:"Beim Herunterladen ist ein Problem aufgetreten. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut"
         }
     },
+    capting:[
+        "Ich suche dich", 
+        "Halt das Telefon still",
+        "Noch einen Moment"
+    ],
     main:{
 
         scan:"QR-Code scannen",
@@ -64,11 +69,7 @@ export const de= {
 		timeoutTagTitle:"AUFMERKSAMKEIT",
 		timeoutTagText:"SilenceTag wird NICHT erkannt, möglicherweise ist es deaktiviert. Verwenden Sie die Schaltfläche \"QR-Code scannen\"",
 		timeoutTagAccept:"Fortsetzen",
-        capting:[
-            "Cerco dove sei", 
-            "Tieni fermo il telefono",
-            "Ancora un momento..."
-        ]
+       
     },
 
     menu:{

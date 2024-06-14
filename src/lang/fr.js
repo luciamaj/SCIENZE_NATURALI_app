@@ -57,6 +57,11 @@ export const fr ={
             text:"Le contenu n'a pas été téléchargé, l'application ne peut fonctionner qu'en ligne. Veuillez réessayer plus tard pour télécharger pour une meilleure expérience"
         }
     },
+    capting:[
+       "Je te cherche", 
+        "Garde ton portable immobile",
+        "Encore un instant..."
+    ],
     main:{
 
         scan:"Scanner le code QR",
@@ -69,11 +74,7 @@ export const fr ={
 		timeoutTagTitle:"ATTENTION",
 		timeoutTagText:"SilenceTag NON détecté, il est peut-être désactivé, utilisez le bouton \"Scan QR Code\"",
 		timeoutTagAccept:"Continuez",
-        capting:[
-            "Cerco dove sei", 
-            "Tieni fermo il telefono",
-            "Ancora un momento..."
-        ]
+       
     },
 
     menu:{

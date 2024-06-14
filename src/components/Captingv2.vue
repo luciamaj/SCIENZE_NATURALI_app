@@ -4,7 +4,7 @@
       
       <div class="back"> 
         <div class="capting-icon-container"> <img src="/assets/background/capting.gif" >
-           <div class="indicazioni">{{ info[index] }}</div>
+           <div class="indicazioni">{{ info[id] }}</div>
         </div>
         <!--div class="indicazioni">{{$t('main.capting[0]')  }}</div-->
       </div>
@@ -30,30 +30,55 @@ export default defineComponent({
    
  
   },
-  props: ["modal"],
+ 
   computed:{
     info() {
-      return this.$t('main.capting'); // Accessing the localized array
+      const infolang= this.$i18n.messages[this.$i18n.locale].capting; 
+         console.log("cosa c'èèèè ? " ,infolang)
+      return infolang; // Accessing the localized array
     }
   },
  
 mounted(){
   
- this.timer= setTimeout(() => {
-  this.changeindex();
-    }, 1500);
+
+ this.emitter.on('startCapting', _ => {
+     this.startAnimation();
+ });
+
+ this.emitter.on('stopCapting', _ => {
+     this.stopAnimation();
+ });
 
 },
   
   methods: {
 
+    startAnimation(){
+      this.settimer();
+    },
+    stopAnimation(){
+      clearTimeout(this.timer);
+
+      this.id=0;
+    },
+
     changeindex(){
-      if(this.index<2){
-        this.index+=1;
+      if(this.id<2){
+        this.id+=1;
       }else{
-        this.index=0
+        this.id=0
       }
+      this.settimer();
       
+    },
+
+    settimer(){
+      this.timer= setTimeout(() => {
+     //   console.log("HOCAMBIATOOOOOOOOOOOOOOOOOOOOOO TOMEOUT")
+        this.changeindex();
+      }, 2300);
+
     }
     
     /*async close() {
@@ -68,7 +93,7 @@ mounted(){
     return {
       value: "",
       title: "Scansiona",
-      index:0
+      id:0
     };
   }
 });
@@ -88,7 +113,15 @@ ion-content {
     color: var(--ion-color-secondary);
     font-size: 1.2em;
     font-weight: 600;
+    transition: opacity 1s;;
+}
 
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 1s;
+}
+
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+  opacity: 0;
 }
 
 

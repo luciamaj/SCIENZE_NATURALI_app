@@ -57,6 +57,11 @@ export const en= {
             text:"The contents have not been downloaded, the application can only work online.</br> Please try again later to download for a better experience"
         }
     },
+    capting:[
+        "Looking for you", 
+        "Hold the phone still",
+        "One moment more..."
+    ],
     main:{
 
         scan:"Scan QR code",
@@ -69,11 +74,7 @@ export const en= {
 		timeoutTagTitle:"ATTENTION",
 		timeoutTagText:"SilenceTag NOT detected, it may be off. Use the \"Scan QR Code\" button",
 		timeoutTagAccept:"Continue",
-        capting:[
-            "Cerco dove sei", 
-            "Tieni fermo il telefono",
-            "Ancora un momento..."
-        ]
+      
     
     },
 

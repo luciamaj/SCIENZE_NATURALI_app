@@ -147,6 +147,7 @@ export default {
 
       this.logoi.hidden = false;
       this.captingIcon.hidden = true;
+      this.emitter.emit('stopCapting');
      
     });
     watch(() => localStorage.getItem('lang'), (newLang) => {
@@ -542,6 +543,7 @@ export default {
           this.captingIcon.hidden = false;
           this.captureStart.hidden = true;
           this.captureStop.hidden = false; 
+          this.emitter.emit('startCapting');
           
           this.waitingTime=setTimeout(() => {
             this.presentAlert();
