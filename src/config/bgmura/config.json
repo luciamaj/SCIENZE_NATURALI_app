@@ -1,6 +1,6 @@
 {
-    "nameMuseum": "museo Palazzo Guiccioli",
-    "baseUrl":"https://museorisorgimentoravenna-test.eadev.it/dataoversound-swi",
+    "nameMuseum": "Mura bergamo",
+    "baseUrl":"https://museobgmura-test.eadev.it/dataoversound-swi",
     "percorsi":true,
     
     "appleAppName":"com.ea.PalazzoGuiccioli://",

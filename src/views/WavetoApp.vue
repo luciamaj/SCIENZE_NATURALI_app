@@ -38,7 +38,7 @@
 
           <!--ion-button expand="block" class="scan-btn" @click="openModal">{{$t('main.scan')}}</ion-button-->
           <ion-button expand="block" class="scan-btn" @click="openModal"><img class="icon-button" src="assets/background/qrI.png"></ion-button>
-
+          <ion-button expand="block" class="gps-btn" id="testGps" @click="opengps" ><img class="icon-button" src="assets/background/map.png"></ion-button>
           </div>
           <!--div class="wait-tag"> </div-->
         </div>
@@ -525,7 +525,9 @@ export default {
     openHistory(){
        this.$router.push({ path: "/raccolta", replace:true});
     },
-
+    opengps(){
+      this.$router.replace({ path: "/gps"});
+    },
        
     callJava(){
      // this.captingModal();
@@ -738,6 +740,16 @@ ion-content {
 .icon-button{
   max-height: 65%;
   max-width:70%;
+}
+
+.gps-btn {
+  font-weight: 700;
+  /*width: 280px;*/
+  width: 25vw;
+  margin: 17px auto;
+  /* height: 41px;*/
+  height: 25vw;
+  --border-radius: 10px;
 }
 .capture-btn {
   font-weight: 700;

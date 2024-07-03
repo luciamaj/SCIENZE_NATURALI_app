@@ -4,7 +4,7 @@
     <ion-toolbar >
       <ion-title > GPS</ion-title>
       <ion-buttons slot="start" >
-        <ion-button  @click="back"><ion-icon size="large" name="chevron-back" /></ion-button>
+        <ion-button v-on:click="back()"><ion-icon size="large" name="chevron-back" /></ion-button>
       </ion-buttons>
     </ion-toolbar> 
   </ion-header>
@@ -12,9 +12,9 @@
    
     <ion-content :fullscreen="true">
       <div class="vertical-center ">
-        <div class="center-content">
+        <div class="">
           
-            <div id="map"></div>
+            <div id="map"   style="height: 80vh; width: 100vw;" ></div>
          
           <div id="punto"></div>
 
@@ -22,7 +22,7 @@
             lat: {{ userCoord.latitude }} -
             long {{ userCoord.longitude }} ---
             distanza {{ distance }} m
-            <ion-button  @click="updateMap">remap</ion-button>
+            <ion-button  @click="updateMap"><img class="icon-button" src="assets/background/reload.png"></ion-button>
           </div>
 
         </div>
@@ -61,12 +61,13 @@ export default {
     return {
       userCoord: { latitude: 0, longitude: 0 },
       distance: null,
-      cityCoord: { latitude:  45.46836295570483, longitude:9.23224679549364 } ,
+      cityCoord: { latitude:  45.466479544159796, longitude:9.192086626765356 } ,
       coord: [
         [ 45.58283251014277, 8.96687190033312],
         [ 45.58283251014277, 9.429670949972401],
         [ 45.35216866591035, 8.96687190033312],
         [ 45.35216866591035, 9.429670949972401]
+        [45.32143083772875, 8.849285673628017]
 
     ],
      lastTouchDistance : 0,
@@ -114,9 +115,9 @@ this.getItens();
   
     getItens() {
       this.itens = [
-        {id: '1', description: 'Centro', latLng: [ 398,589], status: Math.floor((Math.random() * 2) + 1)},
-        {id: '2', description: 'Gaggiano', latLng: [171, 193 ], status: Math.floor((Math.random() * 2) + 1)},
-        {id: '3', description: 'forna', latLng: this.coordtopixelPunti(45.49004314703912, 8.895382882487887), status: Math.floor((Math.random() * 2) + 1)}
+        {id: '1', description: 'duomo', latLng: this.coordtopixelPunti(45.466479544159796, 9.192086626765356), status: Math.floor((Math.random() * 2) + 1)},
+        {id: '2', description: 'Vigevano', latLng:this.coordtopixelPunti(45.32143083772875, 8.849285673628017), status: Math.floor((Math.random() * 2) + 1)},
+        {id: '3', description: 'forna', latLng: this.coordtopixelPunti(45.4695121760421, 8.892903536669618), status: Math.floor((Math.random() * 2) + 1)}
       ];
     },
 
@@ -151,22 +152,23 @@ this.getItens();
      L.featureGroup(this.markers).addTo(this.map);
     },
 
-    getIcon(status) {
+    getIcon(status) { 
       // Inicializa os ícones
       const ColorIcon = L.Icon.extend({
         options: {
             shadowUrl: '',
-            iconSize: [25, 41],
-            iconAnchor: [15, 13],
+            iconSize: [40, 40],
+            iconAnchor: [20,40],
             popupAnchor: [1, -34],
-            shadowSize: [41, 41]
+            shadowSize: [40, 40]
         }
       });
       const icons = [];
       // Ícone verde: status 1 'Disponível'
-      icons[1] = new ColorIcon({iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png'});
+      icons[1] = new ColorIcon({iconUrl: '/assets/background/location.png'});
       // Ícone vermelho: status 2 'Vendido'
-      icons[2] = new ColorIcon({iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png'});
+      icons[2] = new ColorIcon({iconUrl: '/assets/background/location.png'});
+      icons[3] = new ColorIcon({iconUrl: '/assets/background/hotspot.gif'});
       return icons[status];
     },
     updateMap() {
@@ -176,19 +178,27 @@ this.getItens();
     },
 
     back(){
-      const ionNav = document.querySelector('ion-nav') ;
-            ionNav.pop();    
+      this.$router.replace({path:"/"});
     },
 
     showPosition(position) {
      
       this.userCoord.latitude= position.coords.latitude,
       this.userCoord.longitude= position.coords.longitude
-
-      const mypoint={id: '4', description: 'ME', latLng: this.coordtopixelPunti(this.userCoord.latitude,  this.userCoord.longitude), status: Math.floor((Math.random() * 2) + 1)}
-      this.itens.push(mypoint);
-      console.log("mie coord ",   this.userCoord )
+      let foundme=this.itens.find(e=>e.id=="me")
+      const mypoint={id: 'me', description: 'ME', latLng: this.coordtopixelPunti(this.userCoord.latitude,  this.userCoord.longitude), status: 3}
+      if(foundme){
+       console.log(foundme)
+        foundme=mypoint;
+      }else{
+        this.itens.push(mypoint);
+      }
+      
+      console.log("mie coord ",  this.userCoord )
       this.calculateDistance(  this.userCoord, this.cityCoord);
+      if(this.distance<100){
+        alert("sei vicino al punto");
+      }
      // this.getimagepos();
     this.coordtoCart()
     this.coordtopixel()
@@ -299,24 +309,24 @@ this.getItens();
       this.punto.style.left=pixel_x+"px";
 
     },
-    coordtopixelPunti(lat,lon){
+  coordtopixelPunti(lat,lon){
 
-     
-const  lat1= 45.71241717967386
-const  lon1= 8.69531166660485
+        
+    const  lat1= 45.71241717967386
+    const  lon1= 8.69531166660485
 
-const  lat2=  45.18079075895875
-const  lon2= 9.640075829782067
+    const  lat2=  45.18079075895875
+    const  lon2= 9.640075829782067
 
 
 
-  const pixel_x = 1248 * (lon - lon1) / (lon2 - lon1)
-  const pixel_y = 987 * (lat - lat1) / (lat2 - lat1)
+      const pixel_x = 1248 * (lon - lon1) / (lon2 - lon1)
+      const pixel_y = 987 * (lat - lat1) / (lat2 - lat1)
 
-  console.log( "pixel",pixel_x,  pixel_y);
-  return [(987-pixel_y),(pixel_x )]
+      console.log( "pixel",pixel_x,  pixel_y);
+      return [(987-pixel_y),(pixel_x )]
 
-},
+    },
 
      
     mercatorProjection(lat, lon) {
@@ -331,16 +341,16 @@ const  lon2= 9.640075829782067
       return { x, y };
   },
 
-  gestisciTouchStart(event) {
+ /* gestisciTouchStart(event) {
   if (event.touches.length === 2) {
     this.lastTouchDistance = Math.hypot(
       event.touches[0].clientX - event.touches[1].clientX,
       event.touches[0].clientY - event.touches[1].clientY
     );
   }
-},
+},*/
 
-gestisciTouchMove(event) {
+/*gestisciTouchMove(event) {
   if (event.touches.length === 2) {
     const newTouchDistance = Math.hypot(
       event.touches[0].clientX - event.touches[1].clientX,
@@ -356,7 +366,7 @@ gestisciTouchMove(event) {
     this.lastTouchDistance = newTouchDistance;
     this.lastScale = newScale;
   }
-},
+},*/
 
 
 gestisciTouchEnd() {

@@ -564,7 +564,7 @@ ion-content {
   --overflow: hidden;
 }
 .img-container{
-  height: 40vh;
+  height: 45vh;
 }
 
 div.player {
@@ -693,7 +693,7 @@ div.meta-container div.time-container div.duration {
 */
 div.control-container {
   text-align: center;
-  margin-top: 1.7vh;
+  margin-top: 1.5vh;
 }
 div.control-container div.prev {
   width: 24px;

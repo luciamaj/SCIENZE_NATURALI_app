@@ -13,7 +13,7 @@
     <ion-content :fullscreen="true">
       <div class="vertical-center">       
         <div class="player">
-          <div class="img-container-solo"> 
+          <div  :class="[hastext? 'img-container-solo': 'img-container-notext']"> 
             <img :src="imgSrc" class="album-art" :key="imageUrl"/>
           </div>
           
@@ -110,7 +110,8 @@ export default {
       timer:"",
       fileUrl:true,
       imageUrl:0,
-      imgSrc:''
+      imgSrc:'',
+      hastext:true
     };
   },
   computed: {
@@ -204,6 +205,12 @@ export default {
           this.getCoverImg(sel.img);
         }
        
+      }
+
+      if(this.contentScheda.testo==null){
+        this.hastext=false;
+      }else{
+        this.hastext=true;
       }
      
     },
@@ -385,6 +392,10 @@ ion-content {
 .img-container-solo{
   height: 45vh;
 }
+
+.img-container-notext{
+    height: 73vh;
+  }
 
 div.player {
   margin-bottom: 20px;

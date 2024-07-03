@@ -67,7 +67,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/gps',
     name: 'gps',
-    component: () => import('@/views/Gps.vue')
+    component: () => import('@/views/Map.vue')
   },
   
   {

@@ -1,18 +1,16 @@
 <template>
   <ion-page>
     <ion-header collapse="fade">
-      <ion-toolbar >
-        <!--ion-title v-html="contenuto.titolo"></ion-title-->
-        <ion-buttons>
-          <ion-button v-on:click="back()" class="back-button">
-            <ion-icon size="large" name="arrow-back"></ion-icon>
-          </ion-button>
+      <ion-toolbar class="toolbar" >
+        <!--ion-title v-html="contentScheda.titolo" > </ion-title-->
+        <ion-buttons  slot="start" >
+          <ion-button v-on:click="goingback()" class="back-button"><ion-icon size="medium" name="arrow-back"></ion-icon> {{$t('schede.back')}}</ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content>
       <div class="supercontainer">
-        <div class="player-container">
+        <div  :class="[hastext? 'player-container': 'player-container-notext']">
           <video  id="video" >
             <source :src="url" type="video/mp4" />
           </video>
@@ -210,6 +208,12 @@ export default {
 
     this.addtoBucket(this.paramId);
 
+
+    if(this.contenuto.testo==null){
+        this.hastext=false;
+      }else{
+        this.hastext=true;
+      }
   },
 
    methods: {
@@ -547,6 +551,7 @@ export default {
         sec:"00",
       },
       fullscreen:false,
+      hastext:true,
     };
   }
 };
@@ -596,14 +601,18 @@ div.player img.album-art {
 
 .descrArea{
   float: left;
-  /* width: calc(100% - 60px); */
-  padding:5px 25px;
-  max-height: 40vh;
+  padding: 8px 27px 30px;
+ /* max-height: 40vh;*/
+ height: 39vh;
  /* overflow: overlay;*/
-  margin-top: 2vh;
+ /* margin-top: 2vh;*/
   margin-bottom: 2vh;
-  /*bottom: 3vh;
-  position: absolute;*/
+  font-size: 1.1em;
+  line-height: 1.4em;
+ 
+  margin-top: 1vh;
+
+  overflow: scroll;
 
 }
 .descrArea p{ margin-top: 0;}
@@ -701,14 +710,17 @@ div.controls div.amplitude-play-pause.amplitude-playing {
 
 }
 .player-container{
-  height: 30vh;
+  height: 45vh;
+}
+.player-container-notext{
+  height: 60vh;
 }
 
 @media screen and (max-width: 39.9375em) {
   div.player img.album-art {
     width: 100%;
     height: auto;
-    max-height: 40vh;
+    max-height: 45vh;
   }
 }
 /*

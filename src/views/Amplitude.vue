@@ -556,11 +556,11 @@ ion-content {
   --overflow: hidden;
 }
 .img-container{
-  height: 40vh;
+  height: 45vh;
 }
 
 .img-container-audio-notext{
-  height: 73vh;
+  height: 70vh;
 }
 
 div.player {
@@ -593,7 +593,7 @@ div.player img.album-art {
 
 .descrArea{
   float: left;
-  padding: 5px 27px 30px;
+  padding: 8px 27px 30px;
  /* max-height: 40vh;*/
  height: 39vh;
  /* overflow: overlay;*/
@@ -601,13 +601,17 @@ div.player img.album-art {
   margin-bottom: 2vh;
   font-size: 1.1em;
   line-height: 1.4em;
+ 
+  margin-top: 1vh;
+
+  overflow: scroll;
 
 }
 .descrArea p{ margin-top: 0;}
 
 
 .content-scheda{
-     overflow: overlay;
+    /* overflow: overlay;*/
     height: 57vh;
 }
 /*
@@ -686,7 +690,7 @@ div.meta-container div.time-container div.duration {
 */
 div.control-container {
   text-align: center;
-  margin-top: 2vh;
+  margin-top: 1.5vh;
 }
 div.control-container div.prev {
   width: 24px;
