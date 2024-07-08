@@ -1,14 +1,14 @@
 <template>
-
+  <ion-page>
   <ion-header class="ion-no-border">
     <ion-toolbar >
       <ion-title > GPS</ion-title>
       <ion-buttons slot="start" >
-        <ion-button v-on:click="back()"><ion-icon size="large" name="chevron-back" /></ion-button>
+        <ion-button v-on:click="back()"><ion-icon size="medium" name="arrow-back"></ion-icon> {{$t('schede.back')}}</ion-button>
       </ion-buttons>
     </ion-toolbar> 
   </ion-header>
-  <ion-page>
+
    
     <ion-content :fullscreen="true">
       <div class="vertical-center ">
@@ -37,7 +37,7 @@ import {
   IonPage,
   IonContent,
   IonButton,
-
+  IonHeader
   //IonModal
   
 } from "@ionic/vue";
@@ -62,14 +62,7 @@ export default {
       userCoord: { latitude: 0, longitude: 0 },
       distance: null,
       cityCoord: { latitude:  45.466479544159796, longitude:9.192086626765356 } ,
-      coord: [
-        [ 45.58283251014277, 8.96687190033312],
-        [ 45.58283251014277, 9.429670949972401],
-        [ 45.35216866591035, 8.96687190033312],
-        [ 45.35216866591035, 9.429670949972401]
-        [45.32143083772875, 8.849285673628017]
-
-    ],
+      
      lastTouchDistance : 0,
     lastScale : 1,
     map: null,
@@ -87,15 +80,34 @@ export default {
   components: {
    IonContent,
     IonPage,
-        
+    IonHeader,
     //IonModal
   
   },
   computed:{
+    schede(){
+      const data=localStorage.getItem("dataMostra")
+     
+      const schede= JSON.parse(data);
+      return schede
+    }
+   
    
   },
 
-  
+  beforeMount(){
+   
+    
+
+      this.schede.forEach(scheda=>{
+        if(scheda.coord!=null){
+          const point={id:scheda.tag, description: scheda.tag, latLng: this.coordtopixelPunti(scheda.coord.latitude, scheda.coord.longitude), status: Math.floor((Math.random() * 2) + 1)};
+          this.itens.push(point);
+        }
+      })
+        
+   
+  },
   mounted(){
     this.getLocation();
     this.drawMap();
@@ -104,8 +116,8 @@ export default {
     }, 500);
   
 // this.getimagepos();
-this.getItens();
-   
+//this.getItens();
+   console.log("ITENS",this.itens)
              
   },
 
@@ -113,13 +125,13 @@ this.getItens();
   methods: {
 
   
-    getItens() {
+   /* getItens() {
       this.itens = [
         {id: '1', description: 'duomo', latLng: this.coordtopixelPunti(45.466479544159796, 9.192086626765356), status: Math.floor((Math.random() * 2) + 1)},
         {id: '2', description: 'Vigevano', latLng:this.coordtopixelPunti(45.32143083772875, 8.849285673628017), status: Math.floor((Math.random() * 2) + 1)},
         {id: '3', description: 'forna', latLng: this.coordtopixelPunti(45.4695121760421, 8.892903536669618), status: Math.floor((Math.random() * 2) + 1)}
       ];
-    },
+    },*/
 
     drawMap() {
      
@@ -127,7 +139,7 @@ this.getItens();
       this.map = L.map('map', {
         crs: L.CRS.Simple, zoom:1,
         maxZoom: 3,
-        minZoom: -1,
+        minZoom: 0,
         maxBounds:this.bounds,
         maxBoundsViscosity: 1.0
       }).setView([0, 0])
@@ -143,13 +155,34 @@ this.getItens();
       this.markers = [];
       // Converte os itens em marcadores
       this.itens.forEach((item, index, array)=>{
-        const markerX = L.marker(L.latLng(item.latLng), {draggable: false})
+       /* const markerX = L.marker(L.latLng(item.latLng), {draggable: false})
           .setIcon(this.getIcon(item.status))
         markerX.itemId = item.id;
-        this.markers.push(markerX);
+        this.markers.push(markerX);*/
+        if(item.id!="me"){
+          L.marker(L.latLng(item.latLng)).setIcon(this.getIcon(item.status)).addTo(this.map)
+          .bindPopup(
+          L.popup({}).setContent(
+            `<h3>${item.id}</h3>
+            <p>${item.latLng}</p>
+            <div class="links">
+              <a href="">${item.status}</a>
+              
+            </div>`
+          )
+        )
+        
+
+      }else{
+        L.marker(L.latLng(item.latLng)).setIcon(this.getIcon(item.status)).addTo(this.map)
+      }
+        
+
       });
       // Adiciona os marcadores ao mapa, setando as propriedades comuns
-     L.featureGroup(this.markers).addTo(this.map);
+    // L.featureGroup(this.markers).addTo(this.map);
+
+
     },
 
     getIcon(status) { 
@@ -157,7 +190,7 @@ this.getItens();
       const ColorIcon = L.Icon.extend({
         options: {
             shadowUrl: '',
-            iconSize: [40, 40],
+            iconSize: [50, 50],
             iconAnchor: [20,40],
             popupAnchor: [1, -34],
             shadowSize: [40, 40]
@@ -195,13 +228,24 @@ this.getItens();
       }
       
       console.log("mie coord ",  this.userCoord )
-      this.calculateDistance(  this.userCoord, this.cityCoord);
+
+      this.schede.forEach(it=>{
+        console.log(this.userCoord, it.coord)
+        if( it.coord!=null){
+          const distance= this.calculateDistance(this.userCoord, it.coord);
+
+          console.log("distance",it.tag, distance)
+        }
+        
+
+      })
+     
       if(this.distance<100){
         alert("sei vicino al punto");
       }
      // this.getimagepos();
-    this.coordtoCart()
-    this.coordtopixel()
+    //this.coordtoCart()
+   // this.coordtopixel()
             
     },
 
@@ -249,6 +293,7 @@ this.getItens();
 
       const distance = earthRadius * c;
       this.distance = distance.toFixed(2)*1000; // Arrotonda la distanza a due cifre decimali
+      return  distance.toFixed(2)*1000;
     },
     degreesToRadians(degrees) {
         return degrees * (Math.PI / 180);
