@@ -620,9 +620,6 @@ ion-content {
   padding: 10px;
 }
 
-.toolbar {
-   --background:  red;
-}
 
 .capture-btn {
   font-weight: 700;

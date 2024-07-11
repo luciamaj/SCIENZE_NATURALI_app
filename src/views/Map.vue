@@ -1,10 +1,10 @@
 <template>
   <ion-page>
   <ion-header class="ion-no-border">
-    <ion-toolbar >
-      <ion-title > GPS</ion-title>
+    <ion-toolbar class="toolbar" >
+      <ion-title > Mappa</ion-title>
       <ion-buttons slot="start" >
-        <ion-button v-on:click="back()"><ion-icon size="medium" name="arrow-back"></ion-icon> {{$t('schede.back')}}</ion-button>
+        <ion-button v-on:click="aletrtexit()"><ion-icon size="medium" name="arrow-back"></ion-icon> {{$t('schede.back')}}</ion-button>
       </ion-buttons>
     </ion-toolbar> 
   </ion-header>
@@ -22,7 +22,7 @@
             lat: {{ userCoord.latitude }} -
             long {{ userCoord.longitude }} ---
             distanza {{ distance }} m
-            <ion-button  @click="updateMap"><img class="icon-button" src="assets/background/reload.png"></ion-button>
+            <ion-button class="reload-button" @click="updateMap"><img class="icon-button" src="assets/background/reload.png"></ion-button>
           </div>
 
         </div>
@@ -37,7 +37,8 @@ import {
   IonPage,
   IonContent,
   IonButton,
-  IonHeader
+  IonHeader,
+  alertController
   //IonModal
   
 } from "@ionic/vue";
@@ -70,7 +71,8 @@ export default {
      imageBounds : [[0,0], [987,1248]],
     url: '/assets/background/map/mappa.png',
     itens: [],
-    markers: []
+    markers: [],
+    
     };
   },
   setup(){
@@ -90,7 +92,16 @@ export default {
      
       const schede= JSON.parse(data);
       return schede
-    }
+    },
+    lang() {
+      const lang= localStorage.getItem("lang")
+      if (lang) {
+        return lang;
+      } else {
+        return this.$i18n.locale;
+      }
+    },
+
    
    
   },
@@ -100,8 +111,10 @@ export default {
     
 
       this.schede.forEach(scheda=>{
+        
+        const cont= scheda.content.find(x => x.lang == this.lang);
         if(scheda.coord!=null){
-          const point={id:scheda.tag, description: scheda.tag, latLng: this.coordtopixelPunti(scheda.coord.latitude, scheda.coord.longitude), status: Math.floor((Math.random() * 2) + 1)};
+          const point={id:scheda.tag, description: cont.titolo, latLng: this.coordtopixelPunti(scheda.coord.latitude, scheda.coord.longitude), status: Math.floor((Math.random() * 2) + 1), img:scheda.img};
           this.itens.push(point);
         }
       })
@@ -111,6 +124,7 @@ export default {
   mounted(){
     this.getLocation();
     this.drawMap();
+    this.aletrtMap();
     setTimeout(() => {
       this.updateMap();
     }, 500);
@@ -123,6 +137,47 @@ export default {
 
 
   methods: {
+    async aletrtMap() {
+      const alert = await alertController.create({
+        //header: this.$t('menu.lang.add') ,
+        message: "Esplora la mappa raggiungendo i punti segnati" ,
+        buttons: [
+          {
+            text: "Conutinua",
+            cssClass:'modal-accept-button',
+           
+          },
+          
+        ],
+      });
+
+      await alert.present();
+    },
+
+    async aletrtexit() {
+      const alert = await alertController.create({
+       // header: this.$t('menu.lang.add') ,
+        message: "Uscendo la geolocalizzazione verrà interrota" ,
+        buttons: [
+          {
+            text: "Conutinua",
+            cssClass:'modal-accept-button',
+            handler: async() => {
+             this.back();
+            
+            
+            },
+          }, {
+            text: this.$t('action.cancel'),
+            role:"cancel",
+            
+          },
+          
+        ],
+      });
+
+      await alert.present();
+    },
 
   
    /* getItens() {
@@ -154,21 +209,21 @@ export default {
       this.map.invalidateSize();
       this.markers = [];
       // Converte os itens em marcadores
-      this.itens.forEach((item, index, array)=>{
+      this.itens.forEach(async item=>{
        /* const markerX = L.marker(L.latLng(item.latLng), {draggable: false})
           .setIcon(this.getIcon(item.status))
         markerX.itemId = item.id;
         this.markers.push(markerX);*/
         if(item.id!="me"){
+          const im= await this.getCoverImg(item.img)
+        console.log("img card ",im)
           L.marker(L.latLng(item.latLng)).setIcon(this.getIcon(item.status)).addTo(this.map)
           .bindPopup(
           L.popup({}).setContent(
-            `<h3>${item.id}</h3>
-            <p>${item.latLng}</p>
-            <div class="links">
-              <a href="">${item.status}</a>
-              
-            </div>`
+
+            `<div class="img-container"><img src=${im}></div>
+            <h3>${item.description}</h3>
+            `
           )
         )
         
@@ -184,6 +239,7 @@ export default {
 
 
     },
+
 
     getIcon(status) { 
       // Inicializa os ícones
@@ -354,24 +410,24 @@ export default {
       this.punto.style.left=pixel_x+"px";
 
     },
-  coordtopixelPunti(lat,lon){
+    coordtopixelPunti(lat,lon){
 
-        
-    const  lat1= 45.71241717967386
-    const  lon1= 8.69531166660485
+          
+      const  lat1= 45.71241717967386
+      const  lon1= 8.69531166660485
 
-    const  lat2=  45.18079075895875
-    const  lon2= 9.640075829782067
+      const  lat2=  45.18079075895875
+      const  lon2= 9.640075829782067
 
 
 
-      const pixel_x = 1248 * (lon - lon1) / (lon2 - lon1)
-      const pixel_y = 987 * (lat - lat1) / (lat2 - lat1)
+        const pixel_x = 1248 * (lon - lon1) / (lon2 - lon1)
+        const pixel_y = 987 * (lat - lat1) / (lat2 - lat1)
 
-      console.log( "pixel",pixel_x,  pixel_y);
-      return [(987-pixel_y),(pixel_x )]
+        console.log( "pixel",pixel_x,  pixel_y);
+        return [(987-pixel_y),(pixel_x )]
 
-    },
+      },
 
      
     mercatorProjection(lat, lon) {
@@ -414,18 +470,101 @@ export default {
 },*/
 
 
-gestisciTouchEnd() {
-  lastTouchDistance = 0;
-}
 
+/*async getCoverImg(name){
+ 
 
-
-
-
-   
+  if(name!=null){
+    
+    this.request = indexedDB.open('mediaStore', global.dbVersion);
+        this.request.onsuccess = event => {
+             this.db = event.target.result;
+            
+        const transaction = this.db.transaction(['media-'+this.lang],'readwrite');
+        const objectStore = transaction.objectStore('media-'+this.lang);
+        const  test = objectStore.get(name);
+  
+       
+          let imgSrc;
+        test.onsuccess = event => {
+            console.log("GET RESULT ", event.target.result)
+            const testget = event.target.result;      
+            if (testget) {
+             imgSrc= URL.createObjectURL(testget.blob);
+                
+            // this.imgSrc='data:'+testget.blob.type+';base64,'+btoa(testget.data);
+              console.log("img ",imgSrc);
+             
+            
+            } else {
+              console.log('testget dont exixst error');
+                //this.fetchImg(name);
+                imgSrc=""
+            }
+            
+            this.db.close();
+            return imgSrc;
+          };
+        }
+        this.request.onerror= event=>{
+         console.log("errore");
+        }
+      }else{
+        console.log("tstname NO request", name);
       
+       return " ";
+
+      }     
+    },*/
+
+    async getCoverImg(name) {
+      if (name != null) {
+        return new Promise((resolve, reject) => {
+          const request = indexedDB.open('mediaStore', global.dbVersion);
+          
+          request.onsuccess = event => {
+            const db = event.target.result;
+            const transaction = db.transaction(['media-' + this.lang], 'readwrite');
+            const objectStore = transaction.objectStore('media-' + this.lang);
+            const test = objectStore.get(name);
+            
+            test.onsuccess = event => {
+              const testget = event.target.result;
+              if (testget) {
+                const imgSrc = URL.createObjectURL(testget.blob);
+                console.log("img ", imgSrc);
+                db.close();
+                resolve(imgSrc);
+              } else {
+                console.log('testget does not exist');
+                db.close();
+                resolve(""); // or reject with an error message if needed
+              }
+            };
+
+            test.onerror = () => {
+              console.log('test get error');
+              db.close();
+              reject('Error getting image');
+            };
+          };
+
+          request.onerror = () => {
+            console.log("Error opening database");
+            reject('Error opening database');
+          };
+        });
+      } else {
+        console.log("name is null");
+        return "";
+      }
+    }
+ 
   }
 };
+
+
+
 </script>
 
 <style scoped>
@@ -433,7 +572,9 @@ gestisciTouchEnd() {
 ion-content {
   --overflow: hidden;
 }
-
+.back-button{
+  text-transform: capitalize;
+}
 .vertical-center {
   display: flex;
   justify-content: center;
@@ -492,16 +633,27 @@ ion-content {
   width: 100%;
   text-align: center;
 }
+/*.img-container{
+  height: 15vh;
+  width:auto;
+}*/
+.img-container img{
+  width: 15vh;
+  height: 30vw;
+ 
+}
+
+.reload-button{
+  width: 71px;
+    height: 70px;
+    --background: white;
+}
 
 .title {
   color: #2d9fe3;
   font-size: 26px;
   font-weight: 700;
   padding: 10px;
-}
-
-.toolbar {
-   --background:  red;
 }
 
 .powered{

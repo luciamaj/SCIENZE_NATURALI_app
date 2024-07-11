@@ -553,9 +553,6 @@ ion-content {
   padding: 10px;
 }
 
-.toolbar {
-   --background:  red;
-}
 
 .collection-button{
    /* border: 2px solid aliceblue;*/

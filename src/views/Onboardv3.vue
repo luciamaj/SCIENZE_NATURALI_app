@@ -685,9 +685,7 @@ ion-grid{
 
 }
 
-.toolbar {
-   --background:  red;
-}
+
 
 
 .toolbar-background {

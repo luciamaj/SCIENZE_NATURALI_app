@@ -484,9 +484,6 @@ ion-fab{
   padding: 10px;
 }
 
-.toolbar {
-   --background:  red;
-}
 
 
 .toolbar-background {

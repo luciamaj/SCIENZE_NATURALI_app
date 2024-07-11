@@ -200,9 +200,6 @@ ion-content {
   padding: 10px;
 }
 
-.toolbar {
-   --background:  red;
-}
 
 .powered{
     position: absolute;

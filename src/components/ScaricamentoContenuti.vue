@@ -1144,9 +1144,7 @@ ion-fab{
   margin-bottom: 20px;
 }
 
-.toolbar {
-   --background:  red;
-}
+
 
 
 .toolbar-background {
