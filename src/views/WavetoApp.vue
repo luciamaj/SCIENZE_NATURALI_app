@@ -38,7 +38,7 @@
 
           <!--ion-button expand="block" class="scan-btn" @click="openModal">{{$t('main.scan')}}</ion-button-->
           <ion-button expand="block" class="scan-btn" @click="openModal"><img class="icon-button" src="assets/background/qrI.png"></ion-button>
-          <ion-button expand="block" class="gps-btn" id="testGps" @click="opengps" ><img class="icon-button" src="assets/background/map.png"></ion-button>
+          <ion-button expand="block" v-if="conf.gps==true" class="gps-btn" id="testGps" @click="opengps" ><img class="icon-button" src="assets/background/gpsicon.png"></ion-button>
           </div>
           <!--div class="wait-tag"> </div-->
         </div>
@@ -808,12 +808,12 @@ ion-content {
   color: transparent;
 
 }
-@media only screen and (orientation:portrait) {
+/*@media only screen and (orientation:portrait) {
   body {
     height: 100vw;
     transform: rotate(90deg);
   }
-}
+}*/
 .modal-accept-button{
   color: var(--ion-color-primary);
 }

@@ -787,16 +787,16 @@ div.control-container {
   margin-top: 1vh;
 }
 div.control-container div.amplitude-prev {
-  width: 28px;
-  height: 24px;
+  width: 21px;
+  height:18px;
   cursor: pointer;
   background: url("/assets/icon/playerIcon/previous.svg");
   display: inline-block;
   vertical-align: middle;
 }
 div.control-container div.amplitude-play-pause {
-  width: 35px;
-  height: 40px;
+  width: 28px;
+  height: 29px;
   cursor: pointer;
   display: inline-block;
   vertical-align: middle;
@@ -810,8 +810,8 @@ div.control-container div.amplitude-play-pause.amplitude-playing {
       background-size: cover;
 }
 div.control-container div.amplitude-next {
-  width: 28px;
-  height: 24px;
+  width: 21px;
+  height: 18px;
   cursor: pointer;
   background: url("/assets/icon/playerIcon/next.svg");
   display: inline-block;

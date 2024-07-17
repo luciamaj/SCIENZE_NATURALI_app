@@ -2,9 +2,12 @@
   <ion-page>
   <ion-header class="ion-no-border">
     <ion-toolbar class="toolbar" >
-      <ion-title > Mappa</ion-title>
+      <ion-title > </ion-title>
       <ion-buttons slot="start" >
-        <ion-button v-on:click="aletrtexit()"><ion-icon size="medium" name="arrow-back"></ion-icon> {{$t('schede.back')}}</ion-button>
+        <ion-button v-on:click="aletrtexit()" class="back-button"><ion-icon size="medium" name="arrow-back"></ion-icon> {{$t('schede.back')}}</ion-button>
+      </ion-buttons>
+      <ion-buttons slot="end" >
+        <ion-button v-on:click="aletrtMap()" class="back-button"><ion-icon size="medium" name="help-circle-outline"></ion-icon> </ion-button>
       </ion-buttons>
     </ion-toolbar> 
   </ion-header>
@@ -14,15 +17,17 @@
       <div class="vertical-center ">
         <div class="">
           
-            <div id="map"   style="height: 80vh; width: 100vw;" ></div>
+            <div id="map"   style="height: 98vh; width: 100vw;" ></div>
          
           <div id="punto"></div>
 
           <div class="logo-container">
+            <ion-button class="reload-button" @click="updateMap"><img class="icon-button" src="assets/background/reload.png"></ion-button>
+            
             lat: {{ userCoord.latitude }} -
             long {{ userCoord.longitude }} ---
             distanza {{ distance }} m
-            <ion-button class="reload-button" @click="updateMap"><img class="icon-button" src="assets/background/reload.png"></ion-button>
+           
           </div>
 
         </div>
@@ -72,7 +77,7 @@ export default {
     url: '/assets/background/map/mappa.png',
     itens: [],
     markers: [],
-    
+    open:false,
     };
   },
   setup(){
@@ -124,7 +129,11 @@ export default {
   mounted(){
     this.getLocation();
     this.drawMap();
-    this.aletrtMap();
+
+    if(localStorage.getItem("alertmappaletto")!=1){
+      this.aletrtMap();
+    }
+
     setTimeout(() => {
       this.updateMap();
     }, 500);
@@ -145,6 +154,11 @@ export default {
           {
             text: "Conutinua",
             cssClass:'modal-accept-button',
+            handler: async() => {
+             localStorage.setItem("alertmappaletto",1)
+            
+            
+            },
            
           },
           
@@ -163,6 +177,8 @@ export default {
             text: "Conutinua",
             cssClass:'modal-accept-button',
             handler: async() => {
+              this.open=false;
+              this.clearwatcher();
              this.back();
             
             
@@ -192,7 +208,7 @@ export default {
      
       // Inicializa o mapa, utilizando o sistema de coordenadas simples
       this.map = L.map('map', {
-        crs: L.CRS.Simple, zoom:1,
+        crs: L.CRS.Simple, zoom:1,zoomAnimation:false,
         maxZoom: 3,
         minZoom: 0,
         maxBounds:this.bounds,
@@ -217,15 +233,11 @@ export default {
         if(item.id!="me"){
           const im= await this.getCoverImg(item.img)
         console.log("img card ",im)
-          L.marker(L.latLng(item.latLng)).setIcon(this.getIcon(item.status)).addTo(this.map)
-          .bindPopup(
-          L.popup({}).setContent(
-
-            `<div class="img-container"><img src=${im}></div>
-            <h3>${item.description}</h3>
+        const popupcontent=`<div class="img-container"><img src=${im}></div>
+            <div class="card-title">${item.description}</div>
             `
-          )
-        )
+          L.marker(L.latLng(item.latLng)).setIcon(this.getIcon(item.status)).addTo(this.map)
+          .bindPopup(popupcontent)
         
 
       }else{
@@ -270,7 +282,31 @@ export default {
       this.$router.replace({path:"/"});
     },
 
+    calcolaDistanze(){
+      if(this.open==true){
+      this.schede.forEach(it=>{
+        console.log("calc",this.userCoord, it.coord)
+        if( it.coord!=null){
+          const distance= this.calculateDistance(this.userCoord, it.coord);
+
+          console.log("distance",it.tag, distance)
+          if(distance<4000){
+            this.openscheda(it)
+            //alert("sei vicino al punto");
+          }
+        }
+        
+
+      })
+    }
+    },
+
     showPosition(position) {
+      if( this.open==false){
+        setTimeout(() => {
+      this.open=true
+     }, 10000);
+      }
      
       this.userCoord.latitude= position.coords.latitude,
       this.userCoord.longitude= position.coords.longitude
@@ -284,21 +320,8 @@ export default {
       }
       
       console.log("mie coord ",  this.userCoord )
+      this.calcolaDistanze();
 
-      this.schede.forEach(it=>{
-        console.log(this.userCoord, it.coord)
-        if( it.coord!=null){
-          const distance= this.calculateDistance(this.userCoord, it.coord);
-
-          console.log("distance",it.tag, distance)
-        }
-        
-
-      })
-     
-      if(this.distance<100){
-        alert("sei vicino al punto");
-      }
      // this.getimagepos();
     //this.coordtoCart()
    // this.coordtopixel()
@@ -322,9 +345,35 @@ export default {
       }
    },
 
+   clearwatcher(){
+    navigator.geolocation.clearWatch(this.watcher);
+   },
+openscheda(scheda){
+  const tag=scheda.tag
+   const content=scheda.content.find(x => x.lang == this.lang);
+          console.log("scheda.type "+ content.type);
+          this.clearwatcher();
+          this.open=false;
+          if (content.type == "audio") {
+            console.log("audio");
+            //this.schedaState(true);
+            //this.$router.push({ path: "/audio/" + idvid , replace:true});
+           
+            this.$router.push({ path: "/audio/" + tag,  replace:true });
+            
+
+          }else if (content.type == "video"){
+            console.log("video");
+            //this.schedaState(true);
+            this.$router.push({ path: "/video/" + tag, replace:true });
+          }else{
+              this.$router.push({ path: "/soloImg/" + tag , replace:true});
+          }
+    
+},
     getLocation() {
       if (navigator.geolocation) {
-          navigator.geolocation.watchPosition(this.showPosition, this.showError);
+       this.watcher =   navigator.geolocation.watchPosition(this.showPosition, this.showError);
           console.log("dentro, geo ")
       } else {
           alert("Geolocation is not supported by this browser.");
@@ -372,23 +421,7 @@ export default {
 
     },
 
-    coordtoCart(){
 
-    // Esempio di utilizzo
-      
-      const latitude = 45.35216866591035;
-      const longitude = 9.429670949972401;
-
-      this.coord.forEach(coor=>{const mercatorCoords=this.mercatorProjection(coor[0], coor[1])
-        console.log("mercatorCoords ", mercatorCoords);
-      
-      })
-
-     const miecoordtrasform=this.mercatorProjection(this.userCoord.latitude, this.userCoord.longitude)
-     console.log("miecoordtrasform ", miecoordtrasform);
-      //const mercatorCoords = this.mercatorProjection(latitude, longitude);
-      
-    },
 
     coordtopixel(){
 
@@ -429,94 +462,7 @@ export default {
 
       },
 
-     
-    mercatorProjection(lat, lon) {
-    // Converti latitudine e longitudine da gradi a radianti
-      const latRad = lat * (Math.PI / 180);
-      const lonRad = lon * (Math.PI / 180);
-
-      // Proiezione di Mercatore
-      const x = lonRad;
-      const y = Math.log(Math.tan(Math.PI / 4 + latRad / 2));
-
-      return { x, y };
-  },
-
- /* gestisciTouchStart(event) {
-  if (event.touches.length === 2) {
-    this.lastTouchDistance = Math.hypot(
-      event.touches[0].clientX - event.touches[1].clientX,
-      event.touches[0].clientY - event.touches[1].clientY
-    );
-  }
-},*/
-
-/*gestisciTouchMove(event) {
-  if (event.touches.length === 2) {
-    const newTouchDistance = Math.hypot(
-      event.touches[0].clientX - event.touches[1].clientX,
-      event.touches[0].clientY - event.touches[1].clientY
-    );
-    const scaleDelta = newTouchDistance / this.lastTouchDistance;
-    const newScale = this.lastScale * scaleDelta;
-
-    // Limita il fattore di scala minimo e massimo
-    newScale = Math.min(Math.max(0.5, newScale), 3);
-
-    document.getElementById('immagine').style.transform = 'scale(' + newScale + ')';
-    this.lastTouchDistance = newTouchDistance;
-    this.lastScale = newScale;
-  }
-},*/
-
-
-
-/*async getCoverImg(name){
- 
-
-  if(name!=null){
     
-    this.request = indexedDB.open('mediaStore', global.dbVersion);
-        this.request.onsuccess = event => {
-             this.db = event.target.result;
-            
-        const transaction = this.db.transaction(['media-'+this.lang],'readwrite');
-        const objectStore = transaction.objectStore('media-'+this.lang);
-        const  test = objectStore.get(name);
-  
-       
-          let imgSrc;
-        test.onsuccess = event => {
-            console.log("GET RESULT ", event.target.result)
-            const testget = event.target.result;      
-            if (testget) {
-             imgSrc= URL.createObjectURL(testget.blob);
-                
-            // this.imgSrc='data:'+testget.blob.type+';base64,'+btoa(testget.data);
-              console.log("img ",imgSrc);
-             
-            
-            } else {
-              console.log('testget dont exixst error');
-                //this.fetchImg(name);
-                imgSrc=""
-            }
-            
-            this.db.close();
-            return imgSrc;
-          };
-        }
-        this.request.onerror= event=>{
-         console.log("errore");
-        }
-      }else{
-        console.log("tstname NO request", name);
-      
-       return " ";
-
-      }     
-    },*/
-
     async getCoverImg(name) {
       if (name != null) {
         return new Promise((resolve, reject) => {
@@ -532,7 +478,7 @@ export default {
               const testget = event.target.result;
               if (testget) {
                 const imgSrc = URL.createObjectURL(testget.blob);
-                console.log("img ", imgSrc);
+                //console.log("img ", imgSrc);
                 db.close();
                 resolve(imgSrc);
               } else {
@@ -558,7 +504,16 @@ export default {
         console.log("name is null");
         return "";
       }
-    }
+    },
+
+
+    unmounted(){
+    this.open==false
+    console.log("Unmounting map");
+   
+ 
+    
+  },
  
   }
 };
@@ -567,7 +522,7 @@ export default {
 
 </script>
 
-<style scoped>
+<style >
 
 ion-content {
   --overflow: hidden;
@@ -605,6 +560,7 @@ ion-content {
 #map { 
   width:100%;
   height: 500px;
+  z-index: 1;
 
 
 }
@@ -622,6 +578,17 @@ ion-content {
   left: 0;
   background: red;
 }
+.logo-container{
+    position: fixed;
+    bottom: 0;
+    height: 10vh;
+    width: 100%;
+    z-index: 5;
+    background: white;
+    border-top-right-radius: 15px;
+    padding: 20px;
+    border-top-left-radius: 15px;
+}
 .logo {
   object-fit: contain;
   max-height: 35vh;
@@ -633,45 +600,32 @@ ion-content {
   width: 100%;
   text-align: center;
 }
-/*.img-container{
-  height: 15vh;
-  width:auto;
-}*/
-.img-container img{
-  width: 15vh;
-  height: 30vw;
+
+
+.leaflet-popup-content .img-container {
+  width: 46vw;
+  /*height: 30vh;*/
  
 }
 
+.leaflet-popup-content .card-title{
+  font-size: 17px;
+}
+
 .reload-button{
-  width: 71px;
-    height: 70px;
+  width: 60px;
+    height: 60px;
     --background: white;
-}
+    --border-radius:15px;
 
-.title {
-  color: #2d9fe3;
-  font-size: 26px;
-  font-weight: 700;
-  padding: 10px;
-}
-
-.powered{
     position: absolute;
-    bottom: 25px;
-    width: 100vw;
-    font-size: 15px;
-    text-align: center;
-    left: 50%;
-    transform: translateX(-50%);
-    color: #136c97;
+    bottom: 80px;
+    left: 20px;
+}
 
-}
-@media only screen and (orientation:portrait) {
-  body {
-    height: 100vw;
-    transform: rotate(90deg);
-  }
-}
+
+
+
+
 
 </style>

@@ -10,7 +10,7 @@
     "interactionMode":"mix",
     "langDefault":"en",
     "history":true,
-
+    "gps":false,
     "app_primary_color":"#989898",
     "app_secondary_color":"#9402fb"
 

@@ -693,11 +693,11 @@ div.meta-container div.time-container div.duration {
 */
 div.control-container {
   text-align: center;
-  margin-top: 1.5vh;
+  margin-top: 1vh;
 }
 div.control-container div.prev {
-  width: 24px;
-  height: 22px;
+  width: 21px;
+  height: 18px;
   cursor: pointer;
   background: url("/assets/icon/playerIcon/previous.svg");
   background-size: cover;
@@ -705,8 +705,8 @@ div.control-container div.prev {
   vertical-align: middle;
 }
 div.control-container div.amplitude-play-pause {
-  width: 31px;
-  height: 35px;
+  width: 28px;
+  height: 29px;
   cursor: pointer;
   display: inline-block;
   vertical-align: middle;
@@ -720,8 +720,8 @@ div.control-container div.amplitude-play-pause.amplitude-playing {
       background-size: cover;
 }
 div.control-container div.next {
-  width: 24px;
-  height: 22px;
+  width: 21px;
+  height: 18px;
   cursor: pointer;
   background: url("/assets/icon/playerIcon/next.svg");
    background-size: cover;

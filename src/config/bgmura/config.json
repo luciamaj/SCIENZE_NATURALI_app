@@ -8,6 +8,7 @@
     "androidAppName":"com.daisyravenna.ggwave;package=com.daisyravenna.ggwave",
     "androidStoreUrl":"https://play.google.com/store/apps/details?id=com.daisyravenna.ggwave",
     "interactionMode":"mix",
+    "gps":true,
     "langDefault":"en"
 
     

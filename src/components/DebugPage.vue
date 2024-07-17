@@ -576,11 +576,11 @@ ion-content {
   color: transparent;
 
 }
-@media only screen and (orientation:portrait) {
+/*@media only screen and (orientation:portrait) {
   body {
     height: 100vw;
     transform: rotate(90deg);
   }
-}
+}*/
 
 </style>
