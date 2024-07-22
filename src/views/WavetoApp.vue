@@ -526,7 +526,7 @@ export default {
        this.$router.push({ path: "/raccolta", replace:true});
     },
     opengps(){
-      this.$router.replace({ path: "/gps"});
+      this.$router.push({ path: "/gps"});
     },
        
     callJava(){

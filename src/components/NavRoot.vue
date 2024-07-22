@@ -18,7 +18,7 @@
             <div class="button-text"> {{$t('menu.content.title')}}</div>
             <ion-icon  slot="end" size="large" name="chevron-forward" />
         </ion-button>
-        <ion-button v-if="percorsi!=false && percorsi.length>1" expand="block" size="large" color="secondary"  @click="pushPage('percorso')" id="push-nav-child"> 
+        <ion-button v-if="confPercorsi!=false && percorsi.length>1" expand="block" size="large" color="secondary"  @click="pushPage('percorso')" id="push-nav-child"> 
             <ion-icon   slot="start" size="large" name="compass-outline" />
             <div class="button-text">{{$t('menu.percorsi.title')}}</div>
             <ion-icon  slot="end" size="large" name="chevron-forward" />
@@ -122,11 +122,17 @@ export default ({
         IonToolbar,
         
     },
+    computed:{
+        confPercorsi(){
+            return this.conf.percorsi
+        }
+    },
     created(){
         this.networkError=common.networkError;
         this.checkStatus=common.checkOnlineStatus;
-        this.percorsi = localStorage.getItem('percorsi') !=null?localStorage.getItem('percorsi') :null;
-         this.emitter.on('fineAggiornamento', _ => {
+        this.percorsi = localStorage.getItem('percorsi') !=null?JSON.parse(localStorage.getItem('percorsi')) :null;
+        console.log()
+        this.emitter.on('fineAggiornamento', _ => {
            this.notificationState=false;
         });
     },

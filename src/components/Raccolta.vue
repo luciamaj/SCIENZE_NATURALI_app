@@ -8,7 +8,7 @@
       </ion-toolbar> 
     </ion-header>
     <ion-content class="ion-padding">
-        <div class="collection-title"> {{$t('raccolta.subtitle')}}</div>
+        <div v-if="from=='main'" class="collection-title"> {{$t('raccolta.subtitle')}}</div>
         <div class="list-container">
             <ion-grid class="schede-grid" v-if="visited!=null">
                 <template v-for="scheda in visited" v-bind:key="scheda" >
@@ -40,6 +40,10 @@
 <script>
    // import common from '@/js/common';
     export default ({
+        props: {
+    
+            from: { type: String, default: 'main'},
+        },
        
         computed:{
             data(){
@@ -47,8 +51,17 @@
                     images:[],
                 }
             },
+
+            
             visited(){
-                let visitedTag=localStorage.getItem("schede_viste");
+                let visitedTag;
+                console.log("FROM raccolta: ",this.from)
+                if(this.from=="map"){
+                    visitedTag=localStorage.getItem("schede_viste_onmap");
+                }else{
+                    visitedTag=localStorage.getItem("schede_viste");
+                }
+                console.log("visitedTag ",  visitedTag)
                 if(visitedTag){
                     visitedTag=visitedTag.split(',');
                     this.savedtag(visitedTag);
@@ -131,7 +144,13 @@
               
             },
             back(){
-                this.$router.replace("/")
+                if(this.from=="map"){
+                    //this.$router.replace("/gps")
+                    this.$router.go(-1);
+                }else{
+                    this.$router.replace("/")
+                }
+                
             },
             savedtag(tags){
                 this.visitedTag=tags;

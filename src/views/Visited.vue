@@ -2,7 +2,7 @@
   <ion-page>
      <ion-content>
      
-      <raccolta :lang="lang"></raccolta>
+      <raccolta :lang="lang"  :from="from"></raccolta>
 
     </ion-content>
   </ion-page>
@@ -41,6 +41,15 @@ export default {
     Raccolta,
 
   },
+
+  computed:{
+    
+    from(){
+      console.log("FROM: ",this.$route.params.from)
+      return this.$route.params.from;
+    },
+  
+  }
 
 }
 

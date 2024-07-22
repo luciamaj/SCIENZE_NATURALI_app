@@ -6,7 +6,11 @@
       <ion-buttons slot="start" >
         <ion-button v-on:click="aletrtexit()" class="back-button"><ion-icon size="medium" name="arrow-back"></ion-icon> {{$t('schede.back')}}</ion-button>
       </ion-buttons>
+
       <ion-buttons slot="end" >
+        <ion-button v-if="visited.length>0" color="secondary"  @click="openviste()" class="collection-button">
+          <ion-icon   name="file-tray-full-outline" class="history-icon"></ion-icon>
+        </ion-button>
         <ion-button v-on:click="aletrtMap()" class="back-button"><ion-icon size="medium" name="help-circle-outline"></ion-icon> </ion-button>
       </ion-buttons>
     </ion-toolbar> 
@@ -15,9 +19,9 @@
    
     <ion-content :fullscreen="true">
       <div class="vertical-center ">
-        <div class="">
+        <div :class="isloaded==false ?'blur':'' ">
           
-            <div id="map"   style="height: 98vh; width: 100vw;" ></div>
+          <div id="map"   style="height: 98vh; width: 100vw;" ></div>
          
           <div id="punto"></div>
 
@@ -78,6 +82,7 @@ export default {
     itens: [],
     markers: [],
     open:false,
+    isloaded:false
     };
   },
   setup(){
@@ -107,9 +112,23 @@ export default {
       }
     },
 
+    visited(){
+        let visitedTag=localStorage.getItem("schede_viste_onmap");
+        
+        if(visitedTag){
+            visitedTag=visitedTag.split(',');
+            console.log("visitedtag: ",visitedTag)
+            return visitedTag;
+        }else{
+            return [];
+        }
+        
+    }
+
    
    
   },
+ 
 
   beforeMount(){
    
@@ -136,7 +155,9 @@ export default {
 
     setTimeout(() => {
       this.updateMap();
-    }, 500);
+      this.isloaded=true;
+      
+    }, 450);
   
 // this.getimagepos();
 //this.getItens();
@@ -146,6 +167,9 @@ export default {
 
 
   methods: {
+    savedtag(tags){
+        this.visitedTag=tags;
+    },
     async aletrtMap() {
       const alert = await alertController.create({
         //header: this.$t('menu.lang.add') ,
@@ -232,7 +256,7 @@ export default {
         this.markers.push(markerX);*/
         if(item.id!="me"){
           const im= await this.getCoverImg(item.img)
-        console.log("img card ",im)
+       // console.log("img card ",im)
         const popupcontent=`<div class="img-container"><img src=${im}></div>
             <div class="card-title">${item.description}</div>
             `
@@ -279,7 +303,9 @@ export default {
     },
 
     back(){
-      this.$router.replace({path:"/"});
+      //this.$router.replace({path:"/"});
+      console.log("HISTORU : ",window.history )
+      this.$router.go(-1);
     },
 
     calcolaDistanze(){
@@ -291,7 +317,10 @@ export default {
 
           console.log("distance",it.tag, distance)
           if(distance<4000){
-            this.openscheda(it)
+            if( !this.visited.includes(it.tag)){
+              this.openscheda(it)
+            }
+          
             //alert("sei vicino al punto");
           }
         }
@@ -346,10 +375,13 @@ export default {
    },
 
    clearwatcher(){
+   console.log("chiudo il watcher");
     navigator.geolocation.clearWatch(this.watcher);
    },
 openscheda(scheda){
   const tag=scheda.tag
+ //this.addtoBucket(tag,'schede_viste')
+ this.addtoBucket(tag,'schede_viste_onmap')
    const content=scheda.content.find(x => x.lang == this.lang);
           console.log("scheda.type "+ content.type);
           this.clearwatcher();
@@ -505,7 +537,28 @@ openscheda(scheda){
         return "";
       }
     },
+    addtoBucket(ntag, variabile){
+      this.bucket= localStorage.getItem(variabile);
+      if(this.bucket==null){
+        localStorage.setItem(variabile, ntag);
 
+      }else{
+        this.bucket= this.bucket.split(",");
+       
+        if(!this.bucket.includes(ntag)){
+          this.bucket.push(ntag);
+          localStorage.setItem(variabile, this.bucket);
+        }
+       
+        console.log("bucket  "+this.bucket)
+        
+      }
+      
+    },
+    openviste(){
+      this.$router.push({ name: 'raccolta', params:{ from:"map"}});
+     // this.$router.push({ path: "/raccolta", replace:true});
+    },
 
     unmounted(){
     this.open==false
@@ -563,6 +616,14 @@ ion-content {
   z-index: 1;
 
 
+}
+.blur{
+  animation: fadeblur 1s;
+
+}
+@keyframes fadeblur{
+	from { filter: blur(6px); }
+	to { filter: blur(0px);}
 }
 .livello-marker {
     width: auto;
