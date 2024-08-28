@@ -3,19 +3,20 @@
     "baseUrl":"https://museobgmura-test.eadev.it/dataoversound-swi",
     "percorsi":true,
     
-    "appleAppName":"com.ea.BergamoMura://",
-    "appleStoreUrl":"https://itunes.apple.com/it/app/itunes-connect/id6593673275",
+    "appleAppName":"com.ea.PalazzoGuiccioli://",
+    "appleStoreUrl":"https://itunes.apple.com/it/app/itunes-connect/id376771144",
     "androidAppName":"com.daisyravenna.ggwave;package=com.daisyravenna.ggwave",
     "androidStoreUrl":"https://play.google.com/store/apps/details?id=com.daisyravenna.ggwave",
     "interactionMode":"mix",
     "gps":true,
-    "range":20,
+    "range":100,
     "langDefault":"en",
    
-    "lat1":45.463288101008736,
-    "lon1": 9.218441066349875,
-   "lat2": 45.457223848531285,
-   "lon2":9.233766145521432
+    "lat1":45.718059694921365,
+    "lon1": 9.647584876518843,
+   
+   "lat2": 45.69050658034718,
+   "lon2":9.681910369148703
    
 
     

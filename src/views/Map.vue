@@ -21,7 +21,7 @@
       <div class="vertical-center ">
         <div :class="isloaded==false ?'blur':'' ">
           
-          <div id="map"   style="height: 98vh; width: 100vw;" ></div>
+          <div id="map"   style="height: 95vh; width: 100vw;" ></div>
          
           <div id="punto"></div>
 
@@ -55,7 +55,7 @@ import {
 
 import common from "../js/common"
 import { useRouter } from "vue-router";
-import NavRoot from '@/components/NavRoot.vue';
+
 import L from "leaflet";
 import 'leaflet/dist/leaflet.css';
 
@@ -72,23 +72,34 @@ export default {
       userCoord: { latitude: 0, longitude: 0 },
       distance: null,
       cityCoord: { latitude:  45.466479544159796, longitude:9.192086626765356 } ,
-      
-     lastTouchDistance : 0,
-    lastScale : 1,
-    map: null,
+     
+      map: null,
+      mapwidth:925,
+      mapheight:538,
+      bounds: [[0,0], [538,925]],
+      imageBounds : [[0,0], [538,925]],
+
+     /* bergamo
+     mapwidth:2645,
+      mapheight:3000,
+      bounds: [[0,0], [3000,2645]],
+      imageBounds : [[0,0], [3000,2645]],*/
+
+      /*milano
+      mapwidth:1248,
+      mapheight:987,
     bounds: [[0,0], [987,1248]],
-     imageBounds : [[0,0], [987,1248]],
-    url: '/assets/background/map/mappa.png',
-    itens: [],
-    markers: [],
-    open:false,
-    isloaded:false
+      imageBounds : [[0,0], [987,1248]],*/
+
+      url: '/assets/background/map/mappa.png',
+      itens: [],
+      markers: [],
+      open:false,
+      isloaded:false,
+      range:0,
     };
   },
-  setup(){
-    NavRoot
-  },
- 
+  
   components: {
    IonContent,
     IonPage,
@@ -132,7 +143,12 @@ export default {
 
   beforeMount(){
    
-    
+    this.range=this.conf.range;
+    this.lat1=this.conf.lat1;
+    this.lon1=this.conf.lon1;
+    this.lat2=this.conf.lat2;
+    this.lon2=this.conf.lon2;
+    console.log("configlatlan", this.lat1,this.lat2, this.lon1, this.lon2);
 
       this.schede.forEach(scheda=>{
         
@@ -202,9 +218,10 @@ export default {
             cssClass:'modal-accept-button',
             handler: async() => {
               this.open=false;
+              //this.map.remove();
               this.clearwatcher();
              this.back();
-            
+             
             
             },
           }, {
@@ -232,9 +249,9 @@ export default {
      
       // Inicializa o mapa, utilizando o sistema de coordenadas simples
       this.map = L.map('map', {
-        crs: L.CRS.Simple, zoom:1,zoomAnimation:false,
+        crs: L.CRS.Simple, zoom:-2,zoomAnimation:false,
         maxZoom: 3,
-        minZoom: 0,
+        minZoom: -2,
         maxBounds:this.bounds,
         maxBoundsViscosity: 1.0
       }).setView([0, 0])
@@ -265,7 +282,7 @@ export default {
         
 
       }else{
-        L.marker(L.latLng(item.latLng)).setIcon(this.getIcon(item.status)).addTo(this.map)
+        this.meMarker=L.marker(L.latLng(item.latLng)).setIcon(this.getIcon(item.status)).addTo(this.map)
       }
         
 
@@ -316,7 +333,7 @@ export default {
           const distance= this.calculateDistance(this.userCoord, it.coord);
 
           console.log("distance",it.tag, distance)
-          if(distance<4000){
+          if(distance<this.range){
             if( !this.visited.includes(it.tag)){
               this.openscheda(it)
             }
@@ -339,11 +356,12 @@ export default {
      
       this.userCoord.latitude= position.coords.latitude,
       this.userCoord.longitude= position.coords.longitude
-      let foundme=this.itens.find(e=>e.id=="me")
+      const foundme=this.itens.find(e=>e.id=="me")
       const mypoint={id: 'me', description: 'ME', latLng: this.coordtopixelPunti(this.userCoord.latitude,  this.userCoord.longitude), status: 3}
       if(foundme){
        console.log(foundme)
-        foundme=mypoint;
+        //foundme=mypoint; 
+        this.meMarker.setLatLng(this.coordtopixelPunti(this.userCoord.latitude,  this.userCoord.longitude));
       }else{
         this.itens.push(mypoint);
       }
@@ -405,7 +423,8 @@ openscheda(scheda){
 },
     getLocation() {
       if (navigator.geolocation) {
-       this.watcher =   navigator.geolocation.watchPosition(this.showPosition, this.showError);
+       this.watcher =   navigator.geolocation.watchPosition(this.showPosition, this.showError,{enableHighAccuracy: true,  timeout: 5000, maximumAge: 5000,
+});
           console.log("dentro, geo ")
       } else {
           alert("Geolocation is not supported by this browser.");
@@ -453,44 +472,43 @@ openscheda(scheda){
 
     },
 
-
-
-    coordtopixel(){
-
-     
-    const  lat1= 45.71241717967386
-    const  lon1= 8.69531166660485
-   
-    const  lat2=  45.18079075895875
-    const  lon2= 9.640075829782067
-
-
-   
-      const pixel_x = 1248 * (this.userCoord.longitude - lon1) / (lon2 - lon1)
-      const pixel_y = 987 * (this.userCoord.latitude - lat1) / (lat2 - lat1)
-
-      console.log( "pixel",pixel_x,  pixel_y);
-      this.punto= document.getElementById('punto');
-      this.punto.style.top=(pixel_y)+"px";
-      this.punto.style.left=pixel_x+"px";
-
-    },
     coordtopixelPunti(lat,lon){
 
-          
-      const  lat1= 45.71241717967386
+      //milano    
+     /* const  lat1= 45.71241717967386
       const  lon1= 8.69531166660485
 
       const  lat2=  45.18079075895875
-      const  lon2= 9.640075829782067
+      const  lon2= 9.640075829782067*/
+
+      //bergamo
+     /* const  lat1= 45.71818229288252
+      const  lon1= 9.647315629494203
+
+      const  lat2=45.69061654646927
+      const  lon2= 9.681764123048756*/
+
+      const  lat1= this.lat1
+      const  lon1= this.lon1
+
+      const  lat2=this.lat2
+      const  lon2=this.lon2
+     
+      
+      // bergamo
+      /* 1 45.71798229288252, 9.647315629494203*/
+      /* 2 45.69059123618014, 9.681764123048756*/
+
+      //1 45.71110808387814, 9.652650465465236
+     //2 45.6 9805537615133, 9.676256441490102
 
 
 
-        const pixel_x = 1248 * (lon - lon1) / (lon2 - lon1)
-        const pixel_y = 987 * (lat - lat1) / (lat2 - lat1)
+        const pixel_x = this.mapwidth * (lon - lon1) / (lon2 - lon1)
+        const pixel_y = this.mapheight * (lat - lat1) / (lat2 - lat1)
 
         console.log( "pixel",pixel_x,  pixel_y);
-        return [(987-pixel_y),(pixel_x )]
+        return [(this.mapheight-pixel_y),(pixel_x )]
 
       },
 

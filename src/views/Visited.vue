@@ -2,7 +2,7 @@
   <ion-page>
      <ion-content>
      
-      <raccolta :lang="lang"  :from="from"></raccolta>
+      <raccolta :lang="lang"  :from="fromPage"></raccolta>
 
     </ion-content>
   </ion-page>
@@ -41,13 +41,23 @@ export default {
     Raccolta,
 
   },
+  data(){
+      return{
+          images:[],
+          fromPage:""
+      }
+  },
 
+  mounted(){
+    console.log("PASSA DAL MOUNTED")
+        this.fromPage = this.$route.params.from || 'main';
+    },
   computed:{
     
-    from(){
+   /* from(){
       console.log("FROM: ",this.$route.params.from)
       return this.$route.params.from;
-    },
+    },*/
   
   }
 

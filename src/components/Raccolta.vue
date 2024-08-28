@@ -44,14 +44,16 @@
     
             from: { type: String, default: 'main'},
         },
+        data(){
+            return{
+                images:[],
+                fromPage:""
+            }
+        },
+
        
         computed:{
-            data(){
-                return{
-                    images:[],
-                }
-            },
-
+            
             
             visited(){
                 let visitedTag;
