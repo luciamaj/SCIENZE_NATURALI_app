@@ -5,8 +5,8 @@
     
     "appleAppName":"com.ea.BergamoMura://",
     "appleStoreUrl":"https://itunes.apple.com/it/app/itunes-connect/id6593673275",
-    "androidAppName":"com.daisyravenna.ggwave;package=com.daisyravenna.ggwave",
-    "androidStoreUrl":"https://play.google.com/store/apps/details?id=com.daisyravenna.ggwave",
+    "androidAppName":"com.daisymuradibergamo.ggwave;package=com.daisymuradibergamo.ggwave",
+    "androidStoreUrl":"https://play.google.com/store/apps/details?id=com.daisymuradibergamo.ggwave",
     "interactionMode":"mix",
     "gps":true,
     "range":20,
