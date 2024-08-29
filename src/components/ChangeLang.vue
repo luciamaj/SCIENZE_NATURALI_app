@@ -2,8 +2,8 @@
   <ion-header>
     <ion-toolbar>
        <ion-title color="secondary">{{$t('menu.lang.subtitile')}}</ion-title>
-      <ion-buttons slot="start" >
-        <ion-back-button></ion-back-button>
+       <ion-buttons slot="start" >
+        <ion-button  @click="back"><ion-icon size="large" name="chevron-back" /></ion-button>
       </ion-buttons>
      
     </ion-toolbar>
@@ -40,7 +40,7 @@
 import router from '@/router';
 import {
   IonButtons,
-  IonBackButton,
+  
   IonContent,
   IonHeader,
   IonTitle,
@@ -61,7 +61,7 @@ export default ({
   },
   components: {
     IonButtons,
-    IonBackButton,
+   
     IonContent,
     IonHeader,
     IonTitle,
@@ -361,6 +361,10 @@ export default ({
 
     },
   
+    back(){
+      const ionNav = document.querySelector('ion-nav') ;
+            ionNav.pop();    
+    },
    
 
   }

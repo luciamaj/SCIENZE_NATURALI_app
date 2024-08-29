@@ -26,14 +26,18 @@
 </ion-modal-->
       <div class="vertical-center view-wwave-container">
         <div class="center">
+        
           <div class="logo-container" id="mostra"><img  id="logo" class="logo" :src="logo"/>
           <capting :class="iscapting" id="captingIcon" hidden></capting></div>
           <!--div class="logo-container" id="anima" hidden><img class="gif-listen" src="assets/background/anima.gif"/></div-->
           <div class="buttons">
           <!--ion-button expand="block" class="capture-btn" @click="callJava" id="captureStart">{{$t('main.start')}}</ion-button-->
+          <template v-if="infoPercorsi!=null && percSel.hasOwnProperty('pulsanti') && percSel.pulsanti!=null">
+            <ion-button expand="block" class="capture-btn" @click="callJava" id="captureStart"><img class="icon-button" src="assets/background/onda.png"></ion-button>
+            <ion-button expand="block" class="capture-btn" id="captureStop" hidden><img class="icon-button" src="assets/background/onda.png"/></ion-button>
+          </template>
            <ion-button expand="block" class="capture-btn" @click="callJava" id="captureStart"><img class="icon-button" src="assets/background/onda.png"></ion-button>
           <ion-button expand="block" class="capture-btn" id="captureStop" hidden><img class="icon-button" src="assets/background/onda.png"/>
-          <!--ion-badge  mode="ios" id="badge" color="danger" class="listen">0</ion-badge-->
            </ion-button>
 
           <!--ion-button expand="block" class="scan-btn" @click="openModal">{{$t('main.scan')}}</ion-button-->
@@ -159,6 +163,7 @@ export default {
   },
   beforeUnmount() {
     window.removeEventListener('storage', this.updateTitle);
+    console.log("infopercorsi",this.infoPercorsi)
   },
   computed:{
     interactionMode(){
@@ -183,6 +188,22 @@ export default {
         return false;
       }
       
+    },
+
+    infoPercorsi() {
+      
+      const percorsi=JSON.parse(localStorage.getItem('percorsi'))
+      if(percorsi){
+        return percorsi;
+      }else{
+        return null
+      }
+       
+
+    },
+    percselInfo(){
+      const sel=common.getpercinfo();
+      return sel;
     }
 
   },
@@ -526,7 +547,8 @@ export default {
        this.$router.push({ path: "/raccolta", replace:true});
     },
     opengps(){
-      this.$router.push({ path: "/gps"});
+      console.log("HISTORU : ",window.history )
+      this.$router.push({ path: "/gps", replace:false});
     },
        
     callJava(){

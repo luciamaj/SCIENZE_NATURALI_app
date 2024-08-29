@@ -93,7 +93,7 @@ export default {
       imageBounds : [[0,0], [987,1248]],*/
 
       url: '/assets/background/map/mappa.png',
-      itens: [],
+      items: [],
       markers: [],
       open:false,
       isloaded:false,
@@ -125,20 +125,16 @@ export default {
     },
 
     visited(){
-        let visitedTag=localStorage.getItem("schede_viste_onmap");
-        
-        if(visitedTag){
-            visitedTag=visitedTag.split(',');
-            console.log("visitedtag: ",visitedTag)
-            return visitedTag;
-        }else{
-            return [];
-        }
-        
+      let visitedTag=localStorage.getItem("schede_viste_onmap");  
+      if(visitedTag){
+          visitedTag=visitedTag.split(',');
+          console.log("visitedtag: ",visitedTag)
+          return visitedTag;
+      }else{
+          return [];
+      } 
     }
 
-   
-   
   },
  
 
@@ -151,14 +147,15 @@ export default {
     this.lon2=this.conf.lon2;
     console.log("configlatlan", this.lat1,this.lat2, this.lon1, this.lon2);
 
-      this.schede.forEach(scheda=>{
-        
-        const cont= scheda.content.find(x => x.lang == this.lang);
-        if(scheda.coord!=null){
-          const point={id:scheda.tag, description: cont.titolo, latLng: this.coordtopixelPunti(scheda.coord.latitude, scheda.coord.longitude), status: Math.floor((Math.random() * 2) + 1), img:scheda.img};
-          this.itens.push(point);
-        }
-      })
+    this.schede.forEach(scheda=>{
+      const cont= scheda.content.find(x => x.lang == this.lang);
+    
+      if(scheda.coord!=null){
+        const status= !this.visited.includes(scheda.tag)?1:2; 
+        const point={id:scheda.tag, description: cont.titolo, latLng: this.coordtopixelPunti(scheda.coord.latitude, scheda.coord.longitude), status: status, img:scheda.img};
+        this.items.push(point);
+      }
+    })
         
    
   },
@@ -176,9 +173,7 @@ export default {
       
     }, 450);
   
-// this.getimagepos();
-//this.getItens();
-   console.log("ITENS",this.itens)
+   console.log("items",this.items)
              
   },
 
@@ -219,7 +214,7 @@ export default {
             cssClass:'modal-accept-button',
             handler: async() => {
               this.open=false;
-              //this.map.remove();
+              this.map.remove();
               this.clearwatcher();
              this.back();
              
@@ -238,17 +233,9 @@ export default {
     },
 
   
-   /* getItens() {
-      this.itens = [
-        {id: '1', description: 'duomo', latLng: this.coordtopixelPunti(45.466479544159796, 9.192086626765356), status: Math.floor((Math.random() * 2) + 1)},
-        {id: '2', description: 'Vigevano', latLng:this.coordtopixelPunti(45.32143083772875, 8.849285673628017), status: Math.floor((Math.random() * 2) + 1)},
-        {id: '3', description: 'forna', latLng: this.coordtopixelPunti(45.4695121760421, 8.892903536669618), status: Math.floor((Math.random() * 2) + 1)}
-      ];
-    },*/
+
 
     drawMap() {
-     
-      // Inicializa o mapa, utilizando o sistema de coordenadas simples
       this.map = L.map('map', {
         crs: L.CRS.Simple, zoom:-2,zoomAnimation:false,
         maxZoom: 3,
@@ -256,41 +243,30 @@ export default {
         maxBounds:this.bounds,
         maxBoundsViscosity: 1.0
       }).setView([0, 0])
-      // Carrega a imagem do mapa, com seus limites
+    
 
-      
       L.imageOverlay(this.url, this.imageBounds).addTo(this.map);
      this.map.fitBounds(this.bounds);
-      //this.map.setMaxBounds(this.bounds);
-      
-      // Exclui marcadores anteriores
+     
       this.map.invalidateSize();
       this.markers = [];
-      // Converte os itens em marcadores
-      this.itens.forEach(async item=>{
+     
+      this.items.forEach(async item=>{
        /* const markerX = L.marker(L.latLng(item.latLng), {draggable: false})
           .setIcon(this.getIcon(item.status))
         markerX.itemId = item.id;
         this.markers.push(markerX);*/
         if(item.id!="me"){
           const im= await this.getCoverImg(item.img)
-       // console.log("img card ",im)
-        const popupcontent=`<div class="img-container"><img src=${im}></div>
-            <div class="card-title">${item.description}</div>
-            `
+        // console.log("img card ",im)
+          const popupcontent=`<div class="img-container"><img src=${im}></div>
+              <div class="card-title">${item.description}</div>`
           L.marker(L.latLng(item.latLng)).setIcon(this.getIcon(item.status)).addTo(this.map)
-          .bindPopup(popupcontent)
-        
-
-      }else{
-        this.meMarker=L.marker(L.latLng(item.latLng)).setIcon(this.getIcon(item.status)).addTo(this.map)
-      }
-        
-
+            .bindPopup(popupcontent)
+        }else{
+          this.meMarker=L.marker(L.latLng(item.latLng)).setIcon(this.getIcon(item.status)).addTo(this.map)
+        }
       });
-      // Adiciona os marcadores ao mapa, setando as propriedades comuns
-    // L.featureGroup(this.markers).addTo(this.map);
-
 
     },
 
@@ -300,29 +276,28 @@ export default {
       const ColorIcon = L.Icon.extend({
         options: {
             shadowUrl: '',
-            iconSize: [50, 50],
-            iconAnchor: [20,40],
+            iconSize: [36, 36],
+            iconAnchor: status!=3?[18,36]:[18,18],
             popupAnchor: [1, -34],
-            shadowSize: [40, 40]
+            shadowSize: [20, 20]
         }
       });
       const icons = [];
-      // Ícone verde: status 1 'Disponível'
-      icons[1] = new ColorIcon({iconUrl: '/assets/background/location.png'});
-      // Ícone vermelho: status 2 'Vendido'
-      icons[2] = new ColorIcon({iconUrl: '/assets/background/location.png'});
+      icons[1] = new ColorIcon({iconUrl: '/assets/background/pinlocation.png'});
+      icons[2] = new ColorIcon({iconUrl: '/assets/background/pinlocation_visto.png'});
       icons[3] = new ColorIcon({iconUrl: '/assets/background/hotspot.gif'});
       return icons[status];
     },
     updateMap() {
       this.map.remove();
-     // this.getItens();
+     // this.getitems();
       this.drawMap();
     },
 
     back(){
-      //this.$router.replace({path:"/"});
       console.log("HISTORU : ",window.history )
+      //this.$router.replace({path:"/"});
+      
       this.$router.go(-1);
     },
 
@@ -332,7 +307,7 @@ export default {
         console.log("calc",this.userCoord, it.coord)
         if( it.coord!=null){
           const distance= this.calculateDistance(this.userCoord, it.coord);
-          const range=it.range!=null?it.range:this.range;
+          const range=it.range!=null ? it.range : this.range;
           console.log("distance",it.tag, distance)
           
             if(distance<=range){
@@ -361,14 +336,14 @@ export default {
      
       this.userCoord.latitude= position.coords.latitude,
       this.userCoord.longitude= position.coords.longitude
-      const foundme=this.itens.find(e=>e.id=="me")
+      const foundme=this.items.find(e=>e.id=="me")
       const mypoint={id: 'me', description: 'ME', latLng: this.coordtopixelPunti(this.userCoord.latitude,  this.userCoord.longitude), status: 3}
       if(foundme){
        console.log(foundme)
         //foundme=mypoint; 
         this.meMarker.setLatLng(this.coordtopixelPunti(this.userCoord.latitude,  this.userCoord.longitude));
       }else{
-        this.itens.push(mypoint);
+        this.items.push(mypoint);
       }
       
       console.log("mie coord ",  this.userCoord )
