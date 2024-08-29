@@ -74,10 +74,11 @@ export default {
       cityCoord: { latitude:  45.466479544159796, longitude:9.192086626765356 } ,
      
       map: null,
-      mapwidth:925,
-      mapheight:538,
-      bounds: [[0,0], [538,925]],
-      imageBounds : [[0,0], [538,925]],
+     
+      mapheight:this.conf.altezzaMappa,
+      mapwidth:this.conf.larghezzaMappa,
+      bounds: [[0,0], [this.conf.altezzaMappa,this.conf.larghezzaMappa]],
+      imageBounds : [[0,0], [this.conf.altezzaMappa,this.conf.larghezzaMappa]],
 
      /* bergamo
      mapwidth:2645,
@@ -331,15 +332,19 @@ export default {
         console.log("calc",this.userCoord, it.coord)
         if( it.coord!=null){
           const distance= this.calculateDistance(this.userCoord, it.coord);
-
+          const range=it.range!=null?it.range:this.range;
           console.log("distance",it.tag, distance)
-          if(distance<this.range){
-            if( !this.visited.includes(it.tag)){
-              this.openscheda(it)
-            }
           
-            //alert("sei vicino al punto");
-          }
+            if(distance<=range){
+              if( !this.visited.includes(it.tag)){
+                this.openscheda(it)
+              }
+            
+              //alert("sei vicino al punto");
+            }
+
+        
+          
         }
         
 
@@ -423,7 +428,7 @@ openscheda(scheda){
 },
     getLocation() {
       if (navigator.geolocation) {
-       this.watcher =   navigator.geolocation.watchPosition(this.showPosition, this.showError,{enableHighAccuracy: true,  timeout: 5000, maximumAge: 5000,
+       this.watcher =   navigator.geolocation.watchPosition(this.showPosition, this.showError,{enableHighAccuracy: true,  timeout: 5000, maximumAge: 3000,
 });
           console.log("dentro, geo ")
       } else {
