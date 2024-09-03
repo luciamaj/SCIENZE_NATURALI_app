@@ -32,17 +32,21 @@
           <!--div class="logo-container" id="anima" hidden><img class="gif-listen" src="assets/background/anima.gif"/></div-->
           <div class="buttons">
           <!--ion-button expand="block" class="capture-btn" @click="callJava" id="captureStart">{{$t('main.start')}}</ion-button-->
-          <template v-if="infoPercorsi!=null && percSel.hasOwnProperty('pulsanti') && percSel.pulsanti!=null">
-            <ion-button expand="block" class="capture-btn" @click="callJava" id="captureStart"><img class="icon-button" src="assets/background/onda.png"></ion-button>
-            <ion-button expand="block" class="capture-btn" id="captureStop" hidden><img class="icon-button" src="assets/background/onda.png"/></ion-button>
+          <template v-if="infoPercorsi!=null && percselInfo.hasOwnProperty('pulsanti') && percselInfo.pulsanti!=null">
+            <ion-button v-if="percselInfo.pulsanti.includes('Silence_tag')" expand="block" class="capture-btn" @click="callJava" id="captureStart"><img class="icon-button" src="assets/background/onda.png"></ion-button>
+            <ion-button v-if="percselInfo.pulsanti.includes('Silence_tag')" expand="block" class="capture-btn" id="captureStop" hidden><img class="icon-button" src="assets/background/onda.png"/></ion-button>
+            <ion-button v-if="percselInfo.pulsanti.includes('Qr_code')" expand="block" class="scan-btn" @click="openModal"><img class="icon-button" src="assets/background/qrI.png"></ion-button>
+            <ion-button v-if="percselInfo.pulsanti.includes('Geo_tag') && conf.gps==true" expand="block" class="gps-btn" id="testGps" @click="opengps" ><img class="icon-button" src="assets/background/gpsicon.png"></ion-button>
+          
           </template>
-           <ion-button expand="block" class="capture-btn" @click="callJava" id="captureStart"><img class="icon-button" src="assets/background/onda.png"></ion-button>
-          <ion-button expand="block" class="capture-btn" id="captureStop" hidden><img class="icon-button" src="assets/background/onda.png"/>
-           </ion-button>
+          <template v-else>
+            <ion-button expand="block" class="capture-btn" @click="callJava" id="captureStart"><img class="icon-button" src="assets/background/onda.png"></ion-button>
+            <ion-button expand="block" class="capture-btn" id="captureStop" hidden><img class="icon-button" src="assets/background/onda.png"/>  </ion-button>
 
-          <!--ion-button expand="block" class="scan-btn" @click="openModal">{{$t('main.scan')}}</ion-button-->
-          <ion-button expand="block" class="scan-btn" @click="openModal"><img class="icon-button" src="assets/background/qrI.png"></ion-button>
-          <ion-button expand="block" v-if="conf.gps==true" class="gps-btn" id="testGps" @click="opengps" ><img class="icon-button" src="assets/background/gpsicon.png"></ion-button>
+       
+            <ion-button expand="block" class="scan-btn" @click="openModal"><img class="icon-button" src="assets/background/qrI.png"></ion-button>
+            <ion-button expand="block" v-if="conf.gps==true" class="gps-btn" id="testGps" @click="opengps" ><img class="icon-button" src="assets/background/gpsicon.png"></ion-button>
+          </template>
           </div>
           <!--div class="wait-tag"> </div-->
         </div>
@@ -120,6 +124,7 @@ export default {
     this.store=JSON.parse(localStorage.getItem('pubblication'));
     this.captureStart = document.getElementById("captureStart");
     this.captureStop = document.getElementById("captureStop");
+    console.log("Capture start stop", this.captureStart , this.captureStop)
     this.captingIcon = document.getElementById("captingIcon");
     this.logoi = document.getElementById("logo");
     this.currLang=localStorage.getItem("lang")
@@ -335,6 +340,9 @@ export default {
       this.percSel=this.getpercselinlang();
     },
     
+    haspulsanti(){
+      return this.percselInfo.hasOwnProperty("pulsanti")
+    },
     async openModal  ()  {
       if(this.$store.getters.conf.interactionMode=="mix"){
         if(this.tour==true){
@@ -363,6 +371,8 @@ export default {
           if (obj.path.type == "audio") {
             this.$router.replace({ path: "/audio/" + obj.path.index });
           } else  if (obj.path.type == "video") {
+              this.$router.replace({ path: "/video/" + obj.path.index });
+          }else  if (obj.path.supportoVisuale !=null) {//da spostare prima
               this.$router.replace({ path: "/video/" + obj.path.index });
           }else{
             this.$router.replace({ path: "/soloImg/" + obj.path.index });
@@ -694,17 +704,16 @@ ion-content {
 }
 .logo-container {
  /*background-color: #fff;*/
-  position: relative;
-  /* top: 9px; */
-  top: 19%;
-  width: 77vw;
-  margin: auto;
-  height: 300px;
+    position: relative;
+    top: 11%;
+    width: 75vw;
+    margin: auto;
+   /* height: 300px;*/
 }
 
 .logo {
   object-fit: contain;
-  max-height: 40vh;
+  max-height: 50vh;
   margin-bottom: 30px;
   object-position: center;
   width: 100%;
@@ -712,7 +721,7 @@ ion-content {
 .buttons{
   width: 100%;
   text-align: center;
-  top:64vh;
+  top:65vh;
   position: absolute;
   display: flex;
   padding: 0 6vw;

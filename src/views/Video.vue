@@ -141,12 +141,18 @@ export default {
     },
     url() {
       const video = this.contenuto.video;
+      const supportoVisuale = this.contenuto.supportoVisuale;
    
-        if (video) {
+      if (supportoVisuale) {
+        console.log("supporto video ",supportoVisuale);
+        // return this.$store.getters.baseUrl+"/upload/"+video;
+        this.getvideo(supportoVisuale)
+        return "videoo"
+      } else if (video) {
         console.log("video ",video);
-       // return this.$store.getters.baseUrl+"/upload/"+video;
-       this.getvideo(video)
-       return "videoo"
+        // return this.$store.getters.baseUrl+"/upload/"+video;
+        this.getvideo(video)
+        return "videoo"
       } else {
         
         return "";

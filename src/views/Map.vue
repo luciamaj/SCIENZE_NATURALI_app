@@ -25,7 +25,7 @@
          
           <div id="punto"></div>
 
-          <div class="logo-container">
+          <div class="utils-container">
             <ion-button class="reload-button" @click="updateMap"><img class="icon-button" src="assets/background/reload.png"></ion-button>
             
             lat: {{ userCoord.latitude }} -
@@ -637,7 +637,7 @@ ion-content {
   left: 0;
   background: red;
 }
-.logo-container{
+.utils-container{
     position: fixed;
     bottom: 0;
     height: 10vh;
@@ -648,13 +648,7 @@ ion-content {
     padding: 20px;
     border-top-left-radius: 15px;
 }
-.logo {
-  object-fit: contain;
-  max-height: 35vh;
-  margin-bottom: 50px;
-  object-position: center;
-  width: 100%;
-}
+
 .buttons{
   width: 100%;
   text-align: center;

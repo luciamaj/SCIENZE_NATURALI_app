@@ -10,6 +10,12 @@
   </ion-header>
   <ion-content class="ion-padding" id="nav-child-content">
     <!--div>{{$t('menu.lang.subtitile')}}</div-->
+    <div>
+      {{ attivaSupporto }}
+     <!--div> Supporto Visuale</div--> <ion-toggle  v-model="attivaSupporto"  @ionChange="notice()" :enable-on-off-labels="true">Supporto Visuale</ion-toggle>
+     
+    </div>
+
     <ion-grid class="langs-grid">
       <template v-for="lang in saved" v-bind:key="lang">
         <ion-row>
@@ -47,12 +53,13 @@ import {
   IonToolbar,
   alertController,
   actionSheetController ,
+  IonToggle
   
   } from '@ionic/vue';
   
 import common from  "../js/common"
  import Download from '@/components/ScaricamentoContenuti.vue';
- 
+
 //import { defineComponent } from 'vue';
 export default ({
   name: "langSwitch",
@@ -66,6 +73,7 @@ export default ({
     IonHeader,
     IonTitle,
     IonToolbar,
+    IonToggle
     
   },
   data(){
@@ -74,6 +82,7 @@ export default ({
       saved:[],
       remaining:[],
       currLang:this.currentLang,
+      attivaSupporto:0
 
     }
   },
@@ -84,6 +93,31 @@ export default ({
     }
   },
   computed:{
+
+    supportoVisivo(){
+      const pubblication=JSON.parse(localStorage.getItem('pubblication'));
+      if(pubblication.hasOwnProperty("supporto_video")){
+        return pubblication.supporto_video
+
+      }else{
+        return null
+      }
+      
+
+    },
+    getAttivaSuppoto(){
+      const supporto=JSON.parse(localStorage.getItem('attivaSupporto'));
+      if(supporto){
+        if(supporto==true){
+          return true
+        }else{
+          return false
+        }
+
+      }else{
+        return false
+      }
+    },
 
     
     savedLangs:{
@@ -131,11 +165,13 @@ export default ({
       this.addLang(lang);
     })
 
+
+
   },
   mounted(){
     this.savedLangs
     this.remainingLang
-   
+   this.attivaSupporto=this.getAttivaSuppoto;
   
     this.currLang=localStorage.getItem("lang")
 
@@ -147,6 +183,11 @@ export default ({
   },
 
   methods:{
+
+    notice(){
+      console.log("fire notice")
+      localStorage.setItem('attivaSupporto', this.attivaSupporto)
+    },
 
     getversionLangs(){
        
@@ -377,6 +418,11 @@ export default ({
   margin-top: 6vh;
 
 }
+ion-toggle{
+  --background-checked:green;
+  --handle-background-checked: white;
+}
+
  .checked{
     /*background: #377999b8;*/
     background: var(--ion-color-secondary-whitened);
