@@ -1,7 +1,7 @@
 <template>
   <ion-header>
     <ion-toolbar>
-       <ion-title color="secondary">{{$t('menu.accessibility.subtitile')}}</ion-title>
+       <ion-title color="secondary">{{$t('menu.accessibility.title')}}</ion-title>
        <ion-buttons slot="start" >
         <ion-button  @click="back"><ion-icon size="large" name="chevron-back" /></ion-button>
       </ion-buttons>
@@ -9,9 +9,10 @@
     </ion-toolbar>
   </ion-header>
   <ion-content class="ion-padding" id="nav-child-content">
-    <!--div>{{$t('menu.lang.subtitile')}}</div-->
-    <div v-if="supportoVisivo==1" class="container-supporto-visuale">
-     <div> Supporto Visuale</div> <ion-toggle  v-model="attivaSupporto"  @ionChange="notice()" :enable-on-off-labels="true"></ion-toggle>
+    <!--div>{{$t('menu.lang.subtitle')}}</div-->
+    <div>{{$t('menu.accessibility.subtitle')}} </div>
+    <div class="container-supporto-visuale">
+     <div> {{$t('menu.accessibility.supportoVisuale')}}</div> <ion-toggle  v-model="attivaSupporto"  @ionChange="notice()" :enable-on-off-labels="true"></ion-toggle>
      
     </div>
 

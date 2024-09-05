@@ -549,7 +549,6 @@ export default {
 .back-button{
   text-transform: capitalize;
 }
-
 ion-icon{
   margin-right: 10px;
 }

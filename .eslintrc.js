@@ -21,6 +21,7 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/camelcase':'off',
     'no-use-before-define':'off',
+    'vue/no-use-v-if-with-v-for':'off',
   },
   overrides: [
     {

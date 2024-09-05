@@ -18,6 +18,10 @@ export const it = {
             title:"Scegli",
             text:"in quale lingua preferisci ascoltare i contenuti?"
         },
+        accessibility:{
+            title:"Accessibilità",
+            text:"Attiva per visualizzare i sottotitoli dei contenuti multimediali"
+        },
         percorsi:{
             title:"Scegli ",
             text:"il percorso che vuoi seguire"
@@ -85,9 +89,14 @@ export const it = {
         content:{
             title:"Aggiorna contenuti"
         },
+        accessibility:{
+            title:"Accessibilità",
+            subtitle:"Attiva per visualizzare la trascrizione audio",
+            supportoVisuale:"Sottotitoli / Lis"
+        },
         percorsi:{
             title:"Percorsi",
-            subtitile:"Percorsi scaricati",
+            subtitle:"Percorsi scaricati",
             change:"Cambia percorso",
             add:"Aggiungi percorso",
             alert:"Attenzione questa operazione scaricherà i contenuti del nuovo percorso",
@@ -95,7 +104,7 @@ export const it = {
         },
         lang:{
             title:"Lingue",
-            subtitile:"Lingue scaricate",
+            subtitle:"Lingue scaricate",
             add:"Aggiungi nuova lingua",
             select:"Contenuti disponibili",
             alert:"Attenzione questa operazione scaricherà i contenuti nella lingua scelta",

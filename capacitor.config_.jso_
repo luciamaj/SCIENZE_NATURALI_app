@@ -1,12 +1,12 @@
 {
   "appId": "io.ionic.starter",
-  "appName": "Mura di Bergamo",
+  "appName": "MSB Museum",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "dist",
   "plugins": {
     "SplashScreen": {
-      "launchShowDuration":0
+      "launchShowDuration": 0
     }
   },
   "cordova": {}

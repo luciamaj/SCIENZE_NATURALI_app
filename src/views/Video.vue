@@ -94,6 +94,39 @@ export default {
     IonIcon,
   //  IonProgressBar
   },
+  data() {
+    return {
+      options: {
+        title: "Example Title",
+        enabled: true,
+        clickToPlay: true,
+        hideControls: false,
+        controls: [
+          "mute",
+          "volume",
+          "play-large",
+          "progress",
+          "current-time",
+          "fullscreen"
+        ],
+        
+
+      },
+      videoPlay:false,
+      progress:0,
+      duration:{
+          min:"00",
+          sec:"00",
+      },
+      current:{
+        min:"00",
+        sec:"00",
+      },
+      fullscreen:false,
+      hastext:true,
+      timeStamp:0
+    };
+  },
  
   ionViewWillLeave() {
   
@@ -166,6 +199,8 @@ export default {
     });
     this.addtoBucket=common.addtoBucket;
     this.paramId=this.$route.params.id;
+ 
+    this.timeStamp= this.gettimestampS(this.$route.params.timestamp )|| 0;
      this.schedaState(true);
     console.log("Entra update")
     this.emitter.on('changeVersion', _ => {
@@ -185,6 +220,7 @@ export default {
     this.vid.onloadeddata = ()=> {
       console.log("Browser has loaded ");
       this.duration= this.getminsec(this.vid.duration);
+      this.vid.currentTime=this.timeStamp;
       this.vid.play();
       if(this.vid.paused){
         this.videoPlay=false;
@@ -223,6 +259,16 @@ export default {
   },
 
    methods: {
+    gettimestampS(time){
+      const h=parseInt(time.substring(0,1));
+      const min=parseInt(time.substring(1,3));
+      const sec=parseInt(time.substring(3));
+      console.log("hmmss "+h+" "+min + " " +sec);
+
+      const sTime=(min*60)+sec;
+      console.log(sTime);
+      return sTime;
+    },
      getvideo(name){
       /*const mediaRequest = fetch(this.$store.getters.baseUrl+"/upload/"+name).then(response => response.blob()).catch(err => {console.error(err); console.log("sono in errore")});
       
@@ -532,38 +578,7 @@ export default {
     
   },
 
-  data() {
-    return {
-      options: {
-        title: "Example Title",
-        enabled: true,
-        clickToPlay: true,
-        hideControls: false,
-        controls: [
-          "mute",
-          "volume",
-          "play-large",
-          "progress",
-          "current-time",
-          "fullscreen"
-        ],
-        
-
-      },
-      videoPlay:false,
-      progress:0,
-      duration:{
-          min:"00",
-          sec:"00",
-      },
-      current:{
-        min:"00",
-        sec:"00",
-      },
-      fullscreen:false,
-      hastext:true,
-    };
-  }
+  
 };
 </script>
 
@@ -635,7 +650,7 @@ video {
   
   width: 100%;
   object-fit: contain;
-  max-height: 100%;
+  height: 100%;
 }
 .videoFull{
 

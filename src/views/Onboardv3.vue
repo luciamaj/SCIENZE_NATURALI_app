@@ -25,9 +25,10 @@
         </ion-toolbar>
 
       </div>
+ 
     
       <div class="onboard-bot">
-        <ion-slides pager="true" :options="slideOpts"  @ionSlideDidChange="slidechanged" ref="slider">
+        <ion-slides :key="sliderKey" pager="true" :options="slideOpts"  @ionSlideDidChange="slidechanged" ref="slider">
           <ion-slide v-if="context=='onboard'">
             <div class="slide-inner">
               <h5 class="lang-title"> {{$t('onboard.lang.title')}} </h5>
@@ -43,19 +44,20 @@
                       
                   </ion-row>
               </ion-grid>
-            </div>
 
+            
+            </div>
           </ion-slide>
-          <ion-slide v-if="(context=='onboard'&& supportoVisivo==1  )" >
+          <ion-slide   v-if="(context=='onboard' && accessibility==1  )" >
             <div class="slide-inner">
               <h5 class="lang-title"> {{$t('onboard.accessibility.title')}} </h5>
               <div class="text-one"> {{$t('onboard.accessibility.text')}} </div>
               <ion-grid>
                   <ion-row class="row inline-row" >
-                    <ion-col  class="percorsi-cont" size="4" > <div class="circle-cont-perc "  > <img class="cover circle"  id="circle-it"  alt=""></div></ion-col>
-                    <ion-col  size="8"  >
-                      
-                  
+                    <ion-col  class="percorsi-cont" size="8" >  <div> {{$t('menu.accessibility.supportoVisuale')}} </div></ion-col>
+                    <ion-col  size="4"  >
+                      <ion-toggle  v-model="attivaSupporto"  @ionChange="notice()" :enable-on-off-labels="true"></ion-toggle>
+     
                     </ion-col>
                       
                   </ion-row>
@@ -63,15 +65,15 @@
             </div>
 
           </ion-slide>
-          <ion-slide v-else-if="(context!='onboard'&& supportoVisivo==1   )" >
+          <!--ion-slide v-else-if="(context!='onboard' && accessibility==1)" >
             <div class="slide-inner">
               <h5 class="lang-title"> {{$t('onboard.accessibility.title')}} </h5>
               <div class="text-one"> {{$t('onboard.accessibility.text')}} </div>
             </div>
 
-          </ion-slide>
+          </ion-slide-->
          
-          <ion-slide v-if="(context=='onboard'&& confPerc  )" >
+          <ion-slide v-if="(context=='onboard'&& confPerc && nPercMostra!=null && nPercMostra>1)" >
             <div class="slide-inner">
               <h5 class="lang-title"> {{$t('onboard.percorsi.title')}} </h5>
               <div class="text-one"> {{$t('onboard.percorsi.text')}} </div>
@@ -143,6 +145,10 @@
           </ion-slide>
         </ion-slides>
 
+
+      
+      
+
       </div>
    
     </div>
@@ -167,7 +173,8 @@ import {
   IonIcon,
   IonFab,
   IonFabButton,
-  IonSlides, IonSlide 
+  IonSlides, IonSlide ,
+  IonToggle
 
 } from "@ionic/vue";
 import { Navigation, Pagination, Scrollbar, A11y } from 'swiper';
@@ -190,6 +197,22 @@ export default {
       context: { type: String, default: 'onboard' },
   },
   name: "Tab",
+
+  components: {
+    
+    IonToolbar,
+    IonIcon,
+    IonContent,
+    IonPage,
+    IonButton,
+    IonButtons,
+    IonFab,
+    IonFabButton,
+    IonSlides, IonSlide,
+    IonToggle
+   
+  },
+
   data() {
     return {
       publishedLang:[],
@@ -207,6 +230,11 @@ export default {
       help:false,
       percorsi:[],
       showpage:false,
+      accessibility:null,
+      nPercMostra:null,
+      sliderKey: 0,
+      attivaSupporto:false
+    
     
     };
   },
@@ -228,6 +256,11 @@ export default {
   },
 
   computed:{
+
+    getPubbl(){
+      const pubblication=JSON.parse(localStorage.getItem('pubblication'));
+      return pubblication;
+    },
     interactionMode(){
       console.log("interactionMode "+this.conf.interactionMode );
       return this.conf.interactionMode;
@@ -241,16 +274,47 @@ export default {
       return this.conf.percorsi;
 
     },
+    nPercorsiMostra(){
+      const pubblication=JSON.parse(localStorage.getItem('pubblication'));
+      if(pubblication){
+        if( pubblication.hasOwnProperty("percorsi")){
+          console.log("HA I percordsi")
+            return pubblication.percorsi.length
+
+        }else{
+          console.log("NON HA I percordsi")
+            return null
+        }
+      }else{
+        console.log("NON HA pubblication")
+        return null
+      }
+    },
     supportoVisivo(){
             const pubblication=JSON.parse(localStorage.getItem('pubblication'));
-            if(pubblication.hasOwnProperty("supporto_video")){
+            if(pubblication && pubblication.hasOwnProperty("supporto_video")){
+              console.log("HA I il supporto")
                 return pubblication.supporto_video
 
             }else{
+              console.log("Non HA I il supporto")
                 return null
             }
             
 
+    },
+    getAttivaSupporto(){
+      const supporto=JSON.parse(localStorage.getItem('attivaSupporto'));
+      if(supporto){
+        if(supporto==true){
+          return true
+        }else{
+          return false
+        }
+
+      }else{
+        return false
+      }
     },
   
     
@@ -258,34 +322,39 @@ export default {
   },
 
   async created(){
+    //this.nPercMostra=this.nPercorsiMostra;
+  //  this.accessibility=this.supportoVisivo;
     this.getinfo=common.getinfo;
     await this.getinfoall();
+    //this.getpubbldata();
+
+    this.emitter.on('savedPubbl', _ => {
+      this.sliderKey += 1;
+      console.log("EMITTT ")
+      this.getpubbldata();
+     
+      
+    });
    
 
  
   },
   mounted(){
- 
+    if(this.getPubbl!=null){
+      this.accessibility=this.supportoVisivo;
+      this.nPercMostra=this.nPercorsiMostra;
+    }
+
+    this.attivaSupporto=this.getAttivaSupporto
    
     //this.calcSlidelength();
+    
   
    
       
   },
  
-  components: {
-    
-    IonToolbar,
-    IonIcon,
-    IonContent,
-    IonPage,
-    IonButton,
-    IonButtons,
-    IonFab,
-    IonFabButton,
-    IonSlides, IonSlide 
-   
-  },
+ 
 
 
   methods:{
@@ -318,6 +387,32 @@ export default {
         return "checkedDiaplay"
        
       }
+    },
+
+    notice(){
+      
+      localStorage.setItem('attivaSupporto', this.attivaSupporto)
+    },
+    /*attivaaccessibility(){
+     
+      if(this.accessibility==null ||this.accessibility==0 ){
+       // this.settings.push("accessibility");
+       
+        this.accessibility=1
+      
+      }else{
+        this.accessibility=0
+      }
+      this.sliderKey += 1;
+     // this.updateSlides();
+      console.log("Clicked, ",this.accessibility)
+    },*/
+    getpubbldata(){
+     
+      this.accessibility=this.supportoVisivo;
+      this.nPercMostra=this.nPercorsiMostra;
+      console.log("getpubbldata", this.accessibility,this.nPercMostra )
+     // this.sliderKey += 1;
     },
 
    async getinfoall(){
@@ -471,6 +566,15 @@ export default {
       this.checkProgress();    
       
     },
+
+    updateSlides() {
+      // Aggiorna il componente ion-slides quando cambia la visibilità delle slide
+      this.$nextTick(() => {
+        if (this.$refs.slider && this.$refs.slider.update) {
+          this.$refs.slider.update(); // Forza l'aggiornamento delle slides
+        }
+      });
+    },
  
     goBack(){
       
@@ -608,6 +712,27 @@ ion-grid{
  font-size: 0.9em;
  
 }
+
+.container-supporto-visuale{
+  display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .8em 1.2em;
+    border-bottom: solid 0.5px #dcdcdc;
+    top: 2em;
+    position: relative;
+    margin: 0.5em 1em;
+  }
+
+ion-toggle{
+  --background-checked:rgb(91, 136, 91);
+  --handle-background-checked: white;
+  
+  height: 24px;
+  width: 2.5em;
+  --handle-spacing: 2px;
+}
+
 .inline-row{
   margin-bottom: 15px;
   align-items: center;

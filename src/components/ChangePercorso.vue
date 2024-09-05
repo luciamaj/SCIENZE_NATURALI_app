@@ -1,7 +1,7 @@
 <template>
   <ion-header>
     <ion-toolbar>
-       <ion-title color="secondary">{{$t('menu.percorsi.subtitile')}}</ion-title>
+       <ion-title color="secondary">{{$t('menu.percorsi.subtitle')}}</ion-title>
       <ion-buttons slot="start" >
         <ion-back-button></ion-back-button>
       </ion-buttons>
@@ -9,7 +9,7 @@
     </ion-toolbar>
   </ion-header>
   <ion-content class="ion-padding" id="nav-child-content">
-    <!--div>{{$t('menu.lang.subtitile')}}</div-->
+    <!--div>{{$t('menu.lang.subtitle')}}</div-->
     <ion-grid class="langs-grid">
       <template v-for="perc in intersectarray"  v-bind:key="perc">
         <ion-row>

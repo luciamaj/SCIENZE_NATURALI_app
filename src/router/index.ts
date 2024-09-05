@@ -108,7 +108,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/OpenScanner.vue'),
   },
   {
-    path: '/video/:id',
+    path: '/video/:id/:timestamp?',
     name: 'video',
     component: () => import('@/views/Video.vue')
   },

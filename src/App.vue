@@ -138,6 +138,7 @@ export default defineComponent({
         console.log("versione VUOTA");
          
         localStorage.setItem('pubblication', JSON.stringify(info));
+        this.emitter.emit('savedPubbl');
         
         this.scaricaInfoMostra();
        
@@ -169,7 +170,7 @@ export default defineComponent({
    
     
    setTimeout(() => {
-       // this.loading = false
+        this.loading = false
         this.schedaState(false);
     }, 1500);
 

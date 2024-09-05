@@ -79,7 +79,7 @@ export const de= {
         },
         percorsi:{
             title:"Routen",
-            subtitile:"Heruntergeladene Routen",
+            subtitle:"Heruntergeladene Routen",
             change:"Route ändern",
             add:"Fügen Sie eine neue Reiseroute hinzu",
             alert:"Achtung, dieser Vorgang lädt den Inhalt des neuen Pfads herunter",
@@ -87,7 +87,7 @@ export const de= {
         },
         lang:{
             title:"Sprache",
-            subtitile:"Sprachen heruntergeladen",
+            subtitle:"Sprachen heruntergeladen",
             add:"Neue Sprache hinzufügen",
             select:"Available content",
             alert:"Achtung: Bei diesem Vorgang werden die Inhalte in der gewählten Sprache heruntergeladen",

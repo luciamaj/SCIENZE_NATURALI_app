@@ -15,6 +15,10 @@ export const en= {
             title:"Select",
             text:"Which language do you prefer the contents to be in?"
         },
+        accessibility:{
+            title:"Accessibility",
+            text:"Activate to display subtitles of multimedia content"
+        },
         percorsi:{
             title:"Select ",
             text:"wich path do you want to follow"
@@ -83,9 +87,14 @@ export const en= {
         content:{
             title:"Update content"
         },
+        accessibility:{
+            title:"Accessibility",
+            subtitle:"Activate to display trascription of audio content",
+            supportoVisuale:"Subtitles / SL"
+        },
         percorsi:{
             title:"Itineraries",
-            subtitile:"Downloaded itineraries",
+            subtitle:"Downloaded itineraries",
             change:"Change itinerary",
             add:"Add new itinerary",
             alert:"Attention: this operation will download the contents of the new itinerary",
@@ -93,7 +102,7 @@ export const en= {
         },
         lang:{
             title:"Language",
-            subtitile:"Dowloaded languages",
+            subtitle:"Dowloaded languages",
             add:"Add new language",
             select:"Available content",
             alert:"Attention, the contents will be downloaded in the language that you have chosen",

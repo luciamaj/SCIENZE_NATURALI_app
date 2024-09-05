@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header class="ion-no-border">
       <ion-toolbar  class="toolbar">
-        <ion-title slot="start"  class="main-title"> {{percSel}}</ion-title>
+        <ion-title :key="percKey" slot="start"  class="main-title"> {{percSel}}</ion-title>
         <ion-buttons slot="end" v-if="history==true" >
               <ion-button color="secondary"  @click="openHistory()" class="collection-button">
                 <ion-icon  size="large" name="file-tray-full-outline" class="history-icon"></ion-icon>
@@ -25,7 +25,7 @@
   <ion-content>Modal Content</ion-content>
 </ion-modal-->
       <div class="vertical-center view-wwave-container">
-        <div class="center">
+        <div class="center" :key="percKey">
         
           <div class="logo-container" id="mostra"><img  id="logo" class="logo" :src="logo"/>
           <capting :class="iscapting" id="captingIcon" hidden></capting></div>
@@ -95,7 +95,8 @@ export default {
      ntag:"",
      playing:false,
      percSel:"",
-     currLang:""
+     currLang:"",
+     percKey:0
     };
   },
 
@@ -303,6 +304,7 @@ export default {
     updateTitle(){
       this.currLang=localStorage.getItem("lang")
       this.percSel=this.getpercselinlang();
+      this.percKey+=1;
     },
     
     haspulsanti(){
@@ -484,7 +486,11 @@ export default {
           captureStop.click();
           if(this.attivaSupporto==true && content.supportoVisuale !=null ){
 
-            this.$router.push({ path: "/video/" + idvid, replace:true }); ///aggiungere caso video in sync!!
+            if(timeStamp!=null){
+                this.$router.push({ path: "/video/" + idvid +"/"+timeStamp, replace:true });
+              }else{
+                this.$router.push({ path: "/video/" + idvid, replace:true });
+              }
           }else{
 
             if (content.type == "audio") {
@@ -497,8 +503,13 @@ export default {
               }
 
             }else if (content.type == "video"){
+              if(timeStamp!=null){
+                this.$router.push({ path: "/video/" + idvid +"/"+timeStamp, replace:true });
+              }else{
+                this.$router.push({ path: "/video/" + idvid, replace:true });
+              }
               console.log("video");
-              this.$router.push({ path: "/video/" + idvid, replace:true });
+              
             }else{
                 this.$router.push({ path: "/soloImg/" + idvid , replace:true});
             }

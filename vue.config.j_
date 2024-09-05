@@ -1,16 +1,17 @@
 
 module.exports = {
     pwa: {
-        name: "Mura di Bergamo",
-        theme_color: '#382F2D',
+        name: "MS Bergamo",
+        theme_color: '#086a9f',
         msTileColor: '#000',
 
         manifestOptions:{
-            name: `'Mura di Bergamo'`,
-            short_name:`'Mura di Bergamo'`,
+            name: `'MS Bergamo'`,
+            short_name:`'MS Bergamo'`,
             start_url: `'.'`,
             display: 'fullscreen',
-            theme_color:'#382F2D',
+            theme_color:'#086a9f',
+           // permissions:["unlimitedStorage"],
 
         },
         iconPaths: {
@@ -22,7 +23,7 @@ module.exports = {
         },
         appleMobileWebAppCapable: 'yes',
 
-        appleMobileWebAppStatusBarStyle: '#382F2D',
+        appleMobileWebAppStatusBarStyle: '086a9f',
               
     //   workboxPluginMode: 'GenerateSW',
        workboxPluginMode: "InjectManifest",
@@ -30,7 +31,8 @@ module.exports = {
         workboxOptions: {
            
            swSrc: "src/service-worker.js",
-          
+           
+
         }
 
     }

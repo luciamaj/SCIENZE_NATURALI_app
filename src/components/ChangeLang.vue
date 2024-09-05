@@ -1,7 +1,7 @@
 <template>
   <ion-header>
     <ion-toolbar>
-       <ion-title color="secondary">{{$t('menu.lang.subtitile')}}</ion-title>
+       <ion-title color="secondary">{{$t('menu.lang.subtitle')}}</ion-title>
        <ion-buttons slot="start" >
         <ion-button  @click="back"><ion-icon size="large" name="chevron-back" /></ion-button>
       </ion-buttons>
@@ -9,11 +9,10 @@
     </ion-toolbar>
   </ion-header>
   <ion-content class="ion-padding" id="nav-child-content">
-    <!--div>{{$t('menu.lang.subtitile')}}</div-->
-    <div v-if="supportoVisivo==1" class="container-supporto-visuale">
+    <!--div>{{$t('menu.lang.subtitle')}}</div-->
+    <!--div v-if="supportoVisivo==1" class="container-supporto-visuale">
      <div> Supporto Visuale</div> <ion-toggle  v-model="attivaSupporto"  @ionChange="notice()" :enable-on-off-labels="true"></ion-toggle>
-     
-    </div>
+    </div-->
 
     <ion-grid class="langs-grid">
       <template v-for="lang in saved" v-bind:key="lang">
@@ -52,7 +51,7 @@ import {
   IonToolbar,
   alertController,
   actionSheetController ,
-  IonToggle
+  ///IonToggle
   
   } from '@ionic/vue';
   
@@ -72,7 +71,7 @@ export default ({
     IonHeader,
     IonTitle,
     IonToolbar,
-    IonToggle
+    //IonToggle
     
   },
   data(){

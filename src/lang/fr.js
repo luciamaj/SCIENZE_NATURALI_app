@@ -84,7 +84,7 @@ export const fr ={
         },
         percorsi:{
             title:"itinéraires",
-            subtitile:"Itinéraires téléchargés",
+            subtitle:"Itinéraires téléchargés",
             change:"Changer d'itinéraire",
             add:"Ajouter un nouvel itinéraire",
             alert:"Attention : cette opération téléchargera le contenu du nouvel itinéraire",
@@ -92,7 +92,7 @@ export const fr ={
         },
         lang:{
             title:"Langues",
-            subtitile:"Langues téléchargées",
+            subtitle:"Langues téléchargées",
             add:"Ajouter une nouvelle langue",
             select:"Available content",
             alert:"Attention : cette opération consiste à télécharger le contenu dans la langue choisie",

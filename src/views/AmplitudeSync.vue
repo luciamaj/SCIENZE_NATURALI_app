@@ -4,7 +4,7 @@
       <ion-toolbar class="toolbar">
         <!--ion-title v-html="contentScheda.titolo" > </ion-title-->
         <ion-buttons>
-          <ion-button v-on:click="goingback()" class="back-button"><ion-icon  size="large" name="arrow-back"></ion-icon>{{$t('schede.back')}}
+          <ion-button v-on:click="goingback()" class="back-button"><ion-icon  size="medium" name="arrow-back"></ion-icon>{{$t('schede.back')}}
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
@@ -553,7 +553,6 @@ export default {
 </script>
 
 <style>
-
 .back-button{
   text-transform: capitalize;
 }
@@ -596,9 +595,8 @@ div.player img.album-art {
 }
 
 .descrArea{
-  
   float: left;
-  padding: 5px 27px 30px;
+  padding: 8px 27px 30px;
  /* max-height: 40vh;*/
  height: 39vh;
  /* overflow: overlay;*/
@@ -639,7 +637,7 @@ div.meta-container div.song-title {
   font-size: 22px;
   font-weight: 600;
   font-family: "Open Sans", sans-serif;
-  margin: 5px 0;
+  margin: 14px 0 5px;
 
 }
 div.meta-container div.song-artist {
@@ -674,17 +672,10 @@ div.meta-container div.time-container div.duration {
   div.meta-container {
     width: 100%;
   }
-  div.player img.album-art {
-    width: 100%;
-    height: 100%;
-    /*max-height: 40vh;*/
-    object-fit: cover;
-  }
   .img-container-notext{
     height: 60vh;
   }
 }
-
 /*
   Medium only
 */
