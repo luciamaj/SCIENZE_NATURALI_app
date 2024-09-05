@@ -158,6 +158,7 @@
                 this.visitedTag=tags;
             },
             openScheda(tag, type){
+
                 if(type=="video"){
                     this.$router.replace({ path: "/video/" + tag});
 

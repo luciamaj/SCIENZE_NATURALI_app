@@ -24,8 +24,8 @@
               <progress v-if="fileUrl!=null"
                 class="amplitude-song-played-progress"
                 data-amplitude-song-index="0"
-                id="song-played-progress-1"
-              ></progress>
+                id="song-played-progress-1">
+              </progress>
               <div class="time-container" v-if="fileUrl!=null">
                 <div class="current-time">
                   <span class="amplitude-current-minutes" data-amplitude-song-index="0">00</span>:
@@ -370,9 +370,9 @@ export default {
         /* eslint-disable */
         songs: [
           {
-            name: "Song Name 1",
-            artist: "Artist Name",
-            album: "Album Name",
+            name: "",
+            artist: "",
+            album: "",
             url: this.fileUrl,
             cover_art_url: "/assets/icon/icon.png"
           }

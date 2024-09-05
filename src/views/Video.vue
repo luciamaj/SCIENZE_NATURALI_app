@@ -306,11 +306,15 @@ export default {
         
 
      },
-    back() {
-      /*if (window.history.length > 1) {
+   
+    goingback() {
+       this.schedaState(false);
+    /*  if (window.history.length > 1) {
         this.$router.go(-1);
-      } else {*/
-      this.$router.replace({ path: "/" });
+      } */
+    
+      this.$router.replace({path:"/"});
+      
       
     },
     getminsec(time){
@@ -630,8 +634,8 @@ div.player img.album-art {
 video {
   
   width: 100%;
-  object-fit: cover;
-  height: 100%;
+  object-fit: contain;
+  max-height: 100%;
 }
 .videoFull{
 
@@ -717,6 +721,7 @@ div.controls div.amplitude-play-pause.amplitude-playing {
 }
 .player-container{
   height: 45vh;
+  background-color: #000000;
 }
 .player-container-notext{
   height: 60vh;
@@ -797,11 +802,12 @@ div.control-container div.amplitude-prev {
   height:18px;
   cursor: pointer;
   background: url("/assets/icon/playerIcon/previous.svg");
+  background-size: cover;
   display: inline-block;
   vertical-align: middle;
 }
 div.control-container div.amplitude-play-pause {
-  width: 28px;
+  width: 26px;
   height: 29px;
   cursor: pointer;
   display: inline-block;
@@ -809,17 +815,18 @@ div.control-container div.amplitude-play-pause {
 }
 div.control-container div.amplitude-play-pause.amplitude-paused {
   background: url("/assets/icon/playerIcon/play.svg");
-      background-size: cover;
+      background-size: contain;
 }
 div.control-container div.amplitude-play-pause.amplitude-playing {
   background: url("/assets/icon/playerIcon/pause.svg");
-      background-size: cover;
+      background-size: contain;
 }
 div.control-container div.amplitude-next {
   width: 21px;
   height: 18px;
   cursor: pointer;
   background: url("/assets/icon/playerIcon/next.svg");
+  background-size: cover;
   display: inline-block;
   vertical-align: middle;
 }

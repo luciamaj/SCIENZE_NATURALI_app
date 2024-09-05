@@ -267,7 +267,7 @@ export default {
           } else  if (obj.path.type == "video") {
               this.$router.replace({ path: "/video/" + obj.path.index });
           }else{
-            this.$router.replace({ path: "/audio/" + obj.path.index });
+            this.$router.replace({ path: "/soloImg/" + obj.path.index });
           }
         }
       });

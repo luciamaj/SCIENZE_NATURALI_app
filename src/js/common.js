@@ -413,5 +413,19 @@ export default {
       return alert.present();
     },
 
+    getAttivaSuppoto(){
+      const supporto=JSON.parse(localStorage.getItem('attivaSupporto'));
+      if(supporto){
+        if(supporto==true){
+          return true
+        }else{
+          return false
+        }
+
+      }else{
+        return false
+      }
+    },
+
 
 };

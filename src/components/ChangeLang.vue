@@ -10,9 +10,8 @@
   </ion-header>
   <ion-content class="ion-padding" id="nav-child-content">
     <!--div>{{$t('menu.lang.subtitile')}}</div-->
-    <div>
-      {{ attivaSupporto }}
-     <!--div> Supporto Visuale</div--> <ion-toggle  v-model="attivaSupporto"  @ionChange="notice()" :enable-on-off-labels="true">Supporto Visuale</ion-toggle>
+    <div v-if="supportoVisivo==1" class="container-supporto-visuale">
+     <div> Supporto Visuale</div> <ion-toggle  v-model="attivaSupporto"  @ionChange="notice()" :enable-on-off-labels="true"></ion-toggle>
      
     </div>
 
@@ -415,24 +414,32 @@ export default ({
 <style scoped>
 
 .langs-grid{
-  margin-top: 6vh;
+  margin-top: 3vh;
 
 }
+.container-supporto-visuale{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5em 1.2em;
+}
 ion-toggle{
-  --background-checked:green;
+  --background-checked:rgb(91, 136, 91);
   --handle-background-checked: white;
+  height: 22px;
 }
 
  .checked{
     /*background: #377999b8;*/
     background: var(--ion-color-secondary-whitened);
     color: white;
+    border-radius: 8px;
  }
 
  .circle-cont{
 
-   width: 15vw;
-   height: 15vw;
+   width: 13vw;
+   height: 13vw;
  }
  .circle-cont>img{
        max-width: 100%;
@@ -448,6 +455,7 @@ ion-toggle{
     border-bottom: solid 1px #d5d5d5;
     width: 100%;
     padding: 0.4em 1em;
+    
  }
   .lang-cont-flag{
    

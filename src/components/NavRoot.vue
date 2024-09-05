@@ -23,6 +23,11 @@
             <div class="button-text">{{$t('menu.percorsi.title')}}</div>
             <ion-icon  slot="end" size="large" name="chevron-forward" />
         </ion-button>
+        <ion-button v-if="supportoVisivo==1"  expand="block" size="large" color="secondary"  @click="pushPage('access')" id="push-nav-child"> 
+            <ion-icon   slot="start" size="large" name="accessibility" />
+            <div class="button-text">{{$t('menu.accessibility.title')}}</div>
+            <ion-icon  slot="end" size="large" name="chevron-forward" />
+        </ion-button>
         <ion-button expand="block" size="large" color="secondary"  @click="pushPage('lang')" id="push-nav-child"> 
             <ion-icon   slot="start" size="large" name="language" />
             <div class="button-text">{{$t('menu.lang.title')}}</div>
@@ -74,11 +79,13 @@ alertController,
 import NavChild from '@/components/NavChild.vue';
 import Lang from '@/components/ChangeLang.vue';
 import Percorso from '@/components/ChangePercorso.vue';
+import Accessibility from '@/components/Accessibility.vue';
 import Download from '@/components/ScaricamentoContenuti.vue';
 import Copy from '@/components/Copy.vue';
 import Instructions from '@/views/Onboardv3.vue';
 import Test from '@/components/TestTag.vue';
 import common from '@/js/common';
+
 export default ({
     
     props: {
@@ -125,7 +132,19 @@ export default ({
     computed:{
         confPercorsi(){
             return this.conf.percorsi
-        }
+        },
+
+        supportoVisivo(){
+            const pubblication=JSON.parse(localStorage.getItem('pubblication'));
+            if(pubblication.hasOwnProperty("supporto_video")){
+                return pubblication.supporto_video
+
+            }else{
+                return null
+            }
+            
+
+        },
     },
     created(){
         this.networkError=common.networkError;
@@ -158,6 +177,8 @@ export default ({
         const ionNav = document.querySelector('ion-nav') as any;
         if(page=="lang"){
             ionNav.push(Lang, { title: 'Changeeee' });
+        }else if(page=="access"){
+            ionNav.push(Accessibility, { title: 'attiva Accessibilità' } );
         }else if(page=="percorso"){
             ionNav.push(Percorso, { title: 'Change Percorso' } );
         }else if(page=="aggiorna"){
@@ -248,7 +269,7 @@ margin-top: 30px;
     transform: translatey(-55%);
 }
 .button-container>ion-button{
-    text-transform: capitalize;
+    text-transform: none;
     margin: 20px 0;
     height: 48px
     

@@ -46,6 +46,30 @@
             </div>
 
           </ion-slide>
+          <ion-slide v-if="(context=='onboard'&& supportoVisivo==1  )" >
+            <div class="slide-inner">
+              <h5 class="lang-title"> {{$t('onboard.accessibility.title')}} </h5>
+              <div class="text-one"> {{$t('onboard.accessibility.text')}} </div>
+              <ion-grid>
+                  <ion-row class="row inline-row" >
+                    <ion-col  class="percorsi-cont" size="4" > <div class="circle-cont-perc "  > <img class="cover circle"  id="circle-it"  alt=""></div></ion-col>
+                    <ion-col  size="8"  >
+                      
+                  
+                    </ion-col>
+                      
+                  </ion-row>
+              </ion-grid>
+            </div>
+
+          </ion-slide>
+          <ion-slide v-else-if="(context!='onboard'&& supportoVisivo==1   )" >
+            <div class="slide-inner">
+              <h5 class="lang-title"> {{$t('onboard.accessibility.title')}} </h5>
+              <div class="text-one"> {{$t('onboard.accessibility.text')}} </div>
+            </div>
+
+          </ion-slide>
          
           <ion-slide v-if="(context=='onboard'&& confPerc  )" >
             <div class="slide-inner">
@@ -215,6 +239,17 @@ export default {
     confPerc(){
     
       return this.conf.percorsi;
+
+    },
+    supportoVisivo(){
+            const pubblication=JSON.parse(localStorage.getItem('pubblication'));
+            if(pubblication.hasOwnProperty("supporto_video")){
+                return pubblication.supporto_video
+
+            }else{
+                return null
+            }
+            
 
     },
   
@@ -603,6 +638,7 @@ ion-grid{
 .circle{
   
   height:100%;
+  width: 100%;
   border-radius: 50%;
   border: solid 1px rgb(194, 194, 194);
   opacity: 0.8;

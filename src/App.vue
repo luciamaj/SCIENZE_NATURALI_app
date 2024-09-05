@@ -117,6 +117,7 @@ export default defineComponent({
           this.percorsiMosrtra = perc.filter(item => info.percorsi.includes(item.percorso));
           console.log("perc filtrati",  this.percorsiMosrtra);
           localStorage.setItem('percorsi', JSON.stringify(this.percorsiMosrtra));
+          this.loading=false;
           //devo filtrare i percorsi per quelli compresi nella mostra
         })
 
@@ -168,7 +169,7 @@ export default defineComponent({
    
     
    setTimeout(() => {
-        this.loading = false
+       // this.loading = false
         this.schedaState(false);
     }, 1500);
 

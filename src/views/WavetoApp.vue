@@ -171,6 +171,8 @@ export default {
     console.log("infopercorsi",this.infoPercorsi)
   },
   computed:{
+
+
     interactionMode(){
       console.log("interactionMode "+this.conf.interactionMode );
       return this.conf.interactionMode;
@@ -209,6 +211,11 @@ export default {
     percselInfo(){
       const sel=common.getpercinfo();
       return sel;
+    },
+    attivaSupporto(){
+      const sup=common.getAttivaSuppoto();
+      return sup;
+
     }
 
   },
@@ -227,49 +234,7 @@ export default {
   setup() {
      
     const router = useRouter();
-   /* const openModal = async () => {
-      if(store.getters.conf.interactionMode=="mix"){
-        if(this.tour==true){
-          const captureStop=document.getElementById("captureStop");
-          captureStop.click();
-        }
-       
-
-      }
-      
-      const top = await modalController.getTop();
-
-      const modal = await modalController.create({
-        component: Scanner,
-        swipeToClose: true,
-        presentingElement: top
-      });
-
-      modal.onDidDismiss().then(async _ => {
-        console.log("dismissed");
-        const objStr = await Storage.get({ key: "scheda" });
-        const obj = JSON.parse(objStr.value);
-
-        if (obj != null) {
-            console.log("OGGETTO ",obj)
-          if (obj.path.type == "audio") {
-            router.replace({ path: "/audio/" + obj.path.index });
-          } else  if (obj.path.type == "video") {
-            router.replace({ path: "/video/" + obj.path.index });
-          }else{
-            router.replace({ path: "/audio/" + obj.path.index });
-          }
-        }
-      });
-
-      await Storage.remove({ key: "scheda" });
-
-      return modal.present();
-    };*/
- 
     
-
-
 
     const openMenuModal = async (notification) => {
       const top = await modalController.getTop();
@@ -364,19 +329,24 @@ export default {
       modal.onDidDismiss().then(async _ => {
         console.log("dismissed");
         const objStr = await Storage.get({ key: "scheda" });
-        const obj = JSON.parse(objStr.value);
+        let obj = JSON.parse(objStr.value);
 
         if (obj != null) {
-            console.log("OGGETTO ",obj)
-          if (obj.path.type == "audio") {
-            this.$router.replace({ path: "/audio/" + obj.path.index });
-          } else  if (obj.path.type == "video") {
-              this.$router.replace({ path: "/video/" + obj.path.index });
-          }else  if (obj.path.supportoVisuale !=null) {//da spostare prima
-              this.$router.replace({ path: "/video/" + obj.path.index });
+          obj=obj.path
+          console.log("OGGETTO ",obj)
+          if (this.attivaSupporto==true && obj.supportoVisuale !=null) {//da spostare prima
+              this.$router.replace({ path: "/video/" + obj.index });
           }else{
-            this.$router.replace({ path: "/soloImg/" + obj.path.index });
+            if (obj.type == "audio") {
+            this.$router.replace({ path: "/audio/" + obj.index });
+            } else  if (obj.type == "video") {
+                this.$router.replace({ path: "/video/" + obj.index });
+            }else{
+              this.$router.replace({ path: "/soloImg/" + obj.index });
+            }
+
           }
+          
         }
       });
 
@@ -512,23 +482,29 @@ export default {
           const content=scheda.content.find(x => x.lang == this.currLang);
           console.log("scheda.type "+ content.type);
           captureStop.click();
-          if (content.type == "audio") {
-            console.log("audio");
-            //this.schedaState(true);
-            //this.$router.push({ path: "/audio/" + idvid , replace:true});
-            if(timeStamp!=null){
-               this.$router.push({ path: "/audiosync/" + idvid +"/"+timeStamp, replace:true });
+          if(this.attivaSupporto==true && content.supportoVisuale !=null ){
+
+            this.$router.push({ path: "/video/" + idvid, replace:true }); ///aggiungere caso video in sync!!
+          }else{
+
+            if (content.type == "audio") {
+              console.log("audio");
+     
+              if(timeStamp!=null){
+                this.$router.push({ path: "/audiosync/" + idvid +"/"+timeStamp, replace:true });
+              }else{
+                this.$router.push({ path: "/audio/" + idvid,  replace:true });
+              }
+
+            }else if (content.type == "video"){
+              console.log("video");
+              this.$router.push({ path: "/video/" + idvid, replace:true });
             }else{
-              this.$router.push({ path: "/audio/" + idvid,  replace:true });
+                this.$router.push({ path: "/soloImg/" + idvid , replace:true});
             }
 
-          }else if (content.type == "video"){
-            console.log("video");
-            //this.schedaState(true);
-            this.$router.push({ path: "/video/" + idvid, replace:true });
-          }else{
-              this.$router.push({ path: "/soloImg/" + idvid , replace:true});
           }
+          
         
         }else{
 
@@ -705,18 +681,20 @@ ion-content {
 .logo-container {
  /*background-color: #fff;*/
     position: relative;
-    top: 11%;
+    top: 3em;
     width: 75vw;
     margin: auto;
    /* height: 300px;*/
 }
 
 .logo {
-  object-fit: contain;
+  object-fit: cover;
   max-height: 50vh;
   margin-bottom: 30px;
   object-position: center;
   width: 100%;
+  border-radius: 12px;
+
 }
 .buttons{
   width: 100%;
