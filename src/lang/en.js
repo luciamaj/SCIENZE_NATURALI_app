@@ -17,7 +17,8 @@ export const en= {
         },
         accessibility:{
             title:"Accessibility",
-            text:"Activate to display subtitles of multimedia content"
+            text:"Activate to display subtitles of multimedia content",
+            alternative:"In the accessibility section of the menu it is possible to activate subtitles for multimedia contents"
         },
         percorsi:{
             title:"Select ",
@@ -89,8 +90,8 @@ export const en= {
         },
         accessibility:{
             title:"Accessibility",
-            subtitle:"Activate to display trascription of audio content",
-            supportoVisuale:"Subtitles / SL"
+            subtitle:"Activate to display subtitles of multimedia content",
+            supportoVisuale:"Subtitles / ASL"
         },
         percorsi:{
             title:"Itineraries",

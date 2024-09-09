@@ -10,32 +10,12 @@
   </ion-header>
   <ion-content class="ion-padding" id="nav-child-content">
     <!--div>{{$t('menu.lang.subtitle')}}</div-->
-    <div>{{$t('menu.accessibility.subtitle')}} </div>
+    <div class="container-text-access">{{$t('menu.accessibility.subtitle')}} </div>
     <div class="container-supporto-visuale">
      <div> {{$t('menu.accessibility.supportoVisuale')}}</div> <ion-toggle  v-model="attivaSupporto"  @ionChange="notice()" :enable-on-off-labels="true"></ion-toggle>
      
     </div>
 
-    <!--ion-grid class="langs-grid">
-      <template v-for="lang in saved" v-bind:key="lang">
-        <ion-row>
-          <div :class="checkIfActive(lang)" class="lang-cont" v-on:click="switchLang(lang)"> 
-            <ion-col class="lang-cont-flag" size="6"  :value="lang"   >
-              
-                <div class="circle-cont"  > <img class="cover circle" id="circle-it" :src="'/assets/background/Flag_'+lang+'.png'" alt=""></div>
-        
-            </ion-col>
-            <ion-col class="lang-cont-name">
-               <div class="lang" >{{$t('menu.lang.'+lang)}}</div>
-
-            </ion-col> 
-            </div>         
-        </ion-row>
-      </template>
-    </ion-grid-->
-
-
-    
      
   </ion-content>
 </template>
@@ -152,13 +132,17 @@ export default ({
   margin-top: 3vh;
 
 }
+.container-text-access{
+  padding: 14px;
+    margin: 2vh 0;
+
+}
 .container-supporto-visuale{
   display: flex;
     align-items: center;
     justify-content: space-between;
     padding: .8em 1.2em;
-    border-bottom: solid 0.5px #dcdcdc;
-    top: 2em;
+    border-bottom: solid 1px #d5d5d5;
     position: relative;
     margin: 0.5em 1em;
   }
@@ -192,32 +176,10 @@ ion-toggle{
     width: 100%;
     border-radius: 50%;
  }
- .lang-cont{
-   display: flex;
-    margin: 0.2em 1em;
-    border-bottom: solid 1px #d5d5d5;
-    width: 100%;
-    padding: 0.4em 1em;
-    
- }
-  .lang-cont-flag{
-   
-       margin-right: 1em;
- }
- .lang-cont-name{
-   
-    display: flex;
-    align-items: center;
-    font-size: 20px;
- }
- .add-lang{
-  position: absolute;
-    bottom: 5vh;
-    width: 91vw;
- }
- .modal-accept-button{
-  color: var(--ion-color-primary);
-}
+
+  
+ 
+
 
 
 

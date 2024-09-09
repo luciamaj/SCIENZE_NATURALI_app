@@ -1070,13 +1070,7 @@ ion-fab{
   flex-direction: column;
   justify-content: center;
 }
-.swiper-container{
-  width: 85vw;
-  height: 61vh;
-}
-.swiper-slide{
-  width: 100%;
-}
+
 .lang-cont {
   margin-bottom: 20px;
 }
@@ -1108,9 +1102,7 @@ ion-fab{
    border: solid 5px rgb(11, 124, 11);
      opacity: 1;
 }
-.swiper-pagination {
-  color: red;
-}
+
 
 .vertical-center {
   display: flex;

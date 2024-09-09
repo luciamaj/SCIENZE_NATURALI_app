@@ -18,14 +18,14 @@
       <template v-for="lang in saved" v-bind:key="lang">
         <ion-row>
           <div :class="checkIfActive(lang)" class="lang-cont" v-on:click="switchLang(lang)"> 
-            <ion-col class="lang-cont-flag" size="6"  :value="lang"   >
+            <ion-col class="lang-cont-flag" size="3"  :value="lang"   >
               
                 <div class="circle-cont"  > <img class="cover circle" id="circle-it" :src="'/assets/background/Flag_'+lang+'.png'" alt=""></div>
         
             </ion-col>
             <ion-col class="lang-cont-name">
                <div class="lang" >{{$t('menu.lang.'+lang)}}</div>
-
+               <div v-if="checkIfActive(lang)=='checked'" class="lang-chck" ><span>&#10003;</span></div>
             </ion-col> 
             </div>         
         </ion-row>
@@ -416,12 +416,7 @@ export default ({
   margin-top: 3vh;
 
 }
-.container-supporto-visuale{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.5em 1.2em;
-}
+
 ion-toggle{
   --background-checked:rgb(91, 136, 91);
   --handle-background-checked: white;
@@ -429,16 +424,20 @@ ion-toggle{
 }
 
  .checked{
-    /*background: #377999b8;*/
-    background: var(--ion-color-secondary-whitened);
+ 
+   /* background: var(--ion-color-secondary-whitened);
     color: white;
-    border-radius: 8px;
+    border-radius: 8px;*/
+    font-weight: 600;
+    box-shadow: 0px 1px 4px 0px #a5a5a53d;
  }
+
+
 
  .circle-cont{
 
-   width: 13vw;
-   height: 13vw;
+   width: 11vw;
+   height: 11vw;
  }
  .circle-cont>img{
        max-width: 100%;
@@ -453,7 +452,7 @@ ion-toggle{
     margin: 0.2em 1em;
     border-bottom: solid 1px #d5d5d5;
     width: 100%;
-    padding: 0.4em 1em;
+    padding: 0.6em 0.8em;
     
  }
   .lang-cont-flag{
@@ -464,7 +463,14 @@ ion-toggle{
    
     display: flex;
     align-items: center;
-    font-size: 20px;
+    font-size: 19px;
+    justify-content: space-between;
+ }
+
+ .lang-chck{
+    font-weight: bold;
+    color: #d3664d;
+    width: 22px;
  }
  .add-lang{
   position: absolute;

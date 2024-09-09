@@ -48,9 +48,9 @@
       </div>
     </ion-content>
     <div class="video-full-container" :class="(fullscreen? 'show': 'hideFull') ">
-          <video  class="videoFull"  id="videoFull" >
+          <!--video  class="videoFull"  id="videoFull" >
               <source :src="videoSrc" type="video/mp4" />
-          </video>
+          </video-->
           <div class="controls">
              <div  class="amplitude-play-pause play " :class="checkPlay()" @click="playpause('full')" data-icon="P" aria-label="play pause toggle"></div>
              <progress class="amplitude-song-played-progress" :value="progress" :buffer="1" color="secondary"></progress>
@@ -445,7 +445,7 @@ export default {
 
     
     // Find the right method, call on correct element
-    launchIntoFullscreen() {
+    _launchIntoFullscreen() {
       
       this.vid.pause();
       this.videoPlay=false;
@@ -463,22 +463,27 @@ export default {
         }
       }
  
-    
+
+    },
+
+    launchIntoFullscreen() {
       
-      //window.location.replace(videosrc);
-      /*if(element.requestFullscreen) {
-        element.requestFullscreen(void 0);
-      } else if(element.mozRequestFullScreen) {
-        element.mozRequestFullScreen();
-      } else if(element.webkitRequestFullscreen) {
-        element.webkitRequestFullscreen();
-      } else if(element.msRequestFullscreen) {
-        element.msRequestFullscreen();
-      }else if( element.webkitEnterFullscreen){
-         element.webkitEnterFullscreen();
-      } else {
-        return alert("Fullscreen API unavailable");
-      }*/
+      this.vid.pause();
+      this.videoPlay=false;
+      this.fullscreen=true;
+     
+      this.vid.classList.add("videoFull");
+    
+     
+       this.vidFull.play();
+        if(this.vidFull.paused){
+          this.videoPlay=false;
+        }else{
+          this.videoPlay=true;
+        }
+     
+ 
+
     },
     exitFull(){
       this.vidFull.pause();
@@ -653,7 +658,10 @@ video {
   height: 100%;
 }
 .videoFull{
-
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  transform: rotate(90deg);
 }
 
 .video-full-container{

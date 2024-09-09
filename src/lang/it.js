@@ -20,7 +20,8 @@ export const it = {
         },
         accessibility:{
             title:"Accessibilità",
-            text:"Attiva per visualizzare i sottotitoli dei contenuti multimediali"
+            text:"Attiva per visualizzare i sottotitoli dei contenuti multimediali",
+            alternative:"Nella sezione accessibilità del menù è possibile attivare i sottotitoli per i contenuti multimediali"
         },
         percorsi:{
             title:"Scegli ",
@@ -91,8 +92,8 @@ export const it = {
         },
         accessibility:{
             title:"Accessibilità",
-            subtitle:"Attiva per visualizzare la trascrizione audio",
-            supportoVisuale:"Sottotitoli / Lis"
+            subtitle:"Attiva per visualizzare i sottotitoli dei contenuti multimediali",
+            supportoVisuale:"Sottotitoli / LIS"
         },
         percorsi:{
             title:"Percorsi",

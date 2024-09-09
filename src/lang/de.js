@@ -15,6 +15,14 @@ export const de= {
             title:"Wählen Sie",
             text:"in welcher Sprache Sie sich die Inhalte am liebsten anhören möchten?"
         },
+        accessibility:{
+            title:"Zugänglichkeit",
+            text:"Aktivieren Sie diese Option, um Untertitel von Multimedia-Inhalten anzuzeigen"
+        },
+        percorsi:{
+            title:"Select ",
+            text:"wich path do you want to follow"
+        },
         tag:{
             title:"Bringen Sie das Smartphone näher an die SilenceTags heran",
             text:"Nutzen Sie die APP, um auf die vertiefenden Inhalte zuzugreifen"
@@ -76,6 +84,11 @@ export const de= {
         titile:"Einstellungen",
         content:{
             title:"Inhalt aktualisieren"
+        },
+        accessibility:{
+            title:"Zugänglichkeit",
+            subtitle:"Aktivieren Sie diese Option, um Untertitel von Multimedia-Inhalten anzuzeigen",
+            supportoVisuale:"Untertitel / Gebärdensprache"
         },
         percorsi:{
             title:"Routen",

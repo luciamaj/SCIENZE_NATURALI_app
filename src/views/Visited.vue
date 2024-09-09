@@ -111,13 +111,7 @@ ion-fab{
   flex-direction: column;
   justify-content: center;
 }
-.swiper-container{
-  width: 85vw;
-  height: 61vh;
-}
-.swiper-slide{
-  width: 100%;
-}
+
 .lang-cont {
   margin-bottom: 20px;
 }

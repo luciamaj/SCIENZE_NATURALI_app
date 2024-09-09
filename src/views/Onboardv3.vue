@@ -54,7 +54,7 @@
               <div class="text-one"> {{$t('onboard.accessibility.text')}} </div>
               <ion-grid>
                   <ion-row class="row inline-row" >
-                    <ion-col  class="percorsi-cont" size="8" >  <div> {{$t('menu.accessibility.supportoVisuale')}} </div></ion-col>
+                    <ion-col  class="access-cont" size="8" >  <div> {{$t('menu.accessibility.supportoVisuale')}} </div></ion-col>
                     <ion-col  size="4"  >
                       <ion-toggle  v-model="attivaSupporto"  @ionChange="notice()" :enable-on-off-labels="true"></ion-toggle>
      
@@ -65,24 +65,18 @@
             </div>
 
           </ion-slide>
-          <!--ion-slide v-else-if="(context!='onboard' && accessibility==1)" >
-            <div class="slide-inner">
-              <h5 class="lang-title"> {{$t('onboard.accessibility.title')}} </h5>
-              <div class="text-one"> {{$t('onboard.accessibility.text')}} </div>
-            </div>
-
-          </ion-slide-->
+         
          
           <ion-slide v-if="(context=='onboard'&& confPerc && nPercMostra!=null && nPercMostra>1)" >
             <div class="slide-inner">
               <h5 class="lang-title"> {{$t('onboard.percorsi.title')}} </h5>
               <div class="text-one"> {{$t('onboard.percorsi.text')}} </div>
               <ion-grid>
-                  <ion-row v-for="(perc,index) in percorsiMostra" class="row inline-row" :key="(perc,index)" v-on:click="setPercorso(perc.percorso)">
-                    <ion-col  class="percorsi-cont" size="4" > <div class="circle-cont-perc "  > <img class="cover circle" :class="checkPerc(perc.percorso)" id="circle-it" :src="imgPercorsi(perc)" alt=""></div></ion-col>
+                  <ion-row v-for="(perc,index) in percorsiMostra" class="row inline-row" :key="(perc,index)" v-on:click="setPercorso(perc.percorso)" >
+                    <ion-col  class="percorsi-cont" size="3" > <div class="circle-cont-perc "  > <img class="cover circle" :class="checkPerc(perc.percorso)" id="circle-it" :src="imgPercorsi(perc)" alt=""></div></ion-col>
                     <ion-col  size="8"  >
                       
-                      <div class="percorso">{{nomeLingua(perc)}}</div>
+                      <div  class="percorso">{{nomeLingua(perc)}}</div>
                   
                     </ion-col>
                       
@@ -142,6 +136,22 @@
               </template>
              
             </div>
+          </ion-slide>
+           <ion-slide v-if="(context!='onboard' && accessibility==1)" >
+            <div class="slide-inner">
+              <div class="onb-img">
+                  <img class="cover" src="/assets/background/accessibility.png" alt="">
+              </div>
+              <div class="onb-desc ion-text-center">
+                <h5> {{$t('onboard.accessibility.title')}}</h5>
+                <p class="ion-no-margin desc-text" > {{$t('onboard.accessibility.alternative')}}  </p>
+                <p class="ion-no-margin">  </p>
+
+              </div>
+             
+             
+            </div>
+
           </ion-slide>
         </ion-slides>
 
@@ -680,7 +690,7 @@ ion-grid{
     z-index: 1;
 }
 .swiper-container{
-  width: 85vw;
+  width: 90vw;
   height: 90vh;
 }
 .swiper-slide{
@@ -736,16 +746,16 @@ ion-toggle{
 .inline-row{
   margin-bottom: 15px;
   align-items: center;
-  box-shadow: 0px 2px 2px 0px #00000033;
+  box-shadow: 0 1px 6px 0px rgba(0, 0, 0, .2);
   border-radius: 7px;
-  padding: 6px;
-  border: solid 0.5px #bfbfbf24;
-  background: #d6d1ca46;
+  padding: 6px ;
+  border: .5px solid #bfbfbf24;
+  background: rgb(245 245 245 / 81%);
 }
 
 .percorsi-cont{
  display: flex;
- justify-content: center;
+ justify-content: flex-start;
 }
 .percorso{
   text-align: left;
@@ -757,8 +767,8 @@ ion-toggle{
   margin: 0 auto 10px;
 }
 .circle-cont-perc{
-  height:9vh;
-  width: 9vh;
+  height:8vh;
+  width: 8vh;
 }
 .circle{
   
@@ -776,11 +786,16 @@ ion-toggle{
   object-fit: cover;
 }
 .checked{
-   border: solid 5px var(--ion-color-secondary-whitened);
+   outline: solid 5px var(--ion-color-secondary-whitened);
      opacity: 1;
 }
 .checkedDiaplay{
   display: none;
+}
+
+.checked-row{
+  font-weight: 600;
+
 }
 .swiper-pagination {
   color: red;

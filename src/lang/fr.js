@@ -15,6 +15,11 @@ export const fr ={
             title:"Tu choisis",
             text:"dans quelle langue préférez-vous écouter le contenu ?"
         },
+        accessibility:{
+            title:"Accessibilité",
+            text:"Activer pour afficher les sous-titres des contenus multimédia",
+           
+        },
         percorsi:{
             title:"Select ",
             text:"wich path do you want to follow"
@@ -81,6 +86,11 @@ export const fr ={
         titile:"Réglages",
         content:{
             title:"Mettre à jour le contenu"
+        },
+        accessibility:{
+            title:"Accessibilité",
+            subtitle:"Activer pour afficher les sous-titres des contenus multimédia",
+            supportoVisuale:"Sous-titres"
         },
         percorsi:{
             title:"itinéraires",
