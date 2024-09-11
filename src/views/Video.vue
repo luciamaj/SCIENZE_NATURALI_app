@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <ion-header collapse="fade">
+    <ion-header collapse="fade"  :hidden="fullscreen">
       <ion-toolbar class="toolbar" >
         <!--ion-title v-html="contentScheda.titolo" > </ion-title-->
         <ion-buttons  slot="start" >
@@ -47,11 +47,11 @@
         
       </div>
     </ion-content>
-    <div class="video-full-container" :class="(fullscreen? 'show': 'hideFull') ">
+    <div class="video-full-container" :class="(fullscreen? 'show': 'hideFull') " @click="togglecontrols()">
           <!--video  class="videoFull"  id="videoFull" >
               <source :src="videoSrc" type="video/mp4" />
           </video-->
-          <div class="controls">
+          <div class="controls" :class="{ hidden: !showingControls }"  @click.stop>
              <div  class="amplitude-play-pause play " :class="checkPlay()" @click="playpause('full')" data-icon="P" aria-label="play pause toggle"></div>
              <progress class="amplitude-song-played-progress" :value="progress" :buffer="1" color="secondary"></progress>
              <div  class="exitFull" @click="exitFull"><ion-icon class="close-expand" name="expand-outline"></ion-icon></div>
@@ -124,7 +124,9 @@ export default {
       },
       fullscreen:false,
       hastext:true,
-      timeStamp:0
+      timeStamp:0,
+      showingControls: true, // Stato per verificare se mostrare i controlli
+      hideTimeout: null,
     };
   },
  
@@ -214,7 +216,7 @@ export default {
   mounted(){
    
     this.vid=document.getElementById("video");
-    this.vidFull=document.getElementById("videoFull");
+   // this.vidFull=document.getElementById("videoFull");
     console.log("video ",this.vid);
     this.vid.load();
     this.vid.onloadeddata = ()=> {
@@ -234,10 +236,10 @@ export default {
       this.current= this.getminsec(this.vid.currentTime);
       this.calcProgress(this.vid.currentTime, this.vid.duration);
     },
-    this.vidFull.ontimeupdate = ()=> {
+   /* this.vidFull.ontimeupdate = ()=> {
       this.current= this.getminsec(this.vidFull.currentTime);
       this.calcProgress(this.vidFull.currentTime, this.vid.duration);
-    },
+    },*/
     this.vid.onended=()=>{
       console.log("FINIOTOO")
       this.videoPlay=false;
@@ -380,7 +382,7 @@ export default {
 
     },
     playpause(video){
-      this.vidFull=document.getElementById("videoFull")
+     /* this.vidFull=document.getElementById("videoFull")
       if(this.videoPlay){
         if(video=="full"){
           this.vidFull.pause();
@@ -403,7 +405,37 @@ export default {
             clearTimeout(this.timer);
           }
 
+      }*/
+      if(this.videoPlay){
+
+        this.vid.pause();
+        this.videoPlay=false;
+      }else{
+        this.vid.play();
+        this.videoPlay=true;
+          if(this.timer){
+            console.log('clear?');
+            clearTimeout(this.timer);
+          }
       }
+    },
+    togglecontrols(){
+      if( this.showingControls==true){
+        this.showingControls = false;
+      }else{
+        this.showControls();
+      }
+    },
+    showControls() {
+      this.showingControls = true;
+      
+      // Reset timeout se l'utente muove il mouse
+      clearTimeout(this.hideTimeout);
+      
+      // Nasconde i controlli dopo 2 secondi di inattività
+      this.hideTimeout = setTimeout(() => {
+        this.showingControls = false;
+      }, 2000);
     },
 
     checkPlay(){
@@ -468,29 +500,34 @@ export default {
 
     launchIntoFullscreen() {
       
-      this.vid.pause();
-      this.videoPlay=false;
+      //this.vid.pause();
+     // this.videoPlay=false;
       this.fullscreen=true;
      
-      this.vid.classList.add("videoFull");
-    
-     
-       this.vidFull.play();
-        if(this.vidFull.paused){
-          this.videoPlay=false;
-        }else{
-          this.videoPlay=true;
-        }
-     
+      this.vid.classList.add("fullscreen");
+      this.showControls();
  
 
     },
-    exitFull(){
+    _exitFull(){
       this.vidFull.pause();
       this.videoPlay=false;
       this.vid.currentTime=this.vidFull.currentTime;
       this.fullscreen=false;
       this.vid.play();
+      if(this.vid.paused){
+          this.videoPlay=false;
+        }else{
+          this.videoPlay=true;
+        }
+      
+
+    },
+    exitFull(){
+      this.vid.classList.remove("fullscreen");
+   
+      this.fullscreen=false;
+   //   this.vid.play();
       if(this.vid.paused){
           this.videoPlay=false;
         }else{
@@ -657,11 +694,15 @@ video {
   object-fit: contain;
   height: 100%;
 }
-.videoFull{
-  position: absolute;
-  height: 100vh;
-  width: 100vw;
-  transform: rotate(90deg);
+.fullscreen {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 100vh; /* L'altezza della finestra diventa la larghezza del video */
+  height: 100vw; /* La larghezza della finestra diventa l'altezza del video */
+  transform: translate(-50%, -50%) rotate(90deg); /* Ruota di 90 gradi e centra */
+  z-index: 1000; /* Porta il video in primo piano */
+  background-color: black; /* Sfondo nero per simulare il fullscreen */
 }
 
 .video-full-container{
@@ -681,7 +722,7 @@ video {
 }
 .controls {
   /*visibility: hidden;*/
-  opacity: 0.5;
+ /* opacity: 0.5;*/
   width: 400px;
   border-radius: 10px;
   position: absolute;
@@ -693,6 +734,10 @@ video {
   transition: 1s all;
   display: flex;
   align-items: center;
+}
+.hidden{
+  opacity: 0;
+
 }
 div.controls div.amplitude-play-pause {
   height: 20px;
@@ -712,9 +757,11 @@ div.controls div.amplitude-play-pause.amplitude-playing {
       background-size: cover;
 }
 
-.video-full-container:hover .controls, 
-.video-full-containeryer:focus-within .controls {
+ .controls:hover{
   opacity: 1;
+}
+.video-full-containeryer:focus-within .controls {
+
 }
 
 
@@ -748,6 +795,7 @@ div.controls div.amplitude-play-pause.amplitude-playing {
 }
 .player-container-notext{
   height: 60vh;
+  background-color: #000000;
 }
 
 @media screen and (max-width: 39.9375em) {

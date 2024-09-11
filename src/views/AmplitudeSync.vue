@@ -565,6 +565,9 @@ ion-content {
 .img-container{
   height: 45vh;
 }
+.img-container-notext{
+    height: 70vh;
+  }
 
 div.player {
   margin-bottom: 20px;
@@ -604,29 +607,41 @@ div.player img.album-art {
   margin-bottom: 2vh;
   font-size: 1.1em;
   line-height: 1.4em;
+  
+  margin-top: 1vh;
+
+  overflow: scroll;
 
 }
 .descrArea p{ margin-top: 0;}
 
 .content-scheda{
-     overflow: overlay;
+     /*overflow: overlay;*/
     height: 57vh;
 }
 /*
   Small only
 */
-
+@media screen and (max-width: 39.9375em) {
+  div.player img.album-art {
+    width: 100%;
+    height: 100%;
+    /*max-height: 40vh;*/
+    object-fit: cover;
+  }
+  .img-container-audio-notext{
+    height: 60vh;
+  }
+}
 /*
   Medium only
 */
 /*
   Large Only
 */
-.img-container-notext{
-    height: 73vh;
-  }
+
 div.meta-container {
- /* float: left;*/
+ /*float: left;*/
   /*width: calc(100% - 270px);*/
   padding: 10px 20px;
   max-height: 40vh;
@@ -712,7 +727,7 @@ div.control-container div.amplitude-play-pause.amplitude-playing {
 }
 div.control-container div.next {
   width: 21px;
-  height: 18px;
+  height:18px;
   cursor: pointer;
   background: url("/assets/icon/playerIcon/next.svg");
    background-size: cover;

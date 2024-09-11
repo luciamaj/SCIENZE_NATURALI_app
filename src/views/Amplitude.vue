@@ -609,7 +609,6 @@ div.player img.album-art {
 }
 .descrArea p{ margin-top: 0;}
 
-
 .content-scheda{
     /* overflow: overlay;*/
     height: 57vh;
@@ -634,6 +633,7 @@ div.player img.album-art {
 /*
   Large Only
 */
+
 div.meta-container {
   /*float: left;*/
   /*width: calc(100% - 270px);*/
