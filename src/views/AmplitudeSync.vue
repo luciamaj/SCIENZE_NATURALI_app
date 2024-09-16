@@ -602,14 +602,13 @@ div.player img.album-art {
   padding: 8px 27px 30px;
  /* max-height: 40vh;*/
  height: 39vh;
+ width: 100vw;
  /* overflow: overlay;*/
  /* margin-top: 2vh;*/
   margin-bottom: 2vh;
   font-size: 1.1em;
   line-height: 1.4em;
-  
   margin-top: 1vh;
-
   overflow: scroll;
 
 }

@@ -667,24 +667,20 @@ div.player img.album-art {
 }
 
 .descrArea{
+
   float: left;
-  padding: 8px 27px 30px;
- /* max-height: 40vh;*/
- height: 39vh;
- /* overflow: overlay;*/
- /* margin-top: 2vh;*/
-  margin-bottom: 2vh;
-  font-size: 1.1em;
-  line-height: 1.4em;
- 
-  margin-top: 1vh;
-
-  overflow: scroll;
-
+    padding: 8px 27px 30px;
+    height: 30vh;
+    width: 100vw;
+    margin-bottom: 2vh;
+    font-size: 1.1em;
+    line-height: 1.4em;
+    margin-top: 1vh;
+    overflow: scroll;
 }
 .descrArea p{ margin-top: 0;}
 .content-scheda{
-  overflow: overlay;
+  /*overflow: overlay;*/
   height: 57vh;
 
 }

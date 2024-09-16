@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
 import WaveApp from '@/views/WavetoApp.vue'
-import Wave from '@/views/WaveB.vue'
+/*import Wave from '@/views/WaveB.vue'*/
+import Wave from '@/views/WavetoAppSlide.vue'
 import store from '../store/store'
 import common from '../js/common'
 //import Tabs from '../views/Tabs.vue'

@@ -275,11 +275,18 @@ export default {
     },
 
     getpercinfo(){
-       const percorsi =JSON.parse(localStorage.getItem("percorsi"))
+       const percorsi =this.getElencoPercorsi()
        const sel= percorsi.find(perc=> perc.percorso==localStorage.getItem("percSel"));
       return sel
 
     },
+    getElencoPercorsi(){
+      const percorsi =JSON.parse(localStorage.getItem("percorsi"))
+      
+     return percorsi
+
+   },
+
 
     datetoVersion(date){
       const splitted=date.split("-");
