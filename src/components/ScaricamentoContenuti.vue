@@ -446,17 +446,27 @@ export default {
         contenuto=scheda.content.find(el=> el.lang== this.passedLang )
         console.log("Cont ", contenuto);
         if(contenuto.audio!=null){
+          if(!this.mediatoGet.includes(contenuto.audio)){
             this.mediaCounter();
-          this.mediatoGet.push(contenuto.audio);
-          //this.getMedia(contenuto.audio);
-            console.log("Getaudio ")
-        }else if(contenuto.video!=null){
+            this.mediatoGet.push(contenuto.audio);
+            //this.getMedia(contenuto.audio);
+            console.log("Get audio ", contenuto.audio)
+          }
+            
+        }else if(contenuto.video!=null && !this.mediatoGet.includes(contenuto.video) ){
+         
             this.mediaCounter();
             this.mediatoGet.push(contenuto.video);
           //this.getMedia(contenuto.video);
-          console.log("Getvideo ")
+          console.log("Get video ",contenuto.video)
         }else{
             console.log("Non ci sono Media per la scheda ")
+        }
+        if(contenuto.supportoVisuale!=null  && !this.mediatoGet.includes(contenuto.supportoVisuale) ){
+            this.mediaCounter();
+            this.mediatoGet.push(contenuto.supportoVisuale);
+          //this.getMedia(contenuto.video);
+          console.log("Get video Supporto ",contenuto.supportoVisuale)
         }
 
         // console.log('index', index, jsonSchede.length )

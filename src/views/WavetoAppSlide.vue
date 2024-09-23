@@ -2,13 +2,14 @@
   <ion-page>
     <ion-header class="ion-no-border">
       <ion-toolbar  class="toolbar">
-        <ion-title :key="percKey" slot="start"  class="main-title"> {{percSel}}</ion-title>
+        <ion-title :key="percKey" slot="start"  class="main-title"> {{getpercselinlang}}</ion-title>
         <ion-buttons slot="end" v-if="history==true" >
               <ion-button color="secondary"  @click="openHistory()" class="collection-button">
                 <ion-icon  size="large" name="file-tray-full-outline" class="history-icon"></ion-icon>
                 <!--ion-label color="dark">{{$t('raccolta.title')}}</ion-label-->
               </ion-button>
         </ion-buttons>
+      <!--ion-button expand="block" class="capture-btn" @click="opensubs()" id="captureStart">subs</ion-button-->
         
         <ion-buttons slot="end">
           <ion-button @click="openMenuModal(notification)">
@@ -26,11 +27,17 @@
 </ion-modal-->
       <div class="vertical-center view-wwave-container">
         <div class="center" :key="percKey">
-          
-          <template v-for="(percorso,index) in infoPercorsi" v-bind:key="(percorso,index)">
-            <div><img  :id="'logo'+index" class="percosoImg" :class="{ 'percorsoAttivo':checkIfActive(percorso.percorso) }" :src=" this.$store.getters.baseUrl+'/upload/'+percorso.img"/></div>
+          <div class="slide-percorsi">
+            <template v-if="infoPercorsi.length>1" v-for="(percorso,index) in infoPercorsi" v-bind:key="(percorso,index)">
+              <div class="logo-container" v-on:click="switchPerc(percorso)"><img  :id="'logo'+index" class="percosoImg" :class="{ 'percorsoAttivo':checkIfActive(percorso.percorso) }" :src=" this.$store.getters.baseUrl+'/upload/'+percorso.img"/></div>
 
-          </template>
+            </template>
+            <template v-else>
+              <div class="logo-container" ><img  :id="'logo'+index" class="percosoImg percorsoAttivo" :src=" this.$store.getters.baseUrl+'/upload/'+percselInfo.img"/></div>
+
+
+            </template>
+          </div>
         
         
           <div class="logo-container" id="mostra"><img  id="logo" class="logo" :src="logo"/>
@@ -135,7 +142,7 @@ export default {
     this.captingIcon = document.getElementById("captingIcon");
     this.logoi = document.getElementById("logo");
     this.currLang=localStorage.getItem("lang")
-    this.percSel=this.getpercselinlang();
+    this.percSel=this.percselInfo.percorso;
   
 
    // this.anima=document.getElementById("anima");
@@ -313,15 +320,116 @@ export default {
 
 
   methods: {
+
+    opensubs(){
+      this.$router.replace({ path: "/subs/E01A/00004"});
+    },
     updateTitle(){
       this.currLang=localStorage.getItem("lang")
-      this.percSel=this.getpercselinlang();
+     // this.percSel=this.getpercselinlang();
       this.percKey+=1;
     },
     
     haspulsanti(){
       return this.percselInfo.hasOwnProperty("pulsanti")
     },
+
+    switchPerc(percorso){
+      const perc=percorso.percorso
+       /* if (this.$i18n.locale !== lang) {
+           this.$i18n.locale = lang;
+           localStorage.setItem('lang', lang);
+        }*/
+        if (localStorage.getItem('percSel')!= perc) {
+          localStorage.setItem('percSel', perc);
+          console.log("entro,cambio era", this.percSel,"sarà ", perc);
+          this.percSel=perc;
+
+          common.setstorePerc(percorso);
+         
+           let  jsonSchede =JSON.parse(localStorage.getItem('allDataMostra'));
+            jsonSchede=jsonSchede.filter(scheda=>scheda.percorsi.includes(perc))
+            console.log("filtro per percorso scelto", jsonSchede)
+            localStorage.setItem('dataMostra',JSON.stringify(jsonSchede));
+          
+
+          this.$forceUpdate()
+          
+        }
+       // this.checkVersion(perc);  poi da scommentare 
+    },
+    checkVersion(perc){
+      const currentVersion=this.datetoVersion(this.pubblication.pubblicazione);
+      const langVersion=this.getversionLangs().find(el=> el.lang==this.currLang).vers;
+
+      if(currentVersion>langVersion){
+        console.log("LA LINGUA NON è AGGIORNATA"); 
+        this.updatePerc(perc);
+      }else{
+        console.log("versione ok"); 
+      }
+
+    },
+    async updatePerc(perc) {
+      if(window.navigator.onLine){
+            const alert = await alertController.create({
+              header: this.$t('update.title') ,
+              message: this.$t('update.text') ,
+              buttons: [
+                  
+                  {
+                      text: this.$t('action.postponi') ,
+                      role: "cancel",
+                      handler: () => {
+                          console.log("Declined the offer");
+                          
+                      },
+                  },
+                  {
+                      text:this.$t('action.download'),
+                      cssClass:'modal-accept-button',
+                      handler: () => {
+                          console.log("Accepted");
+                          this.emitter.emit('aggiorna', "menu");
+                          this.pushPageAggiorna(perc);
+                      
+                      },
+                  },
+              ],
+          });
+
+          await alert.present();
+
+      }else{
+          this.networkError();
+      }
+           
+    },
+
+    add(perc){
+
+    this.showOptions(perc)
+    /*  this.savedLangs=lang;
+    this.remaining=this.remaining.filter(item => item !== lang);*/
+    },
+    assignSaved(savedPerc, lang){
+    this.saved=savedPerc;
+    console.log("lllang",lang)
+    console.log("savedperlang",this.saved[lang]);
+    this.savedperlang= this.saved[lang]
+    //this.savedperlang=savedPerc["en"].split(",")
+
+    },
+    assignRemaining(remainingLangs){
+    this.remaining=remainingLangs;
+
+    this.remainingIntersected= this.infoPercorsi.filter(p=> this.remaining.includes(p.percorso));
+    console.log("REMAINING ",  this.remaining);
+    console.log("REMAINING Inter ",  this.remainingIntersected);
+
+    },
+
+
     async openModal  ()  {
       if(this.$store.getters.conf.interactionMode=="mix"){
         if(this.tour==true){
@@ -710,6 +818,9 @@ ion-content {
 .main-title{
   width: 65%;
   font-size: 1em;
+}
+.slide-percorsi{
+  display: flex;
 }
 .logo-container {
  /*background-color: #fff;*/

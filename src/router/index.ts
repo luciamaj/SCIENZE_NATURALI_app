@@ -77,9 +77,9 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/Onboardv3.vue')
   },
   {
-    path: '/subs/:lang/:timestamp/:videoParam/',
-    name: '',
-    component: () => import('@/views/SubtitlesIOS.vue')
+    path: '/subs/:id/:timestamp?',
+    name: 'subs',
+    component: () => import('@/views/Subtitles.vue')
   },
   {
     path: '/scanner/',

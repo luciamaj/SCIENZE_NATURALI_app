@@ -336,7 +336,7 @@ export default {
         if (obj != null) {
           obj=obj.path
           console.log("OGGETTO ",obj)
-          if (this.attivaSupporto==true && obj.supportoVisuale !=null) {//da spostare prima
+          if (this.attivaSupporto==true && obj.supportoVisuale !=null) {
               this.$router.replace({ path: "/video/" + obj.index });
           }else{
             if (obj.type == "audio") {

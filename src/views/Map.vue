@@ -185,7 +185,7 @@ export default {
     async aletrtMap() {
       const alert = await alertController.create({
         //header: this.$t('menu.lang.add') ,
-        message: "Esplora la mappa raggiungendo i punti segnati" ,
+        message: "Esplora la mappa per raggiungere i punti di interesse" ,
         buttons: [
           {
             text: "Conutinua",

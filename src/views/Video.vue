@@ -11,8 +11,8 @@
     <ion-content>
       <div class="supercontainer">
         <div  :class="[hastext? 'player-container': 'player-container-notext']">
-          <video  id="video" >
-            <source :src="url" type="video/mp4" />
+          <video  id="video" preload="auto">
+            <source src="" type="video/mp4" />
           </video>
           <ion-icon class="expand" name="expand-outline" @click="launchIntoFullscreen()"></ion-icon>
 
@@ -145,6 +145,23 @@ export default {
     this.schedaState(false);
     console.log("Unmounting page");
   },
+  beforeMount(){
+    const video = this.contenuto.video;
+      const supportoVisuale = this.contenuto.supportoVisuale;
+   
+      if (this.attivaSupporto==true && supportoVisuale) {
+        console.log("supporto video ",supportoVisuale);
+        // return this.$store.getters.baseUrl+"/upload/"+video;
+        this.getvideo(supportoVisuale)
+       
+      } else if (video) {
+        console.log("video ",video);
+        // return this.$store.getters.baseUrl+"/upload/"+video;
+        this.getvideo(video)
+       
+      } 
+
+  },
   computed: {
     tag() {
       return this.paramId;
@@ -174,11 +191,16 @@ export default {
         return "";
       }
     },
+    attivaSupporto(){
+      const sup=common.getAttivaSuppoto();
+      return sup;
+
+    },
     url() {
       const video = this.contenuto.video;
       const supportoVisuale = this.contenuto.supportoVisuale;
    
-      if (supportoVisuale) {
+      if (this.attivaSupporto==true && supportoVisuale) {
         console.log("supporto video ",supportoVisuale);
         // return this.$store.getters.baseUrl+"/upload/"+video;
         this.getvideo(supportoVisuale)
@@ -295,6 +317,7 @@ export default {
           };
         }
         })*/
+       console.log("cerco il video "+ name)
          
         this.request = indexedDB.open('mediaStore', global.dbVersion);
         this.request.onsuccess = event => {
@@ -302,9 +325,11 @@ export default {
           
           const transaction = this.db.transaction(['media-'+this.lang],'readwrite');
           const objectStore = transaction.objectStore('media-'+this.lang);
+          console.log("cerco in 'media-"+this.lang)
 
-          const test = objectStore.get(name);
-      
+       
+       
+        const test = objectStore.get(name);
 
          test.onerror = event => {
             console.log('error');
@@ -314,7 +339,7 @@ export default {
           test.onsuccess = event => {
             console.log("GET RESULT ",test.result)
             const testget = test.result;
-             if (testget) {
+            if (testget) {
               this.videoSrc=URL.createObjectURL(test.result.blob);
               document.getElementById('video').src= this.videoSrc;
             } else {
