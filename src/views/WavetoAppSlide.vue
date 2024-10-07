@@ -938,13 +938,12 @@ ion-content {
     justify-content: center;
 }
 .overlay-opaco{
-  background-color:  hsl(0deg 0% 100% / 69%);
+    background-color:#f4f4f4bd;
     position: absolute;
     width: 100%;
     height: 50px;
-    bottom: 38px;
-    /* border-bottom-right-radius: 10px; */
-    /* border-bottom-left-radius: 10px; */
+    top: 50%;
+    transform: translateY(-50%);
     display: flex;
     align-items: center;
     padding: 14px;
@@ -952,6 +951,7 @@ ion-content {
     font-style: normal;
     color: #212121;
     justify-content: center;
+    /*box-shadow: 0px 0px 7px 0px #747474;*/
 }
 
 .percosoImg{

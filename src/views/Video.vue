@@ -387,7 +387,7 @@ export default {
       } */
     
       //this.$router.replace({path:"/"});
-      if(window.history.state.back=="/gps"){
+      if(window.history.state.back=="/gps" ||window.history.state.back== "/raccolta"){
       this.$router.go(-1);
      }else{
       this.$router.replace({path:"/"});

@@ -47,7 +47,8 @@ import {
   IonContent,
   IonButton,
   IonHeader,
-  alertController
+  alertController,
+  modalController
   //IonModal
   
 } from "@ionic/vue";
@@ -58,6 +59,7 @@ import { useRouter } from "vue-router";
 
 import L from "leaflet";
 import 'leaflet/dist/leaflet.css';
+import Amplitude from "./Amplitude.vue";
 
 
 
@@ -164,7 +166,8 @@ export default {
     this.drawMap();
 
     if(localStorage.getItem("alertmappaletto")!=1){
-      this.aletrtMap();
+      //this.aletrtMap();
+      this.introModal();
     }
 
     setTimeout(() => {
@@ -179,6 +182,32 @@ export default {
 
 
   methods: {
+
+
+    async introModal()  {
+    
+      
+    const top = await modalController.getTop();
+
+    const introModal = await modalController.create({
+      component: Amplitude,
+      cssClass:"modal-intro",
+      componentProps: { 
+        tag:"E00A",
+        context:"modal"
+        },
+      swipeToClose: false,
+      presentingElement: top
+    });
+
+    //await introModal.onWillDismiss();
+    introModal.onDidDismiss().then(async _ => {
+      localStorage.setItem("alertmappaletto",1);
+    });
+
+   
+    return introModal.present();
+  },
     savedtag(tags){
         this.visitedTag=tags;
     },
@@ -229,16 +258,16 @@ export default {
     async aletrtexit() {
       const alert = await alertController.create({
        // header: this.$t('menu.lang.add') ,
-        message: "Uscendo la geolocalizzazione verrà interrota" ,
+        message: this.$t('gps.msgUscita'),
         buttons: [
           {
-            text: "Conutinua",
+            text: this.$t('action.continua'),
             cssClass:'modal-accept-button',
             handler: async() => {
               this.open=false;
               this.map.remove();
               this.clearwatcher();
-             this.back();
+              this.back();
              
             
             },
@@ -259,10 +288,10 @@ export default {
 
     drawMap() {
       this.map = L.map('map', {
-        crs: L.CRS.Simple, zoom:-3,zoomAnimation:false,
+        crs: L.CRS.Simple, zoom:-2.5,zoomAnimation:false,
         zoomControl:false,
         maxZoom: 1,
-        minZoom: -3,
+        minZoom: -2.5,
         maxBounds:this.bounds,
         maxBoundsViscosity: 1.0
       }).setView([0, 0])
@@ -344,12 +373,8 @@ export default {
             
               //alert("sei vicino al punto");
             }
-
-        
           
         }
-        
-
       })
     }
     },
@@ -705,6 +730,12 @@ ion-content {
     position: absolute;
     bottom: 80px;
     left: 20px;
+}
+
+.modal-intro .modal-wrapper{
+  width: 85vw;
+  height: 80vh;
+  border-radius: 1em;
 }
 
 

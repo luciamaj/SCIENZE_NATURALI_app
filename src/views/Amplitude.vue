@@ -3,8 +3,12 @@
      <ion-header collapse="fade">
       <ion-toolbar class="toolbar" >
         <!--ion-title v-html="contentScheda.titolo" > </ion-title-->
-        <ion-buttons  slot="start" >
-          <ion-button v-on:click="goingback()" class="back-button"><ion-icon size="medium" name="arrow-back"></ion-icon> {{$t('schede.back')}}</ion-button>
+        <ion-buttons   slot="start"  v-if="context=='scheda'">
+          <ion-button v-on:click="goingback()"  class="back-button" ><ion-icon size="medium" name="arrow-back"></ion-icon> {{$t('schede.back')}}</ion-button>
+         
+        </ion-buttons>
+        <ion-buttons   slot="end"  v-if="context=='modal'">
+          <ion-button v-on:click="closeModal()"  class="back-button" ><ion-icon size="medium" name="close"></ion-icon> {{$t('action.close')}}</ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -60,6 +64,7 @@ import {
   //IonTitle,
   IonContent,
  alertController,
+ modalController,
   IonButtons,
   //IonIcon,
   //IonButton,
@@ -72,8 +77,16 @@ import common from "./../js/common"
 import {global} from "./../js/global"
 const { Storage } = Plugins;
 
+
+
 export default {
   name: "Amplitude",
+  props:{
+    tag:{ type: String, default: '00'},
+    context:{ type: String, default: 'scheda'}
+
+    
+  },
   components: {
     IonHeader,
     IonToolbar,
@@ -116,7 +129,7 @@ export default {
       this.$router.replace('/');
     });
     this.addtoBucket=common.addtoBucket;
-    this.paramId=this.$route.params.id;
+    this.paramId=this.$route.params.id?this.$route.params.id:this.tag;
     this.schedaState(true);
     this.emitter.on('changeVersion', _ => {
       this.showOptions();
@@ -138,6 +151,7 @@ export default {
       hastext:true,
     };
   },
+
   computed: {
 
     contentScheda(){
@@ -212,6 +226,12 @@ export default {
   },
   methods:{
 
+    async  closeModal(){
+      const top= await modalController.getTop();
+       top.dismiss();
+
+    },
+    
  
     cover() {
       const type=this.contentScheda.type; 
@@ -438,7 +458,7 @@ export default {
         this.$router.go(-1);
       } */
      console.log("HISTORU : ",window.history )
-     if(window.history.state.back=="/gps"){
+     if(window.history.state.back=="/gps" || window.history.state.back== "/raccolta"){
       this.$router.go(-1);
      }else{
       this.$router.replace({path:"/"});
@@ -571,6 +591,7 @@ ion-content {
 div.player {
   margin-bottom: 20px;
   max-width: 750px;
+  width: 100%;
   margin: auto;
   position: relative;
   /*top: 50%;
@@ -593,7 +614,7 @@ div.player img.album-art {
 
 .vertical-center {
   height: 88vh;
-  width: 100vw;
+  width: 100%;
 }
 
 .descrArea{
@@ -601,7 +622,7 @@ div.player img.album-art {
   padding: 8px 27px 30px;
  /* max-height: 40vh;*/
  height: 39vh;
- width: 100vw;
+ width: 100%;
  /* overflow: overlay;*/
  /* margin-top: 2vh;*/
   margin-bottom: 2vh;
