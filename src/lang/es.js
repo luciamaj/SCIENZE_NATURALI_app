@@ -8,7 +8,8 @@ export const es= {
         app:"Abre la App",
         salta:"Salta",
         close:"Cierra",
-        riprova:"Intentar otra vez"
+        riprova:"Intentar otra vez",
+        continua:"Continua"
     },
     onboard:{
         lang:{
@@ -73,9 +74,15 @@ export const es= {
 		timeoutTagTitle:"ALERTA",
 		timeoutTagText:"SilenceTag NO detectado, quizá esté apagado. Utiliza el,\"Escanea el código QR\" botón",
 		timeoutTagAccept:"Continúa",
-       
+        clicktoChangePerc:"Click to activate"
+
+      
+    },
+    gps:{
+         msgUscita:"Al salir la geolocalización se interrumpirá"
+    },
     
-    }, capting:[
+    capting:[
         "Te busco", 
         "Mantén el teléfono quieto",
         "Un momento más"

@@ -182,13 +182,25 @@ export default {
     savedtag(tags){
         this.visitedTag=tags;
     },
-    async aletrtMap() {
-      const alert = await alertController.create({
-        //header: this.$t('menu.lang.add') ,
-        message: "Esplora la mappa per raggiungere i punti di interesse" ,
-        buttons: [
-          {
-            text: "Conutinua",
+
+    buttonsIntro(){
+      const buttonArr=[];
+      if(this.schede.find(scheda=>scheda.tag=="E00A")){
+        const buttonintro={
+          text: "Vai all'intro",
+          cssClass:'modal-accept-button',
+          handler: async() => {
+            localStorage.setItem("alertmappaletto",1);
+            this.$router.push({ path: "/audio/E00A"});
+            
+            
+          },
+        }
+
+        buttonArr.push(buttonintro);
+      }else{
+        const button= {
+            text: "Continua",
             cssClass:'modal-accept-button',
             handler: async() => {
              localStorage.setItem("alertmappaletto",1)
@@ -196,9 +208,19 @@ export default {
             
             },
            
-          },
-          
-        ],
+          }
+
+          buttonArr.push(button);
+
+      }
+      return buttonArr
+
+    },
+    async aletrtMap() {
+      const alert = await alertController.create({
+       // header: `<img src="./assets/background/map.png" alt="g-maps" style="border-radius: 2px">`,
+        message: "Esplora la mappa per raggiungere i punti di interesse" ,
+        buttons:this.buttonsIntro()
       });
 
       await alert.present();
@@ -237,12 +259,17 @@ export default {
 
     drawMap() {
       this.map = L.map('map', {
-        crs: L.CRS.Simple, zoom:-2,zoomAnimation:false,
-        maxZoom: 3,
-        minZoom: -2,
+        crs: L.CRS.Simple, zoom:-3,zoomAnimation:false,
+        zoomControl:false,
+        maxZoom: 1,
+        minZoom: -3,
         maxBounds:this.bounds,
         maxBoundsViscosity: 1.0
       }).setView([0, 0])
+
+      L.control.zoom({
+       position: 'topright' // Change this to topright, bottomright, bottomleft, or topleft
+      }).addTo(this.map);
     
 
       L.imageOverlay(this.url, this.imageBounds).addTo(this.map);
@@ -259,7 +286,7 @@ export default {
         if(item.id!="me"){
           const im= await this.getCoverImg(item.img)
         // console.log("img card ",im)
-          const popupcontent=`<div class="img-container"><img src=${im}></div>
+          const popupcontent=`<div class="img-container-popup"><img src=${im}></div>
               <div class="card-title">${item.description}</div>`
           L.marker(L.latLng(item.latLng)).setIcon(this.getIcon(item.status)).addTo(this.map)
             .bindPopup(popupcontent)
@@ -296,9 +323,9 @@ export default {
 
     back(){
       console.log("HISTORU : ",window.history )
-      //this.$router.replace({path:"/"});
+      this.$router.replace({path:"/"});
       
-      this.$router.go(-1);
+      //this.$router.go(-1);
     },
 
     calcolaDistanze(){
@@ -403,8 +430,7 @@ openscheda(scheda){
 },
     getLocation() {
       if (navigator.geolocation) {
-       this.watcher =   navigator.geolocation.watchPosition(this.showPosition, this.showError,{enableHighAccuracy: true,  timeout: 5000, maximumAge: 3000,
-});
+       this.watcher =   navigator.geolocation.watchPosition(this.showPosition, this.showError,{enableHighAccuracy: true, maximumAge: 3000,});
           console.log("dentro, geo ")
       } else {
           alert("Geolocation is not supported by this browser.");
@@ -655,7 +681,7 @@ ion-content {
 }
 
 
-.leaflet-popup-content .img-container {
+.leaflet-popup-content .img-container-popup {
   width: 46vw;
   /*height: 30vh;*/
  
@@ -664,6 +690,11 @@ ion-content {
 .leaflet-popup-content .card-title{
   font-size: 17px;
 }
+
+.leaflet-container a.leaflet-popup-close-button {
+    font: 23px / 24px Tahoma, Verdana, sans-serif;
+    margin: 2px;
+  }
 
 .reload-button{
   width: 60px;

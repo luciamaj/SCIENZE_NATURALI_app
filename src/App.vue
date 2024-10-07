@@ -252,15 +252,17 @@ export default defineComponent({
         let filtered= retrivedinfo.filter( x => (x.mostra == this.mostra));
         if(this.infoPubbl.percorsi){
           console.log("schede scaricate", filtered);
-            const alldata=filtered;
+          const alldata=filtered;
           const filterbypercorsi = filtered.filter(scheda => {        
-            const found = scheda.percorsi.some(perc =>{ 
-              return this.infoPubbl.percorsi.includes(perc)});
+          const found = scheda.percorsi.some(perc =>{ 
+            return this.infoPubbl.percorsi.includes(perc)
+          });
             return found;
           })
           filtered= filterbypercorsi; 
           const JSONstringalldata= JSON.stringify(this.evendata(alldata));
           localStorage.setItem('allDataMostra',JSONstringalldata);
+
         }
         
         //console.log("Filtered " , filtered);
@@ -528,4 +530,16 @@ ion-header ion-toolbar:first-of-type {
 .modal-accept-button{
   color: var(--ion-color-secondary)!important;
 }
+
+/*.swiper-container {
+  --swiper-theme-color: #ff5722; 
+  --swiper-navigation-color: #ff5722; 
+  --swiper-pagination-color: #ff5722; 
+}*/
+
+/* Optional: Customize active bullet */
+.swiper-pagination-bullet-active {
+  background-color: var(--ion-color-secondary)!important;
+}
+
 </style>

@@ -337,14 +337,14 @@ export default {
           obj=obj.path
           console.log("OGGETTO ",obj)
           if (this.attivaSupporto==true && obj.supportoVisuale !=null) {
-              this.$router.replace({ path: "/video/" + obj.index });
+              this.$router.push({ path: "/video/" + obj.index });
           }else{
             if (obj.type == "audio") {
-            this.$router.replace({ path: "/audio/" + obj.index });
+            this.$router.push({ path: "/audio/" + obj.index });
             } else  if (obj.type == "video") {
-                this.$router.replace({ path: "/video/" + obj.index });
+                this.$router.push({ path: "/video/" + obj.index });
             }else{
-              this.$router.replace({ path: "/soloImg/" + obj.index });
+              this.$router.push({ path: "/soloImg/" + obj.index });
             }
 
           }
@@ -487,9 +487,9 @@ export default {
           if(this.attivaSupporto==true && content.supportoVisuale !=null ){
 
             if(timeStamp!=null){
-                this.$router.push({ path: "/video/" + idvid +"/"+timeStamp, replace:true });
+                this.$router.push({ path: "/video/" + idvid +"/"+timeStamp, replace:false });
               }else{
-                this.$router.push({ path: "/video/" + idvid, replace:true });
+                this.$router.push({ path: "/video/" + idvid, replace:false });
               }
           }else{
 
@@ -497,21 +497,21 @@ export default {
               console.log("audio");
      
               if(timeStamp!=null){
-                this.$router.push({ path: "/audiosync/" + idvid +"/"+timeStamp, replace:true });
+                this.$router.push({ path: "/audiosync/" + idvid +"/"+timeStamp, replace:false });
               }else{
-                this.$router.push({ path: "/audio/" + idvid,  replace:true });
+                this.$router.push({ path: "/audio/" + idvid,  replace:false });
               }
 
             }else if (content.type == "video"){
               if(timeStamp!=null){
-                this.$router.push({ path: "/video/" + idvid +"/"+timeStamp, replace:true });
+                this.$router.push({ path: "/video/" + idvid +"/"+timeStamp, replace:false });
               }else{
-                this.$router.push({ path: "/video/" + idvid, replace:true });
+                this.$router.push({ path: "/video/" + idvid, replace:false });
               }
               console.log("video");
               
             }else{
-                this.$router.push({ path: "/soloImg/" + idvid , replace:true});
+                this.$router.push({ path: "/soloImg/" + idvid , replace:false});
             }
 
           }

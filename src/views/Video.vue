@@ -386,8 +386,12 @@ export default {
         this.$router.go(-1);
       } */
     
+      //this.$router.replace({path:"/"});
+      if(window.history.state.back=="/gps"){
+      this.$router.go(-1);
+     }else{
       this.$router.replace({path:"/"});
-      
+     }
       
     },
     getminsec(time){

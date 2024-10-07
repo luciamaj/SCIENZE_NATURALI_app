@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header class="ion-no-border">
       <ion-toolbar  class="toolbar">
-        <ion-title :key="percKey" slot="start"  class="main-title"> {{getpercselinlang}}</ion-title>
+        <ion-title :key="percKey" slot="start"  class="main-title"> {{getpercselinlang()}}</ion-title>
         <ion-buttons slot="end" v-if="history==true" >
               <ion-button color="secondary"  @click="openHistory()" class="collection-button">
                 <ion-icon  size="large" name="file-tray-full-outline" class="history-icon"></ion-icon>
@@ -28,39 +28,47 @@
       <div class="vertical-center view-wwave-container">
         <div class="center" :key="percKey">
           <div class="slide-percorsi">
-            <template v-if="infoPercorsi.length>1" v-for="(percorso,index) in infoPercorsi" v-bind:key="(percorso,index)">
-              <div class="logo-container" v-on:click="switchPerc(percorso)"><img  :id="'logo'+index" class="percosoImg" :class="{ 'percorsoAttivo':checkIfActive(percorso.percorso) }" :src=" this.$store.getters.baseUrl+'/upload/'+percorso.img"/></div>
 
+            <template v-if="infoPercorsi.length>1">
+              <ion-slides :options="slideOpts" pager="true">
+                <ion-slide v-for="(percorso,index) in infoPercorsi" v-bind:key="(percorso,index)">
+                  <div class="logo-container" v-on:click="select(percorso)">
+                    <img  :id="'logo'+index" class="percosoImg logo" :class="{ 'percorsoAttivo':checkIfActive(percorso.percorso, index) }" :src=" this.$store.getters.baseUrl+'/upload/'+percorso.img"/>
+                    <div v-if="!checkIfActive(percorso.percorso, index)" class="overlay-opaco"> Clicca per attivare</div>
+                    <capting :class="iscapting" id="captingIcon" hidden></capting>
+                  </div>
+                </ion-slide>
+              </ion-slides>
             </template>
             <template v-else>
-              <div class="logo-container" ><img  :id="'logo'+index" class="percosoImg percorsoAttivo" :src=" this.$store.getters.baseUrl+'/upload/'+percselInfo.img"/></div>
+              <div class="logo-container" ><img  :id="'logo'+index" class="percosoImg percorsoAttivo logo" :src=" this.$store.getters.baseUrl+'/upload/'+percselInfo.img"/></div>
 
 
             </template>
           </div>
         
         
-          <div class="logo-container" id="mostra"><img  id="logo" class="logo" :src="logo"/>
-          <capting :class="iscapting" id="captingIcon" hidden></capting></div>
+          <!--div class="logo-container" id="mostra"><img  id="logo" class="logo" :src="logo"/>
+        </div-->
 
-          <div class="buttons">
+          <div class="buttons" :key="percKey">
           <!--ion-button expand="block" class="capture-btn" @click="callJava" id="captureStart">{{$t('main.start')}}</ion-button-->
-          <template v-if="infoPercorsi!=null && percselInfo.hasOwnProperty('pulsanti') && percselInfo.pulsanti!=null">
-            <ion-button v-if="percselInfo.pulsanti.includes('Silence_tag')" expand="block" class="capture-btn" @click="callJava" id="captureStart"><img class="icon-button" src="assets/background/onda.png"></ion-button>
-            <ion-button v-if="percselInfo.pulsanti.includes('Silence_tag')" expand="block" class="capture-btn" id="captureStop" hidden><img class="icon-button" src="assets/background/onda.png"/></ion-button>
-            <ion-button v-if="percselInfo.pulsanti.includes('Qr_code')" expand="block" class="scan-btn" @click="openModal"><img class="icon-button" src="assets/background/qrI.png"></ion-button>
-            <ion-button v-if="percselInfo.pulsanti.includes('Geo_tag') && conf.gps==true" expand="block" class="gps-btn" id="testGps" @click="opengps" ><img class="icon-button" src="assets/background/gpsicon.png"></ion-button>
+        
+          <template v-if="infoPercorsi!=null && percselInfo.hasOwnProperty('pulsanti') && percselInfo.pulsanti!=null" >
+            <ion-button  v-if="percselInfo.pulsanti.includes('Silence_tag')" expand="block" class="capture-btn" @click="callJava" id="captureStart"><img class="icon-button" src="assets/background/onda.png"></ion-button>
+            <ion-button  v-if="percselInfo.pulsanti.includes('Silence_tag')" expand="block" class="capture-btn" id="captureStop" hidden><img class="icon-button" src="assets/background/onda.png"/></ion-button>
+            <ion-button  v-if="percselInfo.pulsanti.includes('Qr_code')" expand="block" class="scan-btn" @click="openModal"><img class="icon-button" src="assets/background/qrI.png"></ion-button>
+            <ion-button  v-if="percselInfo.pulsanti.includes('Geo_tag') && conf.gps==true" expand="block" class="gps-btn" id="testGps" @click="opengps" ><img class="icon-button" src="assets/background/gpsicon.png"></ion-button>
           
           </template>
           <template v-else>
             <ion-button expand="block" class="capture-btn" @click="callJava" id="captureStart"><img class="icon-button" src="assets/background/onda.png"></ion-button>
             <ion-button expand="block" class="capture-btn" id="captureStop" hidden><img class="icon-button" src="assets/background/onda.png"/>  </ion-button>
-
-       
             <ion-button expand="block" class="scan-btn" @click="openModal"><img class="icon-button" src="assets/background/qrI.png"></ion-button>
             <ion-button expand="block" v-if="conf.gps==true" class="gps-btn" id="testGps" @click="opengps" ><img class="icon-button" src="assets/background/gpsicon.png"></ion-button>
           </template>
           </div>
+         
           <!--div class="wait-tag"> </div-->
         </div>
       </div>
@@ -78,7 +86,8 @@ import {
   IonButton,
   modalController,
   alertController,
-  IonBadge
+  IonBadge, 
+  IonSlides, IonSlide 
   //IonModal
   
 } from "@ionic/vue";
@@ -86,6 +95,7 @@ import {
 import Scanner from "./Scanner.vue";
 //import Capting from "@/components/Capting.vue";
 import Capting from "@/components/Captingv2.vue";
+import Download from '@/components/ScaricamentoContenuti.vue';
 import Nav from "../components/Nav.vue";
 import { Plugins } from "@capacitor/core";
 import Subtitles from "./Subtitles.vue";
@@ -109,7 +119,16 @@ export default {
      playing:false,
      percSel:"",
      currLang:"",
-     percKey:0
+     percKey:0,
+     slideOpts: {
+        initialSlide: 0,
+        speed: 400,
+      },
+      pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+      percselInfo:"",
+    },
     };
   },
 
@@ -142,7 +161,9 @@ export default {
     this.captingIcon = document.getElementById("captingIcon");
     this.logoi = document.getElementById("logo");
     this.currLang=localStorage.getItem("lang")
+    this.percselInfo=this.getpercselInfo();
     this.percSel=this.percselInfo.percorso;
+    this.pubblication=JSON.parse(localStorage.getItem('pubblication'))
   
 
    // this.anima=document.getElementById("anima");
@@ -176,13 +197,14 @@ export default {
     watch(() => localStorage.getItem('lang'), (newLang) => {
       console.log("WATCHOOOOOOOOOOOO",newLang)
     this.currLang = newLang;
-    this.percSel = this.getpercselinlang();
+   // this.percSel = this.getpercselinlang();
   });
     
   },
   beforeUnmount() {
     window.removeEventListener('storage', this.updateTitle);
     console.log("infopercorsi",this.infoPercorsi)
+    
   },
   computed:{
 
@@ -222,9 +244,11 @@ export default {
        
 
     },
-    percselInfo(){
-      const sel=common.getpercinfo();
-      return sel;
+   
+    savedPercList(){
+      const getsaved= JSON.parse(localStorage.getItem('savedPerc')) ;
+      
+      return getsaved;
     },
     nomeLingua(perc){
       
@@ -246,7 +270,9 @@ export default {
     IonPage,
     IonButton,
     IonBadge,
-    Capting
+    Capting,
+    IonSlides, 
+    IonSlide 
     
     //IonModal
   
@@ -298,6 +324,8 @@ export default {
     this.setActiveTour=common.setActiveTour;
     this.getNotificationState=common.getNotificationState;
     this.alertPercorso=common.alertPercorso;
+    this.checkStatus=common.checkOnlineStatus;
+    this.datetoVersion=common.datetoVersion;
 
     this.emitter.on('changeVersion', _ => {
       this.showOptions();
@@ -307,6 +335,11 @@ export default {
       console.log("FINITO");
       this.notification=false;
     });
+    this.emitter.on('addPerc', (perc)=>{
+      this.addDowloadedPerc(perc);
+      this.closedownloadModal();
+    })
+
 
     this.getNotificationState().then(state=>{
       console.log("notification", state );
@@ -322,7 +355,7 @@ export default {
   methods: {
 
     opensubs(){
-      this.$router.replace({ path: "/subs/E01A/00004"});
+      this.$router.push({ path: "/subs/E01A/00004"});
     },
     updateTitle(){
       this.currLang=localStorage.getItem("lang")
@@ -334,12 +367,21 @@ export default {
       return this.percselInfo.hasOwnProperty("pulsanti")
     },
 
+
+    select(percorso){
+      if(this.savedPercList[this.currLang].find(perc=>perc==percorso.percorso)){
+        this.switchPerc(percorso);
+      }else{
+        console.log("NON è nella LISTA dei salvati")
+        this.add(percorso)
+       //this.switchPerc(percorso);
+      }
+    },
+
     switchPerc(percorso){
       const perc=percorso.percorso
-       /* if (this.$i18n.locale !== lang) {
-           this.$i18n.locale = lang;
-           localStorage.setItem('lang', lang);
-        }*/
+      
+
         if (localStorage.getItem('percSel')!= perc) {
           localStorage.setItem('percSel', perc);
           console.log("entro,cambio era", this.percSel,"sarà ", perc);
@@ -347,16 +389,24 @@ export default {
 
           common.setstorePerc(percorso);
          
-           let  jsonSchede =JSON.parse(localStorage.getItem('allDataMostra'));
-            jsonSchede=jsonSchede.filter(scheda=>scheda.percorsi.includes(perc))
-            console.log("filtro per percorso scelto", jsonSchede)
-            localStorage.setItem('dataMostra',JSON.stringify(jsonSchede));
+          let  jsonSchede =JSON.parse(localStorage.getItem('allDataMostra'));
+          jsonSchede=jsonSchede.filter(scheda=>scheda.percorsi.includes(this.percSel))
+          console.log("filtro per percorso scelto", jsonSchede)
+          localStorage.setItem('dataMostra',JSON.stringify(jsonSchede));
           
-
+          this.percselInfo=this.getpercselInfo();
           this.$forceUpdate()
           
         }
-       // this.checkVersion(perc);  poi da scommentare 
+       this.checkVersion(perc);  
+    },
+    getversionLangs(){
+       
+       let versionLangs= [];
+         versionLangs=  JSON.parse(localStorage.getItem('versionLangs'));
+       
+      return versionLangs;
+         
     },
     checkVersion(perc){
       const currentVersion=this.datetoVersion(this.pubblication.pubblicazione);
@@ -390,7 +440,7 @@ export default {
                       cssClass:'modal-accept-button',
                       handler: () => {
                           console.log("Accepted");
-                          this.emitter.emit('aggiorna', "menu");
+                          this.emitter.emit('aggiorna', "main");
                           this.pushPageAggiorna(perc);
                       
                       },
@@ -405,29 +455,99 @@ export default {
       }
            
     },
+    pushPageAggiorna(passedPerc) {
+      //const ionNav = document.querySelector('ion-nav') as any;
+      
+      //ionNav.push(Download,  { lang: this.currLang , fromC:"update", perc:passedPerc});
+     
+    },
 
     add(perc){
 
-    this.showOptions(perc)
-    /*  this.savedLangs=lang;
-    this.remaining=this.remaining.filter(item => item !== lang);*/
+    this.showOptionsadd(perc)
+  
     },
-    assignSaved(savedPerc, lang){
-    this.saved=savedPerc;
-    console.log("lllang",lang)
-    console.log("savedperlang",this.saved[lang]);
-    this.savedperlang= this.saved[lang]
-    //this.savedperlang=savedPerc["en"].split(",")
-
+    addDowloadedPerc(newPerc){
+      const saved=this.savedPercList;
+      saved[this.currLang].push(newPerc);
+      localStorage.setItem('savedPerc', JSON.stringify(saved))
     },
-    assignRemaining(remainingLangs){
-    this.remaining=remainingLangs;
 
-    this.remainingIntersected= this.infoPercorsi.filter(p=> this.remaining.includes(p.percorso));
-    console.log("REMAINING ",  this.remaining);
-    console.log("REMAINING Inter ",  this.remainingIntersected);
+    async showOptionsadd(perc) {
+      const alert = await alertController.create({
+        header: this.$t('menu.percorsi.add') ,
+        message:  this.$t('menu.percorsi.alert') ,
+        buttons: [
+          {
+            text: this.$t('action.download'),
+            cssClass:'modal-accept-button',
+            handler: async() => {
+              console.log("Accepted");
+              const online= await this.checkStatus();
+              console.log("onlòineSTATUS ",online);
+              if(online){
+                /*const suppLang=this.pubblication.percorsi.find(el=> el==perc);
+             
+                if(suppLang){}/*/
+                  console.log("aprimodal")
+                 this.modalDownload(perc)
+                
+             
+              }else{
+                console.log("NON C?èRETE");
+                this.networkError();
+              }
+            
+            
+            },
+          },
+          {
+            text: this.$t('action.cancel') ,
+            role: "cancel",
+          },
+        ],
+      });
 
+      await alert.present();
     },
+ 
+
+
+    async modalDownload(percorso)  {
+    
+      
+    const top = await modalController.getTop();
+
+    const modalDownload = await modalController.create({
+    class:"modal-download",
+      component: Download,
+      componentProps: {
+        lang: this.currLang , 
+        fromC:"perc", 
+        perc:percorso.percorso
+        },
+      swipeToClose: false,
+      presentingElement: top
+    });
+
+    modalDownload.onDidDismiss().then(async _ => {
+      this.switchPerc(percorso);
+    });
+
+   
+    return modalDownload.present();
+  },
+
+
+  async closedownloadModal  ()  {
+  
+    
+  const top = await modalController.getTop();
+
+  top.dismiss();
+},
+
+
 
 
     async openModal  ()  {
@@ -457,14 +577,14 @@ export default {
           obj=obj.path
           console.log("OGGETTO ",obj)
           if (this.attivaSupporto==true && obj.supportoVisuale !=null) {//da spostare prima
-              this.$router.replace({ path: "/video/" + obj.index });
+              this.$router.push({ path: "/video/" + obj.index });
           }else{
             if (obj.type == "audio") {
-            this.$router.replace({ path: "/audio/" + obj.index });
+            this.$router.push({ path: "/audio/" + obj.index });
             } else  if (obj.type == "video") {
-                this.$router.replace({ path: "/video/" + obj.index });
+                this.$router.push({ path: "/video/" + obj.index });
             }else{
-              this.$router.replace({ path: "/soloImg/" + obj.index });
+              this.$router.push({ path: "/soloImg/" + obj.index });
             }
 
           }
@@ -479,7 +599,7 @@ export default {
 
 
 
-    async captingModal  ()  {
+  async captingModal  ()  {
     
       
       const top = await modalController.getTop();
@@ -535,35 +655,15 @@ export default {
     const scheda = JSON.parse(ret.value);
     return scheda;
   },
-  /*async showOptions() {
-    const alert = await alertController.create({
-      header: this.$t('update.title'),
-      message:  this.$t('update.text'),
-      buttons: [
-        {
-          text: this.$t('action.postponi'),
-          role: "cancel",
-          handler: () => {
-            console.log("Declined the offer");
-            this.notification=true;
-          },
-        },
-        {
-          text:  this.$t('action.download'),
-          handler: () => {
-            console.log("Accepted");
-             this.emitter.emit('aggiorna');
-          },
-        },
-      ],
-    });
-
-    await alert.present();
-  },*/
+  getpercselInfo(){
+      const sel=common.getpercinfo();
+      return sel;
+   },
+  
   getpercselinlang(){
    
    const sel=common.getpercinfo();
-   common.setstorePerc(sel);
+  // common.setstorePerc(sel);
   console.log("selll",sel)
    if (sel){
       const lan=sel.lingue.find(item=>item.lang==this.currLang);
@@ -575,9 +675,10 @@ export default {
    }
   },
 
-  checkIfActive(perc){
+  checkIfActive(perc, index){
       console.log("checkIfActive p",this.percSel)
       if(this.percSel==perc){
+        this.slideOpts.initialSlide=index
         console.log("checkIfActive dentro")
         return true
       }else{
@@ -821,27 +922,56 @@ ion-content {
 }
 .slide-percorsi{
   display: flex;
+    height: 65vh;
 }
+
+
 .logo-container {
- /*background-color: #fff;*/
     position: relative;
-    top: 3em;
-    width: 75vw;
-    margin: auto;
-   /* height: 300px;*/
+    width: 79vw;
+   /* margin-bottom: 43px;*/
+    margin-bottom: 7px;
+    height: 52vh;
+    display: flex;
+    align-items: center;
+    padding: 0 5px;
+    justify-content: center;
 }
+.overlay-opaco{
+  background-color:  hsl(0deg 0% 100% / 69%);
+    position: absolute;
+    width: 100%;
+    height: 50px;
+    bottom: 38px;
+    /* border-bottom-right-radius: 10px; */
+    /* border-bottom-left-radius: 10px; */
+    display: flex;
+    align-items: center;
+    padding: 14px;
+    font-weight: 500;
+    font-style: normal;
+    color: #212121;
+    justify-content: center;
+}
+
 .percosoImg{
  opacity: 0.7;
+ filter: blur(1px);
  width: 30vw;
 }
 .percorsoAttivo{
-  opacity: 1
-  ;
+  opacity: 1;
+ 
+  filter: blur(0px);
+  box-shadow: 0px 0px 5px 0px #4e4e4e6b;
+  height: 100%;
+  transition:opacity, filter, height 1s;
 }
 .logo {
   object-fit: cover;
-  max-height: 50vh;
-  margin-bottom: 30px;
+ /* max-height: 60vh;*/
+ /* margin-bottom: 30px;*/
+ height: 95%;
   object-position: center;
   width: 100%;
   border-radius: 12px;
@@ -850,7 +980,7 @@ ion-content {
 .buttons{
   width: 100%;
   text-align: center;
-  top:65vh;
+  top:67vh;
   position: absolute;
   display: flex;
   padding: 0 6vw;
@@ -976,6 +1106,22 @@ ion-content {
 }*/
 .modal-accept-button{
   color: var(--ion-color-primary);
+}
+
+.modal-download{
+  display: flex;
+  align-items: center;
+}
+.modal-download>.ion-page{
+  height: 41%;
+  transform: translatex(-50%);
+  margin: auto;
+  text-align: center;
+  left: 50%;
+  /* top: 50%; */
+  width: 86%;
+  border-radius: 15px;
+
 }
 
 </style>

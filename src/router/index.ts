@@ -12,18 +12,31 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'wave',
-    component: WaveApp,
+    component:Wave,
     beforeEnter: (to, from, next) => {
       if(localStorage.getItem('pubblication')==null) {
         next('/onboard');
         
         return;
       } else {
-        next();
-        return;
+        /*if(store.getters.conf.debug==true){
+      
+          next({ component: WaveApp });
+         
+          return;
+        }else{
+          next({ component: Wave });
+          return;
+        }*/
+      
+       next();
+       return;
+       
       }
     }
   },
+
+  
   { path: "/:pathMatch(.*)*", redirect: '/' },
   {
     path:"/scheda/:id",

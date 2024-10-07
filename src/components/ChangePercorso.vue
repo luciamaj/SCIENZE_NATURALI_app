@@ -181,13 +181,11 @@ export default ({
     getversionLangs(){
        
        let versionLangs= [];
-         console.log("linguee ", localStorage.getItem('versionLangs'))
          versionLangs=  JSON.parse(localStorage.getItem('versionLangs'));
-         console.log("linguee versionLangs ", versionLangs)
-          
-    return versionLangs;
+       
+      return versionLangs;
          
-     },
+    },
     addPerc(perc){
       console.log("ADDO perc", perc)
       this.savedPerc={
@@ -361,12 +359,12 @@ export default ({
           this.currPerc=perc;
 
           common.setstorePerc(percorso);
-         
-           let  jsonSchede =JSON.parse(localStorage.getItem('allDataMostra'));
-            jsonSchede=jsonSchede.filter(scheda=>scheda.percorsi.includes(perc))
-            console.log("filtro per percorso scelto", jsonSchede)
-            localStorage.setItem('dataMostra',JSON.stringify(jsonSchede));
-          
+        
+          let  jsonSchede =JSON.parse(localStorage.getItem('allDataMostra'));
+          jsonSchede=jsonSchede.filter(scheda=>scheda.percorsi.includes(perc))
+          console.log("filtro per percorso scelto", jsonSchede)
+          localStorage.setItem('dataMostra',JSON.stringify(jsonSchede));
+        
 
           this.$forceUpdate()
           

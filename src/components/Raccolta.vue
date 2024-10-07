@@ -160,12 +160,12 @@
             openScheda(tag, type){
 
                 if(type=="video"){
-                    this.$router.replace({ path: "/video/" + tag});
+                    this.$router.push({ path: "/video/" + tag});
 
                 }else   if(type=="audio"){
-                    this.$router.replace({ path: "/audio/" + tag});
+                    this.$router.push({ path: "/audio/" + tag});
                 }else{
-                    this.$router.replace({ path: "/soloImg/" + tag});
+                    this.$router.push({ path: "/soloImg/" + tag});
                 }
 
             },

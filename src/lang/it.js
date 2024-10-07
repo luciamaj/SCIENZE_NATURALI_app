@@ -11,7 +11,8 @@ export const it = {
         app:"Apri in App",
         salta:"Salta",
         close:"Chiudi",
-        riprova:"Riprova"
+        riprova:"Riprova",
+        continua:"Continua"
     },
     onboard:{
         lang:{
@@ -82,7 +83,12 @@ export const it = {
 		timeoutTagTitle:"ATTENZIONE",
 		timeoutTagText:"SilenceTag NON rilevato, potrebbe essere spento, utilizza il pulsante \"Scansiona QR Code\"",
 		timeoutTagAccept:"Prosegui",
+        clicktoChangePerc:"Click per attivare"
+
       
+    },
+    gps:{
+        msgUscita:"Uscendo la geolocalizzazione verrà interrotta"
     },
 
     menu:{

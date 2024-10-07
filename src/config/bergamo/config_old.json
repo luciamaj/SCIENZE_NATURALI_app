@@ -1,0 +1,13 @@
+{
+    "nameMuseum": "museodellestorie",
+    "baseUrl":"https://museodellestorie.eadev.it/dataoversound-swi",
+
+    "appleAppName":"com.ea.MuseoDelleStorie://",
+    "appleStoreUrl":"https://itunes.apple.com/it/app/itunes-connect/id376771144",
+    "androidAppName":"com.museodellestorie.ggwave;package=com.msbmuseum.ggwave",
+    "androidStoreUrl":"https://play.google.com/store/apps/details?id=com.msbmuseum.ggwave",
+    "interactionMode":"mix",
+    "langDefault":"it"
+
+    
+}

@@ -8,7 +8,8 @@ export const en= {
         app:"Go to App",
         salta:"Skip",
         close:"Close",
-        riprova:"Try again"
+        riprova:"Try again",
+        continua:"Continue"
     },
     onboard:{
         lang:{
@@ -79,8 +80,12 @@ export const en= {
 		timeoutTagTitle:"ATTENTION",
 		timeoutTagText:"SilenceTag NOT detected, it may be off. Use the \"Scan QR Code\" button",
 		timeoutTagAccept:"Continue",
+        clicktoChangePerc:"Click to activate"
+
       
-    
+    },
+    gps:{
+         msgUscita:"A la sortie la géolocalisation sera interrompue"
     },
 
     menu:{

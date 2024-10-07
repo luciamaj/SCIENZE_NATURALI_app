@@ -417,10 +417,11 @@ export default {
   searchMedia(){
     console.log('VEDO FROM? '+ this.fromC )
     console.log("lingua? "+ this.passedLang);
+    const allschede=localStorage.getItem('allDataMostra');
     const schede=localStorage.getItem('dataMostra');
-    let jsonSchede=JSON.parse(schede);
+    let jsonSchede=allschede==null?JSON.parse(schede):JSON.parse(allschede);
     if(this.perc!=null){
-      localStorage.setItem('allDataMostra',schede);
+      allschede==null && localStorage.setItem('allDataMostra',schede);
        jsonSchede=jsonSchede.filter(scheda=>scheda.percorsi.includes(this.perc))
       console.log("filtro per percorso scelto", jsonSchede)
       localStorage.setItem('dataMostra',JSON.stringify(jsonSchede));
@@ -996,7 +997,9 @@ export default {
       }else if(this.fromC=="update"){
         this.pushPage("update");
       } else if(this.fromC=="lang" ||this.fromC=="perc"){
-        this.pushPage("lang");
+        if(this.fromC=="lang"){
+          this.pushPage("lang");
+        } 
         if(this.salvataggioCompleto==true){
           this.fromC=="lang"?this.emitter.emit('addLang',this.passedLang):this.emitter.emit('addPerc',this.perc);
           

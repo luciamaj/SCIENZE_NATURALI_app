@@ -437,8 +437,13 @@ export default {
     /*  if (window.history.length > 1) {
         this.$router.go(-1);
       } */
-     console.log("HISTORU : ",window.history.length )
+     console.log("HISTORU : ",window.history )
+     if(window.history.state.back=="/gps"){
+      this.$router.go(-1);
+     }else{
       this.$router.replace({path:"/"});
+     }
+      
       
       
     },

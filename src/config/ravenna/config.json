@@ -1,6 +1,6 @@
 {
-    "nameMuseum": "museo Palazzo Guiccioli",
-    "baseUrl":"https://museorisorgimentoravenna-test.eadev.it/dataoversound-swi",
+    "nameMuseum": "museo risorgimento Ravenna",
+    "baseUrl":"https://museorisorgimentoravenna.eadev.it/dataoversound-swi",
     "percorsi":true,
     
     "appleAppName":"com.ea.PalazzoGuiccioli://",
@@ -9,7 +9,12 @@
     "androidStoreUrl":"https://play.google.com/store/apps/details?id=com.daisyravenna.ggwave",
     "interactionMode":"mix",
     "langDefault":"en",
-    "gps":false
 
-    
+    "coord":{
+        "NO":[ 45.58283251014277, 8.96687190033312],
+        "NE":[ 45.58283251014277, 9.429670949972401],
+        "SO":[ 45.35216866591035, 8.96687190033312],
+        "SE":[ 45.35216866591035, 9.429670949972401]
+
+    }
 }

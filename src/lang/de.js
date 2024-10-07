@@ -8,7 +8,8 @@ export const de= {
         app:"Gehe zur App",
         salta:"Überspringen",
         close:"Close",
-        riprova:"Versuch es noch einmal"
+        riprova:"Versuch es noch einmal",
+        continua:"Fortsetzung"
     },
     onboard:{
         lang:{
@@ -77,7 +78,12 @@ export const de= {
 		timeoutTagTitle:"AUFMERKSAMKEIT",
 		timeoutTagText:"SilenceTag wird NICHT erkannt, möglicherweise ist es deaktiviert. Verwenden Sie die Schaltfläche \"QR-Code scannen\"",
 		timeoutTagAccept:"Fortsetzen",
-       
+        clicktoChangePerc:"Click to activate"
+
+      
+    },
+    gps:{
+         msgUscita:"Beim Verlassen wird die Geolokalisierung unterbrochen"
     },
 
     menu:{

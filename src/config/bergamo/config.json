@@ -1,13 +1,31 @@
 {
-    "nameMuseum": "museodellestorie",
-    "baseUrl":"https://museodellestorie.eadev.it/dataoversound-swi",
+  "debug":false,
 
-    "appleAppName":"com.ea.MuseoDelleStorie://",
-    "appleStoreUrl":"https://itunes.apple.com/it/app/itunes-connect/id376771144",
-    "androidAppName":"com.museodellestorie.ggwave;package=com.msbmuseum.ggwave",
-    "androidStoreUrl":"https://play.google.com/store/apps/details?id=com.msbmuseum.ggwave",
-    "interactionMode":"mix",
-    "langDefault":"it"
+  "nameMuseum": "Mura bergamo",
+  "baseUrl":"https://museobgmura-test.eadev.it/dataoversound-swi",
+  "percorsi":true,
+  
+  "appleAppName":"com.ea.BergamoMura://",
+  "appleStoreUrl":"https://itunes.apple.com/it/app/itunes-connect/id6593673275",
+  "androidAppName":"com.daisymuradibergamo.ggwave;package=com.daisymuradibergamo.ggwave",
+  "androidStoreUrl":"https://play.google.com/store/apps/details?id=com.daisymuradibergamo.ggwave",
+  "interactionMode":"mix",
+  "gps":true,
+  "range":20,
+  "langDefault":"en",
+  
+  "lat1":45.463288101008736,
+  "lon1": 9.218441066349875,
+  "lat2": 45.457223848531285,
+  "lon2":9.233766145521432,
+
+  "altezzaMappa": 3000,
+  "larghezzaMappa": 2645,
+  "minZoom":0
+
+
+
+
 
     
 }

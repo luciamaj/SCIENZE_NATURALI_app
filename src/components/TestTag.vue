@@ -263,11 +263,11 @@ export default {
         if (obj != null) {
             console.log("OGGETTO ",obj)
           if (obj.path.type == "audio") {
-            this.$router.replace({ path: "/audio/" + obj.path.index });
+            this.$router.push({ path: "/audio/" + obj.path.index });
           } else  if (obj.path.type == "video") {
-              this.$router.replace({ path: "/video/" + obj.path.index });
+              this.$router.push({ path: "/video/" + obj.path.index });
           }else{
-            this.$router.replace({ path: "/soloImg/" + obj.path.index });
+            this.$router.push({ path: "/soloImg/" + obj.path.index });
           }
         }
       });
