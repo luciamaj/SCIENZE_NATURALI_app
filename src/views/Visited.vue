@@ -18,6 +18,7 @@ import {
   IonPage,
  IonContent,
 
+
 } from "@ionic/vue";
 
 
@@ -39,6 +40,7 @@ export default {
     IonContent,
     IonPage,
     Raccolta,
+  
 
   },
   data(){
@@ -52,15 +54,10 @@ export default {
     console.log("PASSA DAL MOUNTED")
         this.fromPage = this.$route.params.from || 'main';
     },
-  computed:{
-    
-   /* from(){
-      console.log("FROM: ",this.$route.params.from)
-      return this.$route.params.from;
-    },*/
-  
-  }
-
+    methods:{
+     
+    }
+ 
 }
 
 </script>

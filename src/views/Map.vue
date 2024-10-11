@@ -9,9 +9,9 @@
 
       <ion-buttons slot="end" >
         <ion-button v-if="visited.length>0" color="secondary"  @click="openviste()" class="collection-button">
-          <ion-icon   name="file-tray-full-outline" class="history-icon"></ion-icon>
+          <ion-icon   name="file-tray-full-outline" class="history-icon map-icons"></ion-icon>
         </ion-button>
-        <ion-button v-on:click="aletrtMap()" class="back-button"><ion-icon size="medium" name="help-circle-outline"></ion-icon> </ion-button>
+        <ion-button v-on:click="introModal()" class=""><ion-icon class="map-icons" size="medium" name="information-circle-outline"></ion-icon> </ion-button>
       </ion-buttons>
     </ion-toolbar> 
   </ion-header>
@@ -27,7 +27,7 @@
 
           <div class="utils-container">
             <ion-button class="reload-button" @click="updateMap"><img class="icon-button" src="assets/background/reload.png"></ion-button>
-            
+            open{{ open }}
             lat: {{ userCoord.latitude }} -
             long {{ userCoord.longitude }} ---
             distanza {{ distance }} m
@@ -138,6 +138,10 @@ export default {
     }
 
   },
+  activated(){
+    console.log("Activated Mappa")
+
+  },
  
 
   beforeMount(){
@@ -179,7 +183,14 @@ export default {
    console.log("items",this.items)
              
   },
-
+  beforeUnmount() {
+    if (this.map) {
+      this.map.remove();
+    }
+    this.open==false
+    this.clearwatcher();
+    console.log("Unmounting map");
+  },
 
   methods: {
 
@@ -265,7 +276,7 @@ export default {
             cssClass:'modal-accept-button',
             handler: async() => {
               this.open=false;
-              this.map.remove();
+             // this.map.remove();
               this.clearwatcher();
               this.back();
              
@@ -345,16 +356,18 @@ export default {
       return icons[status];
     },
     updateMap() {
-      this.map.remove();
+      if(this.map){
+        this.map.remove();
+      }
+      
      // this.getitems();
       this.drawMap();
     },
 
     back(){
       console.log("HISTORU : ",window.history )
-      this.$router.replace({path:"/"});
-      
-      //this.$router.go(-1);
+     // this.$router.replace({path:"/"});
+      this.$router.go(-1);
     },
 
     calcolaDistanze(){
@@ -383,7 +396,7 @@ export default {
       if( this.open==false){
         setTimeout(() => {
       this.open=true
-     }, 10000);
+     }, 5000);
       }
      
       this.userCoord.latitude= position.coords.latitude,
@@ -428,31 +441,31 @@ export default {
    console.log("chiudo il watcher");
     navigator.geolocation.clearWatch(this.watcher);
    },
-openscheda(scheda){
-  const tag=scheda.tag
- //this.addtoBucket(tag,'schede_viste')
- this.addtoBucket(tag,'schede_viste_onmap')
-   const content=scheda.content.find(x => x.lang == this.lang);
-          console.log("scheda.type "+ content.type);
-          this.clearwatcher();
-          this.open=false;
-          if (content.type == "audio") {
-            console.log("audio");
-            //this.schedaState(true);
-            //this.$router.push({ path: "/audio/" + idvid , replace:true});
-           
-            this.$router.push({ path: "/audio/" + tag,  replace:true });
-            
+    openscheda(scheda){
+      const tag=scheda.tag
+    //this.addtoBucket(tag,'schede_viste')
+    this.addtoBucket(tag,'schede_viste_onmap')
+      const content=scheda.content.find(x => x.lang == this.lang);
+              console.log("scheda.type "+ content.type);
+              this.clearwatcher();
+              this.open=false;
+              if (content.type == "audio") {
+                console.log("audio");
+                //this.schedaState(true);
+                //this.$router.push({ path: "/audio/" + idvid , replace:true});
+              
+                this.$router.push({ path: "/audio/" + tag,  replace:false });
+                
 
-          }else if (content.type == "video"){
-            console.log("video");
-            //this.schedaState(true);
-            this.$router.push({ path: "/video/" + tag, replace:true });
-          }else{
-              this.$router.push({ path: "/soloImg/" + tag , replace:true});
-          }
-    
-},
+              }else if (content.type == "video"){
+                console.log("video");
+                //this.schedaState(true);
+                this.$router.push({ path: "/video/" + tag, replace:false });
+              }else{
+                  this.$router.push({ path: "/soloImg/" + tag , replace:false});
+              }
+        
+    },
     getLocation() {
       if (navigator.geolocation) {
        this.watcher =   navigator.geolocation.watchPosition(this.showPosition, this.showError,{enableHighAccuracy: true, maximumAge: 3000,});
@@ -605,17 +618,12 @@ openscheda(scheda){
       
     },
     openviste(){
+      this.open=false;
       this.$router.push({ name: 'raccolta', params:{ from:"map"}});
      // this.$router.push({ path: "/raccolta", replace:true});
     },
 
-    unmounted(){
-    this.open==false
-    console.log("Unmounting map");
    
- 
-    
-  },
  
   }
 };
@@ -631,6 +639,13 @@ ion-content {
 }
 .back-button{
   text-transform: capitalize;
+}
+.map-icons{
+  font-size: 1.6em;
+  margin: auto;
+}
+.history-icon{
+  margin-right: 10px;
 }
 .vertical-center {
   display: flex;

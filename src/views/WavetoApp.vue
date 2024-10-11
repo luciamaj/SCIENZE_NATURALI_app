@@ -541,7 +541,7 @@ export default {
         
     },
     openHistory(){
-       this.$router.push({ path: "/raccolta", replace:true});
+       this.$router.push({ name: "raccolta",  params:{ from:"main"}, replace:true});
     },
     opengps(){
       console.log("HISTORU : ",window.history )

@@ -80,7 +80,7 @@ export const fr ={
 		timeoutTagTitle:"ATTENTION",
 		timeoutTagText:"SilenceTag NON détecté, il est peut-être désactivé, utilisez le bouton \"Scan QR Code\"",
 		timeoutTagAccept:"Continuez",
-        clicktoChangePerc:"Click to activate"
+        clicktoChangePerc:"Sélectionnez l'itinéraire"
 
       
     },

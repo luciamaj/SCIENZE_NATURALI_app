@@ -118,7 +118,7 @@ export default {
 
     contentScheda(){
          
-       console.log("ENTRO QUA")
+       console.log("ENTRO QUA", this.paramId);
        const lang= localStorage.getItem("lang")
          
       const scheda= this.dataSchede.content.find(x => x.lang == lang);
@@ -311,9 +311,10 @@ export default {
      // this.$router.replace({path:"/"});
      console.log("HISTORY",window.history.state)
       if(window.history.state.back=="/gps"||window.history.state.back== "/raccolta"){
+        //this.$router.replace({path:window.history.state.back});
       this.$router.go(-1);
      }else{
-      this.$router.replace({path:"/"});
+      this.$router.go(-1);
      }
       
       
@@ -339,7 +340,8 @@ export default {
     timeout() { 
       console.log("timeout");
     
-      this.$router.replace({path:"/"});
+     // this.$router.replace({path:"/"});
+     this.$router.go(-1);
       
     },
 
@@ -389,7 +391,7 @@ export default {
 .back-button{
   text-transform: capitalize;
 }
-ion-icon{
+.back-icon{
   margin-right: 10px;
 }
 ion-content {

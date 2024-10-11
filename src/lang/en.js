@@ -80,12 +80,12 @@ export const en= {
 		timeoutTagTitle:"ATTENTION",
 		timeoutTagText:"SilenceTag NOT detected, it may be off. Use the \"Scan QR Code\" button",
 		timeoutTagAccept:"Continue",
-        clicktoChangePerc:"Click to activate"
+        clicktoChangePerc:"Select route"
 
       
     },
     gps:{
-         msgUscita:"A la sortie la géolocalisation sera interrompue"
+         msgUscita:"By leaving, geolocation will be interrupted."
     },
 
     menu:{

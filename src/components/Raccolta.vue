@@ -1,12 +1,13 @@
 <template>
     <ion-header class="ion-no-border">
-      <ion-toolbar >
+        <ion-toolbar >
         <ion-title > {{$t('raccolta.title')}}</ion-title>
-       <ion-buttons slot="start" >
-        <ion-button  @click="back"><ion-icon size="large" name="chevron-back" /></ion-button>
-      </ion-buttons>
-      </ion-toolbar> 
+        <ion-buttons slot="start" >
+        <ion-button  v-on:click="back()"><ion-icon size="large" name="arrow-back" /></ion-button>
+        </ion-buttons>
+        </ion-toolbar> 
     </ion-header>
+  
     <ion-content class="ion-padding">
         <div v-if="from=='main'" class="collection-title"> {{$t('raccolta.subtitle')}}</div>
         <div class="list-container">
@@ -34,7 +35,7 @@
         </div>
     </ion-content>
    
-
+  
 </template>
 
 <script>
@@ -61,6 +62,7 @@
                 if(this.from=="map"){
                     visitedTag=localStorage.getItem("schede_viste_onmap");
                 }else{
+                    
                     visitedTag=localStorage.getItem("schede_viste");
                 }
                 console.log("visitedTag ",  visitedTag)
@@ -88,7 +90,7 @@
         },
         
         created(){
-             this.lang= localStorage.getItem("lang");
+            this.lang= localStorage.getItem("lang");
             this.getImages();
 
         },
@@ -104,25 +106,29 @@
                     const objectStore = transaction.objectStore('media-'+this.lang);
                     if(this.visited){
                         this.visited.forEach(scheda=>{
-                            const  test= objectStore.get(scheda.img);
+                            if(scheda.img!=null){
+                                const  test= objectStore.get(scheda.img);
 
-                            test.onsuccess = event => {
-                                console.log("GET RESULT ", event.target.result)
-                                const testget = event.target.result;      
-                                if (testget) {
-                                    const obj={}
-                                    obj['name=']=testget.name
-                                     obj['blob=']=testget.blob
-                                    this.images.push(obj);
-                                    document.getElementById("thumb-"+testget.name).src=URL.createObjectURL(testget.blob);
+                                test.onsuccess = event => {
+                                    console.log("GET RESULT ", event.target.result)
+                                    const testget = event.target.result;      
+                                    if (testget) {
+                                        const obj={}
+                                        obj['name=']=testget.name
+                                        obj['blob=']=testget.blob
+                                        this.images.push(obj);
+                                        document.getElementById("thumb-"+testget.name).src=URL.createObjectURL(testget.blob);
+                                        
+                                    } else {
+                                    /*console.log('testget dont exixst error');
+                                        this.fetchimg(name);*/
+                                    }
+
                                     
-                                } else {
-                                /*console.log('testget dont exixst error');
-                                    this.fetchimg(name);*/
-                                }
+                                };
 
-                                
-                            };
+                            }
+                            
                         })
                      }
                         
@@ -132,7 +138,7 @@
 
             },
 
-            schedaImage(name){
+           /* schedaImage(name){
                 console.log('tiro su le immagini ', this.images);
                 if(this.images){
                     const img= this.images.find(image=>image.name==name);
@@ -144,30 +150,34 @@
                 }
 
               
-            },
-            back(){
-                if(this.from=="map"){
-                    //this.$router.replace("/gps")
-                    this.$router.go(-1);
-                }else{
-                    this.$router.replace("/")
-                }
-                
-            },
+            },*/
+          
             savedtag(tags){
                 this.visitedTag=tags;
             },
             openScheda(tag, type){
-
+                
+                    console.log("COSA APREEEEEEEEEE?", tag, type);
                 if(type=="video"){
                     this.$router.push({ path: "/video/" + tag});
 
                 }else   if(type=="audio"){
                     this.$router.push({ path: "/audio/" + tag});
                 }else{
-                    this.$router.push({ path: "/soloImg/" + tag});
+                    console.log("else soloImage")
+                    this.$router.push({ path: "/soloImg/" + tag, replace:false});
                 }
 
+            },
+            back(){
+                console.log("Raccolta FROM ", this.from )
+                if(this.from=="map"){
+                    //this.$router.replace("/gps")
+                    this.$router.go(-1);
+                }else{
+                    this.$router.go(-1);
+                }
+                
             },
 
            

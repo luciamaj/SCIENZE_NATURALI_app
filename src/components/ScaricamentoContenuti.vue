@@ -415,6 +415,7 @@ export default {
     },
 
   searchMedia(){
+    let  counter;
     console.log('VEDO FROM? '+ this.fromC )
     console.log("lingua? "+ this.passedLang);
     const allschede=localStorage.getItem('allDataMostra');
@@ -430,9 +431,14 @@ export default {
 
     let contenuto="";
     console.log("->>",jsonSchede);
-    let counter=1;
-    this.mediaCounter();
-    this.mediatoGet.push(this.$store.getters.pubblication.img);
+    const percorsi=JSON.parse(localStorage.getItem('percorsi'));
+    percorsi.forEach(perc=>{
+      counter++;
+      this.mediaCounter();
+      this.mediatoGet.push(perc.img);
+
+    })
+    
    // this.getMedia(this.$store.getters.pubblication.img);
     jsonSchede.forEach((scheda, index) => {
       console.log("n° ",counter++ )

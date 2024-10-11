@@ -4,11 +4,11 @@
       <ion-toolbar class="toolbar" >
         <!--ion-title v-html="contentScheda.titolo" > </ion-title-->
         <ion-buttons   slot="start"  v-if="context=='scheda'">
-          <ion-button v-on:click="goingback()"  class="back-button" ><ion-icon size="medium" name="arrow-back"></ion-icon> {{$t('schede.back')}}</ion-button>
+          <ion-button v-on:click="goingback()"  class="back-button" ><ion-icon size="medium" class="back-icon" name="arrow-back"></ion-icon> {{$t('schede.back')}}</ion-button>
          
         </ion-buttons>
         <ion-buttons   slot="end"  v-if="context=='modal'">
-          <ion-button v-on:click="closeModal()"  class="back-button" ><ion-icon size="medium" name="close"></ion-icon> {{$t('action.close')}}</ion-button>
+          <ion-button v-on:click="closeModal()"  class="back-button" ><ion-icon size="medium" name="close"></ion-icon> </ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -574,7 +574,7 @@ export default {
 .back-button{
   text-transform: capitalize;
 }
-ion-icon{
+.back-icon{
   margin-right: 10px;
 }
 ion-content {

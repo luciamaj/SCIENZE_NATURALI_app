@@ -83,7 +83,7 @@ export const it = {
 		timeoutTagTitle:"ATTENZIONE",
 		timeoutTagText:"SilenceTag NON rilevato, potrebbe essere spento, utilizza il pulsante \"Scansiona QR Code\"",
 		timeoutTagAccept:"Prosegui",
-        clicktoChangePerc:"Click per attivare"
+        clicktoChangePerc:"Seleziona percorso"
 
       
     },

@@ -78,8 +78,7 @@ export const de= {
 		timeoutTagTitle:"AUFMERKSAMKEIT",
 		timeoutTagText:"SilenceTag wird NICHT erkannt, möglicherweise ist es deaktiviert. Verwenden Sie die Schaltfläche \"QR-Code scannen\"",
 		timeoutTagAccept:"Fortsetzen",
-        clicktoChangePerc:"Click to activate"
-
+        clicktoChangePerc:"Route auswählen"
       
     },
     gps:{

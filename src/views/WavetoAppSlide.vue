@@ -34,7 +34,7 @@
                 <ion-slide v-for="(percorso,index) in infoPercorsi" v-bind:key="(percorso,index)">
                   <div class="logo-container" v-on:click="select(percorso)">
                     <img  :id="'logo'+index" class="percosoImg logo" :class="{ 'percorsoAttivo':checkIfActive(percorso.percorso, index) }" :src=" this.$store.getters.baseUrl+'/upload/'+percorso.img"/>
-                    <div v-if="!checkIfActive(percorso.percorso, index)" class="overlay-opaco"> Clicca per attivare</div>
+                    <div v-if="!checkIfActive(percorso.percorso, index)" class="overlay-opaco"> {{$t('main.clicktoChangePerc')}}</div>
                     <capting :class="iscapting" id="captingIcon" hidden></capting>
                   </div>
                 </ion-slide>
@@ -718,9 +718,9 @@ export default {
           if(this.attivaSupporto==true && content.supportoVisuale !=null ){
 
             if(timeStamp!=null){
-                this.$router.push({ path: "/video/" + idvid +"/"+timeStamp, replace:true });
+                this.$router.push({ path: "/video/" + idvid +"/"+timeStamp, replace:false });
               }else{
-                this.$router.push({ path: "/video/" + idvid, replace:true });
+                this.$router.push({ path: "/video/" + idvid, replace:false });
               }
           }else{
 
@@ -728,21 +728,21 @@ export default {
               console.log("audio");
      
               if(timeStamp!=null){
-                this.$router.push({ path: "/audiosync/" + idvid +"/"+timeStamp, replace:true });
+                this.$router.push({ path: "/audiosync/" + idvid +"/"+timeStamp, replace:false });
               }else{
-                this.$router.push({ path: "/audio/" + idvid,  replace:true });
+                this.$router.push({ path: "/audio/" + idvid,  replace:false });
               }
 
             }else if (content.type == "video"){
               if(timeStamp!=null){
-                this.$router.push({ path: "/video/" + idvid +"/"+timeStamp, replace:true });
+                this.$router.push({ path: "/video/" + idvid +"/"+timeStamp, replace:false });
               }else{
-                this.$router.push({ path: "/video/" + idvid, replace:true });
+                this.$router.push({ path: "/video/" + idvid, replace:false });
               }
               console.log("video");
               
             }else{
-                this.$router.push({ path: "/soloImg/" + idvid , replace:true});
+                this.$router.push({ path: "/soloImg/" + idvid , replace:false});
             }
 
           }
@@ -772,7 +772,7 @@ export default {
         
     },
     openHistory(){
-       this.$router.push({ path: "/raccolta", replace:true});
+      this.$router.push({ name: "raccolta",  params:{ from:"main"}, replace:false});
     },
     opengps(){
       console.log("HISTORU : ",window.history )

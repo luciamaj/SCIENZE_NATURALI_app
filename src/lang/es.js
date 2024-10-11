@@ -74,7 +74,7 @@ export const es= {
 		timeoutTagTitle:"ALERTA",
 		timeoutTagText:"SilenceTag NO detectado, quizá esté apagado. Utiliza el,\"Escanea el código QR\" botón",
 		timeoutTagAccept:"Continúa",
-        clicktoChangePerc:"Click to activate"
+        clicktoChangePerc:"Seleccionar ruta"
 
       
     },
