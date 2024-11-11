@@ -60,6 +60,7 @@ import { useRouter } from "vue-router";
 import L from "leaflet";
 import 'leaflet/dist/leaflet.css';
 import Amplitude from "./Amplitude.vue";
+import { set } from "idb-keyval";
 
 
 
@@ -96,7 +97,7 @@ export default {
 
       url: '/assets/background/map/mappa.png',
       items: [],
-      markers: [],
+      markers:[],
       open:false,
       isloaded:false,
       range:0,
@@ -126,15 +127,20 @@ export default {
       }
     },
 
-    visited(){
-      let visitedTag=localStorage.getItem("schede_viste_onmap");  
-      if(visitedTag){
-          visitedTag=visitedTag.split(',');
-          console.log("visitedtag: ",visitedTag)
-          return visitedTag;
-      }else{
-          return [];
-      } 
+    visitedSchede:{
+      get() {
+        let visitedTag=localStorage.getItem("schede_viste_onmap");  
+        if(visitedTag){
+            visitedTag=visitedTag.split(',');
+            console.log("visitedtag: ",visitedTag)
+            return visitedTag;
+        }else{
+            return [];
+        } 
+     },
+     set(info){
+      localStorage.setItem(info.variabile, info.ntag);
+     }
     }
 
   },
@@ -152,7 +158,7 @@ export default {
     this.lat2=this.conf.lat2;
     this.lon2=this.conf.lon2;
     console.log("configlatlan", this.lat1,this.lat2, this.lon1, this.lon2);
-
+    this.visited=this.visitedSchede;
     this.schede.forEach(scheda=>{
       const cont= scheda.content.find(x => x.lang == this.lang);
     
@@ -183,13 +189,15 @@ export default {
    console.log("items",this.items)
              
   },
-  beforeUnmount() {
+  async beforeUnmount() {
     if (this.map) {
       this.map.remove();
     }
     this.open==false
     this.clearwatcher();
     console.log("Unmounting map");
+    const top = await modalController.getTop();
+    if (top) top.dismiss();
   },
 
   methods: {
@@ -198,29 +206,42 @@ export default {
     async introModal()  {
     
       
-    const top = await modalController.getTop();
+      const top = await modalController.getTop();
 
-    const introModal = await modalController.create({
-      component: Amplitude,
-      cssClass:"modal-intro",
-      componentProps: { 
-        tag:"E00A",
-        context:"modal"
-        },
-      swipeToClose: false,
-      presentingElement: top
-    });
+      const introModal = await modalController.create({
+        component: Amplitude,
+        cssClass:"modal-intro",
+        componentProps: { 
+          tag:"E00A",
+          context:"modal"
+          },
+        swipeToClose: false,
+        presentingElement: top
+      });
 
-    //await introModal.onWillDismiss();
-    introModal.onDidDismiss().then(async _ => {
-      localStorage.setItem("alertmappaletto",1);
-    });
+      //await introModal.onWillDismiss();
+      introModal.onDidDismiss().then(async _ => {
+        localStorage.setItem("alertmappaletto",1);
+      });
 
-   
-    return introModal.present();
-  },
+    
+      return introModal.present();
+    },
     savedtag(tags){
         this.visitedTag=tags;
+    },
+    aggiornavisti(tag){
+     const  itemtochchage=this.items.find(it=>it.id==tag);
+     const markertochange=this.markers.find(marker=>marker.id==tag)
+     if (itemtochchage &&markertochange){
+        itemtochchage.status=2;
+    
+        markertochange.marker.setIcon(this.markerIcon(itemtochchage.status));
+      
+    
+      }
+    
+      
     },
 
     buttonsIntro(){
@@ -313,55 +334,53 @@ export default {
     
 
       L.imageOverlay(this.url, this.imageBounds).addTo(this.map);
-     this.map.fitBounds(this.bounds);
+      this.map.fitBounds(this.bounds);
      
       this.map.invalidateSize();
-      this.markers = [];
-     
       this.items.forEach(async item=>{
-       /* const markerX = L.marker(L.latLng(item.latLng), {draggable: false})
-          .setIcon(this.getIcon(item.status))
-        markerX.itemId = item.id;
-        this.markers.push(markerX);*/
         if(item.id!="me"){
           const im= await this.getCoverImg(item.img)
-        // console.log("img card ",im)
-          const popupcontent=`<div class="img-container-popup"><img src=${im}></div>
-              <div class="card-title">${item.description}</div>`
-          L.marker(L.latLng(item.latLng)).setIcon(this.getIcon(item.status)).addTo(this.map)
-            .bindPopup(popupcontent)
+          // console.log("img card ",im)
+            const popupcontent=`<div class="img-container-popup"><img src=${im}></div>
+                <div class="card-title">${item.description}</div>`
+              const marker=L.marker(L.latLng(item.latLng),{ icon:this.markerIcon(item.status)}).addTo(this.map).bindPopup(popupcontent);
+              console.log("ICON marker", marker._icon);
+
+              this.markers.push({id:item.id,marker:marker});
         }else{
-          this.meMarker=L.marker(L.latLng(item.latLng)).setIcon(this.getIcon(item.status)).addTo(this.map)
+          this.meMarker=L.marker(L.latLng(item.latLng)).setIcon(this.markerIcon(item.status)).addTo(this.map)
         }
       });
 
     },
 
 
-    getIcon(status) { 
+    markerIcon(status) { 
       // Inicializa os ícones
-      const ColorIcon = L.Icon.extend({
-        options: {
-            shadowUrl: '',
-            iconSize: [36, 36],
-            iconAnchor: status!=3?[18,36]:[18,18],
-            popupAnchor: [1, -34],
-            shadowSize: [20, 20]
-        }
+      const urlIcon=[];
+      urlIcon[1]='/assets/background/pinlocation.png';
+      urlIcon[2]='/assets/background/pinlocation_visto.png';
+      urlIcon[3]='/assets/background/hotspot.gif';
+      const ColorIcon = L.icon({
+        iconUrl:  urlIcon[status],
+        shadowUrl: '',
+        iconSize: [36, 36],
+        iconAnchor: status!=3?[18,36]:[18,18],
+        popupAnchor: [1, -34],
+        shadowSize: [20, 20]
+      
       });
-      const icons = [];
-      icons[1] = new ColorIcon({iconUrl: '/assets/background/pinlocation.png'});
-      icons[2] = new ColorIcon({iconUrl: '/assets/background/pinlocation_visto.png'});
-      icons[3] = new ColorIcon({iconUrl: '/assets/background/hotspot.gif'});
-      return icons[status];
+     
+      return ColorIcon;
     },
     updateMap() {
       if(this.map){
         this.map.remove();
+        this.markers=[];
+        this.drawMap();
+        
       }
-      
-     // this.getitems();
-      this.drawMap();
+
     },
 
     back(){
@@ -444,6 +463,7 @@ export default {
     openscheda(scheda){
       const tag=scheda.tag
     //this.addtoBucket(tag,'schede_viste')
+    this.aggiornavisti(tag);
     this.addtoBucket(tag,'schede_viste_onmap')
       const content=scheda.content.find(x => x.lang == this.lang);
               console.log("scheda.type "+ content.type);
@@ -600,19 +620,20 @@ export default {
       }
     },
     addtoBucket(ntag, variabile){
-      this.bucket= localStorage.getItem(variabile);
-      if(this.bucket==null){
-        localStorage.setItem(variabile, ntag);
+      //this.bucket= this.visited;
+      if(this.visited==[]){
+        this.visited=ntag;
+        this.visitedSchede={variabile:variabile, ntag:visited}
+              //  localStorage.setItem(variabile, ntag);
 
       }else{
-        this.bucket= this.bucket.split(",");
-       
-        if(!this.bucket.includes(ntag)){
-          this.bucket.push(ntag);
-          localStorage.setItem(variabile, this.bucket);
+        if(!this.visited.includes(ntag)){
+          this.visited.push(ntag);
+          this.visitedSchede={variabile:variabile, ntag:this.visited}
+         // localStorage.setItem(variabile, this.bucket);
         }
        
-        console.log("bucket  "+this.bucket)
+        console.log("bucket  "+this.visited)
         
       }
       
@@ -748,8 +769,8 @@ ion-content {
 }
 
 .modal-intro .modal-wrapper{
-  width: 85vw;
-  height: 80vh;
+  width: 89vw;
+  height: 95vh;
   border-radius: 1em;
 }
 

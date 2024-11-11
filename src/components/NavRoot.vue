@@ -18,11 +18,11 @@
             <div class="button-text"> {{$t('menu.content.title')}}</div>
             <ion-icon  slot="end" size="large" name="chevron-forward" />
         </ion-button>
-        <ion-button v-if="confPercorsi!=false && percorsi.length>1" expand="block" size="large" color="secondary"  @click="pushPage('percorso')" id="push-nav-child"> 
+        <!--ion-button v-if="confPercorsi!=false && percorsi.length>1" expand="block" size="large" color="secondary"  @click="pushPage('percorso')" id="push-nav-child"> 
             <ion-icon   slot="start" size="large" name="compass-outline" />
             <div class="button-text">{{$t('menu.percorsi.title')}}</div>
             <ion-icon  slot="end" size="large" name="chevron-forward" />
-        </ion-button>
+        </ion-button-->
         <ion-button v-if="supportoVisivo==1"  expand="block" size="large" color="secondary"  @click="pushPage('access')" id="push-nav-child"> 
             <ion-icon   slot="start" size="large" name="accessibility" />
             <div class="button-text">{{$t('menu.accessibility.title')}}</div>

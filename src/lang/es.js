@@ -18,7 +18,8 @@ export const es= {
         },
         accessibility:{
             title:"Accesibilidad",
-            text:"Activar para mostrar subtítulos de contenido multimedia"
+            text:"Para personas sordas: activar subtítulos para contenidos multimedia",
+            alternative:"En el apartado de accesibilidad del menú es posible activar subtítulos de contenidos multimedia para personas sordas"
         },
         percorsi:{
             title:"Select ",
@@ -95,7 +96,7 @@ export const es= {
         },
         accessibility:{
             title:"Accessibilità",
-            subtitle:"Activar para mostrar subtítulos de contenido multimedia",
+            subtitle:"Para personas sordas: activar subtítulos para contenidos multimedia",
             supportoVisuale:"Subtítulos/Lengua de Signos"
         },
         percorsi:{

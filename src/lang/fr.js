@@ -18,7 +18,8 @@ export const fr ={
         },
         accessibility:{
             title:"Accessibilité",
-            text:"Activer pour afficher les sous-titres des contenus multimédia",
+            text:"Pour les personnes sourdes: activer les sous-titres pour les contenus multimédias",
+            alternative:"Dans la section accessibilité du menu, il est possible d'activer les sous-titres pour les visiteurs sourds"
            
         },
         percorsi:{
@@ -80,7 +81,7 @@ export const fr ={
 		timeoutTagTitle:"ATTENTION",
 		timeoutTagText:"SilenceTag NON détecté, il est peut-être désactivé, utilisez le bouton \"Scan QR Code\"",
 		timeoutTagAccept:"Continuez",
-        clicktoChangePerc:"Sélectionnez l'itinéraire"
+        clicktoChangePerc:"Cliquez pour activer"
 
       
     },
@@ -96,7 +97,7 @@ export const fr ={
         },
         accessibility:{
             title:"Accessibilité",
-            subtitle:"Activer pour afficher les sous-titres des contenus multimédia",
+            subtitle:"Pour les personnes sourdes : activer les sous-titres pour les contenus multimédias",
             supportoVisuale:"Sous-titres"
         },
         percorsi:{

@@ -21,8 +21,8 @@ export const it = {
         },
         accessibility:{
             title:"Accessibilità",
-            text:"Attiva per visualizzare i sottotitoli dei contenuti multimediali",
-            alternative:"Nella sezione accessibilità del menù è possibile attivare i sottotitoli per i contenuti multimediali"
+            text:"Per le persone sorde: attivare i sottotitoli dei contenuti multimediali",
+            alternative:"Nella sezione accessibilità del menù, è possibile attivare i sottotitoli dei contenuti multimediali per le persone sorde"
         },
         percorsi:{
             title:"Scegli ",
@@ -83,7 +83,7 @@ export const it = {
 		timeoutTagTitle:"ATTENZIONE",
 		timeoutTagText:"SilenceTag NON rilevato, potrebbe essere spento, utilizza il pulsante \"Scansiona QR Code\"",
 		timeoutTagAccept:"Prosegui",
-        clicktoChangePerc:"Seleziona percorso"
+        clicktoChangePerc:"Clicca per attivare"
 
       
     },
@@ -98,7 +98,7 @@ export const it = {
         },
         accessibility:{
             title:"Accessibilità",
-            subtitle:"Attiva per visualizzare i sottotitoli dei contenuti multimediali",
+            subtitle:"Per le persone sorde: attivare i sottotitoli dei contenuti multimediali",
             supportoVisuale:"Sottotitoli / LIS"
         },
         percorsi:{

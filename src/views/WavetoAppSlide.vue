@@ -35,13 +35,16 @@
                   <div class="logo-container" v-on:click="select(percorso)">
                     <img  :id="'logo'+index" class="percosoImg logo" :class="{ 'percorsoAttivo':checkIfActive(percorso.percorso, index) }" :src=" this.$store.getters.baseUrl+'/upload/'+percorso.img"/>
                     <div v-if="!checkIfActive(percorso.percorso, index)" class="overlay-opaco"> {{$t('main.clicktoChangePerc')}}</div>
-                    <capting :class="iscapting" id="captingIcon" hidden></capting>
+                    <capting  v-if="checkIfActive(percorso.percorso, index)" :class="iscapting" :id="'captingIcon-'+percorso.percorso"  class="captingIcon" hidden></capting>
                   </div>
                 </ion-slide>
               </ion-slides>
             </template>
             <template v-else>
-              <div class="logo-container" ><img  :id="'logo'+index" class="percosoImg percorsoAttivo logo" :src=" this.$store.getters.baseUrl+'/upload/'+percselInfo.img"/></div>
+              <div class="logo-container" >
+                <img  :id="'logo'+index" class="percosoImg percorsoAttivo logo" :src=" this.$store.getters.baseUrl+'/upload/'+percselInfo.img"/>
+                <capting :class="iscapting" :id="'captingIcon-'+percSel" class="captingIcon"  hidden></capting>
+              </div>
 
 
             </template>
@@ -52,20 +55,22 @@
         </div-->
 
           <div class="buttons" :key="percKey">
-          <!--ion-button expand="block" class="capture-btn" @click="callJava" id="captureStart">{{$t('main.start')}}</ion-button-->
-        
+           
           <template v-if="infoPercorsi!=null && percselInfo.hasOwnProperty('pulsanti') && percselInfo.pulsanti!=null" >
-            <ion-button  v-if="percselInfo.pulsanti.includes('Silence_tag')" expand="block" class="capture-btn" @click="callJava" id="captureStart"><img class="icon-button" src="assets/background/onda.png"></ion-button>
-            <ion-button  v-if="percselInfo.pulsanti.includes('Silence_tag')" expand="block" class="capture-btn" id="captureStop" hidden><img class="icon-button" src="assets/background/onda.png"/></ion-button>
-            <ion-button  v-if="percselInfo.pulsanti.includes('Qr_code')" expand="block" class="scan-btn" @click="openModal"><img class="icon-button" src="assets/background/qrI.png"></ion-button>
-            <ion-button  v-if="percselInfo.pulsanti.includes('Geo_tag') && conf.gps==true" expand="block" class="gps-btn" id="testGps" @click="opengps" ><img class="icon-button" src="assets/background/gpsicon.png"></ion-button>
+          
+              <ion-button  v-if="percselInfo.pulsanti.includes('Silence_tag')" expand="block" class="capture-btn" @click="callJava" id="captureStart"><img class="icon-button" src="assets/background/onda.png"></ion-button>
+              <ion-button  v-if="percselInfo.pulsanti.includes('Silence_tag')" expand="block" class="capture-btn" id="captureStop" hidden><img class="icon-button" src="assets/background/onda.png"/></ion-button>
+              <ion-button  v-if="percselInfo.pulsanti.includes('Qr_code')" expand="block" class="scan-btn" @click="openModal"><img class="icon-button" src="assets/background/qrI.png"></ion-button>
+              <ion-button  v-if="percselInfo.pulsanti.includes('Geo_tag') && conf.gps==true" expand="block" class="gps-btn" id="testGps" @click="opengps" ><img class="icon-button" src="assets/background/gpsicon.png"></ion-button>
           
           </template>
           <template v-else>
-            <ion-button expand="block" class="capture-btn" @click="callJava" id="captureStart"><img class="icon-button" src="assets/background/onda.png"></ion-button>
-            <ion-button expand="block" class="capture-btn" id="captureStop" hidden><img class="icon-button" src="assets/background/onda.png"/>  </ion-button>
-            <ion-button expand="block" class="scan-btn" @click="openModal"><img class="icon-button" src="assets/background/qrI.png"></ion-button>
-            <ion-button expand="block" v-if="conf.gps==true" class="gps-btn" id="testGps" @click="opengps" ><img class="icon-button" src="assets/background/gpsicon.png"></ion-button>
+            
+              <ion-button expand="block" class="capture-btn" @click="callJava" id="captureStart"><img class="icon-button" src="assets/background/onda.png"></ion-button>
+              <ion-button expand="block" class="capture-btn" id="captureStop" hidden><img class="icon-button" src="assets/background/onda.png"/>  </ion-button>
+              <ion-button expand="block" class="scan-btn" @click="openModal"><img class="icon-button" src="assets/background/qrI.png"></ion-button>
+              <ion-button expand="block" v-if="conf.gps==true" class="gps-btn" id="testGps" @click="opengps" ><img class="icon-button" src="assets/background/gpsicon.png"></ion-button>
+          
           </template>
           </div>
          
@@ -139,7 +144,7 @@ export default {
     this.tour=x;
    
     console.log("upTour ", this.tour)
-    if(this.tour){
+   /* if(this.tour){
         //const captureStart = document.getElementById("captureStart");
         this.captureStart = document.getElementById("captureStart");
         this.captureStop = document.getElementById("captureStop");
@@ -148,61 +153,51 @@ export default {
     
        
          //captureStart.click();
-    }
+    }*/
     } );
    
 
   },
-  mounted(){
-    this.store=JSON.parse(localStorage.getItem('pubblication'));
-    this.captureStart = document.getElementById("captureStart");
+  updated(){
     this.captureStop = document.getElementById("captureStop");
-    console.log("Capture start stop", this.captureStart , this.captureStop)
-    this.captingIcon = document.getElementById("captingIcon");
-    this.logoi = document.getElementById("logo");
-    this.currLang=localStorage.getItem("lang")
+    this.captureStart = document.getElementById("captureStart");
+    this.logoi = document.getElementsByClassName("percorsoAttivo")[0];
+    this.captingIcon = document.getElementById("captingIcon-"+ this.percSel);
+   
+    if(this.captureStart&&this.captureStop){
+      this.captureStop.addEventListener("click", ()=> {
+        this.stopSilenceTag();
+     
+      });
+    }
+  },
+  beforeMount(){
     this.percselInfo=this.getpercselInfo();
     this.percSel=this.percselInfo.percorso;
     this.pubblication=JSON.parse(localStorage.getItem('pubblication'))
-  
-
-   // this.anima=document.getElementById("anima");
-   // this.mostra=document.getElementById("mostra");
-
-    /* window["answMessage"] = (tag) => {
-      this.answMessage(tag);
-      console.log("nella HOME!!");
-
-    };*/
-
-    this.captureStop.addEventListener("click", ()=> {
-      try{
-        AndroidObject.executeJavaCode(false);//aggiungere parametro  false
-      }catch(e){
-        console.log(e);
-      }
-
-      clearTimeout(this.waitingTime);
-      this.setInactiveTour();
-      this.schedaState(false);
-      this.decodedValue = "stopped recording";
-      this.captureStart.hidden = false;
-      this.captureStop.hidden = true;
-
-      this.logoi.hidden = false;
-      this.captingIcon.hidden = true;
-      this.emitter.emit('stopCapting');
+    this.currLang=localStorage.getItem("lang")
+  },
+   mounted(){
+    this.captureStart = document.getElementById("captureStart");
+    this.captureStop = document.getElementById("captureStop");
+    this.captingIcon = document.getElementById("captingIcon-"+ this.percSel);
+    this.logoi = document.getElementsByClassName("percorsoAttivo")[0];
+    if(this.captureStart&&this.captureStop){
+      this.captureStop.addEventListener("click", ()=> {
+        this.stopSilenceTag();
      
-    });
+      });
+    }
+   
     watch(() => localStorage.getItem('lang'), (newLang) => {
       console.log("WATCHOOOOOOOOOOOO",newLang)
-    this.currLang = newLang;
+      this.currLang = newLang;
    // this.percSel = this.getpercselinlang();
   });
     
   },
   beforeUnmount() {
-    window.removeEventListener('storage', this.updateTitle);
+  //  window.removeEventListener('storage', this.updateTitle);
     console.log("infopercorsi",this.infoPercorsi)
     
   },
@@ -214,7 +209,7 @@ export default {
       return this.conf.interactionMode;
     },
     logo() {
-      const img=this.store.img;
+      const img=this.pubblication.img;
       if (img) {
         console.log("c'è logo");
         return this.$store.getters.baseUrl+"/upload/"+img;
@@ -357,11 +352,11 @@ export default {
     opensubs(){
       this.$router.push({ path: "/subs/E01A/00004"});
     },
-    updateTitle(){
+    /*updateTitle(){
       this.currLang=localStorage.getItem("lang")
      // this.percSel=this.getpercselinlang();
-      this.percKey+=1;
-    },
+      
+    },*/
     
     haspulsanti(){
       return this.percselInfo.hasOwnProperty("pulsanti")
@@ -369,6 +364,7 @@ export default {
 
 
     select(percorso){
+
       if(this.savedPercList[this.currLang].find(perc=>perc==percorso.percorso)){
         this.switchPerc(percorso);
       }else{
@@ -391,12 +387,13 @@ export default {
          
           let  jsonSchede =JSON.parse(localStorage.getItem('allDataMostra'));
           jsonSchede=jsonSchede.filter(scheda=>scheda.percorsi.includes(this.percSel))
-          console.log("filtro per percorso scelto", jsonSchede)
+          
           localStorage.setItem('dataMostra',JSON.stringify(jsonSchede));
           
           this.percselInfo=this.getpercselInfo();
+          console.log("percselinfo?",  this.percselInfo)
           this.$forceUpdate()
-          
+          this.percKey+=1;
         }
        this.checkVersion(perc);  
     },
@@ -552,10 +549,10 @@ export default {
 
     async openModal  ()  {
       if(this.$store.getters.conf.interactionMode=="mix"){
-        if(this.tour==true){
-          const captureStop=document.getElementById("captureStop");
-          captureStop.click();
-        }
+       // if(this.tour==true){}
+         
+          this.captureStop.click();
+       
        
 
       }
@@ -778,6 +775,29 @@ export default {
       console.log("HISTORU : ",window.history )
       this.$router.push({ path: "/gps", replace:false});
     },
+
+    stopSilenceTag(){
+      
+      try{
+        AndroidObject.executeJavaCode(false);//aggiungere parametro  false
+      }catch(e){
+        console.log(e);
+      }
+
+      clearTimeout(this.waitingTime);
+      this.setInactiveTour();
+      this.schedaState(false);
+      this.decodedValue = "stopped recording";
+      this.captureStart.hidden = false;
+      this.captureStop.hidden = true;
+
+      this.logoi.hidden = false;
+      this.captingIcon.hidden = true;
+      this.emitter.emit('stopCapting');
+     
+  
+
+    },
        
     callJava(){
      // this.captingModal();
@@ -788,7 +808,7 @@ export default {
       };
      
       try{
-         AndroidObject.executeJavaCode(true);  //aggiungere parametro  true
+         AndroidObject.executeJavaCode(true); 
           this.setActiveTour();
           this.decodedValue = "recording";
           this.logoi.hidden = true;
@@ -802,12 +822,16 @@ export default {
         }, 20000);
       }catch(e){
         clearTimeout(this.waitingTime);
+         this.setInactiveTour()
       //  console.log("catch "+e);
       // alert("catch "+e);
        if(typeof AndroidObject=="undefined"){
            this.openAppModal();
        }else{
+        
+        console.log("catch ",e);
          alert("An error occurred, please restart the app")
+        // this.stopSilenceTag();
        }
       
 

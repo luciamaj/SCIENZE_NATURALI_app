@@ -131,10 +131,8 @@
                     <p class="ion-no-margin">  </p>
 
                   </div>
+                </template>
               </template>
-
-              </template>
-             
             </div>
           </ion-slide>
            <ion-slide v-if="(context!='onboard' && accessibility==1)" >
@@ -277,7 +275,21 @@ export default {
     },
 
     contentsonb(){
-      return contents;
+      const filterCont=[];
+    const tagpercorsi =this.tagPercorsi();
+    console.log("tagpercorsi",tagpercorsi);
+     contents.forEach(cont=>{
+     filterCont.push(cont);
+      /* if(cont.name!="gps"){
+          filterCont.push(cont);
+        }else if(cont.name=="gps" && tagpercorsi.find(tag=>tag=='Geo_tag')){
+          console.log("filtercont entra")
+          filterCont.push(cont);
+        }*/
+      })
+      console.log("filtercont",filterCont)
+     
+      return filterCont;
     },
     confPerc(){
     
@@ -541,6 +553,19 @@ export default {
     // }
     },
 
+    tagPercorsi(){
+      const tag=[];
+      this.percorsiMostra.forEach(perc=>{
+        perc.pulsanti.forEach(tagPulsanti=>{
+          if(!tag.find(t=>t==tagPulsanti)){
+            tag.push(tagPulsanti);
+          }
+
+        })
+      })
+      console.log("TAGLPULSANTI", tag)
+      return tag;
+    },
 
     next(){
       console.log("nexxxt");

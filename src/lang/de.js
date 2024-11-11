@@ -18,7 +18,8 @@ export const de= {
         },
         accessibility:{
             title:"Zugänglichkeit",
-            text:"Aktivieren Sie diese Option, um Untertitel von Multimedia-Inhalten anzuzeigen"
+            text:"Für Gehörlose: Untertitel für Multimedia-Inhalte aktivieren",
+            alternative:"Im Bereich Barrierefreiheit des Menüs besteht die Möglichkeit, Untertitel von Multimedia-Inhalten für Gehörlose zu aktivieren"
         },
         percorsi:{
             title:"Select ",
@@ -92,7 +93,7 @@ export const de= {
         },
         accessibility:{
             title:"Zugänglichkeit",
-            subtitle:"Aktivieren Sie diese Option, um Untertitel von Multimedia-Inhalten anzuzeigen",
+            subtitle:"Für Gehörlose: Untertitel für Multimedia-Inhalte aktivieren",
             supportoVisuale:"Untertitel / Gebärdensprache"
         },
         percorsi:{

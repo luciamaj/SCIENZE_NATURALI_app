@@ -18,8 +18,8 @@ export const en= {
         },
         accessibility:{
             title:"Accessibility",
-            text:"Activate to display subtitles of multimedia content",
-            alternative:"In the accessibility section of the menu it is possible to activate subtitles for multimedia contents"
+            text:"For deaf visitors: activate the subtitles for multimedia content",
+            alternative:"In the accessibility section of the menu it is possible to activate subtitles for deaf visitors"
         },
         percorsi:{
             title:"Select ",
@@ -80,7 +80,7 @@ export const en= {
 		timeoutTagTitle:"ATTENTION",
 		timeoutTagText:"SilenceTag NOT detected, it may be off. Use the \"Scan QR Code\" button",
 		timeoutTagAccept:"Continue",
-        clicktoChangePerc:"Select route"
+        clicktoChangePerc:"Click to activate"
 
       
     },
@@ -95,7 +95,7 @@ export const en= {
         },
         accessibility:{
             title:"Accessibility",
-            subtitle:"Activate to display subtitles of multimedia content",
+            subtitle:"For deaf visitors: activate the subtitles for multimedia content",
             supportoVisuale:"Subtitles / ASL"
         },
         percorsi:{
