@@ -545,8 +545,9 @@ export default {
 
         console.log("cosa vedeee", this.currLang," ",perc )
         percLang[this.currLang]=[perc];
-         
-         
+        const spercLang=[];
+        spercLang.push({"perc":perc, "langs":[{"lang":this.currLang}]})
+        localStorage.setItem('sPercLang',  JSON.stringify(spercLang));
         localStorage.setItem('savedPerc',  JSON.stringify(percLang));
         console.log("OGGGGGGGG", percLang)
        

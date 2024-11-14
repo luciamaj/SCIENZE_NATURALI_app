@@ -54,9 +54,6 @@ import {
 } from "@ionic/vue";
 
 
-import common from "../js/common"
-import { useRouter } from "vue-router";
-
 import L from "leaflet";
 import 'leaflet/dist/leaflet.css';
 import Amplitude from "./Amplitude.vue";
@@ -78,10 +75,12 @@ export default {
      
       map: null,
      
-      mapheight:this.conf.altezzaMappa,
-      mapwidth:this.conf.larghezzaMappa,
-      bounds: [[0,0], [this.conf.altezzaMappa,this.conf.larghezzaMappa]],
-      imageBounds : [[0,0], [this.conf.altezzaMappa,this.conf.larghezzaMappa]],
+      mapheight:"",
+      mapwidth:"",
+      bounds:"",
+      imageBounds:"",
+      mapImage:"",
+     
 
      /* bergamo
      mapwidth:2645,
@@ -126,6 +125,19 @@ export default {
         return this.$i18n.locale;
       }
     },
+    infomap() {
+     
+      const percs= localStorage.getItem("percSel")
+      const perc= JSON.parse(localStorage.getItem("percorsi"))
+      const currPerc=perc.find(p=>p.percorso==percs)
+  
+      if (currPerc) {
+        return currPerc.infomappa
+       
+      } else {
+        return null;
+      }
+    },
 
     visitedSchede:{
       get() {
@@ -151,13 +163,19 @@ export default {
  
 
   beforeMount(){
-   
+    
+    console.log("MAPIMAGE "+this.mapImage)
+    console.log("infomappa ",this.infomap)
     this.range=this.conf.range;
-    this.lat1=this.conf.lat1;
-    this.lon1=this.conf.lon1;
-    this.lat2=this.conf.lat2;
-    this.lon2=this.conf.lon2;
-    console.log("configlatlan", this.lat1,this.lat2, this.lon1, this.lon2);
+    this.lat1=this.infomap!=null? Number(this.infomap.coordTL.latitude): this.conf.lat1;
+    this.lon1=this.infomap!=null?Number(this.infomap.coordTL.longitude):this.conf.lon1;
+    this.lat2=this.infomap!=null?Number(this.infomap.coordBR.latitude):this.conf.lat2;
+    this.lon2=this.infomap!=null?Number(this.infomap.coordBR.longitude):this.conf.lon2;
+    this.mapheight=this.infomap!=null?Number(this.infomap.hMappa):this.conf.altezzaMappa;
+    this.mapwidth=this.infomap!=null?Number(this.infomap.WMappa):this.conf.larghezzaMappa;
+    this.bounds=[[0,0], [this.mapheight,this.mapwidth]],
+    this.imageBounds=[[0,0],  [this.mapheight,this.mapwidth]],
+    console.log("configlatlan",typeof this.lat1,this.lat2, this.lon1, this.lon2);
     this.visited=this.visitedSchede;
     this.schede.forEach(scheda=>{
       const cont= scheda.content.find(x => x.lang == this.lang);
@@ -171,8 +189,9 @@ export default {
         
    
   },
-  mounted(){
+  async mounted(){
     this.getLocation();
+    this.mapImage= await this.getmapImg(this.infomap.img);
     this.drawMap();
 
     if(localStorage.getItem("alertmappaletto")!=1){
@@ -201,11 +220,71 @@ export default {
   },
 
   methods: {
+   async getmapImg(name){
+    if (name != null) {
+      return new Promise((resolve, reject) => {
+       this.request = indexedDB.open('mediaStore', global.dbVersion);
+        this.request.onsuccess = event => {
+             this.db = event.target.result;
+             const transaction = this.db.transaction("general", "readonly");
+          const objstore = transaction.objectStore("general");
+          const getRequest = objstore.get(name);
+
+          getRequest.onsuccess = event => {
+            console.log("GET RESULT ", event.target.result)
+            const testget = event.target.result;      
+            if (testget) {
+            const img= URL.createObjectURL(testget.blob);
+                
+            // this.imgSrc='data:'+testget.blob.type+';base64,'+btoa(testget.data);
+              resolve(img);
+            
+            } else {
+              console.log('testget dont exixst error');
+                this.fetchImg(name);
+            }
+
+            this.db.close();
+          };
+        }
+        this.request.onerror= event=>{
+          reject('Error getting image');
+          this.fetchImg(name);
+        }
+      })
+      }else{
+        //return this.url;
+      }
+    },
+   
+   
+  
+    fetchImg(name){
+       console.log("TRYIN FETCH")
+        const mediaRequest = fetch(this.$store.getters.baseUrl+"/upload/"+name).then(response => response.blob()).catch(err => {console.error(err); console.log("sono in errore")});
+    
+        mediaRequest.then(blob => {
+          const fileblob=blob;
+           this.mapImage=  URL.createObjectURL(fileblob)
+         
+        
+          const objectStore =this.db.transaction("general",'readwrite').objectStore("general");
+            console.log('blobb ',fileblob)
+            const objectStoreRequest = objectStore.add({name: name, blob: fileblob});
+            objectStoreRequest.onsuccess = event=>{
+            // report the success of our request
+            console.log(name+ " Successs put");
+              
+          };
+        
+        })
+        
+        
+
+     },
 
 
     async introModal()  {
-    
-      
       const top = await modalController.getTop();
 
       const introModal = await modalController.create({
@@ -320,10 +399,10 @@ export default {
 
     drawMap() {
       this.map = L.map('map', {
-        crs: L.CRS.Simple, zoom:-2.5,zoomAnimation:false,
+        crs: L.CRS.Simple, zoom:this.infomap!=null?parseFloat(this.infomap.minZoom):-2.5,zoomAnimation:false,
         zoomControl:false,
-        maxZoom: 1,
-        minZoom: -2.5,
+        maxZoom: this.infomap!=null?parseFloat(this.infomap.maxZoom):1,
+        minZoom: this.infomap!=null?parseFloat(this.infomap.minZoom):-2.5,
         maxBounds:this.bounds,
         maxBoundsViscosity: 1.0
       }).setView([0, 0])
@@ -333,20 +412,19 @@ export default {
       }).addTo(this.map);
     
 
-      L.imageOverlay(this.url, this.imageBounds).addTo(this.map);
+      L.imageOverlay(this.mapImage, this.imageBounds).addTo(this.map);
       this.map.fitBounds(this.bounds);
      
       this.map.invalidateSize();
       this.items.forEach(async item=>{
         if(item.id!="me"){
           const im= await this.getCoverImg(item.img)
-          // console.log("img card ",im)
             const popupcontent=`<div class="img-container-popup"><img src=${im}></div>
                 <div class="card-title">${item.description}</div>`
-              const marker=L.marker(L.latLng(item.latLng),{ icon:this.markerIcon(item.status)}).addTo(this.map).bindPopup(popupcontent);
-              console.log("ICON marker", marker._icon);
+            const marker=L.marker(L.latLng(item.latLng),{ icon:this.markerIcon(item.status)}).addTo(this.map).bindPopup(popupcontent);
+            console.log("ICON marker", marker._icon);
 
-              this.markers.push({id:item.id,marker:marker});
+            this.markers.push({id:item.id,marker:marker});
         }else{
           this.meMarker=L.marker(L.latLng(item.latLng)).setIcon(this.markerIcon(item.status)).addTo(this.map)
         }

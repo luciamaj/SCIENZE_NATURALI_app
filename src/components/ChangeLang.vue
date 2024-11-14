@@ -379,7 +379,8 @@ export default ({
           localStorage.setItem('lang', lang);
           this.currLang=lang;
           this.$i18n.locale = lang;
-          
+
+          this.emitter.emit('updateLang', this.currLang);
         }
         this.checkVersion(lang);
 

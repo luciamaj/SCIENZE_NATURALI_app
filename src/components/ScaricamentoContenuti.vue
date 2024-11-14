@@ -51,8 +51,10 @@ export default {
         media:0,
         mediafetched:0,
         quotaExcided:false,
+        mediaGeneral:[],
         mediatoGet:[],
         mediaArray:[],
+        mediaArrayGen:[],
         medianotDownloaded:[],
         vLangs:[],
         stima:0,
@@ -415,33 +417,37 @@ export default {
     },
 
   searchMedia(){
-    let  counter;
-    console.log('VEDO FROM? '+ this.fromC )
-    console.log("lingua? "+ this.passedLang);
+    let  counter=0;
     const allschede=localStorage.getItem('allDataMostra');
     const schede=localStorage.getItem('dataMostra');
     let jsonSchede=allschede==null?JSON.parse(schede):JSON.parse(allschede);
     if(this.perc!=null){
       allschede==null && localStorage.setItem('allDataMostra',schede);
        jsonSchede=jsonSchede.filter(scheda=>scheda.percorsi.includes(this.perc))
-      console.log("filtro per percorso scelto", jsonSchede)
+   //   console.log("filtro per percorso scelto", jsonSchede)
       localStorage.setItem('dataMostra',JSON.stringify(jsonSchede));
     }
     
 
     let contenuto="";
-    console.log("->>",jsonSchede);
+   // console.log("->>",jsonSchede);
     const percorsi=JSON.parse(localStorage.getItem('percorsi'));
     percorsi.forEach(perc=>{
       counter++;
       this.mediaCounter();
-      this.mediatoGet.push(perc.img);
-
+     // this.mediatoGet.push(perc.img);
+      this.mediaGeneral.push(perc.img)
+      if(perc.infomappa.img!=null){
+        this.mediaGeneral.push(perc.infomappa.img);
+        this.mediaCounter();
+        counter++;
+      }
+     
     })
     
    // this.getMedia(this.$store.getters.pubblication.img);
     jsonSchede.forEach((scheda, index) => {
-      console.log("n° ",counter++ )
+     // console.log("n° ",counter++ )
       if(this.quotaExcided==false){
         if(scheda.img!=null){
           this.mediaCounter();
@@ -451,13 +457,13 @@ export default {
           console.log("Non ci sono immagini per la scheda ")
         }
         contenuto=scheda.content.find(el=> el.lang== this.passedLang )
-        console.log("Cont ", contenuto);
+      //  console.log("Cont ", contenuto);
         if(contenuto.audio!=null){
           if(!this.mediatoGet.includes(contenuto.audio)){
             this.mediaCounter();
             this.mediatoGet.push(contenuto.audio);
             //this.getMedia(contenuto.audio);
-            console.log("Get audio ", contenuto.audio)
+           // console.log("Get audio ", contenuto.audio)
           }
             
         }else if(contenuto.video!=null && !this.mediatoGet.includes(contenuto.video) ){
@@ -467,7 +473,7 @@ export default {
           //this.getMedia(contenuto.video);
           console.log("Get video ",contenuto.video)
         }else{
-            console.log("Non ci sono Media per la scheda ")
+            console.log("Non ci sono Media per la scheda ", contenuto.titolo)
         }
         if(contenuto.supportoVisuale!=null  && !this.mediatoGet.includes(contenuto.supportoVisuale) ){
             this.mediaCounter();
@@ -535,21 +541,35 @@ export default {
     getMedia(){
       console.log("numero media contatore ", this.media );
       console.log("numero media ", this.mediatoGet.length);
+      this.mediaGeneral.forEach((name,index)=>{
+        console.log("scarico general  ", name);
+        const mediaPercRequest = fetch(this.$store.getters.baseUrl+"/upload/"+name).then(response => response.blob())
+        .catch(err => { this.medianotDownloaded.push(name); console.log("sono in errore"+ name);this.erroreScaricamento();});
+        mediaPercRequest.then(blob => {
+          if(blob){
+            console.log("scarico media percorso  ", index);
+            this.mediaArrayGen.push({name:name, media:blob});
+            this.incProgress();
+          }
+        })
+        console.log("length   ",  this.mediaArrayGen.length);
+      })
+
       this.mediatoGet.forEach((name, index) => { 
         console.log("scarico media  index  ", index);
-      const mediaRequest = fetch(this.$store.getters.baseUrl+"/upload/"+name).then(response => response.blob())
-      .catch(err => { this.medianotDownloaded.push(name); console.log("sono in errore"+ name);this.erroreScaricamento();/*console.error(err);*/ /*alert('Errore nello scaricamnto');*/});
+        const mediaRequest = fetch(this.$store.getters.baseUrl+"/upload/"+name).then(response => response.blob())
+        .catch(err => { this.medianotDownloaded.push(name); console.log("sono in errore"+ name);this.erroreScaricamento();/*console.error(err);*/ /*alert('Errore nello scaricamnto');*/});
         mediaRequest.then(blob => {
           console.log("sono nel then della media request" );
           navigator.storage.estimate().then((estimate)=> {
-            console.log("estimate ",estimate.quota," ",estimate )
+          //  console.log("estimate ",estimate.quota," ",estimate )
             this.remainingquota=estimate.quota-estimate.usage;
-            console.log("this.remainingquota ",  this.remainingquota)
+          //  console.log("this.remainingquota ",  this.remainingquota)
             if(blob){
-              console.log(" this.filesize ",   blob.size)
+            //  console.log(" this.filesize ",   blob.size)
               if(this.remainingquota> this.stima+blob.size){
                 this.stima+=blob.size;
-                  console.log("CI STA ",name)
+                //  console.log("CI STA ",name)
                   this.mediaArray.push({name:name, media:blob});
                   console.log("media scaricati "+ this.mediaArray.length);
                   this.incProgress();
@@ -569,9 +589,10 @@ export default {
             }
              
             //if(this.medianotDownloaded.length==0){
-              console.log("media scaricati "+ this.mediaArray.length+ " media da scaricare " + this.media);
-              if(this.mediaArray.length==this.media){
+              console.log("media scaricati "+ (this.mediaArray.length+this.mediaArrayGen.length)+ " media da scaricare " + this.media);
+              if(this.mediaArray.length+this.mediaArrayGen.length==this.media){
                 localStorage.setItem("dowloadcompleto", true);
+               // this.saveinDBGen();
                 this.saveinDB();
               }
           /*  }else{
@@ -797,43 +818,87 @@ export default {
       
 
     },
-
-  saveinDB(){
-
-    console.log("GDBV "+global.dbVersion+ ' type '+ typeof  global.dbVersion)
+  saveinDBGen(){
     const request = indexedDB.open('mediaStore', global.dbVersion);
-    console.log( "REQUESTING ",global.dbVersion)
-  
-   
     request.onupgradeneeded = event => {
       console.log("UPGRADE eneeded");
       const db = event.target.result;
       db.onversionchange = function() {
         db.close();
         console.log("version changed");
-      };
-      let objectStore;
-      console.log('VEDO FROM? '+ this.fromC )
+      };    
+      if(!db.objectStoreNames.contains('general')){
+        db.createObjectStore('general',  {keyPath: "name"});
       
+      }
+
+      request.onsuccess = event => {
+        const db = event.target.result;
+
+        const transaction = db.transaction('general','readwrite');
+        const store = transaction.objectStore('general');
+        this.mediaArrayGen.forEach((el,index)=>{
+          const objectStoreRequest = store.add({name: el.name, blob: el.media});
+          objectStoreRequest.onsuccess = (event) =>{
+            // report the success of our request
+            console.log(el.name+ " Successs");
+            };
+            objectStoreRequest.onerror=(event)=>{
+                console.log(" ERROR in add "+el.name , event);
+            }
+        })
+
+
+        db.close();
+      }
+
+    }
+
+  },
+  saveinDB(){
+
+    console.log("GDBV "+global.dbVersion+ ' type '+ typeof  global.dbVersion)
+    const request = indexedDB.open('mediaStore', global.dbVersion);
+    console.log( "REQUESTING ",global.dbVersion)
+  
+    request.onupgradeneeded = (event) => {
+      console.log("UPGRADE eneeded");
+      const db = event.target.result;
+      const storeName = 'media-' + this.passedLang;
+      db.onversionchange = function() {
+        db.close();
+        console.log("version changed");
+      };
       if(!db.objectStoreNames.contains('media-'+this.passedLang)){
         console.log("Apro object Store "+'media-'+this.passedLang);
-       // objectStore = db.createObjectStore('media-'+this.passedLang,  {keyPath: "name"});
+        db.createObjectStore('general',  {keyPath: "name"});
         db.createObjectStore('media-en',  {keyPath: "name"});
         db.createObjectStore('media-es',  {keyPath: "name"});
         db.createObjectStore('media-de',  {keyPath: "name"});
         db.createObjectStore('media-it',  {keyPath: "name"});
         db.createObjectStore('media-fr',  {keyPath: "name"});
-      
 
       }
             
           
     }
     request.onsuccess = event => {
-
-      console.log("REQUEStt SUCCESS, prvo a salvare "+ this.fromC)
       const db = event.target.result;
-      
+
+      const transactionGeneral = db.transaction("general",'readwrite');
+      const storeGeneral = transactionGeneral.objectStore('general');
+
+      this.mediaArrayGen.forEach((el,index)=>{
+          const objectStoreRequest = storeGeneral.add({name: el.name, blob: el.media});
+          objectStoreRequest.onsuccess = (event) =>{
+            // report the success of our request
+            console.log(el.name+ " Successs");
+            };
+            objectStoreRequest.onerror=(event)=>{
+                console.log(" ERROR in add "+el.name , event);
+            }
+        })
+
      const transaction = db.transaction(['media-'+this.passedLang],'readwrite');
       const store = transaction.objectStore('media-'+this.passedLang);
       
@@ -850,11 +915,7 @@ export default {
             // report the success of our request
             console.log(el.name+ " Successs");
               console.log("INDEX E ARR LENGH" +index+  " "+this.mediaArray.length);
-              
-              
-              /*if(this.progress==1){
-                this.openNext();
-              }*/
+             
             };
             objectStoreRequest.onerror=(event)=>{
                   console.log(" ERROR in add "+el.name , event);
@@ -891,45 +952,7 @@ export default {
       }
 
       })
-      /*const file=store.get(name);
-      file.onsuccess=(event)=>{
-          const testget = event.target.result;      
-        if (!testget) {
-        
-          console.log(" il file non presente "+name);
-          const objectStoreRequest = store.add({name: name, blob: blob});
-          objectStoreRequest.onsuccess = (event) =>{
-          // report the success of our request
-          console.log(name+ " Successs");
-            this.incProgress();
-            if(this.progress==1){
-              db.close();
-              console.log("qui chiudevo");
-            }
-           
-          };
-          objectStoreRequest.onerror=(event)=>{
-                console.log(" ERROR in add "+name , event);
-
-                alert( 'ERROR objectStoreRequest'+ name +' '+ event.target.error );
-          }
-          
-        }else{
-              console.log("file già presente "+name);
-              this.incProgress();
-              if(this.last==true){
-              db.close();
-            }
-        }
-
-
-      }
-
-      transaction.onerror=()=>{
-        console.log('ERROR transaction '+name +' ', event);
-          // alert( 'ERROR transaction '+name +' '+ event.target.error );
-      }*/
-
+     
     }
 
    

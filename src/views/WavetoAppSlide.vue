@@ -325,7 +325,9 @@ export default {
     this.emitter.on('changeVersion', _ => {
       this.showOptions();
     });
-    
+    this.emitter.on('updateLang', valLag => {
+      this.currLang=valLag;
+    });
     this.emitter.on('fineAggiornamento', _ => {
       console.log("FINITO");
       this.notification=false;
