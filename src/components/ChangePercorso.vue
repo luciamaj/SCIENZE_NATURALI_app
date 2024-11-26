@@ -178,12 +178,13 @@ export default ({
 
     },
 
-    getversionLangs(){
+    getversionLangs(perc){
        
        let versionLangs= [];
-         versionLangs=  JSON.parse(localStorage.getItem('versionLangs'));
+         versionLangs=  JSON.parse(localStorage.getItem('sPercLang'));
+        const versionLangsPerc=versionLangs.find(p=>p.perc==perc)
        
-      return versionLangs;
+      return versionLangsPerc;
          
     },
     addPerc(perc){
@@ -336,7 +337,7 @@ export default ({
 
     checkVersion(perc){
       const currentVersion=this.datetoVersion(this.pubblication.pubblicazione);
-      const langVersion=this.getversionLangs().find(el=> el.lang==this.currLang).vers;
+      const langVersion=this.getversionLangs(perc).find(el=> el.lang==this.currLang).vers;
 
       if(currentVersion>langVersion){
         console.log("LA LINGUA NON è AGGIORNATA"); 

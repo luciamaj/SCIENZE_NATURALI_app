@@ -63,14 +63,12 @@ export default defineComponent({
         this.alertPermissions();
        
       }
-      if(status.state=="prompt"){
+      /*if(status.state=="prompt"){  //da risolvere
           this.alertPermissions();
           status.addEventListener('change', ()=>{
              this.PermissionAlert.dismiss()
           })
-       
-         
-      }
+      }*/
 
     },
     async close() {

@@ -121,11 +121,15 @@ export default ({
     savedLangs:{
         get() {
           console.log("linguee ", localStorage.getItem('savedLangs'))
-          let savedLangs= [];
-          savedLangs=  localStorage.getItem('savedLangs').split(",");
-          this.assignSaved(savedLangs)
-          console.log("linguee savedLangs ", savedLangs)
-          return savedLangs
+          const langsets= [];
+          const savedLangsPerc=JSON.parse(localStorage.getItem('sPercLang')).find(p=> p.perc==this.currPerc)
+          savedLangsPerc.langs.forEach(lan=>{
+            langsets.push(lan.lang);
+
+          })
+          this.assignSaved(langsets)
+          console.log("linguee savedLangs ", langsets)
+          return langsets
         },
       // setter
       set(newLang) {
@@ -167,15 +171,15 @@ export default ({
 
   },
   mounted(){
+    
+    this.currPerc=localStorage.getItem("percSel")
+    
     this.savedLangs
     this.remainingLang
    this.attivaSupporto=this.getAttivaSuppoto;
   
     this.currLang=localStorage.getItem("lang")
 
-    if(this.conf.percorsi==true){
-      this.currPerc=localStorage.getItem("percSel")
-    }
   
     
   },
@@ -189,12 +193,13 @@ export default ({
 
     getversionLangs(){
        
-       let versionLangs= [];
-         console.log("linguee ", localStorage.getItem('versionLangs'))
-         versionLangs=  JSON.parse(localStorage.getItem('versionLangs'));
-         console.log("linguee versionLangs ", versionLangs)
+      let versionLangs= [];
+      console.log("linguee ", localStorage.getItem('sPercLang'))
+      versionLangs=  JSON.parse(localStorage.getItem('sPercLang'));
+      const versionLangsPerc=versionLangs.find(p=>p.perc==this.currPerc)
+      console.log("linguee sPercLang ", versionLangsPerc)
           
-    return versionLangs;
+    return versionLangsPerc.langs;
          
      },
     addLang(lang){
@@ -204,7 +209,7 @@ export default ({
       if(this.currPerc){
         const getsaved=  JSON.parse(localStorage.getItem('savedPerc'));
        // let oggsaved=JSON.parse(getsaved);
-       getsaved[lang]=[this.currPerc];
+       getsaved[lang].push(this.currPerc);
        console.log("GSAVED ", getsaved);
        localStorage.setItem('savedPerc', JSON.stringify(getsaved))
       }

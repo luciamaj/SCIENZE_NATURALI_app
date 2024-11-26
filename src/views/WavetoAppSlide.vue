@@ -33,7 +33,7 @@
               <ion-slides :options="slideOpts" pager="true">
                 <ion-slide v-for="(percorso,index) in infoPercorsi" v-bind:key="(percorso,index)">
                   <div class="logo-container" v-on:click="select(percorso)">
-                    <img  :id="'logo'+index" class="percosoImg logo" :class="{ 'percorsoAttivo':checkIfActive(percorso.percorso, index) }" :src=" this.$store.getters.baseUrl+'/upload/'+percorso.img"/>
+                    <img  :id="'logo'+index" class="percosoImg logo" :class="{ 'percorsoAttivo':checkIfActive(percorso.percorso, index) }" :src="loadedImages[percorso.img]"/>
                     <div v-if="!checkIfActive(percorso.percorso, index)" class="overlay-opaco"> {{$t('main.clicktoChangePerc')}}</div>
                     <capting  v-if="checkIfActive(percorso.percorso, index)" :class="iscapting" :id="'captingIcon-'+percorso.percorso"  class="captingIcon" hidden></capting>
                   </div>
@@ -133,7 +133,9 @@ export default {
       el: '.swiper-pagination',
       clickable: true,
       percselInfo:"",
+      savedPercList:[], 
     },
+    loadedImages:{}
     };
   },
 
@@ -172,10 +174,12 @@ export default {
     }
   },
   beforeMount(){
+    this.savedPercList= JSON.parse(localStorage.getItem('sPercLang')) || [];
     this.percselInfo=this.getpercselInfo();
     this.percSel=this.percselInfo.percorso;
     this.pubblication=JSON.parse(localStorage.getItem('pubblication'))
     this.currLang=localStorage.getItem("lang")
+    this.preloadImages();
   },
    mounted(){
     this.captureStart = document.getElementById("captureStart");
@@ -240,11 +244,10 @@ export default {
 
     },
    
-    savedPercList(){
-      const getsaved= JSON.parse(localStorage.getItem('savedPerc')) ;
-      
-      return getsaved;
-    },
+    /*savedPercList(){
+      console.log("che salva",this.savedPerc)
+      return this.savedPerc;
+    },*/
     nomeLingua(perc){
       
       const retur= perc.lingue.find(item=>item.lang==this.currLang);
@@ -321,18 +324,21 @@ export default {
     this.alertPercorso=common.alertPercorso;
     this.checkStatus=common.checkOnlineStatus;
     this.datetoVersion=common.datetoVersion;
+    
 
     this.emitter.on('changeVersion', _ => {
       this.showOptions();
     });
     this.emitter.on('updateLang', valLag => {
       this.currLang=valLag;
+      this.updateSavedPerc();
     });
     this.emitter.on('fineAggiornamento', _ => {
       console.log("FINITO");
       this.notification=false;
     });
     this.emitter.on('addPerc', (perc)=>{
+      this.updateSavedPerc();
       this.addDowloadedPerc(perc);
       this.closedownloadModal();
     })
@@ -350,6 +356,12 @@ export default {
 
 
   methods: {
+    updateSavedPerc() {
+        
+     // const getsaved = 
+      this.savedPercList = JSON.parse(localStorage.getItem('sPercLang')) || [];
+        console.log("updateS",this.savedPercList )
+    },
 
     opensubs(){
       this.$router.push({ path: "/subs/E01A/00004"});
@@ -364,10 +376,34 @@ export default {
       return this.percselInfo.hasOwnProperty("pulsanti")
     },
 
+    async getImage(name, store){
+      try {
+        const imgSrc = await common.getImgfromDB(name, store); // Attendi il risultato
+        console.log("GET IMAGE DB",imgSrc)
+         return imgSrc;
+       
+      } catch (error) {
+          console.error("Error fetching image:", error);
+          return null;
+      }
+      
+      
+
+    },
+    async preloadImages() {
+      for (const percorso of this.infoPercorsi) {
+        const image = await common.getImgfromDB(percorso.img, 'general');
+        console.log("preload", percorso, percorso.img,  this.loadedImages)
+       this.loadedImages[percorso.img] = image;
+      }
+    },
+    
+    
 
     select(percorso){
-
-      if(this.savedPercList[this.currLang].find(perc=>perc==percorso.percorso)){
+      const foundPerc=this.savedPercList.find(p=>p.perc==percorso.percorso)
+      console.log("select ",this.currLang, this.savedPercList, percorso.percorso)
+      if(foundPerc && foundPerc.langs.find(l=>l.lang==this.currLang) ){
         this.switchPerc(percorso);
       }else{
         console.log("NON è nella LISTA dei salvati")
@@ -399,17 +435,18 @@ export default {
         }
        this.checkVersion(perc);  
     },
-    getversionLangs(){
+    getversionLangs(perc){
        
        let versionLangs= [];
-         versionLangs=  JSON.parse(localStorage.getItem('versionLangs'));
+         versionLangs=  JSON.parse(localStorage.getItem('sPercLang'));
+         const versionLangsPerc=versionLangs.find(p=>p.perc==perc)
        
-      return versionLangs;
+      return versionLangsPerc.langs;
          
     },
     checkVersion(perc){
       const currentVersion=this.datetoVersion(this.pubblication.pubblicazione);
-      const langVersion=this.getversionLangs().find(el=> el.lang==this.currLang).vers;
+      const langVersion=this.getversionLangs(perc).find(el=> el.lang==this.currLang).vers;
 
       if(currentVersion>langVersion){
         console.log("LA LINGUA NON è AGGIORNATA"); 
@@ -467,8 +504,14 @@ export default {
   
     },
     addDowloadedPerc(newPerc){
-      const saved=this.savedPercList;
-      saved[this.currLang].push(newPerc);
+       
+      const saved= JSON.parse(localStorage.getItem('savedPerc'))
+      if(saved[this.currLang]){
+        saved[this.currLang].push(newPerc);
+      }else{
+        saved[this.currLang]=[newPerc];
+      }
+     
       localStorage.setItem('savedPerc', JSON.stringify(saved))
     },
 
@@ -552,11 +595,12 @@ export default {
     async openModal  ()  {
       if(this.$store.getters.conf.interactionMode=="mix"){
        // if(this.tour==true){}
-         
+       console.log("hidden?  ",this.captureStop.hidden)
+         if(  this.captureStop.hidden==false){
           this.captureStop.click();
-       
-       
 
+         }
+          
       }
       
       const top = await modalController.getTop();
@@ -832,7 +876,7 @@ export default {
        }else{
         
         console.log("catch ",e);
-         alert("An error occurred, please restart the app")
+        // alert("An error occurred, please restart the app")
         // this.stopSilenceTag();
        }
       

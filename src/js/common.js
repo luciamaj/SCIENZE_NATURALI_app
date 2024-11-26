@@ -408,6 +408,67 @@ export default {
       }
 
     },
+    async getImgfromDB(name, store){
+      if (name != null) {
+        return new Promise((resolve, reject) => {
+         this.request = indexedDB.open('mediaStore', global.dbVersion);
+          this.request.onsuccess = event => {
+               this.db = event.target.result;
+               const transaction = this.db.transaction(store, "readonly");
+            const objstore = transaction.objectStore(store);
+            const getRequest = objstore.get(name);
+  
+            getRequest.onsuccess = event => {
+              console.log("GET RESULT ", event.target.result)
+              const testget = event.target.result;      
+              if (testget) {
+              const img= URL.createObjectURL(testget.blob);
+                  
+              // this.imgSrc='data:'+testget.blob.type+';base64,'+btoa(testget.data);
+                resolve(img);
+              
+              } else {
+                console.log('testget dont exixst error');
+                  this.fetchImg(name);
+              }
+  
+              this.db.close();
+            };
+          }
+          this.request.onerror= event=>{
+            reject('Error getting image');
+            resolve(this.fetchImg(name));
+          }
+        })
+        }else{
+          //return this.url;
+        }
+    },
+     
+     
+    
+    fetchImg(name,store){
+         console.log("TRYIN FETCH")
+          const mediaRequest = fetch(this.$store.getters.baseUrl+"/upload/"+name).then(response => response.blob()).catch(err => {console.error(err); console.log("sono in errore")});
+      
+          mediaRequest.then(blob => {
+            const fileblob=blob;
+            
+           
+          
+            const objectStore =this.db.transaction(store,'readwrite').objectStore(store);
+              console.log('blobb ',fileblob)
+              const objectStoreRequest = objectStore.add({name: name, blob: fileblob});
+              objectStoreRequest.onsuccess = event=>{
+              // report the success of our request
+              console.log(name+ " Successs put");
+                
+            };
+            return  URL.createObjectURL(fileblob)
+          
+          })
+  
+       },
 
     alertPercorso() {
       const alert = document.createElement('ion-alert');

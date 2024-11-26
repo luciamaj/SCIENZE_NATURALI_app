@@ -852,7 +852,9 @@ ion-content {
   border-radius: 1em;
 }
 
-
+.leaflet-popup-content-wrapper{
+  width: 65vw;
+}
 
 
 

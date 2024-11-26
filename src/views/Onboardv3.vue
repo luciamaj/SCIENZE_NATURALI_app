@@ -538,7 +538,7 @@ export default {
       this.currPerc=perc;
       console.log("click percorso" + perc);
       localStorage.setItem('percSel', perc);
-      
+         
       common.setstorePerc(this.percorsiMostra.find(itemperc=>itemperc.percorso==perc));
       //if(localStorage.getItem('savedLangs')==null){
         const percLang={};
@@ -546,13 +546,14 @@ export default {
         console.log("cosa vedeee", this.currLang," ",perc )
         percLang[this.currLang]=[perc];
         const spercLang=[];
-        spercLang.push({"perc":perc, "langs":[{"lang":this.currLang}]})
+        spercLang.push({"perc":perc, "langs":[{"lang":this.currLang, "vers":0}]})
         localStorage.setItem('sPercLang',  JSON.stringify(spercLang));
         localStorage.setItem('savedPerc',  JSON.stringify(percLang));
         console.log("OGGGGGGGG", percLang)
        
     // }
     },
+    
 
     tagPercorsi(){
       const tag=[];

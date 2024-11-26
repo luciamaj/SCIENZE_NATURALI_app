@@ -274,7 +274,7 @@ export default defineComponent({
         
     },
     aggiornaInfo(from){
-     
+      this.currLang=localStorage.getItem('lang');  
       this.getSchede((schede) => {
        
         //console.log("schede info", schede);

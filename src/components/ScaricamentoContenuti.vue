@@ -59,7 +59,8 @@ export default {
         vLangs:[],
         stima:0,
         alertOpen:false,
-        salvataggioCompleto:false
+        salvataggioCompleto:false,
+        versionPercLangs:{},
 
         };
     },
@@ -67,25 +68,44 @@ export default {
     computed:{
       versionLangs:{
         get() {
-          let versionLangs= [];
-          if(localStorage.hasOwnProperty(('versionLangs'))){
-            console.log("linguee ", localStorage.getItem('versionLangs'))
-            versionLangs=  JSON.parse(localStorage.getItem('versionLangs'));
+         let versionLangs= [];
+         let versionperc=null;
+          if(localStorage.hasOwnProperty(('sPercLang'))){
+            
+            versionLangs=  JSON.parse(localStorage.getItem('sPercLang'));
+            console.log("verisonii ",  versionLangs)
+            versionperc= versionLangs.find(p=>p.perc==this.perc);
+            this.copyVLangs(versionLangs, versionperc?versionperc.langs:versionperc);
+            if(versionperc){
+              console.log("linguee versionLangs ",  versionLangs)
            
-            console.log("linguee versionLangs ", versionLangs)
-            this.copyVLangs(versionLangs);
+            return versionperc.langs
+            }
+          
+            
           }
-          return versionLangs
+          return null
+          
         },
       // setter
       set(newLVersion) {
-        if(!this.vLangs.find(e=>e.lang==newLVersion.lang)){
+        console.log("faccio il set versin ",this.versionPercLangs)
+        if(!this.versionPercLangs.find(p=>p.perc==this.perc)){
+          const newperc= {"perc":this.perc,"langs":[newLVersion]};
+          this.versionPercLangs.push(newperc);
+
+        }else if(!this.vLangs.find(e=>e.lang==newLVersion.lang)){
           this.vLangs.push(newLVersion);
+          console.log("verisonii  push",  this.vLangs)
+
         }else{
           const langIndex=this.vLangs.findIndex(e=>e.lang==newLVersion.lang);
           this.vLangs[langIndex].vers=newLVersion.vers;
+          console.log("deve settare",  newLVersion.lang, this.vLangs, this.versionPercLangs[this.versionPercLangs.findIndex(p=>p.perc==this.perc)].langs)
+          this.versionPercLangs[this.versionPercLangs.findIndex(p=>p.perc==this.perc)].langs=this.vLangs;
+          console.log("verisonii  set",  this.versionPercLangs)
         }
-        
+        localStorage.setItem('sPercLang',JSON.stringify(this.versionPercLangs));
         localStorage.setItem('versionLangs',JSON.stringify(this.vLangs));
       }
 
@@ -100,7 +120,7 @@ export default {
        this.online=false
        //alert("Connection lost, controllare la connessione alla rete")
     }*/
-
+    this.versionLangs;
     this.online=true
     this.testChiamata();
     this.checkStatus=common.checkOnlineStatus;
@@ -138,8 +158,8 @@ export default {
     clearTimeout(this.timerScaricamento);
     
   },
-  mounted(){
-    this.versionLangs
+  async mounted(){
+    this.db =await this.openDatabase();
    // this.openDB();
    // this.openDBAltern();
     setTimeout(async() => {
@@ -189,9 +209,10 @@ export default {
             },
             {
                 text:"Riprova",
-                handler: () => {
+                handler:async () => {
                     console.log("Riprovo");
-                    this.saveinDB();
+                    await this.addDataToStore(this.db, 'media-' + this.passedLang, this.mediaArray);
+                   // this.saveinDB();
                     
                 },
             },
@@ -278,7 +299,8 @@ export default {
     },
 
 
-    copyVLangs(vLangs){
+    copyVLangs(versionLangs,vLangs){
+      this.versionPercLangs=versionLangs;
       this.vLangs=vLangs;
     },
 
@@ -290,9 +312,11 @@ export default {
         lang:this.passedLang,
         vers:version
       }
-      if(!localStorage.hasOwnProperty("versionLangs")){
-        localStorage.setItem("versionLangs", JSON.stringify([langDate]));
+      if(!localStorage.hasOwnProperty("sPercLang")){
+        const first= [{"perc":this.perc,"langs":langDate}]
+        localStorage.setItem("sPercLang", JSON.stringify([first]));
       }else{
+        console.log("save new version lang", langDate)
         this.versionLangs=langDate;
       }
       
@@ -305,8 +329,10 @@ export default {
         lang:this.passedLang,
         vers:version
       }
-      if(!localStorage.hasOwnProperty("versionLangs")){
-        localStorage.setItem("versionLangs", JSON.stringify([langDate]));
+      if(!localStorage.hasOwnProperty("sPercLang")){
+       const empty= [{"perc":this.perc,"langs":langDate}]
+
+        localStorage.setItem("sPercLang", JSON.stringify([empty]));
       }else{
         this.versionLangs=langDate;
       }
@@ -323,58 +349,39 @@ export default {
 
     },
 
-    openDB(){
-        this.request = indexedDB.open('mediaStore', global.dbVersion);
-        this.request.onsuccess = event => {
-          this.searchMedia();
+     openDatabase() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open  ('mediaStore', global.dbVersion);
+      
 
-          console.log("REQUEStt SUCCESS, "+ this.fromC)
-          const db = event.target.result;
-         
-          /*db.onversionchange = function() {
-            db.close();
-            console.log("version changed");
-          };*/
+        // Configurazione del database al primo avvio
+        request.onupgradeneeded = function (event) {
+            const db = event.target.result;
 
-         // transaction = db.transaction(['media-'+this.lang],'readwrite');
-          //objectStore = transaction.objectStore('media-'+this.lang);
-
-        }
-        
-        this.request.onupgradeneeded = event => {
-          console.log("REQUESR SUCCESS")
-          const db = event.target.result;
-          db.onversionchange = function() {
-            db.close();
-            console.log("version changed");
-          };
-          let objectStore;
-          console.log('VEDO FROM? '+ this.fromC )
-          if(this.fromC=="update" || this.fromC=="main" ){
-
-            objectStore = request.transaction.objectStore('media-'+this.passedLang);
-          }else{
-            if(!db.objectStoreNames.contains('media-'+this.passedLang)){
-              objectStore = db.createObjectStore('media-'+this.passedLang,  {keyPath: "name"});
+            // Creare Object Store "general"
+            if (!db.objectStoreNames.contains("general")) {
+              db.createObjectStore('general',  {keyPath: "name"});
             }
-            
-          }
 
+            // Creare Object Store "media-it"
+            if (!db.objectStoreNames.contains("media-it")) {
+              db.createObjectStore('media-en',  {keyPath: "name"});
+              db.createObjectStore('media-es',  {keyPath: "name"});
+              db.createObjectStore('media-de',  {keyPath: "name"});
+              db.createObjectStore('media-it',  {keyPath: "name"});
+              db.createObjectStore('media-fr',  {keyPath: "name"});
+            }
+        };
 
-        }
-        
-       
-        this.request.onerror =  event => {
-          console.log("error opening db dal mounted Error  ", event)
-          alert("error opening db dal mounted")
-        }
-        this.request.onblocked=event=>{
-          console.log("dal mounted  BLOCKED ",event)
-      
-        }
-      
-    },
+        request.onsuccess = function (event) {
+            resolve(event.target.result);
+        };
 
+        request.onerror = function (event) {
+            reject(`Errore nell'apertura del database: ${event.target.errorCode}`);
+        };
+    });
+  },
 
   
     async networkError() {
@@ -495,117 +502,77 @@ export default {
 
 
   },
-   /* getmedia(name){
-      console.log("nuemro di media "+ this.media );
+   
 
-      //fetch(this.$store.getters.baseUrl+"/inventario/download.php?id="+name+"&link=1")
-      fetch(this.$store.getters.baseUrl+"/upload/"+name)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status}`)
-        }
-        
-        console.log("OK Resp", response);
-        if(response.status==200){
-         
-         // this.mediafetched++
-        }
-      
-       
-        return response
-      })
-      .then(response => response.blob())
-      .then(blob => URL.createObjectURL(blob))
-      .then(url =>{ console.log( url);
-        this.mediafetched++
-        this.progress=Math.round(this.mediafetched/this.media*100 )/100;
-        console.log("progress ",  this.progress);
-      
-        if(this.progress==1){
-          this.openNext();
-        }
-      })
-      .catch(err => {console.error(err)
-        console.log("sono in errore")
-        this.mediafetched++
-        this.progress=Math.round(this.mediafetched/this.media*100 )/100;
-        console.log("progress ",  this.progress);
-        if(this.progress==1){
-          this.openNext();
-        }
-      });
+    getMedia() {
+      console.log("Numero media contatore ", this.media);
+      console.log("Numero media ", this.mediatoGet.length, this.mediaGeneral.length);
 
+      const fetchMedia = (array, targetArray, notDownloadedArray) => {
+        return array.map((name) => {
+          console.log("Scarico media ", name);
 
-    },*/
+          return fetch(this.$store.getters.baseUrl + "/upload/" + name)
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error(`Errore nel fetch per ${name}`);
+              }
+              return response.blob();
+            })
+            .then((blob) => {
+              if (blob) {
+                console.log("Blob scaricato per ", name);
+                targetArray.push( {name:name, media:blob});
+               
+                this.incProgress();
+              }
+            })
+            .catch((err) => {
+              console.error(`Errore nello scaricamento di ${name}: `, err);
+              notDownloadedArray.push(name);
+              this.erroreScaricamento();
+            });
+        });
+      };
 
-    getMedia(){
-      console.log("numero media contatore ", this.media );
-      console.log("numero media ", this.mediatoGet.length);
-      this.mediaGeneral.forEach((name,index)=>{
-        console.log("scarico general  ", name);
-        const mediaPercRequest = fetch(this.$store.getters.baseUrl+"/upload/"+name).then(response => response.blob())
-        .catch(err => { this.medianotDownloaded.push(name); console.log("sono in errore"+ name);this.erroreScaricamento();});
-        mediaPercRequest.then(blob => {
-          if(blob){
-            console.log("scarico media percorso  ", index);
-            this.mediaArrayGen.push({name:name, media:blob});
-            this.incProgress();
+      // Avvia i download per entrambi gli array
+      const mediaGeneralPromises = fetchMedia(
+        this.mediaGeneral,
+        this.mediaArrayGen,
+        this.medianotDownloaded
+      );
+
+      const mediaToGetPromises = fetchMedia(
+        this.mediatoGet,
+        this.mediaArray,
+        this.medianotDownloaded
+      );
+
+      // Attendi che tutti i fetch siano completati
+      Promise.all([...mediaGeneralPromises, ...mediaToGetPromises])
+        .then(() => {
+          console.log(
+            "Download completato: ", this.mediaArrayGen.length + this.mediaArray.length,  " media da scaricare: ",
+            this.media);
+
+          if (this.mediaArrayGen.length + this.mediaArray.length === this.media) {
+            localStorage.setItem("dowloadcompleto", true);
+            this.salvaArrayneldb(); // Chiama la funzione finale
+          } else {
+            console.log("Alcuni media non sono stati scaricati: ", this.medianotDownloaded);
+            //this.getAgain(); // Eventuale funzione di retry
           }
         })
-        console.log("length   ",  this.mediaArrayGen.length);
-      })
+        .catch((err) => {
+          console.error("Errore durante il download dei media: ", err);
+        });
+    },
 
-      this.mediatoGet.forEach((name, index) => { 
-        console.log("scarico media  index  ", index);
-        const mediaRequest = fetch(this.$store.getters.baseUrl+"/upload/"+name).then(response => response.blob())
-        .catch(err => { this.medianotDownloaded.push(name); console.log("sono in errore"+ name);this.erroreScaricamento();/*console.error(err);*/ /*alert('Errore nello scaricamnto');*/});
-        mediaRequest.then(blob => {
-          console.log("sono nel then della media request" );
-          navigator.storage.estimate().then((estimate)=> {
-          //  console.log("estimate ",estimate.quota," ",estimate )
-            this.remainingquota=estimate.quota-estimate.usage;
-          //  console.log("this.remainingquota ",  this.remainingquota)
-            if(blob){
-            //  console.log(" this.filesize ",   blob.size)
-              if(this.remainingquota> this.stima+blob.size){
-                this.stima+=blob.size;
-                //  console.log("CI STA ",name)
-                  this.mediaArray.push({name:name, media:blob});
-                  console.log("media scaricati "+ this.mediaArray.length);
-                  this.incProgress();
-                //  this.saveinDB(name, blob)
-              }else{
-                if(this.quotaExcided==false){
-                  this.storageError();
-                }
-                console.log("NON CI STA ",name)
-                this.quotaExcided=true;
-                this.incProgress();
-                console.log("progress ",  this.progress);
-                if(this.progress==1){
-                  this.openNext();
-                }
-              }
-            }
-             
-            //if(this.medianotDownloaded.length==0){
-              console.log("media scaricati "+ (this.mediaArray.length+this.mediaArrayGen.length)+ " media da scaricare " + this.media);
-              if(this.mediaArray.length+this.mediaArrayGen.length==this.media){
-                localStorage.setItem("dowloadcompleto", true);
-               // this.saveinDBGen();
-                this.saveinDB();
-              }
-          /*  }else{
-              console.log("devo riscaricare ", this.medianotDownloaded);
-              this.getAgain();
-            }*/
-           
-          });
-          
-
-        })
-      });
-      
+    async salvaArrayneldb(){
+      console.log("inizio a salvare nel db")
+      await this.addDataToStore(this.db, "general", this.mediaArrayGen);
+      await this.addDataToStore(this.db, "media-"+this.passedLang, this.mediaArray);
+      this.db.close();
     },
 
     erroreScaricamento(){
@@ -614,7 +581,6 @@ export default {
         this.errorDownloadAlert();
       }
      
-     // this.getAgain(name);
     },
 
     getAgain(name){
@@ -652,7 +618,9 @@ export default {
                       
               console.log("media scaricati "+ this.mediaArray.length+ " media da scaricare " + this.media);
               if(this.mediaArray.length==this.media){
-                this.saveinDB();
+
+                this.addDataToStore(this.db,"media-"+this.passedLang, this.mediaArray)
+                //this.saveinDB();
               }
           
            
@@ -818,43 +786,56 @@ export default {
       
 
     },
-  saveinDBGen(){
-    const request = indexedDB.open('mediaStore', global.dbVersion);
-    request.onupgradeneeded = event => {
-      console.log("UPGRADE eneeded");
-      const db = event.target.result;
-      db.onversionchange = function() {
-        db.close();
-        console.log("version changed");
-      };    
-      if(!db.objectStoreNames.contains('general')){
-        db.createObjectStore('general',  {keyPath: "name"});
-      
-      }
 
-      request.onsuccess = event => {
-        const db = event.target.result;
+  addDataToStore(db, storeName, dataArray) {
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction(storeName, "readwrite");
+        const store = transaction.objectStore(storeName);
 
-        const transaction = db.transaction('general','readwrite');
-        const store = transaction.objectStore('general');
-        this.mediaArrayGen.forEach((el,index)=>{
-          const objectStoreRequest = store.add({name: el.name, blob: el.media});
-          objectStoreRequest.onsuccess = (event) =>{
-            // report the success of our request
-            console.log(el.name+ " Successs");
-            };
-            objectStoreRequest.onerror=(event)=>{
-                console.log(" ERROR in add "+el.name , event);
+        dataArray.forEach((el, index) => {
+          const getRequest = store.get(el.name);
+          getRequest.onsuccess = function (event) {
+              if (event.target.result) {
+                  console.log(`Elemento con nome${el.name} già presente nello store '${storeName}'`);
+                 // resolve(); // Elemento già presente, ignoriamo l'aggiunta
+              } else {
+                  // Aggiungi l'elemento se non esiste
+                  console.log("elemento", el)
+                  const addRequest = store.add({name: el.name, blob: el.media});
+                  addRequest.onsuccess = function () {
+                      console.log(`Elemento con nome ${el.name} aggiunto allo store '${storeName}'`);
+                      resolve();
+                  };
+                  addRequest.onerror = function (event) {
+                      console.error(`Errore nell'aggiungere l'elemento con nome ${el.name}: ${event.target.error}`);
+                      reject(event.target.errorCode);
+                  };
+              }
+          };
+            
+          if(storeName!="general" && index==this.mediaArray.length-1){
+            this.salvataggioCompleto=true;
+            localStorage.setItem("salvataggioCompleto", this.salvataggioCompleto);
+            this.saveVersionLang();
+            this.incProgress();
+            if(this.progress==1){
+             // db.close();
+              console.log("qui chiudevo");
+              clearTimeout(this.timerScaricamento);
             }
-        })
+          }
+        });
 
+        transaction.oncomplete = function () {
+          console.log("completato", storeName)
+            resolve();
+        };
 
-        db.close();
-      }
-
-    }
-
-  },
+        transaction.onerror = function (event) {
+            reject(`Errore nella transazione: ${event.target.errorCode}`);
+        };
+    });
+},
   saveinDB(){
 
     console.log("GDBV "+global.dbVersion+ ' type '+ typeof  global.dbVersion)
@@ -942,8 +923,6 @@ export default {
               clearTimeout(this.timerScaricamento);
             }
           }
-
-
       }
 
       transaction.onerror=()=>{

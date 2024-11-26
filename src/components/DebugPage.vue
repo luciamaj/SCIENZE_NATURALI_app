@@ -134,7 +134,7 @@ export default {
   mounted(){
     this.store=JSON.parse(localStorage.getItem('pubblication'));
     this.schede=JSON.parse(localStorage.getItem('dataMostra'));
-    this.vLang=JSON.parse(localStorage.getItem('versionLangs'));
+    this.vLang=JSON.parse(localStorage.getItem('sPercLang'));
     this.getDBInfo();
 
     this.updateCount();
