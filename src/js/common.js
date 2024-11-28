@@ -409,7 +409,9 @@ export default {
 
     },
     async getImgfromDB(name, store){
+      const backupImage='/assets/background/logo.png'
       if (name != null) {
+        let fetchimage;
         return new Promise((resolve, reject) => {
          this.request = indexedDB.open('mediaStore', global.dbVersion);
           this.request.onsuccess = event => {
@@ -418,7 +420,7 @@ export default {
             const objstore = transaction.objectStore(store);
             const getRequest = objstore.get(name);
   
-            getRequest.onsuccess = event => {
+            getRequest.onsuccess = async event => {
               console.log("GET RESULT ", event.target.result)
               const testget = event.target.result;      
               if (testget) {
@@ -429,15 +431,33 @@ export default {
               
               } else {
                 console.log('testget dont exixst error');
-                  this.fetchImg(name);
+               
+                fetchimage= await this.fetchImg(name);
+                if(fetchimage){
+                  this.saveobjectinDB(name, fetchimage, store);
+                  fetchimage=URL.createObjectURL(fetchimage)
+                  resolve(fetchimage);
+                }else{
+                  resolve(backupImage);
+                }
               }
   
               this.db.close();
             };
           }
-          this.request.onerror= event=>{
+          this.request.onerror= async event=>{
             reject('Error getting image');
-            resolve(this.fetchImg(name));
+            fetchimage= await this.fetchImg(name);
+
+            if(fetchimage){
+              this.saveobjectinDB(name, fetchimage, store);
+              fetchimage=URL.createObjectURL(fetchimage)
+              resolve(fetchimage);
+            }else{
+             
+              resolve(backupImage);
+            }
+            
           }
         })
         }else{
@@ -447,28 +467,53 @@ export default {
      
      
     
-    fetchImg(name,store){
-         console.log("TRYIN FETCH")
-          const mediaRequest = fetch(this.$store.getters.baseUrl+"/upload/"+name).then(response => response.blob()).catch(err => {console.error(err); console.log("sono in errore")});
+   /*async fetchImg(name){
+      console.log("TRYIN FETCH")
+      const mediaRequest = fetch(store.getters.baseUrl+"/upload/"+name).then(response => response.blob()).catch(err => {console.error(err); console.log("sono in errore")});
+      mediaRequest.then(blob => {
+        const fileblob=blob;
+        return fileblob
       
-          mediaRequest.then(blob => {
-            const fileblob=blob;
-            
-           
-          
-            const objectStore =this.db.transaction(store,'readwrite').objectStore(store);
-              console.log('blobb ',fileblob)
-              const objectStoreRequest = objectStore.add({name: name, blob: fileblob});
-              objectStoreRequest.onsuccess = event=>{
-              // report the success of our request
-              console.log(name+ " Successs put");
-                
-            };
-            return  URL.createObjectURL(fileblob)
-          
-          })
+      })
   
-       },
+    },*/
+
+    async fetchImg(name) {
+      try {
+        console.log("Provo a eseguire il fetch");
+        const response = await fetch(store.getters.baseUrl+"/upload/"+name);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const blob = await response.blob(); 
+        console.log("Fetch riuscito:", blob);
+        return blob;
+      } catch (err) {
+        console.error("Errore durante il fetch:", err);
+        return null; 
+      }
+    },
+
+    saveobjectinDB(name, obj, storeDB){
+
+     
+      const openRequest=indexedDB.open('mediaStore', global.dbVersion);
+      openRequest.onsuccess = ()=> {
+        const db = openRequest.result
+        const objectStore =db.transaction(storeDB,'readwrite').objectStore(storeDB);
+
+        console.log('blobb ',obj)
+        const objectStoreRequest = objectStore.add({name: name, blob: obj});
+        objectStoreRequest.onsuccess = event=>{
+        // report the success of our request
+        console.log(name+ " Successs put");
+          db.close();
+        };
+
+      }
+        
+
+    },
 
     alertPercorso() {
       const alert = document.createElement('ion-alert');

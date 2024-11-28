@@ -88,35 +88,28 @@ export default {
   //  IonButton,
 
   },
-  ionViewWillLeave() {
-    console.log('Ampli will leave');
+
+  beforeUnmount(){
+    console.log('beforeUnmount');
+    clearTimeout(this.timer);
     if(this.fileUrl){
-      clearTimeout(this.timer);
       Amplitude.pause();
       this.audio.currentTime=0;
       this.audio.src="";
       this.timeStamp=null;
     }
-
   },
-
    
-  ionViewDidLeave() {
-   
-     console.log("leave page");
-  },
 
   unmounted(){
     this.schedaState(false);
     console.log("Unmounting page");
-    console.log('DB? '+this.db)
+    console.log('DB? ',this.db)
     this.db.close();
   },
 
   created(){
-     document.addEventListener('backbutton',()=>{
-      this.$router.replace('/');
-    });
+
     this.addtoBucket=common.addtoBucket;
     this.paramId=this.$route.params.id;
     this.schedaState(true);
@@ -144,7 +137,6 @@ export default {
   computed: {
 
     contentScheda(){
-         
        console.log("ENTRO QUA")
        const lang= localStorage.getItem("lang")
          
@@ -153,14 +145,12 @@ export default {
       if(scheda) {
         return scheda
       }else{
-
         return ""
       }
      
 
     },
     dataSchede(){
-
       const data=localStorage.getItem("dataMostra")
      
       const scheda= JSON.parse(data).find(x => x.tag ==  this.paramId);
@@ -210,7 +200,7 @@ export default {
     this.timeStamp = this.gettimestampS(this.$route.params.timestamp);
   },
   mounted() {
-   
+    console.log("mounted ampli page  ",this.id);
     this.addtoBucket(this.paramId);
   },
   methods:{
@@ -445,7 +435,8 @@ export default {
     /*  if (window.history.length > 1) {
         this.$router.go(-1);
       } */
-      this.$router.replace({path:"/"});
+      this.$router.go(-1);
+     // this.$router.replace({path:"/"});
       
       
     },

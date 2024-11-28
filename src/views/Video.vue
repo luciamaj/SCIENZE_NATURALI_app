@@ -130,38 +130,19 @@ export default {
     };
   },
  
-  ionViewWillLeave() {
-  
+   beforeUnmount(){
     console.log('VIdeo will leave');
      clearTimeout(this.timer);
     this.vid.pause();
     this.vid.currentTime=0;
-   
-   
-  },
-   
+    this.schedaState(false);
+   },
   unmounted(){
     this.vid.src="";
     this.schedaState(false);
     console.log("Unmounting page");
   },
-  beforeMount(){
-    const video = this.contenuto.video;
-      const supportoVisuale = this.contenuto.supportoVisuale;
-   
-      if (this.attivaSupporto==true && supportoVisuale) {
-        console.log("supporto video ",supportoVisuale);
-        // return this.$store.getters.baseUrl+"/upload/"+video;
-        this.getvideo(supportoVisuale)
-       
-      } else if (video) {
-        console.log("video ",video);
-        // return this.$store.getters.baseUrl+"/upload/"+video;
-        this.getvideo(video)
-       
-      } 
-
-  },
+ 
   computed: {
     tag() {
       return this.paramId;
@@ -216,9 +197,8 @@ export default {
       }
     }
   },
-  created(){
-   
-   document.addEventListener('backbutton',()=>{
+  created(){  
+    document.addEventListener('backbutton',()=>{
       this.$router.replace('/');  this.vid.play()
     });
     this.addtoBucket=common.addtoBucket;
@@ -234,9 +214,24 @@ export default {
       console.log("FINITO");
     });
 
+    const video = this.contenuto.video;
+    const supportoVisuale = this.contenuto.supportoVisuale;
+  
+    if (this.attivaSupporto==true && supportoVisuale) {
+      console.log("supporto video ",supportoVisuale);
+      // return this.$store.getters.baseUrl+"/upload/"+video;
+      this.getvideo(supportoVisuale)
+      
+    } else if (video) {
+      console.log("video ",video);
+      // return this.$store.getters.baseUrl+"/upload/"+video;
+      this.getvideo(video)
+      
+    } 
+
   },
   mounted(){
-   
+    console.log("mounted video page  ",this.tag);
     this.vid=document.getElementById("video");
    // this.vidFull=document.getElementById("videoFull");
     console.log("video ",this.vid);
@@ -381,16 +376,13 @@ export default {
      },
    
     goingback() {
-       this.schedaState(false);
-    /*  if (window.history.length > 1) {
-        this.$router.go(-1);
-      } */
+       
     
-      //this.$router.replace({path:"/"});
       if(window.history.state.back=="/gps" ||window.history.state.back== "/raccolta"){
       this.$router.go(-1);
      }else{
-      this.$router.replace({path:"/"});
+     // this.$router.replace({path:"/"});
+      this.$router.go(-1);
      }
       
     },

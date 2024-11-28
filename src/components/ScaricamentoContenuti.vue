@@ -349,8 +349,8 @@ export default {
 
     },
 
-     openDatabase() {
-    return new Promise((resolve, reject) => {
+    openDatabase() {
+     return new Promise((resolve, reject) => {
         const request = indexedDB.open  ('mediaStore', global.dbVersion);
       
 

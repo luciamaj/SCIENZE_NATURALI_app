@@ -97,23 +97,19 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/scanner/',
     name: 'scanner',
-    component: () => import('@/views/Scanner.vue')
+    component: () => import('@/views/Scanner.vue'),
   },
   {
     path: '/audio/:id',
     name: 'audio',
+    props: true,
     component: () => import('@/views/Amplitude.vue'),
-    beforeEnter: (to, from, next) => {
-    
-        next();
-        next(from)
-
-    },
   },
   {
     path: '/audiosync/:id/:timestamp',
     name: 'audio-sync',
     component: () => import('@/views/AmplitudeSync.vue'),
+    props: true,
       
   },
   {
@@ -124,12 +120,14 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/video/:id/:timestamp?',
     name: 'video',
-    component: () => import('@/views/Video.vue')
+    component: () => import('@/views/Video.vue'),
+    props: true,
   },
   {
     path: '/soloImg/:id',
     name: 'solo-image',
     component: () => import('@/views/SoloImage.vue'),
+    props: true,
       
   },
   {
@@ -190,6 +188,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  console.log('Navigating from:', from.fullPath, 'to:', to.fullPath);
   if (localStorage.getItem('pubblication')==null && to.path !== '/onboard') {
     if((to.name == 'scheda'||to.name == 'open-app' ) && store.getters.conf.interactionMode=='mix'){
       return  next();
@@ -203,8 +202,6 @@ router.beforeEach((to, from, next) => {
       return next('/onboard');
  
     }
-    
-   
   } else if(localStorage.getItem('pubblication')!=null){
    
     const confsaved=JSON.parse(localStorage.getItem("pubblication"))
@@ -217,14 +214,15 @@ router.beforeEach((to, from, next) => {
         localStorage.clear();
        return next('/onboard');
     } else{
-      return  next();
+      next();
     }    
    
     
   } else {
-    return  next();
-  
+      next();
   }
+  return;
+  
 });
 
 export default router

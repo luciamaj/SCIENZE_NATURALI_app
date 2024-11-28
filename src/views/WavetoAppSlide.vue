@@ -135,7 +135,8 @@ export default {
       percselInfo:"",
       savedPercList:[], 
     },
-    loadedImages:{}
+    loadedImages:{},
+    openingScheda:false,
     };
   },
 
@@ -593,16 +594,12 @@ export default {
 
 
     async openModal  ()  {
-      if(this.$store.getters.conf.interactionMode=="mix"){
-       // if(this.tour==true){}
-       console.log("hidden?  ",this.captureStop.hidden)
-         if(  this.captureStop.hidden==false){
-          this.captureStop.click();
-
-         }
-          
-      }
       
+    
+      if(  this.captureStop.hidden==false){
+       this.captureStop.click();
+
+      }
       const top = await modalController.getTop();
 
       const modal = await modalController.create({
@@ -612,27 +609,33 @@ export default {
       });
 
       modal.onDidDismiss().then(async _ => {
-        console.log("dismissed");
-        const objStr = await Storage.get({ key: "scheda" });
-        let obj = JSON.parse(objStr.value);
+        console.log("scanner dismissed");
+        //this.stato = await this.getSchedaState();
+      
+          const objStr = await Storage.get({ key: "scheda" });
+          let obj = JSON.parse(objStr.value);
 
-        if (obj != null) {
-          obj=obj.path
-          console.log("OGGETTO ",obj)
-          if (this.attivaSupporto==true && obj.supportoVisuale !=null) {//da spostare prima
-              this.$router.push({ path: "/video/" + obj.index });
-          }else{
-            if (obj.type == "audio") {
-            this.$router.push({ path: "/audio/" + obj.index });
-            } else  if (obj.type == "video") {
-                this.$router.push({ path: "/video/" + obj.index });
+          if (obj != null) {
+            obj=obj.path
+            console.log("OGGETTO ",obj)
+            this.findRoute(obj.index)
+          /*  if (this.attivaSupporto==true && obj.supporto!=null) {//da spostare prima
+                this.$router.push({ path: "/video/" + obj.index, replace:false });
             }else{
-              this.$router.push({ path: "/soloImg/" + obj.index });
-            }
+              if (obj.type == "audio") {
+              this.$router.push({ path: "/audio/" + obj.index ,replace:false});
+              } else  if (obj.type == "video") {
+                  this.$router.push({ path: "/video/" + obj.index, replace:false});
+              }else{
+                this.$router.push({ path: "/soloImg/" + obj.index, replace:false });
+              }
 
+            }*/
+            
           }
-          
-        }
+
+        
+       
       });
 
       await Storage.remove({ key: "scheda" });
@@ -668,8 +671,10 @@ export default {
     
       
     const top = await modalController.getTop();
-
-    top.dismiss();
+      if(top){
+        top.dismiss();
+      }
+  
   },
 
 
@@ -752,18 +757,21 @@ export default {
      
       const scheda= JSON.parse(data).find(x => x.tag == idvid);
       
-      const captureStop = document.getElementById("captureStop");  
-         
-        if (scheda != null) {
+        if(scheda != null && this.openingScheda==false) {
+          this.openingScheda=true;
           const content=scheda.content.find(x => x.lang == this.currLang);
           console.log("scheda.type "+ content.type);
-          captureStop.click();
+
+          let path
+         
           if(this.attivaSupporto==true && content.supportoVisuale !=null ){
 
             if(timeStamp!=null){
-                this.$router.push({ path: "/video/" + idvid +"/"+timeStamp, replace:false });
+               path="/video/" + idvid +"/"+timeStamp
+              //  this.$router.push({ path: "/video/" + idvid +"/"+timeStamp, replace:false });
               }else{
-                this.$router.push({ path: "/video/" + idvid, replace:false });
+                path="/video/" + idvid 
+               // this.$router.push({ path: "/video/" + idvid, replace:false });
               }
           }else{
 
@@ -771,25 +779,35 @@ export default {
               console.log("audio");
      
               if(timeStamp!=null){
-                this.$router.push({ path: "/audiosync/" + idvid +"/"+timeStamp, replace:false });
+                path="/audiosync/" + idvid +"/"+timeStamp
+               // this.$router.push({ path: "/audiosync/" + idvid +"/"+timeStamp, replace:false });
               }else{
-                this.$router.push({ path: "/audio/" + idvid,  replace:false });
+                path="/audio/" + idvid
+                //this.$router.push({ path: "/audio/" + idvid,  replace:false });
               }
 
             }else if (content.type == "video"){
               if(timeStamp!=null){
-                this.$router.push({ path: "/video/" + idvid +"/"+timeStamp, replace:false });
+                path="/video/" + idvid +"/"+timeStamp
+                //this.$router.push({ path: "/video/" + idvid +"/"+timeStamp, replace:false });
               }else{
-                this.$router.push({ path: "/video/" + idvid, replace:false });
+                path="/video/" + idvid
+               // this.$router.push({ path: "/video/" + idvid, replace:false });
               }
               console.log("video");
               
             }else{
-                this.$router.push({ path: "/soloImg/" + idvid , replace:false});
+              path="/soloImg/" + idvid
+                //this.$router.push({ path: "/soloImg/" + idvid , replace:false});
             }
 
           }
-          
+
+          this.$router.push({ path: path, replace:false }).finally(() => {
+            console.log("finally");
+            this.openingScheda = false; // Resetta la variabile dopo la navigazione
+          });
+         
         
         }else{
 
@@ -889,18 +907,21 @@ export default {
      clearTimeout(this.waitingTime);
       (async () => {
        this.stato = await this.getSchedaState();
-          //console.log("statooo "+stato);
-          if( this.stato==false|| this.stato==null){
-             const res = tag
-             
-            if (res) {
-              this.closeCaptingModal();
-                  this.findRoute(res);
-                  this.decodedValue = res;
-                  
+        console.log("statooo "+this.stato);
+        if( this.stato==false|| this.stato==null){
+            const res = tag
+          if (res) {
+            this.closeCaptingModal();
+            const captureStop = document.getElementById("captureStop");  
+            if(captureStop){
+              captureStop.click();
             }
-
+            this.findRoute(res);
+            this.decodedValue = res;
+                
           }
+
+        }
         })();
 
     },

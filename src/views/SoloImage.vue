@@ -182,7 +182,7 @@ export default {
     
   },
   mounted() {
-   
+    console.log("mounted soloimg  page  ",this.id);
     this.addtoBucket(this.paramId);
   },
   methods:{
@@ -303,12 +303,7 @@ export default {
         
 
      },
-    goingback() {
-       this.schedaState(false);
-    /*  if (window.history.length > 1) {
-        this.$router.go(-1);
-      } */
-     // this.$router.replace({path:"/"});
+    goingback() {   
      console.log("HISTORY",window.history.state)
       if(window.history.state.back=="/gps"||window.history.state.back== "/raccolta"){
         //this.$router.replace({path:window.history.state.back});

@@ -99,24 +99,17 @@ export default {
   //  IonButton,
 
   },
-  ionViewWillLeave() {
+  beforeUnmount(){
     console.log('Ampli will leave');
+    clearTimeout(this.timer);
     if(this.fileUrl){
-      clearTimeout(this.timer);
       Amplitude.pause();
       this.audio.currentTime=0;
       this.audio.src="";
       
     }
-
   },
-
    
-  ionViewDidLeave() {
-   
-     console.log("leave page");
-  },
-
   unmounted(){
     this.schedaState(false);
     console.log("Unmounting page");
@@ -221,7 +214,7 @@ export default {
 
   },
   mounted() {
-  
+    console.log("mounted ampli page  ",this.id);
     this.addtoBucket(this.paramId);
   },
   methods:{
@@ -461,7 +454,8 @@ export default {
      if(window.history.state.back=="/gps" || window.history.state.back== "/raccolta"){
       this.$router.go(-1);
      }else{
-      this.$router.replace({path:"/"});
+      //this.$router.replace({path:"/"});
+      this.$router.go(-1);
      }
       
       

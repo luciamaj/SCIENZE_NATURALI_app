@@ -104,7 +104,7 @@ export default defineComponent({
       if(media){
         media=media.content.find(x => x.lang == lang);
         console.log("content",media);
-        const dataEl = { index: this.tag, type: media.type };
+        const dataEl = { index: this.tag, type: media.type};
         this.setObject(dataEl);
         this.close();
       }else{

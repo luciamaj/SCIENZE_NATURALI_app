@@ -24,7 +24,6 @@ self.addEventListener('install', event => {
 		'/index.html',
 		'/soloImg/E01A',
 		'/audiosync/01/00000',
-		'/open-scanner',
 		'/dataoversound-swi/service/rest/v1/mostra-attiva',
 		"/config/config.json",
 		'https://cdn.jsdelivr.net/npm/jsqr@1.3.1/dist/jsQR.min.js',

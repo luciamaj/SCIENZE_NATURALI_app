@@ -1,6 +1,6 @@
 <template>
   <ion-app>
-    <ion-router-outlet ref="routerOuteletRef" id="main-content"></ion-router-outlet>
+    <ion-router-outlet ref="routerOuteletRef" id="main-content" :animated="false" :key="$route.fullPath" ></ion-router-outlet>
   </ion-app>
   <KeepAlive>
     <loader v-if="loading"/>
