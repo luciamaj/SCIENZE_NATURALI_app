@@ -38,6 +38,7 @@ import * as allIcons from 'ionicons/icons';
 import mitt from 'mitt';
 const emitter = mitt();
 
+
 const currentIcons = Object.keys(allIcons).map(i => {
   const key = i.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)
   if (typeof allIcons[i] === 'string') {
@@ -135,7 +136,6 @@ fetchlocalconf().then(configuration=>{
 
 const iconsObject = Object.assign({}, ...currentIcons);
 addIcons(iconsObject);
-
 
 
 defineCustomElements(window);

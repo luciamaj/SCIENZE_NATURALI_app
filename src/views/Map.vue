@@ -7,12 +7,12 @@
         <ion-button v-on:click="aletrtexit()" class="back-button"><ion-icon size="medium" name="arrow-back"></ion-icon> {{$t('schede.back')}}</ion-button>
       </ion-buttons>
 
-      <ion-buttons slot="end" >
-        <ion-button v-if="visited.length>0" color="secondary"  @click="openviste()" class="collection-button">
-          <ion-icon   name="file-tray-full-outline" class="history-icon map-icons"></ion-icon>
+      <!--ion-buttons slot="end" >
+        <ion-button v-if="visited.length>0" color="secondary" :key="visited.length"  @click="openviste()" class="collection-button">
+          <ion-icon   name="file-tray-full-outline" class="history-icon map-icons"></ion-icon*>
+           <svg-icon></svg-icon>
         </ion-button>
-        <ion-button v-on:click="introModal()" class=""><ion-icon class="map-icons" size="medium" name="information-circle-outline"></ion-icon> </ion-button>
-      </ion-buttons>
+        </ion-buttons-->
     </ion-toolbar> 
   </ion-header>
 
@@ -27,11 +27,13 @@
 
           <div class="utils-container">
             <ion-button class="reload-button" @click="updateMap"><img class="icon-button" src="assets/background/reload.png"></ion-button>
-            open{{ open }}
-            lat: {{ userCoord.latitude }} -
-            long {{ userCoord.longitude }} ---
-            distanza {{ distance }} m
+            <ion-button  v-if="visited.length>0"  :key="visited.length"  class="raccolta-button" @click="openviste()"> <svg-icon></svg-icon></ion-button>
            
+            <div class="info-coord"> open{{ open }}
+              lat: {{ userCoord.latitude }} -
+              long {{ userCoord.longitude }} ---
+              distanza {{ distance }} m
+           </div>
           </div>
 
         </div>
@@ -58,7 +60,7 @@ import L from "leaflet";
 import 'leaflet/dist/leaflet.css';
 import Amplitude from "./Amplitude.vue";
 import { set } from "idb-keyval";
-
+import SvgIcon from "@/components/svgPack.vue";
 
 
 
@@ -72,16 +74,12 @@ export default {
       userCoord: { latitude: 0, longitude: 0 },
       distance: null,
       cityCoord: { latitude:  45.466479544159796, longitude:9.192086626765356 } ,
-     
       map: null,
-     
       mapheight:"",
       mapwidth:"",
       bounds:"",
       imageBounds:"",
       mapImage:"",
-     
-
      /* bergamo
      mapwidth:2645,
       mapheight:3000,
@@ -100,6 +98,9 @@ export default {
       open:false,
       isloaded:false,
       range:0,
+      visited:[],
+      introOpen:false,
+      openingScheda:false
     };
   },
   
@@ -108,6 +109,7 @@ export default {
     IonPage,
     IonHeader,
     //IonModal
+    SvgIcon
   
   },
   computed:{
@@ -125,6 +127,15 @@ export default {
         return this.$i18n.locale;
       }
     },
+    currPerc() {
+     
+      const percs= localStorage.getItem("percSel")
+      const perc= JSON.parse(localStorage.getItem("percorsi"))
+      const currPerc=perc.find(p=>p.percorso==percs)
+      return currPerc
+     
+   },
+
     infomap() {
      
       const percs= localStorage.getItem("percSel")
@@ -137,6 +148,15 @@ export default {
       } else {
         return null;
       }
+    },
+    mapImg(){
+      const linguaperc = this.currPerc.lingue.find(l=>l.lang==this.lang)
+        if(linguaperc){
+          return linguaperc.imgMappa
+        }else{
+          return null;
+        }
+
     },
 
     visitedSchede:{
@@ -191,7 +211,8 @@ export default {
   },
   async mounted(){
     this.getLocation();
-    this.mapImage= await this.getmapImg(this.infomap.img);
+    const mapToget=this.mapImg!=null?this.mapImg:this.infomap.imgMappa
+    this.mapImage= await this.getmapImg(mapToget);
     this.drawMap();
 
     if(localStorage.getItem("alertmappaletto")!=1){
@@ -211,6 +232,7 @@ export default {
   async beforeUnmount() {
     if (this.map) {
       this.map.remove();
+      this.mapImage=null
     }
     this.open==false
     this.clearwatcher();
@@ -238,13 +260,12 @@ export default {
                 
             // this.imgSrc='data:'+testget.blob.type+';base64,'+btoa(testget.data);
               resolve(img);
-            
+              this.db.close();
             } else {
               console.log('testget dont exixst error');
                 this.fetchImg(name);
             }
-
-            this.db.close();
+      
           };
         }
         this.request.onerror= event=>{
@@ -274,6 +295,8 @@ export default {
             objectStoreRequest.onsuccess = event=>{
             // report the success of our request
             console.log(name+ " Successs put");
+
+            this.db.close();
               
           };
         
@@ -296,16 +319,22 @@ export default {
           },
         swipeToClose: false,
         presentingElement: top
-      });
+      })
 
-      //await introModal.onWillDismiss();
+      introModal.addEventListener('didPresent', () => { this.introOpen = true;  });
+    
       introModal.onDidDismiss().then(async _ => {
+        console.log("DISMISS")
+        this.introOpen = false; 
+        this.addtoBucket("E00A",'schede_viste_onmap');
         localStorage.setItem("alertmappaletto",1);
       });
 
     
       return introModal.present();
     },
+
+
     savedtag(tags){
         this.visitedTag=tags;
     },
@@ -470,23 +499,25 @@ export default {
     calcolaDistanze(){
       if(this.open==true){
       this.schede.forEach(it=>{
-        console.log("calc",this.userCoord, it.coord)
-        if( it.coord!=null){
-          const distance= this.calculateDistance(this.userCoord, it.coord);
-          const range=it.range!=null ? it.range : this.range;
-          console.log("distance",it.tag, distance)
-          
-            if(distance<=range){
-              if( !this.visited.includes(it.tag)){
+          //console.log("calc",this.userCoord, it.coord)
+          if( it.coord!=null){
+            const distance= this.calculateDistance(this.userCoord, it.coord);
+            const range=it.range!=null ? it.range : this.range;
+            console.log("distance",it.tag, distance)
+            
+            if(distance<=range ){
+              if( !this.visited.includes(it.tag) && !this.introOpen && !this.openingScheda){
+                this.openingScheda=true
                 this.openscheda(it)
+                
               }
             
               //alert("sei vicino al punto");
             }
-          
-        }
-      })
-    }
+            
+          }
+        })
+      }
     },
 
     showPosition(position) {
@@ -547,21 +578,23 @@ export default {
               console.log("scheda.type "+ content.type);
               this.clearwatcher();
               this.open=false;
+              let composePath="";
               if (content.type == "audio") {
                 console.log("audio");
-                //this.schedaState(true);
-                //this.$router.push({ path: "/audio/" + idvid , replace:true});
-              
-                this.$router.push({ path: "/audio/" + tag,  replace:false });
-                
+                composePath="/audio/" + tag;
 
               }else if (content.type == "video"){
                 console.log("video");
-                //this.schedaState(true);
-                this.$router.push({ path: "/video/" + tag, replace:false });
+                composePath="/video/" + tag;
+            
               }else{
-                  this.$router.push({ path: "/soloImg/" + tag , replace:false});
+                composePath="/soloImg/" + tag;
               }
+              this.$router.push({ path: composePath, replace:false }).finally(() => {
+                console.log("finally");
+                this.openingScheda = false;
+              });
+
         
     },
     getLocation() {
@@ -700,20 +733,17 @@ export default {
     addtoBucket(ntag, variabile){
       //this.bucket= this.visited;
       if(this.visited==[]){
-        this.visited=ntag;
-        this.visitedSchede={variabile:variabile, ntag:visited}
-              //  localStorage.setItem(variabile, ntag);
+        this.visited.push(ntag);
+        this.visitedSchede={variabile:variabile, ntag:this.visited}
 
-      }else{
-        if(!this.visited.includes(ntag)){
-          this.visited.push(ntag);
-          this.visitedSchede={variabile:variabile, ntag:this.visited}
+      }else if(!this.visited.includes(ntag)){
+        this.visited.push(ntag);
+        this.visitedSchede={variabile:variabile, ntag:this.visited}
          // localStorage.setItem(variabile, this.bucket);
-        }
-       
-        console.log("bucket  "+this.visited)
-        
       }
+       
+      console.log("bucket  "+this.visited,+this.visited.length )
+      
       
     },
     openviste(){
@@ -805,7 +835,7 @@ ion-content {
 .utils-container{
     position: fixed;
     bottom: 0;
-    height: 10vh;
+    height: 5vh;
     width: 100%;
     z-index: 5;
     background: white;
@@ -818,7 +848,20 @@ ion-content {
   width: 100%;
   text-align: center;
 }
+.collection-button{
+  width: 40px;
+  height: 28px;
+}
+.raccolta-button{
+  width: 60px;
+  height: 60px;
+    --background: white;
+    --border-radius:15px;
 
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+}
 
 .leaflet-popup-content .img-container-popup {
   width: 46vw;
@@ -842,8 +885,16 @@ ion-content {
     --border-radius:15px;
 
     position: absolute;
-    bottom: 80px;
+    bottom: 20px;
     left: 20px;
+}
+.info-coord{
+  display: none;
+  position: fixed;
+  right: 0;
+  width: 67%;
+  margin-right: 6px;
+
 }
 
 .modal-intro .modal-wrapper{

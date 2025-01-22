@@ -444,14 +444,21 @@ export default {
       this.mediaCounter();
      // this.mediatoGet.push(perc.img);
       this.mediaGeneral.push(perc.img)
-      if(perc.infomappa.img!=null){
-        this.mediaGeneral.push(perc.infomappa.img);
+
+      if(perc.infomappa.imgMappa!=null){
+        this.mediaGeneral.push(perc.infomappa.imgMappa);
         this.mediaCounter();
         counter++;
       }
-     
+      perc.lingue.forEach(pLang=>{
+        if(pLang.imgMappa!=null){
+          this.mediaCounter();
+          counter++;
+          this.mediaGeneral.push(pLang.imgMappa);
+        }
+      })
     })
-    
+    console.log("mediageneral ",this.mediaGeneral)
    // this.getMedia(this.$store.getters.pubblication.img);
     jsonSchede.forEach((scheda, index) => {
      // console.log("n° ",counter++ )
@@ -510,7 +517,7 @@ export default {
 
       const fetchMedia = (array, targetArray, notDownloadedArray) => {
         return array.map((name) => {
-          console.log("Scarico media ", name);
+        //  console.log("Scarico media ",array, name);
 
           return fetch(this.$store.getters.baseUrl + "/upload/" + name)
             .then((response) => {
@@ -791,6 +798,7 @@ export default {
     return new Promise((resolve, reject) => {
         const transaction = db.transaction(storeName, "readwrite");
         const store = transaction.objectStore(storeName);
+        console.log( "DB ", db, "SN ",storeName,"Dta Arr ",dataArray)
 
         dataArray.forEach((el, index) => {
           const getRequest = store.get(el.name);

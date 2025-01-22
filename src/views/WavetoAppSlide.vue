@@ -27,7 +27,7 @@
 </ion-modal-->
       <div class="vertical-center view-wwave-container">
         <div class="center" :key="percKey">
-          <div class="slide-percorsi">
+          <div class="slide-percorsi"  :class="infoPercorsi.length==1? 'vertical':''">
 
             <template v-if="infoPercorsi.length>1">
               <ion-slides :options="slideOpts" pager="true">
@@ -1014,6 +1014,10 @@ ion-content {
 .slide-percorsi{
   display: flex;
     height: 65vh;
+    justify-content: center;
+}
+.vertical{
+  align-items: center;
 }
 
 

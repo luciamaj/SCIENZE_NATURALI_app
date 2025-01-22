@@ -15,7 +15,7 @@
     <ion-content :fullscreen="true">
       <div class="vertical-center">       
         <div class="player">
-          <div :class="[hastext? 'img-container': 'img-container-audio-notext']"> 
+          <div :class="[hastext? 'img-container': 'img-container-audio-notext', context == 'modal'?'img-modal':'' ]" > 
             <img :src="imgSrc" class="album-art" :key="imageUrl"/>
           </div>
           
@@ -46,7 +46,7 @@
                 <div class="next" @click="plus"></div>
               </div>
             </div>
-            <div class="descrArea"   v-html="contentScheda.testo"> </div>
+            <div class="descrArea" :class="{'descrArea-modal': context == 'modal'}"  v-html="contentScheda.testo"> </div>
           </div>
         </div>
 
@@ -220,6 +220,7 @@ export default {
   methods:{
 
     async  closeModal(){
+      this.pause
       const top= await modalController.getTop();
        top.dismiss();
 
@@ -577,6 +578,9 @@ ion-content {
 .img-container{
   height: 45vh;
 }
+.img-modal{
+  height: 42vh; 
+}
 
 .img-container-audio-notext{
   height: 70vh;
@@ -626,6 +630,12 @@ div.player img.album-art {
   overflow: scroll;
 
 }
+
+.descrArea-modal{
+  height: 29vh;
+  padding: 8px 20px 25px;
+}
+
 .descrArea p{ margin-top: 0;}
 
 .content-scheda{

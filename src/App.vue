@@ -1,6 +1,6 @@
 <template>
   <ion-app>
-    <ion-router-outlet ref="routerOuteletRef" id="main-content" :animated="false" :key="$route.fullPath" ></ion-router-outlet>
+    <ion-router-outlet ref="routerOuteletRef" id="main-content" :animated="false" :key="shouldRefreshPage ?$route.fullPath:undefined" ></ion-router-outlet>
   </ion-app>
   <KeepAlive>
     <loader v-if="loading"/>
@@ -42,6 +42,16 @@ export default defineComponent({
       mediafetched:0,
       loading: true
     };
+  },
+
+  computed:{
+    shouldRefreshPage() {
+      const freshPages = ['audio', 'video','solo-image','audio-sync']; 
+     // const freshPages = ['wave']; 
+      console.log("inckludee?",this.$route.name, freshPages.includes(this.$route.name) )
+      return freshPages.includes(this.$route.name);
+    },
+
   },
   ionViewWillEnter() {
     this.statusBar.styleDarkContent();
