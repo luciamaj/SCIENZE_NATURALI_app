@@ -596,7 +596,7 @@ export default {
     async openModal  ()  {
       
     
-      if(  this.captureStop.hidden==false){
+      if( this.captureStop&& this.captureStop.hidden==false){
        this.captureStop.click();
 
       }

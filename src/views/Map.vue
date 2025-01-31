@@ -181,9 +181,12 @@ export default {
 
   },
  
-
   beforeMount(){
-    
+    navigator.geolocation.getCurrentPosition((position)=>{  
+      this.userCoord.latitude= position.coords.latitude,
+      this.userCoord.longitude= position.coords.longitude
+
+    })
     console.log("MAPIMAGE "+this.mapImage)
     console.log("infomappa ",this.infomap)
     this.range=this.conf.range;
@@ -197,6 +200,19 @@ export default {
     this.imageBounds=[[0,0],  [this.mapheight,this.mapwidth]],
     console.log("configlatlan",typeof this.lat1,this.lat2, this.lon1, this.lon2);
     this.visited=this.visitedSchede;
+   const savedCoord=JSON.parse(localStorage.getItem('userCoord'));
+    let mypoint;
+    console.log("usercoord  ", savedCoord)
+    if(savedCoord){
+      this.userCoord=savedCoord
+       mypoint={id: 'me', description: 'ME', latLng: this.coordtopixelPunti( this.userCoord.latitude,this.userCoord.longitude), status: 3}
+    }else{
+       mypoint={id: 'me', description: 'ME', latLng: this.coordtopixelPunti(this.lat1,this.lon1), status: 3}
+    }
+    
+    this.items.push(mypoint);
+    console.log("mypoint ",mypoint)
+    
     this.schede.forEach(scheda=>{
       const cont= scheda.content.find(x => x.lang == this.lang);
     
@@ -542,9 +558,9 @@ export default {
       console.log("mie coord ",  this.userCoord )
       this.calcolaDistanze();
 
-     // this.getimagepos();
-    //this.coordtoCart()
-   // this.coordtopixel()
+      // this.getimagepos();
+      //this.coordtoCart()
+      // this.coordtopixel()
             
     },
 
@@ -565,35 +581,36 @@ export default {
       }
    },
 
-   clearwatcher(){
-   console.log("chiudo il watcher");
-    navigator.geolocation.clearWatch(this.watcher);
-   },
+    clearwatcher(){
+    console.log("chiudo il watcher");
+      navigator.geolocation.clearWatch(this.watcher);
+    },
     openscheda(scheda){
       const tag=scheda.tag
-    //this.addtoBucket(tag,'schede_viste')
-    this.aggiornavisti(tag);
-    this.addtoBucket(tag,'schede_viste_onmap')
+      //this.addtoBucket(tag,'schede_viste')
+      this.aggiornavisti(tag);
+      this.addtoBucket(tag,'schede_viste_onmap')
       const content=scheda.content.find(x => x.lang == this.lang);
-              console.log("scheda.type "+ content.type);
-              this.clearwatcher();
-              this.open=false;
-              let composePath="";
-              if (content.type == "audio") {
-                console.log("audio");
-                composePath="/audio/" + tag;
+      console.log("scheda.type "+ content.type);
+      this.salvaPosition();
+      this.clearwatcher();
+      this.open=false;
+      let composePath="";
+      if (content.type == "audio") {
+        console.log("audio");
+        composePath="/audio/" + tag;
 
-              }else if (content.type == "video"){
-                console.log("video");
-                composePath="/video/" + tag;
-            
-              }else{
-                composePath="/soloImg/" + tag;
-              }
-              this.$router.push({ path: composePath, replace:false }).finally(() => {
-                console.log("finally");
-                this.openingScheda = false;
-              });
+      }else if (content.type == "video"){
+        console.log("video");
+        composePath="/video/" + tag;
+    
+      }else{
+        composePath="/soloImg/" + tag;
+      }
+      this.$router.push({ path: composePath, replace:false }).finally(() => {
+        console.log("finally");
+        this.openingScheda = false;
+      });
 
         
     },
@@ -747,10 +764,18 @@ export default {
       
     },
     openviste(){
+      this.salvaPosition();
       this.open=false;
       this.$router.push({ name: 'raccolta', params:{ from:"map"}});
+
      // this.$router.push({ path: "/raccolta", replace:true});
     },
+
+    
+  salvaPosition(){
+    console.log("salva Position ",this.userCoord)
+    localStorage.setItem("userCoord", JSON.stringify(this.userCoord))
+  },
 
    
  
