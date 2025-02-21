@@ -113,6 +113,10 @@ progress::-webkit-progress-value {
   background: #066988 !important;
 }
 
+/*input[type="range"]::-webkit-slider-runnable-track {
+  background-color:#066988;
+}*/
+
 .slides-ios {
   --bullet-background-active: #075478;
 

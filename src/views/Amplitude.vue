@@ -22,14 +22,8 @@
           <div class="ion-no-border content-scheda">
             <div class="meta-container"> 
               <div class="song-title" v-html="contentScheda.titolo"></div>
-
-              
-              <progress v-if="fileUrl!=null"
-                class="amplitude-song-played-progress"
-                data-amplitude-song-index="0"
-                id="song-played-progress-1">
-              </progress>
-              <div class="time-container" v-if="fileUrl!=null">
+              <input type="range" class="amplitude-song-slider" data-amplitude-song-index="0" :value="progress" min="0" max="100"/>
+                <div class="time-container" v-if="fileUrl!=null">
                 <div class="current-time">
                   <span class="amplitude-current-minutes" data-amplitude-song-index="0">00</span>:
                   <span class="amplitude-current-seconds" data-amplitude-song-index="0">00</span>
@@ -66,6 +60,7 @@ import {
  alertController,
  modalController,
   IonButtons,
+  //IonRange
   //IonIcon,
   //IonButton,
 
@@ -93,7 +88,7 @@ export default {
     //IonTitle,
     IonContent,
     IonPage,
-   
+  //  IonRange,
     IonButtons,
     //IonIcon,
   //  IonButton,
@@ -101,7 +96,7 @@ export default {
   },
   beforeUnmount(){
     console.log('Ampli will leave');
-    clearTimeout(this.timer);
+    clearTimeout(this.timerScheda);
     if(this.fileUrl){
       Amplitude.pause();
       this.audio.currentTime=0;
@@ -137,11 +132,12 @@ export default {
   data() {
     return {
       title: "Audioguida",
-      timer:"",
+      timerScheda:"",
       fileUrl:true,
       imageUrl:0,
       imgSrc:'',
       hastext:true,
+      progress:0
     };
   },
 
@@ -216,6 +212,9 @@ export default {
   mounted() {
     console.log("mounted ampli page  ",this.id);
     this.addtoBucket(this.paramId);
+
+    
+
   },
   methods:{
 
@@ -349,7 +348,6 @@ export default {
              // this.audio.load()
              // this.audio.onloadeddata=()=>  this.play();
               this.ampliInit();
-
                  this.play();
                 console.log("AMPLI ",Amplitude);
             
@@ -394,12 +392,15 @@ export default {
             }
             
 
+          },
+          timeupdate: ()=>{
+            this.updateProgress();
           }
         }
       });
       this.audio=Amplitude.getAudio();
-
-      document.getElementById("song-played-progress-1")
+      //this.progress = Amplitude.getSongPlayedPercentage();
+      /*document.getElementById("song-played-progress-1")
       .addEventListener("click", function(e) {
         if (Amplitude.getActiveIndex() == 0) {
           var offset = this.getBoundingClientRect();
@@ -411,9 +412,15 @@ export default {
               100
           );
         }
-      });
+      });*/
 
     },
+
+     updateProgress ()  {
+      this.progress = Amplitude.getSongPlayedPercentage();
+    },
+
+   
     
      fetchFile(name){
        console.log("TRYIN FETCH")
@@ -447,7 +454,7 @@ export default {
 
      },
     goingback() {
-       this.schedaState(false);
+      this.schedaState(false);
     /*  if (window.history.length > 1) {
         this.$router.go(-1);
       } */
@@ -467,8 +474,8 @@ export default {
       Amplitude.play();
       
       $('.amplitude-play-pause').addClass('amplitude-playing').removeClass('amplitude-paused');
-      if(this.timer){
-         clearTimeout(this.timer);
+      if(this.timerScheda){
+         clearTimeout(this.timerScheda);
       }
     },
     pause() {
@@ -481,8 +488,8 @@ export default {
       this.audio.currentTime= this.audio.currentTime-5;
         
       }
-      if(this.timer){
-        clearTimeout(this.timer);
+      if(this.timerScheda){
+        clearTimeout(this.timerScheda);
       }
 
 
@@ -493,8 +500,8 @@ export default {
         this.audio.currentTime= this.audio.currentTime+5;
        
       }
-      if(this.timer){
-        clearTimeout(this.timer);
+      if(this.timerScheda){
+        clearTimeout(this.timerScheda);
       }
       
         
@@ -502,24 +509,28 @@ export default {
     },
   
     inactivityTime(){
-       document.ontouchmove = this.resetTimer;
+       //document.ontouchmove = this.resetTimer;
     },
      
     resetTimer() {
       console.log('RESET Timer out');
-      clearTimeout(this.timer);
+      clearTimeout(this.timerScheda);
       this.setTimer();
           
     },
 
     setTimer(){
        this.inactivityTime();
-      this.timer = setTimeout(this.timeout, 30 * 1000);
+      this.timerScheda = setTimeout(this.timeout, 5 * 1000);
     },
     timeout() { 
       console.log("timeout");
-    
-      this.$router.replace({path:"/"});
+    if(this.context=="scheda"){
+      this.goingback();
+    }else{
+      this.closeModal();
+    }
+     
       
     },
 
@@ -619,7 +630,7 @@ div.player img.album-art {
   float: left;
   padding: 8px 27px 30px;
  /* max-height: 40vh;*/
- height: 39vh;
+ height: 31vh;
  width: 100%;
  /* overflow: overlay;*/
  /* margin-top: 2vh;*/
@@ -675,7 +686,7 @@ div.meta-container div.song-title {
   font-size: 22px;
   font-weight: 600;
   font-family: "Open Sans", sans-serif;
-  margin: 14px 0 5px;
+  margin: 14px 0 10px;
 
 }
 div.meta-container div.song-artist {
@@ -798,11 +809,13 @@ progress.amplitude-song-played-progress:not([value]) {
   background-color: #313252;
 }
 
-progress.amplitude-song-played-progress {
+
+.amplitude-song-slider {
   background-color: #d7dee3;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
+  accent-color: #868686;
+  /*-webkit-appearance: none;*/
+ /* -moz-appearance: none;*/
+ /* appearance: none;*/
   width: 100%;
   display: block;
   cursor: pointer;
@@ -811,24 +824,45 @@ progress.amplitude-song-played-progress {
   border: none;
 }
 
-progress[value]::-webkit-progress-bar {
-  background-color: #d7dee3;
-  border-radius: 3px;
+/*.amplitude-song-slider {
+    background-color: #72b3e2;
+    -webkit-appearance: progress-bar;
+    -moz-appearance: none;
+   
+    width: 100%;
+    display: block;
+    
+    border-radius: 3px;
+   
+    border: none;
+}*/
+
+input[type='range']::-webkit-slider-thumb {
+  width: 15px;
+  /*  -webkit-appearance: none;*/
+    height: 15px;
+    background: #f3f3f3;
+    border:solid #bfbfbf 1px;
+    border-radius: 50%
 }
 
-progress[value]::-moz-progress-bar {
-  background-color: #00a0ff;
-  border-radius: 3px;
-}
 
-progress[value]::-webkit-progress-value {
-  background-color: #00a0ff;
-  border-radius: 3px;
+/* WebKit Browsers */
+/*input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 6px;
+  background: #ddd;
+  border-radius: 5px;
 }
+input[type="range"]::-moz-range-track {
+  width: 100%;
+  height: 6px;
+  background: #ddd;
+  border-radius: 5px;
+}*/
 
-/*
-  3. Layout
-*/
+
+
 body {
   background-color: #ffffff;
   -webkit-font-smoothing: antialiased;

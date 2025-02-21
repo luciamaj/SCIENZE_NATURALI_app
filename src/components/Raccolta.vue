@@ -1,10 +1,9 @@
 <template>
     <ion-header class="ion-no-border">
         <ion-toolbar >
-        <ion-title > {{$t('raccolta.title')}}</ion-title>
-        <ion-buttons slot="start" >
-        <ion-button  v-on:click="back()"><ion-icon size="large" name="arrow-back" /></ion-button>
-        </ion-buttons>
+            <ion-buttons slot="start" >
+                <ion-button  v-on:click="back()" class="back-button"><ion-icon size="medium" name="arrow-back" />{{$t('schede.back')}}</ion-button>
+            </ion-buttons>
         </ion-toolbar> 
     </ion-header>
   
@@ -48,7 +47,8 @@
         data(){
             return{
                 images:[],
-                fromPage:""
+                fromPage:"",
+                timer:null,
             }
         },
 
@@ -90,9 +90,14 @@
         },
         
         created(){
+            this.setTimer();
             this.lang= localStorage.getItem("lang");
             this.getImages();
 
+        },
+        unmounted(){
+            console.log("it is umounted")
+            this.clearTimer();
         },
 
         methods:{
@@ -170,6 +175,7 @@
 
             },
             back(){
+                this.clearTimer();
                 console.log("Raccolta FROM ", this.from )
                 if(this.from=="map"){
                     //this.$router.replace("/gps")
@@ -179,6 +185,19 @@
                 }
                 
             },
+
+            setTimer(){
+                this.timer=setTimeout(()=>{
+                    this.clearTimer();
+                    this.$router.go(-1);
+                },16*1000)
+
+            },
+            clearTimer(){
+                clearTimeout(this.timer)
+                console.log("clearTimer", this.timer)
+
+            }
 
            
         }
@@ -193,6 +212,9 @@
     margin-left: 5vw;
     font-size: 18px;
     color: var(--ion-color-secondary);
+}
+.back-button{
+  text-transform: capitalize;
 }
 .list-container{
     height: 80vh;

@@ -1,9 +1,8 @@
 <template>
   <ion-header>
     <ion-toolbar>
-       <ion-title color="secondary">{{$t('menu.lang.subtitle')}}</ion-title>
        <ion-buttons slot="start" >
-        <ion-button  @click="back"><ion-icon size="large" name="chevron-back" /></ion-button>
+        <ion-button  @click="back"><ion-icon size="large" name="arrow-back" />{{$t('schede.back')}}</ion-button>
       </ion-buttons>
      
     </ion-toolbar>
@@ -47,7 +46,6 @@ import {
   
   IonContent,
   IonHeader,
-  IonTitle,
   IonToolbar,
   alertController,
   actionSheetController ,
@@ -66,10 +64,8 @@ export default ({
   },
   components: {
     IonButtons,
-   
     IonContent,
     IonHeader,
-    IonTitle,
     IonToolbar,
     //IonToggle
     
@@ -417,10 +413,11 @@ export default ({
 </script>
 
 <style scoped>
-
+ion-button{
+  text-transform:capitalize ;
+}
 .langs-grid{
   margin-top: 3vh;
-
 }
 
 ion-toggle{

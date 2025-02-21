@@ -43,6 +43,7 @@
             <div class="button-text"> {{$t("menu.copyright")}}</div>
             <ion-icon  slot="end" size="large" name="chevron-forward" />
         </ion-button>
+       
         <!--ion-button expand="block" size="large" color="secondary" @click="pushPage('privacy')" > 
             <ion-icon  slot="start" size="large" name="glasses" />
             <div class="button-text"> {{$t("menu.privacy")}}</div>
@@ -51,6 +52,11 @@
         <ion-button expand="block" size="large" color="secondary" @click="pushPage('terms')" > 
             <ion-icon  slot="start" size="large" name="shield-checkmark-outline"/>
             <div class="button-text"> {{$t("menu.termini")}}</div>
+            <ion-icon  slot="end" size="large" name="chevron-forward" />
+        </ion-button>
+        <ion-button expand="block" size="large" color="secondary" @click="pushPage('credits')" > 
+            <ion-icon  slot="start" size="large" name="information-circle-outline" />
+            <div class="button-text"> {{$t("menu.credits")}}</div>
             <ion-icon  slot="end" size="large" name="chevron-forward" />
         </ion-button>
         <ion-button expand="block" size="large" color="secondary" @click="pushPage('test')" > 
@@ -190,9 +196,11 @@ export default ({
             
         }else if(page=="copy"){
             ionNav.push(Copy,  {page:"copyright" });
+        }else if(page=="credits"){
+            ionNav.push(Copy,  {page:"credits" });
         }else if(page=="privacy"){
             ionNav.push(Copy,  {page:"privacy" });
-        }else if(page=="terms"){
+        }        else if(page=="terms"){
             ionNav.push(Copy,  {page:"termini" });
         }else if(page=="help"){
             ionNav.push(Instructions,  {context:"help" });

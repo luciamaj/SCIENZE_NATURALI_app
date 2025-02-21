@@ -59,9 +59,7 @@ import {
 import L from "leaflet";
 import 'leaflet/dist/leaflet.css';
 import Amplitude from "./Amplitude.vue";
-import { set } from "idb-keyval";
 import SvgIcon from "@/components/svgPack.vue";
-
 
 
 export default {
@@ -182,6 +180,18 @@ export default {
   },
  
   beforeMount(){
+    try{
+      console.log("executeJava");
+      AndroidObject.executeJavaCodeNotificationMessage(true); 
+    }catch(e){
+      console.log("catch ",e);
+      if(typeof AndroidObject=="undefined"){
+      }else{
+        console.log("catch ",e);
+      }
+    }
+
+
     navigator.geolocation.getCurrentPosition((position)=>{  
       this.userCoord.latitude= position.coords.latitude,
       this.userCoord.longitude= position.coords.longitude
@@ -233,6 +243,7 @@ export default {
 
     if(localStorage.getItem("alertmappaletto")!=1){
       //this.aletrtMap();
+      this.introOpen=true;
       this.introModal();
     }
 
@@ -243,6 +254,11 @@ export default {
     }, 450);
   
    console.log("items",this.items)
+
+   window.document.addEventListener("visibilitychange", ()=> { 
+    console.log("BG GEO?")
+  
+   })
              
   },
   async beforeUnmount() {
@@ -251,6 +267,7 @@ export default {
       this.mapImage=null
     }
     this.open==false
+   
     this.clearwatcher();
     console.log("Unmounting map");
     const top = await modalController.getTop();
@@ -422,6 +439,7 @@ export default {
             handler: async() => {
               this.open=false;
              // this.map.remove();
+             this.stopGps();
               this.clearwatcher();
               this.back();
              
@@ -465,7 +483,7 @@ export default {
         if(item.id!="me"){
           const im= await this.getCoverImg(item.img)
             const popupcontent=`<div class="img-container-popup"><img src=${im}></div>
-                <div class="card-title">${item.description}</div>`
+                <div class="card-title museo-style" >${item.description}</div>`
             const marker=L.marker(L.latLng(item.latLng),{ icon:this.markerIcon(item.status)}).addTo(this.map).bindPopup(popupcontent);
             console.log("ICON marker", marker._icon);
 
@@ -522,6 +540,7 @@ export default {
             console.log("distance",it.tag, distance)
             
             if(distance<=range ){
+              console.log("intro Open" ,this.introOpen)
               if( !this.visited.includes(it.tag) && !this.introOpen && !this.openingScheda){
                 this.openingScheda=true
                 this.openscheda(it)
@@ -777,6 +796,14 @@ export default {
     localStorage.setItem("userCoord", JSON.stringify(this.userCoord))
   },
 
+  stopGps(){
+    try{
+      console.log("send not executeJava");
+        AndroidObject.executeJavaCodeNotificationMessage(false);//aggiungere parametro  false
+      }catch(e){
+        console.log(e);
+      }
+  }
    
  
   }
@@ -887,15 +914,30 @@ ion-content {
     bottom: 20px;
     right: 20px;
 }
+.leaflet-popup-content{
+  margin: 0;
+  padding: 15px 14px;
+  width: 100% !important;
+}
 
 .leaflet-popup-content .img-container-popup {
-  width: 46vw;
+  width: 55vw;
+  top: 12px;
+  position: relative;
   /*height: 30vh;*/
  
 }
 
 .leaflet-popup-content .card-title{
   font-size: 17px;
+  margin-top: 16px;
+    position: relative;
+}
+
+.leaflet-popup-content .museo-style{
+  text-transform: uppercase;
+    color: #d26045;
+    font-weight: 600;
 }
 
 .leaflet-container a.leaflet-popup-close-button {
@@ -929,7 +971,7 @@ ion-content {
 }
 
 .leaflet-popup-content-wrapper{
-  width: 65vw;
+  width: 62vw;
 }
 
 

@@ -497,7 +497,7 @@ export default {
     timeout() { 
       console.log("timeout");
     
-      this.$router.replace({path:"/"});
+      this.goingback();
       
     },
 
@@ -592,7 +592,7 @@ div.player img.album-art {
   float: left;
   padding: 8px 27px 30px;
  /* max-height: 40vh;*/
- height: 39vh;
+ height: 31vh;
  width: 100vw;
  /* overflow: overlay;*/
  /* margin-top: 2vh;*/

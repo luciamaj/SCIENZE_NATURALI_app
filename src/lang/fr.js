@@ -122,6 +122,7 @@ export const fr ={
         },
         help:"Aider",
         copyright:"Copyright et Privacy",
+        credits:"Credits",
         privacy:"Privacy",
         termini:"Conditions d'utilisation",
         test:{
@@ -136,6 +137,7 @@ export const fr ={
     },
     raccolta:{
         title:"Collection",
+        map:"Retour à la carte",
         subtitle:"Revivez l'expérience",
         alerttext:"Aucun contenu n'a encore été consulté. \n Revenez à la fin de la visite pour revoir le contenu trouvé en cours de route."
     },

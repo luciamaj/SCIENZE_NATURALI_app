@@ -24,7 +24,8 @@
           <div class="meta-container">
 
             <div class="song-title" v-html="contenuto.titolo"></div>
-            <progress class="amplitude-song-played-progress" :value="progress" :buffer="1" color="secondary"></progress>
+            <progress v-if="sync" class="amplitude-song-played-progress" :value="progress" :buffer="1" color="secondary"></progress>
+            <input  v-else type="range" class="amplitude-song-played-progress"   :value="progress" min="0" max="100"/>
               <div class="time-container">
               <div class="current-time">
                 <span class="amplitude-current-minutes" data-amplitude-song-index="0">{{current.min}}</span>:
@@ -127,7 +128,15 @@ export default {
       timeStamp:0,
       showingControls: true, // Stato per verificare se mostrare i controlli
       hideTimeout: null,
+      sync:false,
     };
+  },
+
+  beforeMount(){
+    this.timeStamp= this.gettimestampS(this.$route.params.timestamp )|| 0;
+    if(this.timeStamp!=0){
+      this.sync=true
+    }
   },
  
    beforeUnmount(){
@@ -199,7 +208,8 @@ export default {
   },
   created(){  
     document.addEventListener('backbutton',()=>{
-      this.$router.replace('/');  this.vid.play()
+      this.$router.replace('/');  
+      this.vid.play()
     });
     this.addtoBucket=common.addtoBucket;
     this.paramId=this.$route.params.id;
@@ -599,7 +609,7 @@ export default {
       console.log("timeout");
     
      // this.$router.replace({path:"/"});
-     this.back();
+     this.goingback();
       
     },
 
@@ -691,7 +701,7 @@ div.player img.album-art {
 
   float: left;
     padding: 8px 27px 30px;
-    height: 30vh;
+    height: 31vh;
     width: 100vw;
     margin-bottom: 2vh;
     font-size: 1.1em;
@@ -956,7 +966,7 @@ progress.amplitude-song-played-progress:not([value]) {
   background-color: #313252;
 }
 
-progress.amplitude-song-played-progress {
+.amplitude-song-played-progress {
   background-color: #d7dee3;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -968,6 +978,20 @@ progress.amplitude-song-played-progress {
   height:6px;
   border: none;
 }
+input.amplitude-song-played-progress {
+  background-color: #d7dee3;
+  accent-color: #868686;
+  /*-webkit-appearance: none;*/
+ /* -moz-appearance: none;*/
+ /* appearance: none;*/
+  width: 100%;
+  display: block;
+  cursor: pointer;
+  border-radius: 3px;
+  height: 6px;
+  border: none;
+}
+
 
 progress[value]::-webkit-progress-bar {
   background-color: #d7dee3;

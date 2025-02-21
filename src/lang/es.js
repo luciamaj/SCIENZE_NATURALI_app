@@ -123,6 +123,7 @@ export const es= {
         help:"Ayuda",
         copyright:"Copyright y Privacy",
         privacy:"Privacy",
+        credits:"Credits",
         termini:"Términos de servicio",
         test:{
             title:"Test",
@@ -136,6 +137,7 @@ export const es= {
     },
     raccolta:{
         title:"Recolección de datos",
+        map:"Volver al mapa",
         subtitle:"Revive nuevamente la experiencia",
         alerttext:"Aún no hay contenidos visualizados. \n Al final del recorrido encontrarás los contenidos en esta sección"
     },

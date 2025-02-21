@@ -2,13 +2,12 @@
 
   <ion-header class="ion-no-border">
     <ion-toolbar >
-      <ion-title color="secondary" > Test</ion-title>
         <ion-buttons slot="start" >
-          <ion-back-button ></ion-back-button>
+          <ion-back-button :text="$t('schede.back')"></ion-back-button>
         </ion-buttons>
         <ion-buttons slot="end" >
           <ion-button color="#efecec40"  @click="openDebug()" >
-                <ion-icon  size="large" name="bug-outline" class="debug-icon"></ion-icon>
+                <ion-icon  size="small" name="bug-outline" class="debug-icon"></ion-icon>
                 
               </ion-button>
         </ion-buttons>
@@ -489,6 +488,9 @@ export default {
 
 ion-content {
   --overflow: hidden;
+}
+.button-text{
+  text-transform: capitalize;
 }
 
 .vertical-center {

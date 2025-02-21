@@ -118,6 +118,7 @@ export const de= {
         },
         help:"Aiuto",
         copyright:"Copyright",
+        credits:"Credits",
         privacy:"Privacy",
         termini:"Nutzungsbedingungen",
         test:{
@@ -132,6 +133,7 @@ export const de= {
     },
     raccolta:{
         title:"Sammlung",
+        map:"Kehren Sie zur Karte zurück",
         subtitle:"Erleben Sie die Erfahrung noch einmal",
         alerttext:"Es wurde noch kein Inhalt angesehen. \n Kommen Sie am Ende der Tour zurück, um die Inhalte zu überprüfen, die Sie auf dem Weg gefunden haben."
     },

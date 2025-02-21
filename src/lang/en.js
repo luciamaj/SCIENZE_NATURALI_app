@@ -121,6 +121,7 @@ export const en= {
         help:"Help",
         copyright:"Copyright & Privacy",
         privacy:"Privacy",
+        credits:"Credits",
         termini:"Terms of Service",
         test:{
             title:"Test",
@@ -134,6 +135,7 @@ export const en= {
     },
     raccolta:{
         title:"Collection",
+        map:"Back to the map",
         subtitle:"Live the experience again",
         alerttext:"No content has been viewed yet. \n All contents viewed throughout the visit will be available here"
     },

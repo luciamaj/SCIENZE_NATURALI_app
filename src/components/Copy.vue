@@ -1,9 +1,8 @@
 <template>
  <ion-header>
     <ion-toolbar>
-       <ion-title color="secondary">{{$t("menu."+page)}}</ion-title>
       <ion-buttons slot="start" >
-        <ion-back-button></ion-back-button>
+        <ion-back-button :text="$t('schede.back')" ></ion-back-button>
       </ion-buttons>
      
     </ion-toolbar>
@@ -69,16 +68,18 @@ export default ({
 <style scoped>
 
 .ex-page-container{
- width: 80vw;
- margin: auto;
- font-size: 0.35em;
- height: 95%;
- overflow: scroll;
-
+  width: 85vw;
+  margin: auto;
+  font-size: 0.35em;
+  height: 100%;
+  overflow: scroll;
 }
 .ex-page-container>h2{
   font-size: 22px;
 
+}
+ion-back-button{
+  text-transform: capitalize;
 }
 
 </style>

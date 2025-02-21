@@ -124,6 +124,7 @@ export const it = {
         help:"Aiuto",
         copyright:"Copyright e Privacy",
         privacy:"Privacy",
+        credits:"Crediti",
         termini:"Termini di servizio",
         test:{
             title:"Test",
@@ -137,6 +138,7 @@ export const it = {
     },
     raccolta:{
         title:"Raccolta",
+        map:"Torna alla mappa",
         subtitle:"Rivivi l'esperienza",
         alerttext:"Non hai ancora aperto le schede. \n Alla fine del tour potrai rivedere qui le schede trovate lungo il percorso."
     },
