@@ -25,7 +25,7 @@
 
             <div class="song-title" v-html="contenuto.titolo"></div>
             <progress v-if="sync" class="amplitude-song-played-progress" :value="progress" :buffer="1" color="secondary"></progress>
-            <input  v-else type="range" class="amplitude-song-played-progress"   :value="progress" min="0" max="100"/>
+            <input  v-else type="range" class="progress-slider"   @input="seekVideo" :step="step" :value="progress" min="0" max="1"/>
               <div class="time-container">
               <div class="current-time">
                 <span class="amplitude-current-minutes" data-amplitude-song-index="0">{{current.min}}</span>:
@@ -54,7 +54,8 @@
           </video-->
           <div class="controls" :class="{ hidden: !showingControls }"  @click.stop>
              <div  class="amplitude-play-pause play " :class="checkPlay()" @click="playpause('full')" data-icon="P" aria-label="play pause toggle"></div>
-             <progress class="amplitude-song-played-progress" :value="progress" :buffer="1" color="secondary"></progress>
+             <progress v-if="sync" class="amplitude-song-played-progress" :value="progress" :buffer="1" color="secondary"></progress>
+             <input  v-else type="range" class="progress-slider"   @input="seekVideo" :step="step" :value="progress" min="0" max="1"/>
              <div  class="exitFull" @click="exitFull"><ion-icon class="close-expand" name="expand-outline"></ion-icon></div>
           </div>
 
@@ -123,9 +124,10 @@ export default {
         min:"00",
         sec:"00",
       },
+      step:0.1,
       fullscreen:false,
       hastext:true,
-      timeStamp:0,
+      timeStamp:0.1,
       showingControls: true, // Stato per verificare se mostrare i controlli
       hideTimeout: null,
       sync:false,
@@ -249,6 +251,8 @@ export default {
     this.vid.onloadeddata = ()=> {
       console.log("Browser has loaded ");
       this.duration= this.getminsec(this.vid.duration);
+      this.step=1/this.vid.duration;
+      console.log( "STEP", this.step, this.vid.duration)
       this.vid.currentTime=this.timeStamp;
       this.vid.play();
       if(this.vid.paused){
@@ -411,6 +415,12 @@ export default {
       this.progress=current/duration;
       console.log("prog "+current+" " +duration+" "+ this.progress)
 
+    },
+    seekVideo(event) {
+      //console.log("Value",event.target.value)
+      console.log("time",event.target.value, this.vid.duration, (this.vid.duration*event.target.value))
+      //this.progress=event.target.value;
+      this.vid.currentTime=this.vid.duration*(event.target.value)
     },
     playpause(video){
      /* this.vidFull=document.getElementById("videoFull")
@@ -978,7 +988,7 @@ progress.amplitude-song-played-progress:not([value]) {
   height:6px;
   border: none;
 }
-input.amplitude-song-played-progress {
+.progress-slider{
   background-color: #d7dee3;
   accent-color: #868686;
   /*-webkit-appearance: none;*/
