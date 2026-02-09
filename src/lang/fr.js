@@ -23,8 +23,8 @@ export const fr ={
            
         },
         percorsi:{
-            title:"Select ",
-            text:"wich path do you want to follow"
+            title:"Sélectionner ",
+            text:"quel parcours souhaitez-vous suivre"
         },
         tag:{
             title:"Rapprocher le smartphone des SilenceTags",
@@ -73,7 +73,7 @@ export const fr ={
 
         scan:"Scanner le code QR",
         start:"Scanner le SilenceTag",
-        stop:"Stop SilenceTag",
+        stop:"Arrêter SilenceTag",
         alertApp:{
             title:"Attention",
             text:"Cette fonctionnalité est disponible via l'application",
@@ -120,9 +120,9 @@ export const fr ={
             de:"Allemand",
             es:"Espagnol"
         },
-        help:"Aider",
+        help:"Aide",
         copyright:"Copyright et Privacy",
-        credits:"Credits",
+        credits:"Crédits",
         privacy:"Privacy",
         termini:"Conditions d'utilisation",
         test:{
@@ -142,6 +142,6 @@ export const fr ={
         alerttext:"Aucun contenu n'a encore été consulté. \n Revenez à la fin de la visite pour revoir le contenu trouvé en cours de route."
     },
     schede:{
-        back:"Back"
+        back:"Retour"
     }
 } 

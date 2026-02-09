@@ -22,8 +22,8 @@ export const de= {
             alternative:"Im Bereich Barrierefreiheit des Menüs besteht die Möglichkeit, Untertitel von Multimedia-Inhalten für Gehörlose zu aktivieren"
         },
         percorsi:{
-            title:"Select ",
-            text:"wich path do you want to follow"
+            title:"Wählen Sie",
+            text:"die Route, der Sie folgen möchten"
         },
         tag:{
             title:"Bringen Sie das Smartphone näher an die SilenceTags heran",
@@ -71,7 +71,7 @@ export const de= {
 
         scan:"QR-Code scannen",
         start:"SilenceTag scannen",
-        stop:"Stop SilenceTag",
+        stop:"SilenceTag stoppen",
         alertApp:{
             title:"Nicht verfügbar",
             text:"Diese Funktion ist in der App verfügbar",
@@ -92,7 +92,7 @@ export const de= {
             title:"Inhalt aktualisieren"
         },
         accessibility:{
-            title:"Zugänglichkeit",
+            title:"Barrierefreiheit",
             subtitle:"Für Gehörlose: Untertitel für Multimedia-Inhalte aktivieren",
             supportoVisuale:"Untertitel / Gebärdensprache"
         },
@@ -116,7 +116,7 @@ export const de= {
             de:"Deutsch",
             es:"Spanisch"
         },
-        help:"Aiuto",
+        help:"Hilfe",
         copyright:"Copyright",
         credits:"Credits",
         privacy:"Privacy",
@@ -138,6 +138,6 @@ export const de= {
         alerttext:"Es wurde noch kein Inhalt angesehen. \n Kommen Sie am Ende der Tour zurück, um die Inhalte zu überprüfen, die Sie auf dem Weg gefunden haben."
     },
     schede:{
-        back:"Back"
+        back:"Zurück"
     }
 }

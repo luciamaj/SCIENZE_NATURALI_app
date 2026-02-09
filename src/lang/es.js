@@ -22,8 +22,8 @@ export const es= {
             alternative:"En el apartado de accesibilidad del menú es posible activar subtítulos de contenidos multimedia para personas sordas"
         },
         percorsi:{
-            title:"Select ",
-            text:"wich path do you want to follow"
+            title:"Selecciona ",
+            text:"qué recorrido quieres seguir"
         },
         tag:{
             title:"Acerca el smartphone a los SilenceTags",
@@ -65,9 +65,9 @@ export const es= {
     },
     main:{
 
-        scan:"Escanéa el código",
-        start:"Escanéa el SilenceTag",
-        stop:"Para el SilenceTag",
+        scan:"Escanear el código",
+        start:"Escanear el SilenceTag",
+        stop:"Detener el SilenceTag",
         alertApp:{
             title:"Función no disponible",
             text:"Esta función està disponible solo en la APP",
@@ -95,7 +95,7 @@ export const es= {
             title:"Actualiza los contenidos"
         },
         accessibility:{
-            title:"Accessibilità",
+            title:"Accesibilidad",
             subtitle:"Para personas sordas: activar subtítulos para contenidos multimedia",
             supportoVisuale:"Subtítulos/Lengua de Signos"
         },
@@ -123,7 +123,7 @@ export const es= {
         help:"Ayuda",
         copyright:"Copyright y Privacy",
         privacy:"Privacy",
-        credits:"Credits",
+        credits:"Créditos",
         termini:"Términos de servicio",
         test:{
             title:"Test",
@@ -142,7 +142,7 @@ export const es= {
         alerttext:"Aún no hay contenidos visualizados. \n Al final del recorrido encontrarás los contenidos en esta sección"
     },
     schede:{
-        back:"Back"
+        back:"Atrás"
     }
    
 }
